@@ -1,0 +1,85 @@
+### create user
+POST {{host}}/user/create
+Content-Type: application/json
+
+{
+  "email": "1@test.com",
+  "password": "password"
+}
+
+### login
+POST {{host}}/user/login
+Content-Type: application/json
+
+{
+  "email": "1@test.com",
+  "password": "password"
+}
+
+### refresh token
+POST {{host}}/user/refresh-token
+Content-Type: application/json
+Authorization: Bearer {{tokenUser1}}
+
+### get user
+GET {{host}}/user
+Authorization: Bearer {{tokenUser1}}
+
+### get trending shows
+GET {{host}}/discover/trending
+Authorization: Bearer {{tokenUser1}}
+
+### get reccomended shows
+GET {{host}}/discover/recommended
+Authorization: Bearer {{tokenUser1}}
+
+### get episodes from show
+GET {{host}}/shows/1/episodes
+Authorization: Bearer {{tokenUser1}}
+Content-Type: application/json
+
+### create tracked show
+POST {{host}}/track/shows
+Authorization: Bearer {{tokenUser1}}
+Content-Type: application/json
+
+{
+  "tmdb_id": 12971,
+  "wishlisted": false
+}
+
+### search multi by term
+POST {{host}}/search
+Authorization: Bearer {{tokenUser1}}
+Content-Type: application/json
+
+{
+  "term": "game of"
+}
+
+### add episode to tracked show
+POST {{host}}/track/shows/6/episode
+Authorization: Bearer {{tokenUser1}}
+Content-Type: application/json
+
+{
+  "episode_ids": [
+    "ed59e1a6-c465-4147-99c9-fafa3a2f02b1",
+    "1a0c76b7-d314-411f-8c03-6c1dd25d4761"
+  ]
+}
+
+### get tracked shows: ongoing
+GET {{host}}/track/shows/watching
+Authorization: Bearer {{tokenUser1}}
+Content-Type: application/json
+
+### get tracked shows: wishlisted
+GET {{host}}/track/shows/watchlist
+Authorization: Bearer {{tokenUser1}}
+Content-Type: application/json
+
+### get tracked shows: finished
+GET {{host}}/track/shows/finished
+Authorization: Bearer {{tokenUser1}}
+Content-Type: application/json
