@@ -1,17 +1,17 @@
 import androidx.compose.ui.window.ComposeUIViewController
-import besttvtracker.DiscoverScreen
-import besttvtracker.FinishedScreen
-import besttvtracker.SettingsScreen
-import besttvtracker.ShowDetailsScreen
-import besttvtracker.WatchingScreen
-import besttvtracker.WatchlistScreen
+import besttvtracker.screens.details.DetailsScreen
+import besttvtracker.screens.discover.DiscoverScreen
+import besttvtracker.screens.finished.FinishedScreen
+import besttvtracker.screens.settings.SettingsScreen
+import besttvtracker.screens.watching.WatchingScreen
+import besttvtracker.screens.watchlist.WatchlistScreen
 
 fun WatchingScreenViewController(onNav: () -> Unit) = ComposeUIViewController {
     WatchingScreen(onNav)
 }
 
 fun FinishedScreenViewController() = ComposeUIViewController {
-    FinishedScreen({})
+    FinishedScreen()
 }
 
 fun WatchlistScreenViewController() = ComposeUIViewController {
@@ -27,5 +27,5 @@ fun SettingsScreenViewController() = ComposeUIViewController {
 }
 
 fun ShowDetailsScreenViewController() = ComposeUIViewController {
-    ShowDetailsScreen()
+    DetailsScreen()
 }

@@ -34,8 +34,7 @@ flyway {
 
 dependencies {
     implementation(projects.shared)
-    testImplementation(libs.kotlin.test.junit)
-
+    implementation(projects.api)
     implementation(libs.springBootJdbc )
     implementation(libs.springBootJpa)
     implementation(libs.springBootStarterWeb)
@@ -47,6 +46,7 @@ dependencies {
     implementation(libs.flywayCore)
     implementation(libs.postgres)
 
+    testImplementation(libs.kotlin.test.junit)
     testImplementation(libs.testSpringBoot)
     testImplementation(libs.testSpringBootSecurity)
 }

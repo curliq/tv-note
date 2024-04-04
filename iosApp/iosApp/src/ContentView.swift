@@ -3,16 +3,22 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var selection: String? = nil
+    @State private var count = 0
     let content: some View = ShowDetailsScreen().hideToolbar()
     var body: some View {
         TabView {
             NavigationView {
                 VStack {
+                    Text("count: \(count)")
+                    Button(action: { count+=1 }, label: {Text("inc")})
                     NavigationLink(destination: content, tag: "A", selection: $selection) { EmptyView() }
                     WatchingScreen(v2: {selection = "A"}).ignoresSafeArea(.keyboard)
-                }}.tabItem {
-                    Label("Watching", systemImage: "play.tv.fill")
-                }
+                }.hideToolbar()
+            }
+            .navigationViewStyle(StackNavigationViewStyle())
+            .tabItem {
+                Label("Watching", systemImage: "play.tv.fill")
+            }
             FinishedScreen()
                 .tabItem {
                     Label("Finished", systemImage: "flag.checkered")
