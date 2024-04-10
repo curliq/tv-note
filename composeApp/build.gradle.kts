@@ -3,20 +3,19 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
+    alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.jetbrainsCompose)
+    alias(libs.plugins.sqldelight)
 }
 
 kotlin {
     androidTarget {
         compilations.all {
             kotlinOptions {
-                jvmTarget = "11"
+                jvmTarget = "17"
             }
         }
     }
-
-    jvm("desktop")
-
     listOf(
         iosX64(),
         iosArm64(),
@@ -27,9 +26,9 @@ kotlin {
             isStatic = true
         }
     }
+    jvm()
 
     sourceSets {
-        val desktopMain by getting
         androidMain.dependencies {
             implementation(libs.compose.ui.tooling.preview)
             implementation(libs.androidx.activity.compose)
@@ -37,15 +36,20 @@ kotlin {
             implementation(libs.accompanist.navigation.material)
             implementation(compose.uiTooling)
             implementation(compose.preview)
-            implementation(compose.material3)
-            implementation(compose.material)
-
+            implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.viewmodel.compose)
+            implementation(libs.ktor.client.okhttp)
+            implementation(libs.slf4j.android)
+            implementation(libs.koin.android)
+            implementation(libs.koin.androidx.compose)
+            implementation(libs.sqldelight.android.driver)
         }
         iosMain.dependencies {
+            implementation(libs.ktor.client.darwin)
+            implementation(libs.sqldelight.native.driver)
         }
         commonMain.dependencies {
-            implementation(projects.shared)
+            implementation(projects.api)
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material)
@@ -58,9 +62,24 @@ kotlin {
             implementation(libs.coil.compose)
             implementation(libs.coil.network.ktor)
             implementation(libs.ktor.client.core)
+            implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.ktor.client.cio)
+            implementation(libs.ktor.client.logging)
+            implementation(libs.ktor.client.contentNegotiation)
+            implementation(libs.ktor.serialization.kotlinx.json)
+            implementation(libs.koin.core)
+            implementation(libs.sqldelight.runtime)
+            implementation(libs.uuid)
         }
-        desktopMain.dependencies {
-            implementation(compose.desktop.currentOs)
+        commonTest.dependencies {
+            implementation(libs.kotlin.test)
+            implementation(libs.kotlinx.coroutines.test)
+        }
+        jvmTest.dependencies {
+            implementation(libs.kotlin.test)
+            implementation(libs.mockk)
+            implementation(libs.kotlinx.coroutines.test)
+            implementation(libs.koin.test)
         }
     }
 }
@@ -89,6 +108,7 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "/META-INF/INDEX.LIST"
         }
     }
     buildTypes {
@@ -97,12 +117,16 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     dependencies {
         debugImplementation(libs.compose.ui.tooling)
     }
+}
+
+dependencies {
+    implementation(project(":api"))
 }
 
 compose.desktop {
@@ -118,4 +142,11 @@ compose.desktop {
 
 compose.experimental {
     web.application {}
+}
+
+sqldelight {
+    database("AppDatabase") {
+        packageName = "com.free.tvtracker.shared.db"
+        dialect = "sqlite:3.24"
+    }
 }

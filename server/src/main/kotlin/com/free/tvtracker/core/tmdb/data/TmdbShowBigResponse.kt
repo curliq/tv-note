@@ -14,9 +14,9 @@ data class TmdbShowBigResponse(
     @JsonProperty("in_production") var inProduction: Boolean? = null,
     @JsonProperty("languages") var languages: ArrayList<String> = arrayListOf(),
     @JsonProperty("last_air_date") var lastAirDate: String? = null,
-    @JsonProperty("last_episode_to_air") var lastEpisodeToAir: LastEpisodeToAir? = LastEpisodeToAir(),
+    @JsonProperty("last_episode_to_air") var lastEpisodeToAir: Episode? = Episode(),
     @JsonProperty("name") var name: String? = null,
-    @JsonProperty("next_episode_to_air") var nextEpisodeToAir: NextEpisodeToAir? = NextEpisodeToAir(),
+    @JsonProperty("next_episode_to_air") var nextEpisodeToAir: Episode? = Episode(),
     @JsonProperty("networks") var networks: ArrayList<Networks> = arrayListOf(),
     @JsonProperty("number_of_episodes") var numberOfEpisodes: Int? = null,
     @JsonProperty("number_of_seasons") var numberOfSeasons: Int? = null,
@@ -34,7 +34,7 @@ data class TmdbShowBigResponse(
     @JsonProperty("tagline") var tagline: String? = null,
     @JsonProperty("type") var type: String? = null,
     @JsonProperty("vote_average") var voteAverage: Double? = null,
-    @JsonProperty("vote_count") var voteCount: Int? = null
+    @JsonProperty("vote_count") var voteCount: Double? = null
 ) {
     data class CreatedBy(
         @JsonProperty("id") var id: Int? = null,
@@ -63,7 +63,7 @@ data class TmdbShowBigResponse(
         @JsonProperty("overview") var overview: String? = null,
         @JsonProperty("poster_path") var posterPath: String? = null,
         @JsonProperty("season_number") var seasonNumber: Int? = null,
-        @JsonProperty("vote_average") var voteAverage: Int? = null
+        @JsonProperty("vote_average") var voteAverage: Double? = null
     )
 
     data class ProductionCountries(
@@ -85,28 +85,12 @@ data class TmdbShowBigResponse(
         @JsonProperty("origin_country") var originCountry: String? = null
     )
 
-    data class NextEpisodeToAir(
+    data class Episode(
         @JsonProperty("id") var id: Int? = null,
         @JsonProperty("name") var name: String? = null,
         @JsonProperty("overview") var overview: String? = null,
-        @JsonProperty("vote_average") var voteAverage: Int? = null,
-        @JsonProperty("vote_count") var voteCount: Int? = null,
-        @JsonProperty("air_date") var airDate: String? = null,
-        @JsonProperty("episode_number") var episodeNumber: Int? = null,
-        @JsonProperty("episode_type") var episodeType: String? = null,
-        @JsonProperty("production_code") var productionCode: String? = null,
-        @JsonProperty("runtime") var runtime: Int? = null,
-        @JsonProperty("season_number") var seasonNumber: Int? = null,
-        @JsonProperty("show_id") var showId: Int? = null,
-        @JsonProperty("still_path") var stillPath: String? = null
-    )
-
-    data class LastEpisodeToAir(
-        @JsonProperty("id") var id: Int? = null,
-        @JsonProperty("name") var name: String? = null,
-        @JsonProperty("overview") var overview: String? = null,
-        @JsonProperty("vote_average") var voteAverage: Int? = null,
-        @JsonProperty("vote_count") var voteCount: Int? = null,
+        @JsonProperty("vote_average") var voteAverage: Double? = null,
+        @JsonProperty("vote_count") var voteCount: Double? = null,
         @JsonProperty("air_date") var airDate: String? = null,
         @JsonProperty("episode_number") var episodeNumber: Int? = null,
         @JsonProperty("episode_type") var episodeType: String? = null,

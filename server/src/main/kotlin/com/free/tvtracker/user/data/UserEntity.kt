@@ -1,14 +1,15 @@
 package com.free.tvtracker.user.data
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
+import kotlinx.serialization.Serializable
 import org.hibernate.annotations.CreationTimestamp
 
+@Serializable
 @Entity
 @Table(name = "users")
 class UserEntity(
@@ -24,7 +25,6 @@ class UserEntity(
     val email: String = "",
 
     @Column
-    @JsonIgnore
     val password: String = "",
 
     @Column

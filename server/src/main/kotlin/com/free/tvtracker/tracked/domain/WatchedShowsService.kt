@@ -4,13 +4,14 @@ import com.free.tvtracker.core.tmdb.data.enums.TmdbShowStatus
 import com.free.tvtracker.security.SessionService
 import com.free.tvtracker.stored.shows.data.StoredEpisodeEntity
 import com.free.tvtracker.stored.shows.domain.StoredShowsService
-import com.free.tvtracker.user.domain.UserService
-import com.free.tvtracker.tracked.api.WatchedShowsController
 import com.free.tvtracker.tracked.data.TrackedShowEntity
 import com.free.tvtracker.tracked.data.TrackedShowEpisodeEntity
 import com.free.tvtracker.tracked.data.TrackedShowEpisodeJdbcRepository
 import com.free.tvtracker.tracked.data.TrackedShowJdbcRepository
 import com.free.tvtracker.tracked.data.TrackedShowJpaRepository
+import com.free.tvtracker.tracked.request.AddEpisodesRequest
+import com.free.tvtracker.tracked.request.AddShowRequest
+import com.free.tvtracker.user.domain.UserService
 import org.springframework.stereotype.Service
 
 @Service
@@ -22,7 +23,7 @@ class WatchedShowsService(
     private val userService: UserService,
     private val storedShowsService: StoredShowsService,
 ) {
-    fun addShow(body: WatchedShowsController.AddShowRequest): TrackedShowEntity? {
+    fun addShow(body: AddShowRequest): TrackedShowEntity? {
         val userId = userService.getAuthenticatedUserId()!!
         val storedShow = storedShowsService.createStoredShow(body.tmdbShowId)
         val trackedShow = TrackedShowEntity(
@@ -39,8 +40,8 @@ class WatchedShowsService(
         this.storedShow.storedEpisodes = episodes
     }
 
-    fun addEpisode(watchedShowId: Int, body: WatchedShowsController.AddEpisodeRequest): TrackedShowEntity {
-        val trackedShow = trackedShowJpaRepository.findById(watchedShowId).get()
+    fun addEpisode(body: AddEpisodesRequest): List<TrackedShowEpisodeEntity> {
+        val trackedShow = trackedShowJpaRepository.findById(body.trackedShowId).get()
         val episodes = body.episodeIds.map {
             TrackedShowEpisodeEntity(
                 storedEpisodeId = it,
@@ -48,7 +49,7 @@ class WatchedShowsService(
             )
         }
         trackedShowEpisodeJdbcRepository.saveBatch(episodes)
-        return trackedShow
+        return episodes
     }
 
     fun getOngoingShows(): List<TrackedShowEntity> {

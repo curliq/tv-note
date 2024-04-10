@@ -5,6 +5,9 @@ plugins {
     alias(libs.plugins.sprintBootDependency)
     alias(libs.plugins.springBootKotlin)
     alias(libs.plugins.flyway)
+    alias(libs.plugins.kotlinSerialization)
+
+    id("kotlinx-serialization")
 }
 
 buildscript {
@@ -33,18 +36,20 @@ flyway {
 }
 
 dependencies {
-    implementation(projects.shared)
     implementation(projects.api)
     implementation(libs.springBootJdbc )
     implementation(libs.springBootJpa)
-    implementation(libs.springBootStarterWeb)
+    implementation(libs.springBootStarterWeb) {
+        exclude(group = "com.fasterxml.jackson.core")
+        exclude(group = "com.fasterxml.jackson.datatype")
+        exclude(group = "com.fasterxml.jackson.module")
+    }
     implementation(libs.springBootSecurity)
-    implementation(libs.jackson)
     implementation(libs.kotlinReflect)
     implementation(libs.jjtw)
     implementation(libs.flywayPostgres)
-    implementation(libs.flywayCore)
     implementation(libs.postgres)
+    implementation(libs.kotlinx.serialization.json)
 
     testImplementation(libs.kotlin.test.junit)
     testImplementation(libs.testSpringBoot)

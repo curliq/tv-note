@@ -1,0 +1,86 @@
+CREATE TABLE stored_shows(
+    tmdb_id INTEGER NOT NULL PRIMARY KEY,
+    title TEXT NOT NULL,
+    poster_image TEXT NOT NULL,
+    status TEXT NOT NULL
+);
+
+CREATE TABLE tracked_shows(
+    id INTEGER NOT NULL PRIMARY KEY,
+    created_at_datetime TEXT NOT NULL,
+    stored_show INTEGER NOT NULL,
+    watchlisted INTEGER AS Boolean DEFAULT 0,
+    FOREIGN KEY (stored_show) REFERENCES stored_shows(tmdb_id)
+);
+
+CREATE TABLE watched_episodes(
+    id INTEGER NOT NULL PRIMARY KEY,
+    stored_episode_id TEXT NOT NULL,
+    tracked_show INTEGER NOT NULL,
+    FOREIGN KEY (tracked_show) REFERENCES tracked_shows(id)
+);
+
+CREATE TABLE stored_episodes(
+    id TEXT NOT NULL PRIMARY KEY,
+    season INTEGER NOT NULL,
+    episode INTEGER NOT NULL,
+    stored_show INTEGER NOT NULL,
+    FOREIGN KEY (stored_show) REFERENCES stored_shows(tmdb_id)
+);
+
+CREATE TABLE episode_watched_order(
+    id TEXT NOT NULL PRIMARY KEY,
+    show_id INTEGER NOT NULL,
+    stored_episode_id TEXT NOT NULL
+);
+
+selectAllTrackedShows:
+SELECT *
+FROM tracked_shows
+JOIN stored_shows ON stored_shows.tmdb_id = tracked_shows.stored_show;
+
+selectAllWatchedEpisodes:
+SELECT *
+FROM watched_episodes
+WHERE watched_episodes.tracked_show = ?;
+
+selectAllStoredEpisodes:
+SELECT *
+FROM stored_episodes
+WHERE stored_episodes.stored_show = ?;
+
+saveStoredShow:
+INSERT INTO stored_shows(tmdb_id, title, poster_image, status)
+VALUES(?,?,?,?)
+ON CONFLICT(tmdb_id) DO UPDATE SET
+title=excluded.title, poster_image=excluded.poster_image, status=excluded.status;
+
+saveTrackedShow:
+INSERT INTO tracked_shows(id, created_at_datetime, stored_show, watchlisted)
+VALUES(?, ?, ?, ?)
+ON CONFLICT(id) DO UPDATE SET
+created_at_datetime=excluded.created_at_datetime, stored_show=excluded.stored_show, watchlisted=excluded.watchlisted;
+
+saveWatchedEpisodes:
+INSERT INTO watched_episodes(id, stored_episode_id, tracked_show)
+VALUES(?,?,?)
+ON CONFLICT(id) DO UPDATE SET
+stored_episode_id=excluded.stored_episode_id, tracked_show=excluded.tracked_show;
+
+saveStoredEpisodes:
+INSERT INTO stored_episodes(id, season, episode, stored_show)
+VALUES(?,?,?, ?)
+ON CONFLICT(id) DO UPDATE SET
+season=excluded.season, episode=excluded.episode, stored_show=excluded.stored_show;
+
+getWatchedEpisodeOrder:
+SELECT *
+FROM episode_watched_order;
+
+saveWatchedEpisodeOrder:
+INSERT INTO episode_watched_order(id, show_id, stored_episode_id)
+VALUES(?,?,?);
+
+deleteWatchedEpisodeOrder:
+DELETE FROM episode_watched_order
+WHERE id=?;

@@ -6,8 +6,10 @@ plugins {
     alias(libs.plugins.jetbrainsCompose) apply false
     alias(libs.plugins.kotlinJvm) apply false
     alias(libs.plugins.kotlinMultiplatform) apply false
+    alias(libs.plugins.kotlinSerialization) apply false
     alias(libs.plugins.springBoot) apply false
     alias(libs.plugins.sprintBootDependency) apply false
     alias(libs.plugins.springBootKotlin) apply false
     alias(libs.plugins.flyway) apply false
+    alias(libs.plugins.sqldelight) apply false
 }

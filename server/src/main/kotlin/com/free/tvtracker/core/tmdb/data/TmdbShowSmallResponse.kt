@@ -1,21 +1,23 @@
 package com.free.tvtracker.core.tmdb.data
 
-import com.fasterxml.jackson.annotation.JsonProperty
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class TmdbShowSmallResponse(
-    @JsonProperty("adult") var adult: Boolean? = null,
-    @JsonProperty("backdrop_path") var backdropPath: String? = null,
-    @JsonProperty("id") var id: Int? = null,
-    @JsonProperty("name") var name: String? = null,
-    @JsonProperty("original_language") var originalLanguage: String? = null,
-    @JsonProperty("original_name") var originalName: String? = null,
-    @JsonProperty("overview") var overview: String? = null,
-    @JsonProperty("poster_path") var posterPath: String? = null,
-    @JsonProperty("media_type") var mediaType: String? = null,
-    @JsonProperty("genre_ids") var genreIds: ArrayList<Int> = arrayListOf(),
-    @JsonProperty("popularity") var popularity: Double? = null,
-    @JsonProperty("first_air_date") var firstAirDate: String? = null,
-    @JsonProperty("vote_average") var voteAverage: Double? = null,
-    @JsonProperty("vote_count") var voteCount: Int? = null,
-    @JsonProperty("origin_country") var originCountry: ArrayList<String> = arrayListOf()
+    @SerialName("adult") var adult: Boolean? = null,
+    @SerialName("backdrop_path") var backdropPath: String? = null,
+    @SerialName("id") var id: Int? = null,
+    @SerialName("name") var name: String? = null,
+    @SerialName("original_language") var originalLanguage: String? = null,
+    @SerialName("original_name") var originalName: String? = null,
+    @SerialName("overview") var overview: String? = null,
+    @SerialName("poster_path") var posterPath: String? = null,
+    @SerialName("media_type") var mediaType: String? = null,
+    @SerialName("genre_ids") var genreIds: ArrayList<Int> = arrayListOf(),
+    @SerialName("popularity") var popularity: Double? = null,
+    @SerialName("first_air_date") var firstAirDate: String? = null,
+    @SerialName("vote_average") var voteAverage: Double? = null,
+    @SerialName("vote_count") var voteCount: Int? = null,
+    @SerialName("origin_country") var originCountry: ArrayList<String> = arrayListOf()
 )

@@ -1,15 +1,14 @@
 package com.free.tvtracker.navigation
 
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.painterResource
-import com.example.deloitteshop.theme.ThemeColors
+import androidx.compose.ui.text.font.FontWeight
 import com.free.tvtracker.R
-import com.free.tvtracker.Typography
 
 enum class BottomNavBarItems(val label: String, val icon: Int, val iconSelected: Int, val destinationId: String) {
     WATCHING(
@@ -46,30 +45,22 @@ enum class BottomNavBarItems(val label: String, val icon: Int, val iconSelected:
 
 @Composable
 fun RowScope.BottomNavBarItem(selected: Boolean, label: String, icon: Int, iconSelected: Int, onNavClick: () -> Unit) {
-    BottomNavigationItem(
+    NavigationBarItem(
         icon = {
             Icon(
                 painterResource(id = if (selected) iconSelected else icon),
                 contentDescription = null,
-                tint = if (selected) {
-                    MaterialTheme.colorScheme.primary
-                } else {
-                    ThemeColors.PrimaryDisabled
-                }
             )
         },
         label = {
             Text(
                 label,
-                color = if (selected) {
-                    MaterialTheme.colorScheme.primary
-                } else {
-                    ThemeColors.PrimaryDisabled
-                },
-                style = Typography.labelMedium
+                style = MaterialTheme.typography.labelMedium,
+                fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
+                softWrap = false,
             )
         },
         selected = selected,
-        onClick = onNavClick
+        onClick = onNavClick,
     )
 }

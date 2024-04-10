@@ -2,9 +2,12 @@ package com.free.tvtracker.security
 
 import com.free.tvtracker.core.logging.RequestLoggingInterceptor
 import com.free.tvtracker.user.data.UserJpaRepository
+import kotlinx.serialization.json.Json
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.converter.HttpMessageConverter
+import org.springframework.http.converter.json.KotlinSerializationJsonHttpMessageConverter
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider
@@ -21,7 +24,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
 @Configuration
 @EnableConfigurationProperties(JwtProperties::class)
-class SecurityConfig(private val requestResponseLoggingInterceptor: RequestLoggingInterceptor): WebMvcConfigurer {
+class SecurityConfig(private val requestResponseLoggingInterceptor: RequestLoggingInterceptor) : WebMvcConfigurer {
 
     @Bean
     fun encoder(): PasswordEncoder = BCryptPasswordEncoder()
@@ -42,5 +45,23 @@ class SecurityConfig(private val requestResponseLoggingInterceptor: RequestLoggi
     override fun addInterceptors(registry: InterceptorRegistry) {
         super.addInterceptors(registry)
         registry.addInterceptor(requestResponseLoggingInterceptor)
+    }
+
+    override fun extendMessageConverters(converters: MutableList<HttpMessageConverter<*>>) {
+        val json = Json {
+            ignoreUnknownKeys = true
+            isLenient = true
+            allowSpecialFloatingPointValues = true
+            useArrayPolymorphism = true
+            encodeDefaults = true // might need this also
+        }
+
+        val converter = KotlinSerializationJsonHttpMessageConverter(json)
+        converters.forEachIndexed { index, httpMessageConverter ->
+            if (httpMessageConverter is KotlinSerializationJsonHttpMessageConverter) {
+                converters[index] = converter
+                return
+            }
+        }
     }
 }

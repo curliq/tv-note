@@ -1,36 +1,74 @@
 import UIKit
 import SwiftUI
+import ComposeApp
 
 struct ContentView: View {
     @State private var selection: String? = nil
-    @State private var count = 0
-    let content: some View = ShowDetailsScreen().hideToolbar()
+    @State private var showCategorySelector: Bool = false
+    @State private var selectedShowId: Int32 = -1
+    let vm1 = ViewModelsModule().watchingViewModel
+    let vm2 = ViewModelsModule().addTrackedViewModel
+    
     var body: some View {
         TabView {
             NavigationView {
                 VStack {
-                    Text("count: \(count)")
-                    Button(action: { count+=1 }, label: {Text("inc")})
-                    NavigationLink(destination: content, tag: "A", selection: $selection) { EmptyView() }
-                    WatchingScreen(v2: {selection = "A"}).ignoresSafeArea(.keyboard)
-                }.hideToolbar()
+                    let navActions: (NavAction) -> Void = { navAction in
+                        switch navAction {
+                        case _ as NavAction.GoAddShow:
+                            selection = "addShow"
+                            //                                showCategorySelector.toggle()
+                        case let action as NavAction.GoShowDetails:
+                            selectedShowId = action.showId
+                            selection = "showDetails"
+                        default: break
+                        }
+                    }
+                    NavigationLink(destination: ShowDetailsScreen(detailsViewModel: ViewModelsModule().detailsViewModel, showId: selectedShowId), tag: "showDetails", selection: $selection) { EmptyView() }
+                    NavigationLink(destination: AddTrackedScreen(addTrackedViewModel: vm2).hideToolbar(), tag: "addShow", selection: $selection) { EmptyView() }
+                    ScrollView {
+                        WatchingScreen(
+                            navigate: navActions,
+                            watchingViewModel: vm1
+                        )
+                        .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+                    }
+                    .ignoresSafeArea(.keyboard)
+                    .navigationTitle("Watching")
+                    .toolbar {
+//                        ToolbarItemGroup(placement: .primaryAction) {
+//                            Button {
+//                                navActions(NavAction.GoAddShow())
+//                            } label: {
+//                                Image(systemName: "plus.circle")
+//                            }
+//                        }
+                    }
+                }
+            }
+            .sheet(isPresented: $showCategorySelector) {
+                //                AddTrackedScreen()
             }
             .navigationViewStyle(StackNavigationViewStyle())
             .tabItem {
                 Label("Watching", systemImage: "play.tv.fill")
             }
+            
             FinishedScreen()
                 .tabItem {
                     Label("Finished", systemImage: "flag.checkered")
                 }
+            
             WatchlistScreen()
                 .tabItem {
                     Label("Watchlist", systemImage: "star.square")
                 }
+            
             DiscoverScreen()
                 .tabItem {
                     Label("Discover", systemImage: "safari")
                 }
+            
             SettingsScreen()
                 .tabItem {
                     Label("Settings", systemImage: "gear")

@@ -36,10 +36,7 @@ class TmdbClient(private val logger: OutRequestLoggingInterceptor, private val p
     private fun buildHeaders(): HttpEntity<String> {
         val headers = HttpHeaders()
         headers.set("accept", "application/json")
-        headers.set(
-            "Authorization",
-            "Bearer ${prop.tmdbKey}"
-        )
+        headers.set("Authorization", "Bearer ${prop.tmdbKey}")
         return HttpEntity("", headers)
     }
 
@@ -50,7 +47,6 @@ class TmdbClient(private val logger: OutRequestLoggingInterceptor, private val p
                     queryParam(t, u)
                 }
             }
-        println(builder.build().toUriString())
         return client.exchange(
             builder.build().toUriString(),
             HttpMethod.GET,

@@ -1,6 +1,10 @@
 package com.free.tvtracker.user.domain
 
+import com.free.tvtracker.base.ApiError
+import com.free.tvtracker.user.response.UserApiResponse
 import com.free.tvtracker.core.logging.TvtrackerLogger
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -19,8 +23,10 @@ class UserController(val logger: TvtrackerLogger, val service: UserService) {
     data class CreateUserResponse(val accessToken: String, val userId: Int)
 
     @GetMapping("")
-    fun root(): Any {
-        return service.getAuthenticatedUser() ?: "user not found"
+    fun root(): ResponseEntity<UserApiResponse> {
+        val user = service.getAuthenticatedUser()
+            ?: return ResponseEntity(UserApiResponse.error(ApiError.Unknown), HttpStatus.BAD_REQUEST)
+        return ResponseEntity.ok(UserApiResponse.ok(user.toApiModel()))
     }
 
     @PostMapping("/create")

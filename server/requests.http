@@ -65,7 +65,6 @@ Content-Type: application/json
 {
   "episode_ids": [
     "ed59e1a6-c465-4147-99c9-fafa3a2f02b1",
-    "1a0c76b7-d314-411f-8c03-6c1dd25d4761"
   ]
 }
 

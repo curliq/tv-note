@@ -17,27 +17,56 @@ struct SwiftUIViewScreens: View {
 
 struct WatchingScreen: UIViewControllerRepresentable {
     
-    let val2:() -> Void
-    
-    init(v2: @escaping () -> Void) {
-        val2 = v2
+    let navigate: (NavAction) -> Void
+    let watchingViewModel: WatchingViewModel
+
+    init(navigate: @escaping (NavAction) -> Void,  watchingViewModel: WatchingViewModel) {
+        self.navigate = navigate
+        self.watchingViewModel = watchingViewModel
     }
     
     func makeUIViewController(context: Context) -> UIViewController {
-        MainViewControllerKt.WatchingScreenViewController(onNav: val2)
+        MainViewControllerKt.WatchingScreenViewController(
+            navigate: navigate,
+            watchingViewModel: watchingViewModel
+        )
     }
     
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
 }
 
 struct ShowDetailsScreen: UIViewControllerRepresentable {
-    
+
+    let detailsViewModel: DetailsViewModel
+    let showId: Int32
+
+    init(detailsViewModel: DetailsViewModel, showId: Int32) {
+        self.detailsViewModel = detailsViewModel
+        self.showId = showId
+    }
+
     func makeUIViewController(context: Context) -> UIViewController {
-        MainViewControllerKt.ShowDetailsScreenViewController()
+        MainViewControllerKt.ShowDetailsScreenViewController(detailsViewModel: detailsViewModel, showId: showId)
     }
     
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
 }
+
+struct AddTrackedScreen: UIViewControllerRepresentable {
+
+    let addTrackedViewModel: AddTrackedViewModel
+
+    init(addTrackedViewModel: AddTrackedViewModel) {
+        self.addTrackedViewModel = addTrackedViewModel
+    }
+    
+    func makeUIViewController(context: Context) -> UIViewController {
+        MainViewControllerKt.AddTrackedScreenViewController(addTrackedViewModel: addTrackedViewModel)
+    }
+    
+    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
+}
+
 
 struct FinishedScreen: UIViewControllerRepresentable {
 

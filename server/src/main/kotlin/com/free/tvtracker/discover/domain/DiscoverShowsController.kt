@@ -18,10 +18,6 @@ class DiscoverShowsController(
 
     @GetMapping("/trending")
     fun trending(): TmdbTrendingResponse {
-
-
-        logger.get.debug("@@@@@@@@@@@@@@@@@")
-
         return discoverShowsService.getTrendingShows()
     }
 

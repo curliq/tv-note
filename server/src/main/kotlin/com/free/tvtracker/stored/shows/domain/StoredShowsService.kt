@@ -1,7 +1,7 @@
 package com.free.tvtracker.stored.shows.domain
 
 import com.free.tvtracker.core.tmdb.data.TmdbShowBigResponse
-import com.free.tvtracker.discover.domain.DiscoverShowsService
+import com.free.tvtracker.search.SearchService
 import com.free.tvtracker.stored.shows.data.StoredEpisodeEntity
 import com.free.tvtracker.stored.shows.data.StoredEpisodeJpaRepository
 import com.free.tvtracker.stored.shows.data.StoredShowEntity
@@ -15,7 +15,7 @@ import java.time.Instant
 class StoredShowsService(
     private val storedShowJpaRepository: StoredShowJpaRepository,
     private val storedEpisodeJpaRepository: StoredEpisodeJpaRepository,
-    private val discoverShowsService: DiscoverShowsService,
+    private val searchService: SearchService,
     private val createStoredEpisodesUseCase: CreateStoredEpisodesUseCase
 ) {
 
@@ -25,11 +25,11 @@ class StoredShowsService(
             val eps = storedEpisodeJpaRepository.findAllByStoredShowIdIs(storedShow.id)
             return storedShow to eps
         }
-        val tmdbShowResponse = discoverShowsService.getShow(tmdbShowId)
+        val tmdbShowResponse = searchService.getShow(tmdbShowId)
         val newStoredShow = buildStoredShow(tmdbShowResponse)
         if (storedShow != null) {
-            storedShow.createdAtDatetime = storedShow.createdAtDatetime
-            storedShow.id = storedShow.id
+            newStoredShow.createdAtDatetime = storedShow.createdAtDatetime
+            newStoredShow.id = storedShow.id
         }
         storedShowJpaRepository.save(newStoredShow)
         val episodes = createStoredEpisodesUseCase(tmdbShowResponse, newStoredShow)

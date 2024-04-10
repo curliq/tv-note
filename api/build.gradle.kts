@@ -1,7 +1,6 @@
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
-    kotlin("plugin.serialization") version "1.9.23"
-
+    alias(libs.plugins.kotlinSerialization)
 }
 
 kotlin {
@@ -12,8 +11,8 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            implementation(libs.jackson)
-            implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+            api(libs.kotlinx.serialization.json)
+            api(libs.kotlinx.serialization.core)
         }
     }
 }

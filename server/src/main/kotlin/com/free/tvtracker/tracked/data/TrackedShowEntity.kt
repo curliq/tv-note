@@ -38,7 +38,7 @@ data class TrackedShowEntity(
     val userId: Int = 0,
 
     @OneToMany(fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE], mappedBy = "trackedTvShow")
-    val watchedEpisodes: List<TrackedShowEpisodeEntity> = emptyList(),
+    var watchedEpisodes: List<TrackedShowEpisodeEntity> = emptyList(),
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "storedshow_id", nullable = false)

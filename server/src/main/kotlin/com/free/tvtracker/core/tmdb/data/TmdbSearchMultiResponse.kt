@@ -23,7 +23,7 @@ class TmdbSearchMultiResponse : TmdbListResponse<TmdbSearchMultiResponse.Data>()
         @JsonProperty("original_name") val originalName: String? = null,
         @JsonProperty("first_air_date") val firstAirDate: String? = null,
         @JsonProperty("profile_path") val profilePath: String? = null,
-        @JsonProperty("origin_country") val originCountry: ArrayList<String> = arrayListOf(),
+        @JsonProperty("origin_country") val originCountry: List<String>? = null,
         @JsonProperty("gender") val gender: Int? = null,
         @JsonProperty("known_for_department") val knownForDepartment: String? = null,
         @JsonProperty("known_for") val knownFor: List<Data>? = null,
