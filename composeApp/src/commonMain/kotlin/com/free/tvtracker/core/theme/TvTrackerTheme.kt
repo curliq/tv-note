@@ -13,7 +13,7 @@ import androidx.compose.material3.Typography
 object TvTrackerTheme {
     val ShapeCornerMedium = 12.dp
     val FilledButtonHeight = 40.dp
-    val defaultSidePadding = 16.dp
+    val sidePadding = 16.dp
 
     val Typography = Typography(
 

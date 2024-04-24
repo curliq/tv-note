@@ -11,7 +11,7 @@ fun startKoin() {
         modules(appModules())
         modules(module {
             single { AddTrackedViewModel(get(), get()) }
-            single { WatchingViewModel(get(), get(), get()) }
+            single { WatchingViewModel(get(), get(), get(), get()) }
             single { DetailsViewModel(get()) }
         })
     }

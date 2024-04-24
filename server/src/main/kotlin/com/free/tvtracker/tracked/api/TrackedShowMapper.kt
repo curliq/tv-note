@@ -15,9 +15,10 @@ fun TrackedShowEntity.toApiModel(): TrackedShowApiModel {
                 title = title,
                 storedEpisodes = storedEpisodes.map { ep ->
                     TrackedShowApiModel.StoredEpisodeApiModel(
-                        id = ep.id.toString(),
+                        id = ep.id,
                         season = ep.seasonNumber,
-                        episode = ep.episodeNumber
+                        episode = ep.episodeNumber,
+                        airDate = ep.airDate
                     )
                 },
                 posterImage = posterImage,

@@ -22,7 +22,7 @@ class AndroidApplication : Application() {
             modules(
                 module {
                     viewModel { AddTrackedViewModel(get(), get()) }
-                    viewModel { WatchingViewModel(get(), get(), get()) }
+                    viewModel { WatchingViewModel(get(), get(), get(), get()) }
                     viewModel { DetailsViewModel(get()) }
                 }
             )

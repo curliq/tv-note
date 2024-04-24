@@ -2,6 +2,7 @@ package com.free.tvtracker.screens.watching
 
 import com.free.tvtracker.core.ui.ViewModel
 import com.free.tvtracker.data.tracked.TrackedShowsRepository
+import com.free.tvtracker.tracked.response.TrackedShowApiModel
 import com.free.tvtracker.utils.TmdbConfigData
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -14,6 +15,7 @@ class WatchingViewModel(
     private val trackedShowsRepository: TrackedShowsRepository,
     private val getWatchingShowsUseCase: GetWatchingShowsUseCase,
     private val getNextUnwatchedEpisodeUseCase: GetNextUnwatchedEpisodeUseCase,
+    private val isTrackedShowWatchableUseCase: IsTrackedShowWatchableUseCase,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : ViewModel() {
     val shows: MutableStateFlow<WatchingUiState> = MutableStateFlow(WatchingUiState.Loading)
@@ -25,25 +27,16 @@ class WatchingViewModel(
                     if (data.data.isNullOrEmpty()) {
                         shows.value = WatchingUiState.Empty
                     } else {
-                        shows.value = WatchingUiState.Ok(data.data!!.map { show ->
-                            val nextEpisode = getNextUnwatchedEpisodeUseCase(show)
-                            WatchingItemUiModel(
-                                trackedShowId = show.id,
-                                tmdbId = show.storedShow.tmdbId,
-                                title = show.storedShow.title,
-                                image = TmdbConfigData.get().getPosterUrl(show.storedShow.posterImage),
-                                nextEpisode = nextEpisode?.run {
-                                    WatchingItemUiModel.NextEpisode(
-                                        id = nextEpisode.id,
-                                        body = "Watch next:",
-                                        season = "S${season} ",
-                                        seasonNumber = season,
-                                        episode = "E${episode}",
-                                        episodeNumber = episode,
-                                    )
-                                },
-                            )
-                        })
+                        shows.value = WatchingUiState.Ok(
+                            watching = isTrackedShowWatchableUseCase.canWatch(data.data!!).map { show ->
+                                val nextEpisode = getNextUnwatchedEpisodeUseCase(show)
+                                show.toUiModel(nextEpisode)
+                            },
+                            waitingNextEpisode = isTrackedShowWatchableUseCase.waitingShortTerm(data.data!!).map { show ->
+                                val nextEpisode = getNextUnwatchedEpisodeUseCase(show)
+                                show.toUiModel(nextEpisode)
+                            },
+                        )
                     }
                 }
                 data.asError {
@@ -74,7 +67,10 @@ sealed class WatchingUiState {
     data object Loading : WatchingUiState()
     data object Error : WatchingUiState()
     data object Empty : WatchingUiState()
-    data class Ok(val watching: List<WatchingItemUiModel>) : WatchingUiState()
+    data class Ok(
+        val watching: List<WatchingItemUiModel>,
+        val waitingNextEpisode: List<WatchingItemUiModel>
+    ) : WatchingUiState()
 }
 
 data class WatchingItemUiModel(
@@ -97,3 +93,23 @@ data class WatchingItemUiModel(
     )
 }
 
+fun TrackedShowApiModel.toUiModel(nextEpisode: TrackedShowApiModel.StoredEpisodeApiModel?): WatchingItemUiModel{
+    return  WatchingItemUiModel(
+        trackedShowId = this.id,
+        tmdbId = this.storedShow.tmdbId,
+        title = this.storedShow.title,
+        image = TmdbConfigData.get().getPosterUrl(this.storedShow.posterImage),
+        nextEpisode = nextEpisode?.toUiModel(),
+    )
+}
+
+fun TrackedShowApiModel.StoredEpisodeApiModel.toUiModel(): WatchingItemUiModel.NextEpisode {
+    return WatchingItemUiModel.NextEpisode(
+        id = this.id,
+        body = "Watch next:",
+        season = "S${season} ",
+        seasonNumber = season,
+        episode = "E${episode}",
+        episodeNumber = episode,
+    )
+}

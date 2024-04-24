@@ -29,6 +29,6 @@ fun LoadingCard(modifier: Modifier = Modifier) {
 @Composable
 fun LoadingScreen() {
     Box(modifier = Modifier.fillMaxSize()) {
-        LoadingCard(modifier = Modifier.padding(TvTrackerTheme.defaultSidePadding))
+        LoadingCard(modifier = Modifier.padding(TvTrackerTheme.sidePadding))
     }
 }

@@ -73,10 +73,10 @@ fun WatchingScreen(
         }
         ) { targetState ->
             when (targetState) {
+                is WatchingUiState.Ok -> WatchingOk(navigate, viewModel::markEpisodeWatched, targetState)
                 WatchingUiState.Error -> ErrorScreen { viewModel.refresh() }
                 WatchingUiState.Loading -> LoadingScreen()
-                is WatchingUiState.Ok -> WatchingOk(navigate, viewModel::markEpisodeWatched, targetState)
-                WatchingUiState.Empty -> WatchingEmpty()
+                WatchingUiState.Empty -> WatchingEmpty(navigate)
             }
         }
     }
@@ -96,28 +96,63 @@ fun WatchingOk(navigate: (NavAction) -> Unit, markWatched: (Int?, String?) -> Un
             }
         },
     ) {
-        LazyColumn {
-            itemsIndexed(
-                shows.watching
-            ) { index, show ->
-                WatchingItem(
-                    show,
-                    onClick = { navigate(NavAction.GoShowDetails(show.tmdbId)) },
-                    onMarkWatched = markWatched
+        Column {
+            LazyColumn {
+                itemsIndexed(
+                    shows.watching
+                ) { index, show ->
+                    WatchingItem(
+                        show,
+                        onClick = { navigate(NavAction.GoShowDetails(show.tmdbId)) },
+                        onMarkWatched = markWatched
+                    )
+                }
+            }
+            if (shows.waitingNextEpisode.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(24.dp))
+                Text(
+                    "Waiting for next episode",
+                    style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier.padding(horizontal = 16.dp)
                 )
+                Spacer(modifier = Modifier.height(16.dp))
+                LazyColumn {
+                    itemsIndexed(
+                        shows.waitingNextEpisode
+                    ) { index, show ->
+                        WatchingItem(
+                            show,
+                            onClick = { navigate(NavAction.GoShowDetails(show.tmdbId)) },
+                            onMarkWatched = markWatched
+                        )
+                    }
+                }
             }
         }
     }
 }
 
 @Composable
-fun WatchingEmpty() {
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text(
-            text = "Not tracking any show yet",
-            style = MaterialTheme.typography.labelMedium,
-            textAlign = TextAlign.Center
-        )
+fun WatchingEmpty(navigate: (NavAction) -> Unit) {
+    Scaffold(
+        contentWindowInsets = WindowInsets(0.dp, 0.dp, 0.dp, 0.dp),
+        modifier = Modifier.fillMaxSize(),
+        floatingActionButtonPosition = FabPosition.EndOverlay,
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { navigate(NavAction.GoAddShow) },
+            ) {
+                Icon(Icons.Default.Add, "")
+            }
+        },
+    ) {
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Text(
+                text = "Not tracking any show yet.",
+                style = MaterialTheme.typography.labelMedium,
+                textAlign = TextAlign.Center
+            )
+        }
     }
 }
 

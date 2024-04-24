@@ -22,10 +22,12 @@ import io.ktor.http.URLProtocol
 import io.ktor.http.contentType
 import io.ktor.http.path
 import io.ktor.serialization.kotlinx.json.json
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 
 expect fun getHttpClient(block: HttpClientConfig<*>.() -> Unit): HttpClient
 
+@OptIn(ExperimentalSerializationApi::class)
 class TvHttpClient {
 
     val localhostAndroid = "10.0.2.2"
@@ -46,6 +48,7 @@ class TvHttpClient {
                 prettyPrint = true
                 isLenient = true
                 ignoreUnknownKeys = true
+                explicitNulls = false
             })
         }
         install(HttpTimeout) {
@@ -62,7 +65,7 @@ class TvHttpClient {
             headers {
                 append(
                     "Authorization",
-                    "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzExMTI2MTc1LCJleHAiOjE3MTM3MTgxNzUsInJvbGUiOiJ3YXRjaGVyIn0.9l-cS_0qCRzG1Vgi-JFD5oLVJujNoI84DfkmNq73C4xpAHNaf72D_5f1Gt2whLf9gpRBNnVfuqi2GPeFdwjq9Q"
+                    "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzEzODcwMjIwLCJleHAiOjE3Mjk0MjIyMjAsInJvbGUiOiJ3YXRjaGVyIn0.6JmtaE6pZ_b1H-bX3ZpZUreMoyHJ959sR7SlYXcu3OOxGVdK1LwUL5C7KHcVCmlAoTwSIB2VfI0PIGmmWCJWAQ"
                 )
             }
         }

@@ -1,3 +1,12 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath(libs.flywayPostgres)
+    }
+}
+
 plugins {
     // this is necessary to avoid the plugins to be loaded multiple times
     // in each subproject's classloader
@@ -13,3 +22,4 @@ plugins {
     alias(libs.plugins.flyway) apply false
     alias(libs.plugins.sqldelight) apply false
 }
+

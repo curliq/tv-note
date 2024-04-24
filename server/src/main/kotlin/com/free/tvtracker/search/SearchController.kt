@@ -62,7 +62,7 @@ class SearchController(
     fun getTmdbShow(@RequestBody body: TmdbShowDetailsRequestBody): ResponseEntity<TmdbShowDetailsApiResponse> {
         return ResponseEntity.ok(
             TmdbShowDetailsApiResponse.ok(
-                searchService.getShow(tmdbId = body.tmdbId).toApiModel()
+                searchService.getShow(tmdbShowId = body.tmdbId).toApiModel()
             )
         )
     }

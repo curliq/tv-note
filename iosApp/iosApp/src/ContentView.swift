@@ -31,7 +31,7 @@ struct ContentView: View {
                             navigate: navActions,
                             watchingViewModel: vm1
                         )
-                        .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+                        .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height * 2)
                     }
                     .ignoresSafeArea(.keyboard)
                     .navigationTitle("Watching")

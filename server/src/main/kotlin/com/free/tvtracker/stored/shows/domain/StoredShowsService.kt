@@ -10,18 +10,21 @@ import org.springframework.stereotype.Service
 import java.sql.Timestamp
 import java.time.Duration
 import java.time.Instant
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
+@OptIn(ExperimentalContracts::class)
 @Service
 class StoredShowsService(
     private val storedShowJpaRepository: StoredShowJpaRepository,
     private val storedEpisodeJpaRepository: StoredEpisodeJpaRepository,
     private val searchService: SearchService,
-    private val createStoredEpisodesUseCase: CreateStoredEpisodesUseCase
+    private val storedEpisodesService: StoredEpisodesService
 ) {
 
-    fun createStoredShow(tmdbShowId: Int): Pair<StoredShowEntity, List<StoredEpisodeEntity>> {
+    fun createOrUpdateStoredShow(tmdbShowId: Int): Pair<StoredShowEntity, List<StoredEpisodeEntity>> {
         val storedShow = storedShowJpaRepository.findByTmdbId(tmdbShowId)
-        if (storedShow != null && storedShowStillGood(storedShow)) {
+        if (isStoredShowCacheValid(storedShow)) {
             val eps = storedEpisodeJpaRepository.findAllByStoredShowIdIs(storedShow.id)
             return storedShow to eps
         }
@@ -32,12 +35,17 @@ class StoredShowsService(
             newStoredShow.id = storedShow.id
         }
         storedShowJpaRepository.save(newStoredShow)
-        val episodes = createStoredEpisodesUseCase(tmdbShowResponse, newStoredShow)
+        val episodes = storedEpisodesService.getOrCreateEpisodes(tmdbShowResponse, newStoredShow)
+        newStoredShow.storedEpisodes = episodes
         return newStoredShow to episodes
     }
 
-    private fun storedShowStillGood(storedShow: StoredShowEntity): Boolean {
-        val storedShowValidDuration = Duration.ofMinutes(30)
+    private fun isStoredShowCacheValid(storedShow: StoredShowEntity?): Boolean {
+        contract { returns(true) implies (storedShow != null) }
+        if (storedShow == null) {
+            return false
+        }
+        val storedShowValidDuration = Duration.ofHours(24)
         return Timestamp.valueOf(storedShow.updatedAtDatetime).toInstant()
             .plus(storedShowValidDuration)
             .isAfter(Instant.now())

@@ -2,8 +2,8 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.androidApplication)
     alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.sqldelight)
 }
@@ -61,15 +61,18 @@ kotlin {
             implementation(libs.coil)
             implementation(libs.coil.compose)
             implementation(libs.coil.network.ktor)
-            implementation(libs.ktor.client.core)
             implementation(libs.kotlinx.coroutines.core)
-            implementation(libs.ktor.client.cio)
+            implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.logging)
             implementation(libs.ktor.client.contentNegotiation)
             implementation(libs.ktor.serialization.kotlinx.json)
             implementation(libs.koin.core)
             implementation(libs.sqldelight.runtime)
             implementation(libs.uuid)
+            implementation(libs.kotlinx.datetime)
+        }
+        jvmMain.dependencies {
+            implementation(libs.ktor.client.cio)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -123,10 +126,6 @@ android {
     dependencies {
         debugImplementation(libs.compose.ui.tooling)
     }
-}
-
-dependencies {
-    implementation(project(":api"))
 }
 
 compose.desktop {

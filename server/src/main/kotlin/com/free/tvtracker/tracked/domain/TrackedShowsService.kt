@@ -2,7 +2,6 @@ package com.free.tvtracker.tracked.domain
 
 import com.free.tvtracker.core.tmdb.data.enums.TmdbShowStatus
 import com.free.tvtracker.security.SessionService
-import com.free.tvtracker.stored.shows.data.StoredEpisodeEntity
 import com.free.tvtracker.stored.shows.domain.StoredShowsService
 import com.free.tvtracker.tracked.data.TrackedShowEntity
 import com.free.tvtracker.tracked.data.TrackedShowEpisodeEntity
@@ -15,7 +14,7 @@ import com.free.tvtracker.user.domain.UserService
 import org.springframework.stereotype.Service
 
 @Service
-class WatchedShowsService(
+class TrackedShowsService(
     private val trackedShowJpaRepository: TrackedShowJpaRepository,
     private val trackedShowJdbcRepository: TrackedShowJdbcRepository,
     private val trackedShowEpisodeJdbcRepository: TrackedShowEpisodeJdbcRepository,
@@ -25,19 +24,14 @@ class WatchedShowsService(
 ) {
     fun addShow(body: AddShowRequest): TrackedShowEntity? {
         val userId = userService.getAuthenticatedUserId()!!
-        val storedShow = storedShowsService.createStoredShow(body.tmdbShowId)
+        val storedShow = storedShowsService.createOrUpdateStoredShow(body.tmdbShowId)
         val trackedShow = TrackedShowEntity(
             userId = userId,
             watchlisted = body.wishlisted,
             storedShow = storedShow.first,
         )
         trackedShowJdbcRepository.save(trackedShow)
-        trackedShow.attachEpisodes(storedShow.second)
         return trackedShow
-    }
-
-    private fun TrackedShowEntity.attachEpisodes(episodes: List<StoredEpisodeEntity>) {
-        this.storedShow.storedEpisodes = episodes
     }
 
     fun addEpisode(body: AddEpisodesRequest): List<TrackedShowEpisodeEntity> {
@@ -54,7 +48,11 @@ class WatchedShowsService(
 
     fun getOngoingShows(): List<TrackedShowEntity> {
         val userId = sessionService.getSessionUserId()
-        return trackedShowJpaRepository.findByUserIdAndWatchlisted(userId, watchlisted = false)
+        val trackedShow = trackedShowJpaRepository.findByUserIdAndWatchlisted(userId, watchlisted = false).map {
+            val storedShow = storedShowsService.createOrUpdateStoredShow(it.storedShow.tmdbId)
+            it.copy(storedShow = storedShow.first)
+        }
+        return trackedShow
     }
 
     fun getWatchlistedShows(): List<TrackedShowEntity> {

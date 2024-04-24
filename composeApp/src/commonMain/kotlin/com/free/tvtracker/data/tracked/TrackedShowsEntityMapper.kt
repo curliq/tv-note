@@ -50,7 +50,8 @@ fun TrackedShowApiModel.StoredEpisodeApiModel.toClientEntity(): StoredEpisodeCli
     return StoredEpisodeClientEntity(
         this.id,
         this.season.toLong(),
-        this.episode.toLong()
+        this.episode.toLong(),
+        this.airDate
     )
 }
 
@@ -58,7 +59,8 @@ fun StoredEpisodeClientEntity.toApiModel(): TrackedShowApiModel.StoredEpisodeApi
     return TrackedShowApiModel.StoredEpisodeApiModel(
         this.id,
         this.season.toInt(),
-        this.episode.toInt()
+        this.episode.toInt(),
+        this.airDate
     )
 }
 

@@ -8,6 +8,7 @@ import com.free.tvtracker.data.tracked.TrackedShowsRepository
 import com.free.tvtracker.data.tracked.WatchedEpisodesTaskQueue
 import com.free.tvtracker.screens.watching.GetNextUnwatchedEpisodeUseCase
 import com.free.tvtracker.screens.watching.GetWatchingShowsUseCase
+import com.free.tvtracker.screens.watching.IsTrackedShowWatchableUseCase
 import com.free.tvtracker.shared.db.AppDatabase
 import com.squareup.sqldelight.db.SqlDriver
 import org.koin.dsl.module
@@ -21,6 +22,7 @@ fun appModules() = module {
     single<TrackedShowsRepository> { TrackedShowsRepository(get(), get(), get()) }
     single<WatchedEpisodesTaskQueue> { WatchedEpisodesTaskQueue(get(), get()) }
     factory<GetWatchingShowsUseCase> { GetWatchingShowsUseCase(get(), get()) }
+    factory<IsTrackedShowWatchableUseCase> { IsTrackedShowWatchableUseCase(get()) }
     single<SearchRepository> { SearchRepository(get()) }
     factory<GetNextUnwatchedEpisodeUseCase> { GetNextUnwatchedEpisodeUseCase() }
 }

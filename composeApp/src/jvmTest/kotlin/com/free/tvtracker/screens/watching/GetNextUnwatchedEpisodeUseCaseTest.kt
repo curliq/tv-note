@@ -12,16 +12,16 @@ class GetNextUnwatchedEpisodeUseCaseTest {
             id = 1,
             createdAtDatetime = "2014-02-03",
             watchedEpisodes = listOf(
-                TrackedShowApiModel.WatchedEpisodeApiModel("a"),
-                TrackedShowApiModel.WatchedEpisodeApiModel("b"),
+                TrackedShowApiModel.WatchedEpisodeApiModel(1, "a"),
+                TrackedShowApiModel.WatchedEpisodeApiModel(2, "b"),
             ),
             storedShow = TrackedShowApiModel.StoredShowApiModel(
                 tmdbId = 1,
                 title = "game of thrones",
                 storedEpisodes = listOf(
-                    TrackedShowApiModel.StoredEpisodeApiModel(id = "a", season = 1, episode = 1),
-                    TrackedShowApiModel.StoredEpisodeApiModel(id = "b", season = 1, episode = 2),
-                    TrackedShowApiModel.StoredEpisodeApiModel(id = "c", season = 1, episode = 3),
+                    TrackedShowApiModel.StoredEpisodeApiModel(id = "a", season = 1, episode = 1, airDate = "2015-1-01"),
+                    TrackedShowApiModel.StoredEpisodeApiModel(id = "b", season = 1, episode = 2, airDate = "2015-1-01"),
+                    TrackedShowApiModel.StoredEpisodeApiModel(id = "c", season = 1, episode = 3, airDate = "2015-1-01"),
                 ),
                 posterImage = "",
                 status = ""
@@ -43,9 +43,9 @@ class GetNextUnwatchedEpisodeUseCaseTest {
                 tmdbId = 1,
                 title = "game of thrones",
                 storedEpisodes = listOf(
-                    TrackedShowApiModel.StoredEpisodeApiModel(id = "a", season = 1, episode = 1),
-                    TrackedShowApiModel.StoredEpisodeApiModel(id = "b", season = 1, episode = 2),
-                    TrackedShowApiModel.StoredEpisodeApiModel(id = "c", season = 1, episode = 3),
+                    TrackedShowApiModel.StoredEpisodeApiModel(id = "a", season = 1, episode = 1, airDate = "2022-1-1"),
+                    TrackedShowApiModel.StoredEpisodeApiModel(id = "b", season = 1, episode = 2, airDate = "2022-1-1"),
+                    TrackedShowApiModel.StoredEpisodeApiModel(id = "c", season = 1, episode = 3, airDate = "2022-1-1"),
                 ),
                 posterImage = "",
                 status = ""
@@ -62,17 +62,17 @@ class GetNextUnwatchedEpisodeUseCaseTest {
             id = 1,
             createdAtDatetime = "2014-02-03",
             watchedEpisodes = listOf(
-                TrackedShowApiModel.WatchedEpisodeApiModel("a"),
-                TrackedShowApiModel.WatchedEpisodeApiModel("b"),
-                TrackedShowApiModel.WatchedEpisodeApiModel("c"),
+                TrackedShowApiModel.WatchedEpisodeApiModel(1, "a"),
+                TrackedShowApiModel.WatchedEpisodeApiModel(2, "b"),
+                TrackedShowApiModel.WatchedEpisodeApiModel(3, "c"),
             ),
             storedShow = TrackedShowApiModel.StoredShowApiModel(
                 tmdbId = 1,
                 title = "game of thrones",
                 storedEpisodes = listOf(
-                    TrackedShowApiModel.StoredEpisodeApiModel(id = "a", season = 1, episode = 1),
-                    TrackedShowApiModel.StoredEpisodeApiModel(id = "b", season = 1, episode = 2),
-                    TrackedShowApiModel.StoredEpisodeApiModel(id = "c", season = 1, episode = 3),
+                    TrackedShowApiModel.StoredEpisodeApiModel(id = "a", season = 1, episode = 1, airDate = "2022-1-1"),
+                    TrackedShowApiModel.StoredEpisodeApiModel(id = "b", season = 1, episode = 2, airDate = "2022-1-1"),
+                    TrackedShowApiModel.StoredEpisodeApiModel(id = "c", season = 1, episode = 3, airDate = "2022-1-1"),
                 ),
                 posterImage = "",
                 status = ""
@@ -89,15 +89,15 @@ class GetNextUnwatchedEpisodeUseCaseTest {
             id = 1,
             createdAtDatetime = "2014-02-03",
             watchedEpisodes = listOf(
-                TrackedShowApiModel.WatchedEpisodeApiModel("c"),
+                TrackedShowApiModel.WatchedEpisodeApiModel(3, "c"),
             ),
             storedShow = TrackedShowApiModel.StoredShowApiModel(
                 tmdbId = 1,
                 title = "game of thrones",
                 storedEpisodes = listOf(
-                    TrackedShowApiModel.StoredEpisodeApiModel(id = "a", season = 1, episode = 1),
-                    TrackedShowApiModel.StoredEpisodeApiModel(id = "b", season = 1, episode = 2),
-                    TrackedShowApiModel.StoredEpisodeApiModel(id = "c", season = 1, episode = 3),
+                    TrackedShowApiModel.StoredEpisodeApiModel(id = "a", season = 1, episode = 1, airDate = "2022-1-1"),
+                    TrackedShowApiModel.StoredEpisodeApiModel(id = "b", season = 1, episode = 2, airDate = "2022-1-1"),
+                    TrackedShowApiModel.StoredEpisodeApiModel(id = "c", season = 1, episode = 3, airDate = "2022-1-1"),
                 ),
                 posterImage = "",
                 status = ""

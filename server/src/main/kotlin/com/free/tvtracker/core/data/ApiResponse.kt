@@ -30,13 +30,3 @@ data class ApiResponse<out T>(
         val data: T?
     )
 }
-
-@Bean
-fun messageConverter(): KotlinSerializationJsonHttpMessageConverter {
-    return KotlinSerializationJsonHttpMessageConverter(Json {
-        ignoreUnknownKeys = true
-        prettyPrint = true
-    })
-}
-
-

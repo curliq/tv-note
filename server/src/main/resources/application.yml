@@ -1,5 +1,5 @@
 jwt:
-  access-token-expiration: 2592000000
+  access-token-expiration: 15552000000 # 6 months
   key: ${JWT_PRIVATE_KEY}
   refresh-token-expiration: 0
 logging:
@@ -35,7 +35,7 @@ spring:
   datasource:
     driver-class-name: org.postgresql.Driver
     password: admin
-    url: jdbc:postgresql://localhost:5432/tvtracker2
+    url: jdbc:postgresql://localhost:5432/tvtracker3
     username: admin2
   flyway:
     create-schemas: true
@@ -43,7 +43,7 @@ spring:
     enabled: false
     group: true
     password: admin
-    url: jdbc:postgresql://localhost:5432/tvtracker2
+    url: jdbc:postgresql://localhost:5432/tvtracker3
     user: admin
   jpa:
     generate-ddl: false

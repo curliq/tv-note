@@ -1,7 +1,9 @@
 package com.free.tvtracker.core.tmdb.data
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import kotlinx.serialization.Serializable
 
+@Serializable
 open class TmdbListResponse<T>(
     @JsonProperty("page") var page: Int? = null,
     @JsonProperty("results") var results: ArrayList<T> = arrayListOf(),

@@ -1,4 +1,4 @@
-package com.free.tvtracker.navigation
+package com.free.tvtracker.navigation.bottom
 
 import androidx.compose.material3.NavigationBar
 import androidx.compose.runtime.Composable

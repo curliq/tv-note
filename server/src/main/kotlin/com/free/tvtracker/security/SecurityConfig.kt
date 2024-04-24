@@ -21,7 +21,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 /**
  * Security setup guide used: https://codersee.com/spring-boot-3-spring-security-6-with-kotlin-jwt/
  */
-
 @Configuration
 @EnableConfigurationProperties(JwtProperties::class)
 class SecurityConfig(private val requestResponseLoggingInterceptor: RequestLoggingInterceptor) : WebMvcConfigurer {
@@ -46,22 +45,31 @@ class SecurityConfig(private val requestResponseLoggingInterceptor: RequestLoggi
         super.addInterceptors(registry)
         registry.addInterceptor(requestResponseLoggingInterceptor)
     }
-
-    override fun extendMessageConverters(converters: MutableList<HttpMessageConverter<*>>) {
-        val json = Json {
-            ignoreUnknownKeys = true
-            isLenient = true
-            allowSpecialFloatingPointValues = true
-            useArrayPolymorphism = true
-            encodeDefaults = true // might need this also
-        }
-
-        val converter = KotlinSerializationJsonHttpMessageConverter(json)
-        converters.forEachIndexed { index, httpMessageConverter ->
-            if (httpMessageConverter is KotlinSerializationJsonHttpMessageConverter) {
-                converters[index] = converter
-                return
-            }
-        }
-    }
+//
+//    SOMEHOW WE ARE USING KOTLINX SERIALIZATION AND ITS WORKING WITHOUT `ignoreUnknownKeys = true`
+//
+//    @Bean
+//    fun messageConverter(): KotlinSerializationJsonHttpMessageConverter {
+//        return KotlinSerializationJsonHttpMessageConverter(Json {
+//            ignoreUnknownKeys = true
+//        })
+//    }
+//
+//    override fun extendMessageConverters(converters: MutableList<HttpMessageConverter<*>>) {
+//        val json = Json {
+//            ignoreUnknownKeys = true
+//            isLenient = true
+//            allowSpecialFloatingPointValues = true
+//            useArrayPolymorphism = true
+//            encodeDefaults = true
+//        }
+//
+//        val converter = KotlinSerializationJsonHttpMessageConverter(json)
+//        converters.forEachIndexed { index, httpMessageConverter ->
+//            if (httpMessageConverter is KotlinSerializationJsonHttpMessageConverter) {
+//                converters[index] = converter
+//                return
+//            }
+//        }
+//    }
 }

@@ -64,14 +64,18 @@ class TrackedShowsRepository(
     }
 
     suspend fun addTrackedShow(showId: Int) {
-        val res = remoteDataSource.call(Endpoints.addTracked, AddShowRequest(showId, false))
-        res.coAsSuccess { newShow ->
-            val combined = if (last != null && last!!.isSuccess()) {
-                last!!.copy(data = last!!.data!!.plus(newShow))
-            } else {
-                TrackedShowApiResponse.ok(listOf(newShow))
+        try {
+            val res = remoteDataSource.call(Endpoints.addTracked, AddShowRequest(showId, false))
+            res.coAsSuccess { newShow ->
+                val combined = if (last != null && last!!.isSuccess()) {
+                    last!!.copy(data = last!!.data!!.plus(newShow))
+                } else {
+                    TrackedShowApiResponse.ok(listOf(newShow))
+                }
+                _watchingShows.tryEmit(combined)
             }
-            _watchingShows.tryEmit(combined)
+        } catch (e: Exception) {
+
         }
     }
 }

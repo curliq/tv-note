@@ -1,4 +1,4 @@
-package com.free.tvtracker.navigation
+package com.free.tvtracker.navigation.bottom
 
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetValue

@@ -27,6 +27,7 @@ class TmdbClient(private val logger: OutRequestLoggingInterceptor, private val p
         if (logger.get.isDebugEnabled) {
             client.requestFactory = BufferingClientHttpRequestFactory(SimpleClientHttpRequestFactory())
             client.interceptors = client.interceptors.plus(logger)
+
         }
         return client
     }
@@ -40,7 +41,52 @@ class TmdbClient(private val logger: OutRequestLoggingInterceptor, private val p
         return HttpEntity("", headers)
     }
 
-    fun <T> get(endpoint: String, returnType: Class<T>, params: Map<String, Any> = emptyMap()): ResponseEntity<T> {
+    fun <T> get(endpoint: String, returnType: Class<T>, params: Map<String, String> = emptyMap()): ResponseEntity<T> {
+//        return HttpClient(CIO) {
+//            install(ContentNegotiation) {
+//                json(Json {
+//                    prettyPrint = true
+//                    isLenient = true
+//                    ignoreUnknownKeys = true
+//                })
+//            }
+//            install(Logging) {
+//                logger = Logger.DEFAULT
+//                level = LogLevel.ALL
+//                logger = object: Logger {
+//                    override fun log(message: String) {
+//                        println("HTTP Client $message")
+//                    }
+//                }
+//            }
+//            install(DefaultRequest) {
+//                this.url {
+//                    protocol = URLProtocol.HTTPS
+//                    host = "api.themoviedb.org"
+//                }
+//                contentType(ContentType.Application.Json)
+//                accept(ContentType.Application.Json)
+//                headers {
+//                    append(
+//                        "Authorization",
+//                        "Bearer ${prop.tmdbKey}"
+//                    )
+//                }
+//            }
+//        }.request {
+//            this.method = Get
+//            url {
+//                path(endpoint)
+////                path(path)
+//                params.forEach { (name, value) ->
+//                    parameters.append(name=name, value= value)
+//                }
+//            }
+////            body?.let {
+////                setBody(it)
+////            }
+//        }.body(TypeInfo(returnType::class, returnType))
+
         val builder = UriComponentsBuilder.fromUriString("https://api.themoviedb.org$endpoint")
             .apply {
                 params.forEach { (t, u) ->

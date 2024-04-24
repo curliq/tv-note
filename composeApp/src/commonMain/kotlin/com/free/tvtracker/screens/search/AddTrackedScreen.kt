@@ -7,6 +7,7 @@ import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -17,8 +18,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -28,23 +31,32 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DockedSearchBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow.Companion.Ellipsis
 import androidx.compose.ui.unit.dp
 import com.free.tvtracker.core.composables.ErrorScreen
@@ -52,14 +64,28 @@ import com.free.tvtracker.core.composables.LoadingIndicator
 import com.free.tvtracker.core.composables.TvImage
 import com.free.tvtracker.core.composables.posterRatio
 import com.free.tvtracker.core.theme.TvTrackerTheme
+import com.free.tvtracker.core.theme.TvTrackerTheme.sidePadding
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddTrackedScreen(viewModel: AddTrackedViewModel) {
+fun AddTrackedScreen(viewModel: AddTrackedViewModel, modifier: Modifier = Modifier) {
     val query = viewModel.searchQuery.collectAsState().value
     val results = viewModel.results.collectAsState().value
+    val focusRequester = remember { FocusRequester() }
+    val keyboard = LocalSoftwareKeyboardController.current
+
+    if (viewModel.focusSearch.collectAsState().value) {
+        focusRequester.requestFocus()
+        keyboard?.show()
+        viewModel.clearFocus()
+    }
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
+
     TvTrackerTheme {
-        Box(Modifier.fillMaxWidth()) {
+        Scaffold(modifier.fillMaxWidth()) {
             DockedSearchBar(
                 query = query,
                 onQueryChange = { v -> viewModel.setSearchQuery(v) },
@@ -69,8 +95,12 @@ fun AddTrackedScreen(viewModel: AddTrackedViewModel) {
                 placeholder = { Text("Search") },
                 leadingIcon = { Icon(Icons.Rounded.Search, contentDescription = null) },
                 trailingIcon = {
-                    AnimatedContent(targetState = results) { targetState ->
-                        if (targetState is AddTrackedUiState.Ok && targetState.isSearching) {
+                    AnimatedContent(transitionSpec = {
+                        fadeIn(animationSpec = tween(50)) togetherWith fadeOut(animationSpec = tween(50))
+                    }, targetState = results) { targetState ->
+                        if (targetState is AddTrackedUiState.Ok && targetState.isSearching ||
+                            targetState is AddTrackedUiState.Empty && targetState.isSearching
+                        ) {
                             LoadingIndicator(modifier = Modifier.size(24.dp))
                         } else {
                             Icon(
@@ -81,7 +111,7 @@ fun AddTrackedScreen(viewModel: AddTrackedViewModel) {
                     }
                 },
                 content = {},
-                modifier = Modifier.fillMaxWidth().padding(16.dp)
+                modifier = Modifier.fillMaxWidth().padding(16.dp).focusRequester(focusRequester)
             )
             when (results) {
                 AddTrackedUiState.Error -> ErrorScreen(
@@ -90,6 +120,7 @@ fun AddTrackedScreen(viewModel: AddTrackedViewModel) {
                 ) { viewModel.searchRefresh() }
 
                 is AddTrackedUiState.Ok -> AddTrackedScreenGrid(results.data, viewModel::action)
+                is AddTrackedUiState.Empty -> EmptyView()
             }
         }
     }
@@ -101,7 +132,7 @@ fun AddTrackedScreenGrid(results: List<AddTrackedItemUiModel>, action: (AddTrack
     LazyVerticalGrid(
         modifier = Modifier.fillMaxWidth(),
         columns = GridCells.Fixed(3),
-        contentPadding = PaddingValues(start = 12.dp, top = 86.dp, end = 12.dp, bottom = 12.dp),
+        contentPadding = PaddingValues(start = sidePadding, top = 86.dp, end = sidePadding, bottom = sidePadding),
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
@@ -181,5 +212,16 @@ fun AddTrackedScreenGrid(results: List<AddTrackedItemUiModel>, action: (AddTrack
             }
             Spacer(modifier = Modifier.height(8.dp))
         }
+    }
+}
+
+@Composable
+private fun EmptyView() {
+    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Text(
+            text = "No results found.",
+            style = MaterialTheme.typography.labelMedium,
+            textAlign = TextAlign.Center
+        )
     }
 }

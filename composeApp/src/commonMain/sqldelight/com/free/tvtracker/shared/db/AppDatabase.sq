@@ -25,6 +25,7 @@ CREATE TABLE stored_episodes(
     season INTEGER NOT NULL,
     episode INTEGER NOT NULL,
     stored_show INTEGER NOT NULL,
+    air_date TEXT,
     FOREIGN KEY (stored_show) REFERENCES stored_shows(tmdb_id)
 );
 
@@ -68,10 +69,10 @@ ON CONFLICT(id) DO UPDATE SET
 stored_episode_id=excluded.stored_episode_id, tracked_show=excluded.tracked_show;
 
 saveStoredEpisodes:
-INSERT INTO stored_episodes(id, season, episode, stored_show)
-VALUES(?,?,?, ?)
+INSERT INTO stored_episodes(id, season, episode, stored_show, air_date)
+VALUES(?,?,?, ?, ?)
 ON CONFLICT(id) DO UPDATE SET
-season=excluded.season, episode=excluded.episode, stored_show=excluded.stored_show;
+season=excluded.season, episode=excluded.episode, stored_show=excluded.stored_show, air_date = excluded.air_date;
 
 getWatchedEpisodeOrder:
 SELECT *

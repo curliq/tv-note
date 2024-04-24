@@ -9,16 +9,11 @@
 import SwiftUI
 import ComposeApp
 
-struct SwiftUIViewScreens: View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
-    }
-}
-
 struct WatchingScreen: UIViewControllerRepresentable {
     
     let navigate: (NavAction) -> Void
     let watchingViewModel: WatchingViewModel
+//    let model: WatchingItemUiModel
 
     init(navigate: @escaping (NavAction) -> Void,  watchingViewModel: WatchingViewModel) {
         self.navigate = navigate
@@ -30,6 +25,11 @@ struct WatchingScreen: UIViewControllerRepresentable {
             navigate: navigate,
             watchingViewModel: watchingViewModel
         )
+//        MainViewControllerKt.WatchingItemViewController(
+//            navigate: navigate,
+//            watchingViewModel: watchingViewModel,
+//            uiModel: model
+//        )
     }
     
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}

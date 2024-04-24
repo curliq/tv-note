@@ -13,9 +13,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import com.free.tvtracker.core.ui.BaseActivity
-import com.free.tvtracker.navigation.AppNavController
-import com.free.tvtracker.navigation.BottomNavBar
-import com.free.tvtracker.navigation.MainNavHost
+import com.free.tvtracker.navigation.bottom.AppNavController
+import com.free.tvtracker.navigation.bottom.BottomNavBar
+import com.free.tvtracker.navigation.bottom.MainNavHost
 import com.free.tvtracker.core.theme.TvTrackerTheme
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.google.accompanist.navigation.material.ModalBottomSheetLayout
@@ -45,7 +45,6 @@ class MainActivity : BaseActivity() {
                             MediumTopAppBar(
                                 title = { Text(text = "Watching") },
                                 scrollBehavior = scrollBehavior,
-                                colors = TopAppBarDefaults.mediumTopAppBarColors()
                             )
                         }
                     ) { padding ->
@@ -53,7 +52,6 @@ class MainActivity : BaseActivity() {
                     }
                 }
             }
-
         }
     }
 }

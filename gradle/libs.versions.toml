@@ -18,6 +18,7 @@ junit = "4.13.2"
 koinCore = "3.2.0"
 kotlin = "1.9.22"
 kotlinxCoroutinesCore = "1.8.0"
+kotlinxDatetime = "0.6.0-RC.2"
 kotlinxSerializationJson = "1.6.3"
 ktorClient = "2.3.9"
 logbackClassic = "1.4.14"
@@ -26,7 +27,7 @@ navigationCompose = "2.7.7"
 sqldelight = "1.5.5"
 slf4jAndroid = "1.7.36"
 spring = "3.2.1"
-flyway = "10.10.0"
+flyway = "10.11.1"
 lifecycle_version = "2.7.0"
 arch_version = "2.2.0"
 uuid = "0.8.4"
@@ -59,6 +60,7 @@ coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" 
 coil-network-ktor = { module = "io.coil-kt.coil3:coil-network-ktor", version.ref = "coil" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesCore" }
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
 kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinxSerializationJson" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktorClient" }

@@ -9,6 +9,8 @@ import com.free.tvtracker.screens.search.AddTrackedScreen
 import com.free.tvtracker.screens.search.AddTrackedViewModel
 import com.free.tvtracker.screens.settings.SettingsScreen
 import com.free.tvtracker.screens.watching.NavAction
+import com.free.tvtracker.screens.watching.WatchingItem
+import com.free.tvtracker.screens.watching.WatchingItemUiModel
 import com.free.tvtracker.screens.watching.WatchingScreen
 import com.free.tvtracker.screens.watching.WatchingViewModel
 import com.free.tvtracker.screens.watchlist.WatchlistScreen
@@ -17,6 +19,11 @@ fun WatchingScreenViewController(navigate: (NavAction) -> Unit, watchingViewMode
     ComposeUIViewController {
         WatchingScreen(navigate, watchingViewModel)
     }
+
+//fun WatchingItemViewController(navigate: (NavAction) -> Unit, watchingViewModel: WatchingViewModel, uiModel: WatchingItemUiModel) =
+//    ComposeUIViewController {
+//        WatchingItem(uiModel, { }, watchingViewModel::markEpisodeWatched)
+//    }
 
 fun FinishedScreenViewController() = ComposeUIViewController {
     FinishedScreen()

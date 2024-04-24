@@ -10,7 +10,9 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
@@ -28,6 +30,14 @@ class AddTrackedViewModel(
 
     val results: MutableStateFlow<AddTrackedUiState> = MutableStateFlow(AddTrackedUiState.Ok(false, emptyList()))
     val searchQuery: MutableStateFlow<String> = MutableStateFlow("")
+    val focusSearch: MutableStateFlow<Boolean> = MutableStateFlow(false)
+
+    fun focusSearch() {
+        focusSearch.value = true
+    }
+    fun clearFocus() {
+        focusSearch.value = false
+    }
 
     init {
         viewModelScope.launch(ioDispatcher) {
@@ -72,20 +82,26 @@ class AddTrackedViewModel(
     }
 
     private suspend fun search(term: String) {
-        if (results.value is AddTrackedUiState.Ok) {
-            results.value = (results.value as AddTrackedUiState.Ok).copy(isSearching = true)
-        } else {
-            results.value = AddTrackedUiState.Ok(isSearching = true, emptyList())
+        when (results.value) {
+            is AddTrackedUiState.Ok -> results.value = (results.value as AddTrackedUiState.Ok).copy(isSearching = true)
+            is AddTrackedUiState.Empty -> {
+                results.value = (results.value as AddTrackedUiState.Empty).copy(isSearching = true)
+            }
+            else -> results.value = AddTrackedUiState.Ok(isSearching = true, emptyList())
         }
         val trackedShows = trackedShowsRepository.getOrUpdateWatchingShows()
         searchRepository.searchTvShows(term)
             .asSuccess { data ->
-                results.value = AddTrackedUiState.Ok(
-                    isSearching = false,
-                    data.shows.map { show ->
-                        val tracked = trackedShows.data?.firstOrNull { it.storedShow.tmdbId == show.tmdbId } != null
-                        show.toUiModel(tracked)
-                    })
+                if (data.shows.isEmpty()) {
+                    results.value = AddTrackedUiState.Empty(isSearching = false)
+                } else {
+                    results.value = AddTrackedUiState.Ok(
+                        isSearching = false,
+                        data.shows.map { show ->
+                            val tracked = trackedShows.data?.firstOrNull { it.storedShow.tmdbId == show.tmdbId } != null
+                            show.toUiModel(tracked)
+                        })
+                }
             }
             .asError { error ->
                 if (error.code != ApiError.Cancelled.code) {
@@ -98,6 +114,7 @@ class AddTrackedViewModel(
 sealed class AddTrackedUiState {
     data object Error : AddTrackedUiState()
     data class Ok(val isSearching: Boolean, val data: List<AddTrackedItemUiModel>) : AddTrackedUiState()
+    data class Empty(val isSearching: Boolean) : AddTrackedUiState()
 }
 
 data class AddTrackedItemUiModel(val id: Int, val title: String, val image: String, var tracked: Boolean)

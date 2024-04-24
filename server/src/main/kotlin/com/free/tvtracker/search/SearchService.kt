@@ -3,6 +3,7 @@ package com.free.tvtracker.search
 import com.free.tvtracker.core.logging.TvtrackerLogger
 import com.free.tvtracker.core.tmdb.TmdbClient
 import com.free.tvtracker.core.tmdb.data.TmdbSearchMultiResponse
+import com.free.tvtracker.core.tmdb.data.TmdbSeasonResponse
 import com.free.tvtracker.core.tmdb.data.TmdbShowBigResponse
 import com.free.tvtracker.search.request.MediaType
 import org.springframework.stereotype.Service
@@ -27,12 +28,19 @@ class SearchService(
         return respEntity.body!!
     }
 
-    fun getShow(tmdbId: Int): TmdbShowBigResponse {
+    fun getShow(tmdbShowId: Int): TmdbShowBigResponse {
         val respEntity = tmdbClient.get(
-            "/3/tv/$tmdbId}",
+            "/3/tv/$tmdbShowId}",
             TmdbShowBigResponse::class.java
         )
         return respEntity.body!!
+    }
+
+    fun getSeason(tmdbShowId: Int, seasonNumber: Int): TmdbSeasonResponse {
+        return tmdbClient.get(
+            "/3/tv/$tmdbShowId/season/$seasonNumber",
+            TmdbSeasonResponse::class.java,
+        ).body!!
     }
 }
 

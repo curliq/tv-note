@@ -31,5 +31,6 @@ data class TrackedShowApiModel(
         @SerialName("id") val id: String,
         @SerialName("season") val season: Int,
         @SerialName("episode") val episode: Int,
+        @SerialName("air_date") val airDate: String?,
     )
 }

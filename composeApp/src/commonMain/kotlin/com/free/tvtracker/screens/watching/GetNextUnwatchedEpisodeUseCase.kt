@@ -8,14 +8,17 @@ class GetNextUnwatchedEpisodeUseCase {
      * @return id of stored episode
      */
     operator fun invoke(show: TrackedShowApiModel): TrackedShowApiModel.StoredEpisodeApiModel? {
-        val shh =
+        val lastWatchedEpisode =
             show.storedShow.storedEpisodes
                 .filter { show.watchedEpisodes.map { it.storedEpisodeId }.contains(it.id) }
                 .sortedWith(compareBy({ it.season }, { it.episode }))
                 .lastOrNull()
-                ?: return null
-        val lastSeenIndex = show.storedShow.storedEpisodes.indexOfFirst { it.id == shh.id }
-        return show.storedShow.storedEpisodes.getOrNull(lastSeenIndex + 1)
+        val nextUnseenIndex = if (lastWatchedEpisode == null) {
+            0
+        } else {
+            show.storedShow.storedEpisodes.indexOfFirst { it.id == lastWatchedEpisode.id } + 1
+        }
+        return show.storedShow.storedEpisodes.getOrNull(nextUnseenIndex)
     }
 
 }

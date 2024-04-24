@@ -19,7 +19,7 @@ class GetWatchingShowsUseCase(
                     if (show.id == order.showId.toInt()) {
                         eps = eps.plus(
                             TrackedShowApiModel.WatchedEpisodeApiModel(
-                                id = 0,
+                                id = -1,
                                 storedEpisodeId = order.episodeId,
                             )
                         )

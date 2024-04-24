@@ -12,7 +12,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -26,7 +25,7 @@ import com.free.tvtracker.core.theme.TvTrackerTheme
 fun ErrorCard(refresh: (() -> Unit)? = null, refreshText: String? = null, modifier: Modifier = Modifier) {
     Card(modifier = modifier.fillMaxWidth(),) {
         Column(
-            modifier = Modifier.fillMaxWidth().padding(TvTrackerTheme.defaultSidePadding),
+            modifier = Modifier.fillMaxWidth().padding(TvTrackerTheme.sidePadding),
         ) {
             Icon(Icons.Rounded.Warning, contentDescription = null, tint = Color.Red, modifier = Modifier.size(50.dp))
             Spacer(modifier = Modifier.height(8.dp))
@@ -46,6 +45,6 @@ fun ErrorCard(refresh: (() -> Unit)? = null, refreshText: String? = null, modifi
 @Composable
 fun ErrorScreen(modifier: Modifier = Modifier, refreshText: String? = null, refresh: (() -> Unit)? = null) {
     Box(modifier = modifier.fillMaxSize()) {
-        ErrorCard(refresh, refreshText, Modifier.padding(TvTrackerTheme.defaultSidePadding))
+        ErrorCard(refresh, refreshText, Modifier.padding(TvTrackerTheme.sidePadding))
     }
 }

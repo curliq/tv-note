@@ -3,7 +3,7 @@ package com.free.tvtracker.tracked.api
 import com.free.tvtracker.Endpoints
 import com.free.tvtracker.core.data.ApiResponse
 import com.free.tvtracker.core.logging.TvtrackerLogger
-import com.free.tvtracker.tracked.domain.WatchedShowsService
+import com.free.tvtracker.tracked.domain.TrackedShowsService
 import com.free.tvtracker.tracked.request.AddEpisodesRequest
 import com.free.tvtracker.tracked.request.AddShowRequest
 import com.free.tvtracker.tracked.response.AddTrackedEpisodesApiResponse
@@ -26,13 +26,13 @@ import org.springframework.web.bind.annotation.RequestMapping
 )
 class TrackedShowsController(
     val logger: TvtrackerLogger,
-    val watchedShowsService: WatchedShowsService
+    val trackedShowsService: TrackedShowsService
 ) {
 
     @PostMapping(Endpoints.Path.ADD_TRACKED)
     fun addShow(@RequestBody body: AddShowRequest): ResponseEntity<AddTrackedShowApiResponse> {
         val res = try {
-            watchedShowsService.addShow(body)
+            trackedShowsService.addShow(body)
         } catch (e: org.springframework.dao.DataIntegrityViolationException) {
             e.printStackTrace()
             return ResponseEntity(
@@ -51,23 +51,23 @@ class TrackedShowsController(
 
     @PostMapping(Endpoints.Path.ADD_EPISODES)
     fun episodeWatched(@RequestBody body: AddEpisodesRequest): ResponseEntity<AddTrackedEpisodesApiResponse> {
-        val show = watchedShowsService.addEpisode(body)
+        val show = trackedShowsService.addEpisode(body)
         return ResponseEntity.ok(AddTrackedEpisodesApiResponse.ok(show.map { it.toApiModel() }))
     }
 
     @GetMapping(Endpoints.Path.WATCHING)
     fun getOngoing(): ResponseEntity<TrackedShowApiResponse> {
-        val shows = watchedShowsService.getOngoingShows().map { it.toApiModel() }
+        val shows = trackedShowsService.getOngoingShows().map { it.toApiModel() }
         return ResponseEntity.ok(TrackedShowApiResponse.ok(shows))
     }
 
     @GetMapping("/watchlist")
     fun getWatchlist(): ApiResponse<List<TrackedShowApiModel>> {
-        return ApiResponse.ok(watchedShowsService.getWatchlistedShows().map { it.toApiModel() })
+        return ApiResponse.ok(trackedShowsService.getWatchlistedShows().map { it.toApiModel() })
     }
 
     @GetMapping("/finished")
     fun getFinished(): ApiResponse<List<TrackedShowApiModel>> {
-        return ApiResponse.ok(watchedShowsService.getFinishedShows().map { it.toApiModel() })
+        return ApiResponse.ok(trackedShowsService.getFinishedShows().map { it.toApiModel() })
     }
 }

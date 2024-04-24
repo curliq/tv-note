@@ -31,7 +31,7 @@ data class TrackedShowEpisodeEntity(
     @JoinColumn(name = "storedepisode_id", nullable = false, insertable = false, updatable = false)
     val storedEpisode: StoredEpisodeEntity = StoredEpisodeEntity(),
 
-    @Column(name="storedepisode_id")
+    @Column(name="storedepisode_id", nullable = false)
     val storedEpisodeId: String = "",
 
     @ManyToOne(fetch = FetchType.LAZY)

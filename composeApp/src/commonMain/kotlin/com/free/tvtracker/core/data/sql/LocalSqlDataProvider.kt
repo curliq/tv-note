@@ -20,7 +20,13 @@ class LocalSqlDataProvider(appDatabase: AppDatabase) {
                 )
                 dbQuery.saveTrackedShow(show.id, show.createdAtDatetime, show.storedShow.tmdbId, show.watchlisted)
                 show.storedShow.storedEpisodes.forEach { episode ->
-                    dbQuery.saveStoredEpisodes(episode.id, episode.season, episode.episode, show.storedShow.tmdbId)
+                    dbQuery.saveStoredEpisodes(
+                        episode.id,
+                        episode.season,
+                        episode.episode,
+                        show.storedShow.tmdbId,
+                        episode.airDate
+                    )
                 }
                 show.watchedEpisodes.forEach { episode ->
                     dbQuery.saveWatchedEpisodes(episode.id, episode.storedEpisodeId, show.id)
