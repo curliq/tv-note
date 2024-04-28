@@ -35,6 +35,7 @@ dependencies {
     implementation(libs.ktor.client.logging)
     implementation(libs.logback.classic)
     implementation(libs.ktor.client.contentNegotiation)
+    implementation(libs.kotlinx.datetime)
 
     testImplementation(libs.testSpringBoot)
     testImplementation(libs.testSpringBootSecurity)

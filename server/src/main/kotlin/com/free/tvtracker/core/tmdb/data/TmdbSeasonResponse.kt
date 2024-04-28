@@ -14,10 +14,10 @@ class TmdbSeasonResponse(
     @JsonProperty("vote_average") var voteAverage: Double? = null
 ) {
     data class Episodes(
+        @JsonProperty("id") var id: Int,
         @JsonProperty("air_date") var airDate: String? = null,
         @JsonProperty("episode_number") var episodeNumber: Int? = null,
         @JsonProperty("episode_type") var episodeType: String? = null,
-        @JsonProperty("id") var id: Int? = null,
         @JsonProperty("name") var name: String? = null,
         @JsonProperty("overview") var overview: String? = null,
         @JsonProperty("production_code") var productionCode: String? = null,

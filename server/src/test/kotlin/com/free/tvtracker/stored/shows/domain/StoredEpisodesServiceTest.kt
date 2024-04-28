@@ -21,6 +21,7 @@ class StoredEpisodesServiceTest {
         val sut = StoredEpisodesService(
             mockk(),
             mockk(),
+            mockk(),
             Clock.fixed(Instant.ofEpochSecond(1704067200), ZoneId.of("UTC")) // 2024-01-01
         )
         assertEquals(true, sut.shouldFetchSeason(1, data))
@@ -37,6 +38,7 @@ class StoredEpisodesServiceTest {
         val sut = StoredEpisodesService(
             mockk(),
             mockk(),
+            mockk(),
             Clock.fixed(Instant.ofEpochSecond(1704067200), ZoneId.of("UTC")) // 2024-01-01
         )
         assertEquals(false, sut.shouldFetchSeason(1, data))
@@ -51,6 +53,7 @@ class StoredEpisodesServiceTest {
         )
         val data = StoredShowEntity(storedEpisodes = eps)
         val sut = StoredEpisodesService(
+            mockk(),
             mockk(),
             mockk(),
             Clock.fixed(Instant.ofEpochSecond(1704067200), ZoneId.of("UTC")) // 2024-01-01
@@ -70,6 +73,7 @@ class StoredEpisodesServiceTest {
         )
         val data = StoredShowEntity(storedEpisodes = eps)
         val sut = StoredEpisodesService(
+            mockk(),
             mockk(),
             mockk(),
             Clock.fixed(Instant.ofEpochSecond(1704067200), ZoneId.of("UTC")) // 2024-01-01

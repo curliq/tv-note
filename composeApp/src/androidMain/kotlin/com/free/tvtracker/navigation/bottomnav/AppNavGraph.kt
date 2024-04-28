@@ -1,4 +1,4 @@
-package com.free.tvtracker.navigation.bottom
+package com.free.tvtracker.navigation.bottomnav
 
 import android.app.Activity
 import android.content.Intent
@@ -6,9 +6,9 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.free.tvtracker.activities.AddShowActivity
-import com.free.tvtracker.activities.ShowDetailsActivity
-import com.free.tvtracker.activities.ShowDetailsActivity.Extras.EXTRA_SHOW_ID
-import com.free.tvtracker.navigation.bottom.AppNavController.NavDestinations
+import com.free.tvtracker.activities.showdetails.ShowDetailsActivity
+import com.free.tvtracker.activities.showdetails.ShowDetailsActivity.Extras.EXTRA_SHOW_ID
+import com.free.tvtracker.navigation.AppNavController
 import com.free.tvtracker.screens.discover.DiscoverScreen
 import com.free.tvtracker.screens.finished.FinishedScreen
 import com.free.tvtracker.screens.settings.SettingsScreen
@@ -21,7 +21,7 @@ import org.koin.androidx.compose.koinViewModel
 @ExperimentalMaterial3Api
 @ExperimentalMaterialNavigationApi
 fun NavGraphBuilder.mainNavGraph(navController: AppNavController, context: Activity) {
-    composable(NavDestinations.WATCHING.id) {
+    composable(AppNavDestinations.WATCHING.id) {
         WatchingScreen({ action ->
             when (action) {
                 NavAction.GoAddShow -> context.startActivity(Intent(context, AddShowActivity::class.java))
@@ -34,16 +34,16 @@ fun NavGraphBuilder.mainNavGraph(navController: AppNavController, context: Activ
             }
         }, viewModel = koinViewModel())
     }
-    composable(NavDestinations.FINISHED.id) {
-        FinishedScreen()
+    composable(AppNavDestinations.FINISHED.id) {
+        FinishedScreen(viewModel = koinViewModel())
     }
-    composable(NavDestinations.WATCHLIST.id) {
-        WatchlistScreen()
+    composable(AppNavDestinations.WATCHLIST.id) {
+        WatchlistScreen(viewModel = koinViewModel())
     }
-    composable(NavDestinations.DISCOVER.id) {
+    composable(AppNavDestinations.DISCOVER.id) {
         DiscoverScreen()
     }
-    composable(NavDestinations.SETTINGS.id) {
+    composable(AppNavDestinations.SETTINGS.id) {
         SettingsScreen()
     }
 }

@@ -10,7 +10,7 @@ fun TrackedShowApiModel.toClientEntity(): TrackedShowClientEntity {
     return TrackedShowClientEntity(
         this.id.toLong(),
         this.createdAtDatetime,
-        this.watchedEpisodes.map { it.toClientEntity() },
+        this.watchedEpisodes.map { it.toClientEntity(this.id.toLong()) },
         this.storedShow.toClientEntity(),
         this.watchlisted
     )
@@ -48,7 +48,7 @@ fun StoredShowClientEntity.toApiModel(): TrackedShowApiModel.StoredShowApiModel 
 
 fun TrackedShowApiModel.StoredEpisodeApiModel.toClientEntity(): StoredEpisodeClientEntity {
     return StoredEpisodeClientEntity(
-        this.id,
+        this.id.toLong(),
         this.season.toLong(),
         this.episode.toLong(),
         this.airDate
@@ -57,23 +57,24 @@ fun TrackedShowApiModel.StoredEpisodeApiModel.toClientEntity(): StoredEpisodeCli
 
 fun StoredEpisodeClientEntity.toApiModel(): TrackedShowApiModel.StoredEpisodeApiModel {
     return TrackedShowApiModel.StoredEpisodeApiModel(
-        this.id,
+        this.id.toInt(),
         this.season.toInt(),
         this.episode.toInt(),
         this.airDate
     )
 }
 
-fun TrackedShowApiModel.WatchedEpisodeApiModel.toClientEntity(): WatchedEpisodeClientEntity {
+fun TrackedShowApiModel.WatchedEpisodeApiModel.toClientEntity(trackedShowId: Long): WatchedEpisodeClientEntity {
     return WatchedEpisodeClientEntity(
-        this.id.toLong(),
-        this.storedEpisodeId
+        this.id,
+        this.storedEpisodeId.toLong(),
+        trackedShowId = trackedShowId
     )
 }
 
 fun WatchedEpisodeClientEntity.toApiModel(): TrackedShowApiModel.WatchedEpisodeApiModel {
     return TrackedShowApiModel.WatchedEpisodeApiModel(
-        this.id.toInt(),
-        this.storedEpisodeId
+        this.id,
+        this.storedEpisodeId.toInt()
     )
 }

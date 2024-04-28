@@ -1,26 +1,20 @@
-package com.free.tvtracker.navigation.bottom
+package com.free.tvtracker.navigation
 
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.navigation.NavDestination
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.navigation.material.BottomSheetNavigator
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalMaterialNavigationApi::class)
 class AppNavController {
-
-    enum class NavDestinations(val id: String) {
-        WATCHING("watching"),
-        FINISHED("finished"),
-        WATCHLIST("watchlist"),
-        DISCOVER("discover"),
-        SETTINGS("settings"),
-    }
 
     private var navHostController: NavHostController? = null
     private var bottomSheetNavigator: BottomSheetNavigator? = null
@@ -32,7 +26,7 @@ class AppNavController {
         }
         val sheetState = rememberModalBottomSheetState(
             initialValue = ModalBottomSheetValue.Hidden,
-            skipHalfExpanded = true
+            skipHalfExpanded = true,
         )
         bottomSheetNavigator = remember { BottomSheetNavigator(sheetState) }
         return bottomSheetNavigator!!
@@ -50,6 +44,11 @@ class AppNavController {
 
     fun pop() {
         navHostController?.popBackStack()
+    }
+
+    @Composable
+    fun rememberCurrentDestination(): NavDestination? {
+        return rememberNavController().currentBackStackEntryAsState().value?.destination
     }
 
     fun navigate(destinationId: String) {

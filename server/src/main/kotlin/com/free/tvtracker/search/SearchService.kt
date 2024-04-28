@@ -3,15 +3,18 @@ package com.free.tvtracker.search
 import com.free.tvtracker.core.logging.TvtrackerLogger
 import com.free.tvtracker.core.tmdb.TmdbClient
 import com.free.tvtracker.core.tmdb.data.TmdbSearchMultiResponse
-import com.free.tvtracker.core.tmdb.data.TmdbSeasonResponse
 import com.free.tvtracker.core.tmdb.data.TmdbShowBigResponse
+import com.free.tvtracker.discover.response.TmdbShowDetailsApiModel
 import com.free.tvtracker.search.request.MediaType
+import com.free.tvtracker.stored.shows.data.StoredEpisodeEntity
+import com.free.tvtracker.stored.shows.domain.StoredEpisodesService
 import org.springframework.stereotype.Service
 
 @Service
 class SearchService(
     private val logger: TvtrackerLogger,
     private val tmdbClient: TmdbClient,
+    private val storedEpisodesService: StoredEpisodesService,
 ) {
     fun searchTerm(term: String, mediaType: MediaType): TmdbSearchMultiResponse {
         val media = when (mediaType) {
@@ -31,16 +34,28 @@ class SearchService(
     fun getShow(tmdbShowId: Int): TmdbShowBigResponse {
         val respEntity = tmdbClient.get(
             "/3/tv/$tmdbShowId}",
-            TmdbShowBigResponse::class.java
+            TmdbShowBigResponse::class.java,
+            params = mapOf(
+                "append_to_response" to "credits,watch/providers,videos,images"
+            )
         )
         return respEntity.body!!
     }
 
-    fun getSeason(tmdbShowId: Int, seasonNumber: Int): TmdbSeasonResponse {
-        return tmdbClient.get(
-            "/3/tv/$tmdbShowId/season/$seasonNumber",
-            TmdbSeasonResponse::class.java,
-        ).body!!
+    fun getShowApiModel(tmdbShowId: Int): TmdbShowDetailsApiModel {
+        val episodes = storedEpisodesService.getEpisodes(tmdbShowId = tmdbShowId)
+        return getShow(tmdbShowId).toApiModel(episodes.map { it.toApiModel() })
+    }
+
+    fun StoredEpisodeEntity.toApiModel(): TmdbShowDetailsApiModel.Season.Episode {
+        return TmdbShowDetailsApiModel.Season.Episode(
+            id = this.id,
+            number = this.episodeNumber,
+            thumbnail = this.thumbnail,
+            name = this.episodeName,
+            airDate = this.airDate,
+            seasonNumber = this.seasonNumber,
+        )
     }
 }
 

@@ -1,17 +1,14 @@
-package com.free.tvtracker.navigation.bottom
+package com.free.tvtracker.navigation.bottomnav
 
 import androidx.compose.material3.NavigationBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.compose.currentBackStackEntryAsState
+import com.free.tvtracker.navigation.AppNavController
 
 @Composable
 fun BottomNavBar(appNavController: AppNavController) {
-    val navController = appNavController.rememberNavController()
     NavigationBar {
-        val navBackStackEntry by navController.currentBackStackEntryAsState()
-        val currentDestination = navBackStackEntry?.destination
+        val currentDestination = appNavController.rememberCurrentDestination()
         BottomNavBarItems.entries.forEach { screen ->
             val selected = currentDestination?.hierarchy?.any { it.route == screen.destinationId } == true
             BottomNavBarItem(

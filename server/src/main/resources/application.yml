@@ -11,11 +11,11 @@ logging:
         tvtracker:
           core:
             logging:
-              OutRequestLoggingInterceptor: DEBUG
+              OutRequestLoggingInterceptor: off
               RequestLoggingInterceptor: INFO
               TvtrackerLogger: DEBUG
     httpclient:
-      wire: DEBUG
+      wire: off
     org:
       apache:
         http: DEBUG

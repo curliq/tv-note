@@ -10,8 +10,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,30 +20,31 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.free.tvtracker.core.composables.ErrorScreen
@@ -66,11 +66,10 @@ fun WatchingScreen(
 ) {
     val shows = viewModel.shows.collectAsState().value
     TvTrackerTheme {
-        AnimatedContent(shows, transitionSpec = ScreenContentAnimation(), contentKey = { targetState ->
-            if (targetState is WatchingUiState.Ok) {
-                targetState.watching.size
-            } else targetState
-        }
+        AnimatedContent(
+            shows,
+            transitionSpec = ScreenContentAnimation(),
+            contentKey = { targetState -> targetState::class }
         ) { targetState ->
             when (targetState) {
                 is WatchingUiState.Ok -> WatchingOk(navigate, viewModel::markEpisodeWatched, targetState)
@@ -82,24 +81,37 @@ fun WatchingScreen(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun WatchingOk(navigate: (NavAction) -> Unit, markWatched: (Int?, String?) -> Unit, shows: WatchingUiState.Ok) {
-    Scaffold(
-        contentWindowInsets = WindowInsets(0.dp, 0.dp, 0.dp, 0.dp),
-        modifier = Modifier.fillMaxSize(),
-        floatingActionButtonPosition = FabPosition.EndOverlay,
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = { navigate(NavAction.GoAddShow) },
-            ) {
-                Icon(Icons.Default.Add, "")
+fun WatchingOk(navigate: (NavAction) -> Unit, markWatched: (Int?, Int?) -> Unit, shows: WatchingUiState.Ok) {
+    FabContainer(navigate) {
+        LazyColumn(modifier = Modifier.fillMaxHeight(), contentPadding = PaddingValues(vertical = 8.dp)) {
+            itemsIndexed(
+                shows.watching,
+                key = { _, item -> item.tmdbId }
+            ) { index, show ->
+                WatchingItem(
+                    show,
+                    onClick = { navigate(NavAction.GoShowDetails(show.tmdbId)) },
+                    onMarkWatched = markWatched,
+                    modifier = Modifier
+                )
             }
-        },
-    ) {
-        Column {
-            LazyColumn {
+            if (shows.waitingNextEpisode.isNotEmpty()) {
+                item(key = -123) {
+                    Column(Modifier.animateItemPlacement()) {
+                        Spacer(modifier = Modifier.height(24.dp))
+                        Text(
+                            "Waiting for next episode",
+                            style = MaterialTheme.typography.titleLarge,
+                            modifier = Modifier.padding(horizontal = 16.dp)
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+                }
                 itemsIndexed(
-                    shows.watching
+                    shows.waitingNextEpisode,
+                    key = { _, item -> item.tmdbId }
                 ) { index, show ->
                     WatchingItem(
                         show,
@@ -108,44 +120,13 @@ fun WatchingOk(navigate: (NavAction) -> Unit, markWatched: (Int?, String?) -> Un
                     )
                 }
             }
-            if (shows.waitingNextEpisode.isNotEmpty()) {
-                Spacer(modifier = Modifier.height(24.dp))
-                Text(
-                    "Waiting for next episode",
-                    style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.padding(horizontal = 16.dp)
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                LazyColumn {
-                    itemsIndexed(
-                        shows.waitingNextEpisode
-                    ) { index, show ->
-                        WatchingItem(
-                            show,
-                            onClick = { navigate(NavAction.GoShowDetails(show.tmdbId)) },
-                            onMarkWatched = markWatched
-                        )
-                    }
-                }
-            }
         }
     }
 }
 
 @Composable
 fun WatchingEmpty(navigate: (NavAction) -> Unit) {
-    Scaffold(
-        contentWindowInsets = WindowInsets(0.dp, 0.dp, 0.dp, 0.dp),
-        modifier = Modifier.fillMaxSize(),
-        floatingActionButtonPosition = FabPosition.EndOverlay,
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = { navigate(NavAction.GoAddShow) },
-            ) {
-                Icon(Icons.Default.Add, "")
-            }
-        },
-    ) {
+    FabContainer(navigate) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Text(
                 text = "Not tracking any show yet.",
@@ -157,25 +138,41 @@ fun WatchingEmpty(navigate: (NavAction) -> Unit) {
 }
 
 @Composable
-fun WatchingItem(uiModel: WatchingItemUiModel, onClick: () -> Unit, onMarkWatched: (Int?, String?) -> Unit) {
-    OutlinedCard(
-        Modifier
+private fun FabContainer(navigate: (NavAction) -> Unit, content: @Composable (PaddingValues) -> Unit) {
+    Scaffold(
+        contentWindowInsets = WindowInsets(0.dp, 0.dp, 0.dp, 0.dp),
+        modifier = Modifier.fillMaxSize(),
+        floatingActionButtonPosition = FabPosition.EndOverlay,
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { navigate(NavAction.GoAddShow) },
+            ) {
+                Icon(Icons.Default.Add, "")
+            }
+        },
+        content = content
+    )
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun LazyItemScope.WatchingItem(
+    uiModel: WatchingItemUiModel,
+    onClick: () -> Unit,
+    onMarkWatched: (Int?, Int?) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier
             .height(IntrinsicSize.Max)
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
-            .clickable(onClick = onClick),
+            .clickable(onClick = onClick)
+            .animateItemPlacement(),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
     ) {
         Row {
-            Box(
-                Modifier
-                    .aspectRatio(posterRatio())
-                    .border(
-                        1.dp,
-                        MaterialTheme.colorScheme.outlineVariant,
-                        RoundedCornerShape(TvTrackerTheme.ShapeCornerMedium)
-                    )
-                    .clip(RoundedCornerShape(TvTrackerTheme.ShapeCornerMedium))
-            ) {
+            Box(Modifier.aspectRatio(posterRatio())) {
                 TvImage(uiModel.image)
             }
             Column(Modifier.padding(16.dp)) {

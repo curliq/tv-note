@@ -1,4 +1,4 @@
-package com.free.tvtracker.navigation.bottom
+package com.free.tvtracker.navigation.bottomnav
 
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import com.free.tvtracker.activities.MainActivity
-import com.free.tvtracker.navigation.bottom.AppNavController.NavDestinations
+import com.free.tvtracker.navigation.AppNavController
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 
 @ExperimentalMaterial3Api
@@ -21,12 +21,12 @@ fun MainNavHost(padding: PaddingValues, navController: AppNavController) {
     val context = LocalContext.current as MainActivity
     NavHost(
         navController = navController.rememberNavController(),
-        startDestination = NavDestinations.WATCHING.id,
+        startDestination = AppNavDestinations.WATCHING.id,
         modifier = Modifier.padding(padding),
-        enterTransition = { fadeIn(animationSpec = tween(durationMillis = 220)) },
-        exitTransition = { fadeOut(animationSpec = tween(durationMillis = 220)) },
-        popEnterTransition = { fadeIn(animationSpec = tween(durationMillis = 100)) },
-        popExitTransition = { fadeOut(animationSpec = tween(durationMillis = 100)) }
+        enterTransition = { fadeIn(animationSpec = tween(durationMillis = 0)) },
+        exitTransition = { fadeOut(animationSpec = tween(durationMillis = 0)) },
+        popEnterTransition = { fadeIn(animationSpec = tween(durationMillis = 0)) },
+        popExitTransition = { fadeOut(animationSpec = tween(durationMillis = 0)) }
     ) {
         mainNavGraph(navController, context)
     }

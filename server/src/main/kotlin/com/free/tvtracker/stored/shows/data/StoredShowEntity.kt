@@ -42,7 +42,7 @@ data class StoredShowEntity(
     val trackedShows: List<TrackedShowEntity> = emptyList(),
 
     /**
-     * See [com.free.tvtracker.core.tmdb.data.enums.TmdbShowStatus] for options
+     * See [com.free.tvtracker.tracked.response.TmdbShowStatus] for options
      */
     @Column(name = "status")
     val status: String = "",

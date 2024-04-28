@@ -5,6 +5,11 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class AddEpisodesRequest(
-    @SerialName("trackedShowId") val trackedShowId: Int,
-    @SerialName("episode_ids") val episodeIds: List<String>
-)
+    @SerialName("episodes") val episodes: List<Episode>
+) {
+    @Serializable
+    data class Episode(
+        @SerialName("tracked_show_id") val trackedShowId: Int,
+        @SerialName("episode_id") val episodeId: Int
+    )
+}

@@ -11,14 +11,14 @@ class TrackedShowEpisodeJdbcRepository {
     var jdbcTemplate: JdbcTemplate? = null
 
     fun saveBatch(episodes: List<TrackedShowEpisodeEntity>) {
-        val sql = "insert into tracked_episodes (storedepisode_id, trackedshow_id) values(?::uuid, ?)"
+        val sql = "insert into tracked_episodes (storedepisode_id, trackedshow_id) values(?, ?)"
 
         jdbcTemplate!!.batchUpdate(
             sql,
             episodes,
             episodes.size
         ) { ps: PreparedStatement, episode: TrackedShowEpisodeEntity ->
-            ps.setString(1, episode.storedEpisodeId)
+            ps.setInt(1, episode.storedEpisodeId)
             ps.setInt(2, episode.trackedTvShow.id)
         }
     }

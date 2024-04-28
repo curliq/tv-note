@@ -28,12 +28,12 @@ import kotlinx.serialization.json.Json
 expect fun getHttpClient(block: HttpClientConfig<*>.() -> Unit): HttpClient
 
 @OptIn(ExperimentalSerializationApi::class)
-class TvHttpClient {
+open class TvHttpClient {
 
     val localhostAndroid = "10.0.2.2"
     val localhostiOS = "localhost"
     val localhostiOSPhone = "192.168.1.137"
-    val tempWifi = "172.16.73.93"
+    val tempWifi = "192.168.160.79"
 
     val cli = getHttpClient {
 

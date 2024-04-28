@@ -9,7 +9,7 @@ import com.free.tvtracker.shared.db.AppDatabase
 class LocalSqlDataProvider(appDatabase: AppDatabase) {
     private val dbQuery = appDatabase.appDatabaseQueries
 
-    fun saveTrackedShow(shows: List<TrackedShowClientEntity>) {
+    fun saveTrackedShows(shows: List<TrackedShowClientEntity>) {
         dbQuery.transaction {
             shows.forEach { show ->
                 dbQuery.saveStoredShow(
@@ -35,10 +35,10 @@ class LocalSqlDataProvider(appDatabase: AppDatabase) {
         }
     }
 
-    fun saveWatchedEpisodes(showId: Long, episodes: List<WatchedEpisodeClientEntity>) {
+    fun saveWatchedEpisodes(episodes: List<WatchedEpisodeClientEntity>) {
         dbQuery.transaction {
             episodes.forEach { episode ->
-                dbQuery.saveWatchedEpisodes(episode.id, episode.storedEpisodeId, showId)
+                dbQuery.saveWatchedEpisodes(episode.id, episode.storedEpisodeId, episode.trackedShowId)
             }
         }
     }
@@ -63,11 +63,19 @@ class LocalSqlDataProvider(appDatabase: AppDatabase) {
         return dbQuery.getWatchedEpisodeOrder(MarkEpisodeWatchedOrderClientEntity::fromSql).executeAsList()
     }
 
-    fun saveEpisodeWatchedOrder(order: MarkEpisodeWatchedOrderClientEntity) {
-        dbQuery.saveWatchedEpisodeOrder(order.id, order.showId, order.episodeId)
+    fun saveEpisodeWatchedOrder(orders: List<MarkEpisodeWatchedOrderClientEntity>) {
+        dbQuery.transaction {
+            orders.forEach { order ->
+                dbQuery.saveWatchedEpisodeOrder(order.id, order.showId, order.episodeId)
+            }
+        }
     }
 
-    fun deleteEpisodeWatchedOrder(orderId: String) {
-        dbQuery.deleteWatchedEpisodeOrder(orderId)
+    fun deleteEpisodeWatchedOrder(orderIds: List<String>) {
+        dbQuery.transaction {
+            orderIds.forEach { orderId ->
+                dbQuery.deleteWatchedEpisodeOrder(orderId)
+            }
+        }
     }
 }

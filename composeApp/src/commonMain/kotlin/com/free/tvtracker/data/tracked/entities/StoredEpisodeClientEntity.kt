@@ -1,14 +1,14 @@
 package com.free.tvtracker.data.tracked.entities
 
 data class StoredEpisodeClientEntity(
-    val id: String,
+    val id: Long,
     val season: Long,
     val episode: Long,
     val airDate: String?
 ) {
     companion object {
         fun fromSql(
-            id: String,
+            id: Long,
             season: Long,
             episode: Long,
             storedShow: Long,

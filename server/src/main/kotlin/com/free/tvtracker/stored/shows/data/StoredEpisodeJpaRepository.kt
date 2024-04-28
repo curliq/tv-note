@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository
 @Repository
 interface StoredEpisodeJpaRepository : JpaRepository<StoredEpisodeEntity, Int>{
     fun findAllByStoredShowIdIs(storedShowId: Int): List<StoredEpisodeEntity>
+    fun findAllByStoredShowTmdbIdIs(tmdbShowId: Int): List<StoredEpisodeEntity>
 }

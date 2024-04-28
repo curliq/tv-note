@@ -9,6 +9,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.free.tvtracker.utils.OsPlatform
 import androidx.compose.material3.Typography
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 
 object TvTrackerTheme {
     val ShapeCornerMedium = 12.dp
@@ -16,7 +18,9 @@ object TvTrackerTheme {
     val sidePadding = 16.dp
 
     val Typography = Typography(
-
+        headlineMedium = Typography().headlineMedium.copy(fontWeight = FontWeight.Bold),
+        headlineSmall = Typography().headlineSmall.copy(fontWeight = FontWeight.Bold),
+        titleLarge = Typography().titleLarge.copy(fontWeight = FontWeight.Bold),
     )
 }
 
@@ -30,7 +34,9 @@ fun TvTrackerTheme(content: @Composable () -> Unit) {
         },
     )
     val colorsDark = darkColorScheme()
-    MaterialTheme(colorScheme = if (isSystemInDarkTheme()) colorsDark else colorsLight) {
-        content()
-    }
+    MaterialTheme(
+        colorScheme = if (isSystemInDarkTheme()) colorsDark else colorsLight,
+        typography = TvTrackerTheme.Typography,
+        content = content,
+    )
 }

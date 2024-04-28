@@ -1,4 +1,4 @@
-package com.free.tvtracker.navigation.bottom
+package com.free.tvtracker.navigation.bottomnav
 
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material3.Icon
@@ -9,37 +9,43 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import com.free.tvtracker.R
+import com.free.tvtracker.navigation.AppNavController
 
-enum class BottomNavBarItems(val label: String, val icon: Int, val iconSelected: Int, val destinationId: String) {
+enum class BottomNavBarItems(val label: String, val title: String, val icon: Int, val iconSelected: Int, val destinationId: String) {
     WATCHING(
         "Watching",
+        "Currently Watching",
         R.drawable.ic_live_tv_24px,
         R.drawable.ic_live_tv_filled_24px,
-        AppNavController.NavDestinations.WATCHING.id
+        AppNavDestinations.WATCHING.id
     ),
     FINISHED(
         "Finished",
+        "Finished Watching",
         R.drawable.ic_flag_24px,
         R.drawable.ic_flag_filled_24px,
-        AppNavController.NavDestinations.FINISHED.id
+        AppNavDestinations.FINISHED.id
     ),
     WATCHLIST(
         "Watchlist",
-        R.drawable.ic_star_24px,
-        R.drawable.ic_star_filled_24px,
-        AppNavController.NavDestinations.WATCHLIST.id
+        "Watchlist",
+        R.drawable.ic_bookmark,
+        R.drawable.ic_bookmark_filled,
+        AppNavDestinations.WATCHLIST.id
     ),
     DISCOVER(
         "Discover",
+        "Discover",
         R.drawable.ic_explore_24px,
         R.drawable.ic_explore_filled_24px,
-        AppNavController.NavDestinations.DISCOVER.id
+        AppNavDestinations.DISCOVER.id
     ),
     SETTINGS(
         "Settings",
+        "Settings & Account",
         R.drawable.ic_settings_24px,
         R.drawable.ic_settings_filled_24px,
-        AppNavController.NavDestinations.SETTINGS.id
+        AppNavDestinations.SETTINGS.id
     ),
 }
 

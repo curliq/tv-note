@@ -21,26 +21,29 @@ class WatchedEpisodesTaskQueue(
     suspend fun emitOrders() {
         val pendingOrders = localDataSource.getEpisodeWatchedOrder()
         watchedEpisodeOrders.value = pendingOrders
-        pendingOrders.forEach {
-            trySync(it)
-        }
+        trySync(pendingOrders)
     }
 
-    suspend fun add(order: MarkEpisodeWatchedOrderClientEntity) {
-        watchedEpisodeOrders.value = watchedEpisodeOrders.value.plus(order)
-        localDataSource.saveEpisodeWatchedOrder(order)
-        trySync(order)
+    suspend fun add(orders: List<MarkEpisodeWatchedOrderClientEntity>) {
+        watchedEpisodeOrders.value = watchedEpisodeOrders.value.plus(orders)
+        localDataSource.saveEpisodeWatchedOrder(orders)
+        trySync(orders)
     }
 
-    private suspend fun trySync(order: MarkEpisodeWatchedOrderClientEntity) {
+    private suspend fun trySync(orders: List<MarkEpisodeWatchedOrderClientEntity>) {
         try {
+            val eps = orders.map { AddEpisodesRequest.Episode(it.showId.toInt(), it.episodeId.toInt()) }
             remoteDataSource.call(
                 Endpoints.addEpisodes,
-                AddEpisodesRequest(order.showId.toInt(), listOf(order.episodeId))
+                AddEpisodesRequest(eps)
             )
                 .asSuccess { data ->
-                    localDataSource.saveWatchedEpisodes(order.showId, data.map { it.toClientEntity() })
-                    localDataSource.deleteEpisodeWatchedOrder(order.id)
+                    val watchedEps = data.map { responseEp ->
+                        val showId = eps.first { it.episodeId == responseEp.storedEpisodeId }.trackedShowId
+                        responseEp.toClientEntity(showId.toLong())
+                    }
+                    localDataSource.saveWatchedEpisodes(watchedEps)
+                    localDataSource.deleteEpisodeWatchedOrder(orders.map { it.id })
                 }
                 .asError {
 

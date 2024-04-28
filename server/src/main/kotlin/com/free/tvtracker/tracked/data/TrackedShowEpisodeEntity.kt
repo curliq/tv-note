@@ -20,8 +20,7 @@ import org.hibernate.annotations.CreationTimestamp
 )
 data class TrackedShowEpisodeEntity(
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Int = 0,
+    val id: String = "",
 
     @CreationTimestamp
     @Column(columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
@@ -32,9 +31,12 @@ data class TrackedShowEpisodeEntity(
     val storedEpisode: StoredEpisodeEntity = StoredEpisodeEntity(),
 
     @Column(name="storedepisode_id", nullable = false)
-    val storedEpisodeId: String = "",
+    val storedEpisodeId: Int = 0,
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "trackedshow_id", nullable = false)
+    @JoinColumn(name = "trackedshow_id", nullable = false, updatable = false, insertable = false)
     val trackedTvShow: TrackedShowEntity = TrackedShowEntity(),
+
+    @Column(name = "trackedshow_id", nullable = false)
+    val trackedTvShowId: Int = 0,
 )

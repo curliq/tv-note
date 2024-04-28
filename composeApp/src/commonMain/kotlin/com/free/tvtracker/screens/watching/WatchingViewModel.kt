@@ -1,19 +1,21 @@
 package com.free.tvtracker.screens.watching
 
 import com.free.tvtracker.core.ui.ViewModel
+import com.free.tvtracker.data.tracked.MarkEpisodeWatched
 import com.free.tvtracker.data.tracked.TrackedShowsRepository
+import com.free.tvtracker.domain.GetNextUnwatchedEpisodeUseCase
+import com.free.tvtracker.domain.IsTrackedShowWatchableUseCase
 import com.free.tvtracker.tracked.response.TrackedShowApiModel
 import com.free.tvtracker.utils.TmdbConfigData
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 
 class WatchingViewModel(
     private val trackedShowsRepository: TrackedShowsRepository,
-    private val getWatchingShowsUseCase: GetWatchingShowsUseCase,
+    private val getShowsUseCase: GetWatchingShowsUseCase,
     private val getNextUnwatchedEpisodeUseCase: GetNextUnwatchedEpisodeUseCase,
     private val isTrackedShowWatchableUseCase: IsTrackedShowWatchableUseCase,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
@@ -22,24 +24,25 @@ class WatchingViewModel(
 
     init {
         viewModelScope.launch(ioDispatcher) {
-            getWatchingShowsUseCase().filterNotNull().collect { data ->
-                data.asSuccess {
-                    if (data.data.isNullOrEmpty()) {
+            getShowsUseCase().collect { data ->
+                data.data.asSuccess {
+                    if (data.data.data.isNullOrEmpty()) {
                         shows.value = WatchingUiState.Empty
                     } else {
                         shows.value = WatchingUiState.Ok(
-                            watching = isTrackedShowWatchableUseCase.canWatch(data.data!!).map { show ->
+                            watching = isTrackedShowWatchableUseCase.canWatchNow(data.data.data!!).map { show ->
                                 val nextEpisode = getNextUnwatchedEpisodeUseCase(show)
                                 show.toUiModel(nextEpisode)
                             },
-                            waitingNextEpisode = isTrackedShowWatchableUseCase.waitingShortTerm(data.data!!).map { show ->
-                                val nextEpisode = getNextUnwatchedEpisodeUseCase(show)
-                                show.toUiModel(nextEpisode)
-                            },
+                            waitingNextEpisode = isTrackedShowWatchableUseCase.canWatchSoon(data.data.data!!)
+                                .map { show ->
+                                    val nextEpisode = getNextUnwatchedEpisodeUseCase(show)
+                                    show.toUiModel(nextEpisode)
+                                },
                         )
                     }
                 }
-                data.asError {
+                data.data.asError {
                     shows.value = WatchingUiState.Error
                 }
             }
@@ -50,14 +53,14 @@ class WatchingViewModel(
     fun refresh() {
         shows.value = WatchingUiState.Loading
         viewModelScope.launch(ioDispatcher) {
-            trackedShowsRepository.emitLatest()
+            trackedShowsRepository.emitLatestWatching()
         }
     }
 
-    fun markEpisodeWatched(showId: Int?, episodeId: String?) {
+    fun markEpisodeWatched(showId: Int?, episodeId: Int?) {
         viewModelScope.launch(ioDispatcher) {
             episodeId?.let {
-                trackedShowsRepository.markEpisodeAsWatched(showId!!, it)
+                trackedShowsRepository.markEpisodeAsWatched(listOf(MarkEpisodeWatched(showId!!, it)))
             }
         }
     }
@@ -84,7 +87,7 @@ data class WatchingItemUiModel(
      * All this splitting up is needed to build the animation, the full text is something like: "Watch next: S1 E5"
      */
     data class NextEpisode(
-        val id: String,
+        val id: Int,
         val body: String,
         val season: String,
         val seasonNumber: Int,
@@ -93,8 +96,8 @@ data class WatchingItemUiModel(
     )
 }
 
-fun TrackedShowApiModel.toUiModel(nextEpisode: TrackedShowApiModel.StoredEpisodeApiModel?): WatchingItemUiModel{
-    return  WatchingItemUiModel(
+fun TrackedShowApiModel.toUiModel(nextEpisode: TrackedShowApiModel.StoredEpisodeApiModel?): WatchingItemUiModel {
+    return WatchingItemUiModel(
         trackedShowId = this.id,
         tmdbId = this.storedShow.tmdbId,
         title = this.storedShow.title,
@@ -106,7 +109,7 @@ fun TrackedShowApiModel.toUiModel(nextEpisode: TrackedShowApiModel.StoredEpisode
 fun TrackedShowApiModel.StoredEpisodeApiModel.toUiModel(): WatchingItemUiModel.NextEpisode {
     return WatchingItemUiModel.NextEpisode(
         id = this.id,
-        body = "Watch next:",
+        body = "Watch next: ",
         season = "S${season} ",
         seasonNumber = season,
         episode = "E${episode}",

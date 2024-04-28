@@ -62,11 +62,10 @@ class SearchController(
     fun getTmdbShow(@RequestBody body: TmdbShowDetailsRequestBody): ResponseEntity<TmdbShowDetailsApiResponse> {
         return ResponseEntity.ok(
             TmdbShowDetailsApiResponse.ok(
-                searchService.getShow(tmdbShowId = body.tmdbId).toApiModel()
+                searchService.getShowApiModel(tmdbShowId = body.tmdbId)
             )
         )
     }
-
 }
 
 fun TmdbSearchMultiResponse.Data.toMovieApiModel(): SearchMovieApiModel {
@@ -115,8 +114,7 @@ fun TmdbSearchMultiResponse.Data.toPersonApiModel(): SearchPersonApiModel {
     )
 }
 
-
-fun TmdbShowBigResponse.toApiModel() = TmdbShowDetailsApiModel(
+fun TmdbShowBigResponse.toApiModel(episodes: List<TmdbShowDetailsApiModel.Season.Episode>) = TmdbShowDetailsApiModel(
     id = this.id!!,
     name = this.name!!,
     status = this.status!!,
@@ -140,55 +138,15 @@ fun TmdbShowBigResponse.toApiModel() = TmdbShowDetailsApiModel(
     posterPath = this.posterPath,
     productionCompanies = this.productionCompanies.map { it.toApiModel() },
     productionCountries = this.productionCountries.map { it.toApiModel() },
-    seasons = this.seasons.map { it.toApiModel() },
+    seasons = this.seasons.filter { (it.episodeCount ?: 0) > 0 }
+        .map { it.toApiModel(episodes.filter { ep -> ep.seasonNumber == it.seasonNumber }) },
     tagline = this.tagline,
     type = this.type,
     voteAverage = this.voteAverage,
     voteCount = this.voteCount,
-)
-
-fun TmdbShowBigResponse.Episode.toApiModel() = TmdbShowDetailsApiModel.Episode(
-    id = this.id,
-    name = this.name,
-    overview = this.overview,
-    voteAverage = this.voteAverage,
-    voteCount = this.voteCount,
-    airDate = this.airDate,
-    episodeNumber = this.episodeNumber,
-    episodeType = this.episodeType,
-    productionCode = this.productionCode,
-    runtime = this.runtime,
-    seasonNumber = this.seasonNumber,
-    showId = this.showId,
-    stillPath = this.stillPath,
-)
-
-fun TmdbShowBigResponse.Networks.toApiModel() = TmdbShowDetailsApiModel.Networks(
-    id = id!!,
-    name = name!!,
-    logoPath = logoPath,
-    originCountry = originCountry,
-)
-
-fun TmdbShowBigResponse.ProductionCompanies.toApiModel() = TmdbShowDetailsApiModel.ProductionCompanies(
-    id = this.id,
-    logoPath = this.logoPath,
-    name = this.name,
-    originCountry = this.originCountry,
-)
-
-fun TmdbShowBigResponse.ProductionCountries.toApiModel() = TmdbShowDetailsApiModel.ProductionCountries(
-    iso31661 = this.iso31661,
-    name = this.name,
-)
-
-fun TmdbShowBigResponse.Seasons.toApiModel() = TmdbShowDetailsApiModel.Seasons(
-    airDate = this.airDate,
-    episodeCount = this.episodeCount,
-    id = this.id,
-    name = this.name,
-    overview = this.overview,
-    posterPath = this.posterPath,
-    seasonNumber = this.seasonNumber,
-    voteAverage = this.voteAverage,
+    videos = this.videos?.results?.map { it.toApiModel() },
+    images = this.images?.toApiModel(),
+    cast = this.credits?.cast?.map { it.toApiModel() },
+    crew = this.credits?.crew?.map { it.toApiModel() },
+    watchProvider = this.watchProviders?.results?.gb?.flatrate?.map { it.toApiModel() }
 )

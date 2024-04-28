@@ -1,5 +1,6 @@
 package com.free.tvtracker.screens.watching
 
+import com.free.tvtracker.domain.GetNextUnwatchedEpisodeUseCase
 import com.free.tvtracker.tracked.response.TrackedShowApiModel
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -12,16 +13,16 @@ class GetNextUnwatchedEpisodeUseCaseTest {
             id = 1,
             createdAtDatetime = "2014-02-03",
             watchedEpisodes = listOf(
-                TrackedShowApiModel.WatchedEpisodeApiModel(1, "a"),
-                TrackedShowApiModel.WatchedEpisodeApiModel(2, "b"),
+                TrackedShowApiModel.WatchedEpisodeApiModel("1", 1),
+                TrackedShowApiModel.WatchedEpisodeApiModel("2", 2),
             ),
             storedShow = TrackedShowApiModel.StoredShowApiModel(
                 tmdbId = 1,
                 title = "game of thrones",
                 storedEpisodes = listOf(
-                    TrackedShowApiModel.StoredEpisodeApiModel(id = "a", season = 1, episode = 1, airDate = "2015-1-01"),
-                    TrackedShowApiModel.StoredEpisodeApiModel(id = "b", season = 1, episode = 2, airDate = "2015-1-01"),
-                    TrackedShowApiModel.StoredEpisodeApiModel(id = "c", season = 1, episode = 3, airDate = "2015-1-01"),
+                    TrackedShowApiModel.StoredEpisodeApiModel(id = 1, season = 1, episode = 1, airDate = "2015-1-01"),
+                    TrackedShowApiModel.StoredEpisodeApiModel(id = 2, season = 1, episode = 2, airDate = "2015-1-01"),
+                    TrackedShowApiModel.StoredEpisodeApiModel(id = 3, season = 1, episode = 3, airDate = "2015-1-01"),
                 ),
                 posterImage = "",
                 status = ""
@@ -29,7 +30,7 @@ class GetNextUnwatchedEpisodeUseCaseTest {
             watchlisted = false
         )
         val sut = GetNextUnwatchedEpisodeUseCase()
-        assertEquals("c", sut(show = show)?.id)
+        assertEquals(3, sut(show = show)?.id)
     }
 
     @Test
@@ -43,9 +44,9 @@ class GetNextUnwatchedEpisodeUseCaseTest {
                 tmdbId = 1,
                 title = "game of thrones",
                 storedEpisodes = listOf(
-                    TrackedShowApiModel.StoredEpisodeApiModel(id = "a", season = 1, episode = 1, airDate = "2022-1-1"),
-                    TrackedShowApiModel.StoredEpisodeApiModel(id = "b", season = 1, episode = 2, airDate = "2022-1-1"),
-                    TrackedShowApiModel.StoredEpisodeApiModel(id = "c", season = 1, episode = 3, airDate = "2022-1-1"),
+                    TrackedShowApiModel.StoredEpisodeApiModel(id = 1, season = 1, episode = 1, airDate = "2022-1-1"),
+                    TrackedShowApiModel.StoredEpisodeApiModel(id = 2, season = 1, episode = 2, airDate = "2022-1-1"),
+                    TrackedShowApiModel.StoredEpisodeApiModel(id = 3, season = 1, episode = 3, airDate = "2022-1-1"),
                 ),
                 posterImage = "",
                 status = ""
@@ -53,7 +54,7 @@ class GetNextUnwatchedEpisodeUseCaseTest {
             watchlisted = false
         )
         val sut = GetNextUnwatchedEpisodeUseCase()
-        assertEquals("a", sut(show = show)?.id)
+        assertEquals(1, sut(show = show)?.id)
     }
 
     @Test
@@ -62,17 +63,17 @@ class GetNextUnwatchedEpisodeUseCaseTest {
             id = 1,
             createdAtDatetime = "2014-02-03",
             watchedEpisodes = listOf(
-                TrackedShowApiModel.WatchedEpisodeApiModel(1, "a"),
-                TrackedShowApiModel.WatchedEpisodeApiModel(2, "b"),
-                TrackedShowApiModel.WatchedEpisodeApiModel(3, "c"),
+                TrackedShowApiModel.WatchedEpisodeApiModel("1", 1),
+                TrackedShowApiModel.WatchedEpisodeApiModel("2", 2),
+                TrackedShowApiModel.WatchedEpisodeApiModel("3", 3),
             ),
             storedShow = TrackedShowApiModel.StoredShowApiModel(
                 tmdbId = 1,
                 title = "game of thrones",
                 storedEpisodes = listOf(
-                    TrackedShowApiModel.StoredEpisodeApiModel(id = "a", season = 1, episode = 1, airDate = "2022-1-1"),
-                    TrackedShowApiModel.StoredEpisodeApiModel(id = "b", season = 1, episode = 2, airDate = "2022-1-1"),
-                    TrackedShowApiModel.StoredEpisodeApiModel(id = "c", season = 1, episode = 3, airDate = "2022-1-1"),
+                    TrackedShowApiModel.StoredEpisodeApiModel(id = 1, season = 1, episode = 1, airDate = "2022-1-1"),
+                    TrackedShowApiModel.StoredEpisodeApiModel(id = 2, season = 1, episode = 2, airDate = "2022-1-1"),
+                    TrackedShowApiModel.StoredEpisodeApiModel(id = 3, season = 1, episode = 3, airDate = "2022-1-1"),
                 ),
                 posterImage = "",
                 status = ""
@@ -89,15 +90,15 @@ class GetNextUnwatchedEpisodeUseCaseTest {
             id = 1,
             createdAtDatetime = "2014-02-03",
             watchedEpisodes = listOf(
-                TrackedShowApiModel.WatchedEpisodeApiModel(3, "c"),
+                TrackedShowApiModel.WatchedEpisodeApiModel("3", 3),
             ),
             storedShow = TrackedShowApiModel.StoredShowApiModel(
                 tmdbId = 1,
                 title = "game of thrones",
                 storedEpisodes = listOf(
-                    TrackedShowApiModel.StoredEpisodeApiModel(id = "a", season = 1, episode = 1, airDate = "2022-1-1"),
-                    TrackedShowApiModel.StoredEpisodeApiModel(id = "b", season = 1, episode = 2, airDate = "2022-1-1"),
-                    TrackedShowApiModel.StoredEpisodeApiModel(id = "c", season = 1, episode = 3, airDate = "2022-1-1"),
+                    TrackedShowApiModel.StoredEpisodeApiModel(id = 1, season = 1, episode = 1, airDate = "2022-1-1"),
+                    TrackedShowApiModel.StoredEpisodeApiModel(id = 2, season = 1, episode = 2, airDate = "2022-1-1"),
+                    TrackedShowApiModel.StoredEpisodeApiModel(id = 3, season = 1, episode = 3, airDate = "2022-1-1"),
                 ),
                 posterImage = "",
                 status = ""

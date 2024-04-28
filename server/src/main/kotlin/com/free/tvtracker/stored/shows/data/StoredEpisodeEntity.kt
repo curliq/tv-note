@@ -11,13 +11,14 @@ import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 import org.hibernate.annotations.CreationTimestamp
+import org.hibernate.annotations.UpdateTimestamp
 
 @Entity
 @Table(name = "stored_episodes")
 data class StoredEpisodeEntity(
 
     @Id
-    val id: String = "",
+    val id: Int = 0,
 
     @CreationTimestamp
     @Column(
@@ -28,13 +29,23 @@ data class StoredEpisodeEntity(
     )
     val createdAtDatetime: String = "",
 
+    @UpdateTimestamp
+    @Column(name = "updated_at_datetime", nullable = false, columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    val updatedAtDatetime: String? = null,
+
     @Column(name = "air_date", nullable = true)
     val airDate: String? = null,
 
-    @Column(nullable = false, name = "season_number")
+    @Column(name = "episode_name", nullable = true)
+    val episodeName: String? = null,
+
+    @Column(name = "thumbnail", nullable = true)
+    val thumbnail: String? = null,
+
+    @Column(name = "season_number", nullable = false)
     val seasonNumber: Int = 0,
 
-    @Column(nullable = false, name = "episode_number")
+    @Column(name = "episode_number", nullable = false)
     val episodeNumber: Int = 0,
 
     @OneToMany(fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE], mappedBy = "storedEpisode")

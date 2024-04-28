@@ -2,12 +2,15 @@ CREATE
 EXTENSION IF NOT EXISTS "uuid-ossp";
 create table stored_episodes
 (
-    id                  varchar(255) not null,
+    id                  integer                             not null,
     created_at_datetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP not null,
     episode_number      integer                             not null,
     season_number       integer                             not null,
     storedshow_id       integer                             not null,
     air_date            varchar(255),
+    updated_at_datetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP not null,
+    episode_name        varchar(255),
+    thumbnail           varchar(255),
     primary key (id)
 );
 create table stored_shows
@@ -23,9 +26,9 @@ create table stored_shows
 );
 create table tracked_episodes
 (
-    id                    serial            not null,
+    id                    varchar(255)            not null,
     created_at_datetime   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    storedepisode_id      varchar(255)      not null,
+    storedepisode_id      integer      not null,
     trackedshow_id        integer           not null,
     primary key (id)
 );

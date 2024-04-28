@@ -1,7 +1,6 @@
 package com.free.tvtracker.tracked.api
 
 import com.free.tvtracker.Endpoints
-import com.free.tvtracker.core.data.ApiResponse
 import com.free.tvtracker.core.logging.TvtrackerLogger
 import com.free.tvtracker.tracked.domain.TrackedShowsService
 import com.free.tvtracker.tracked.request.AddEpisodesRequest
@@ -10,7 +9,6 @@ import com.free.tvtracker.tracked.response.AddTrackedEpisodesApiResponse
 import com.free.tvtracker.tracked.response.AddTrackedShowApiResponse
 import com.free.tvtracker.tracked.response.ErrorShowAlreadyAdded
 import com.free.tvtracker.tracked.response.ErrorShowIsGone
-import com.free.tvtracker.tracked.response.TrackedShowApiModel
 import com.free.tvtracker.tracked.response.TrackedShowApiResponse
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -57,17 +55,19 @@ class TrackedShowsController(
 
     @GetMapping(Endpoints.Path.WATCHING)
     fun getOngoing(): ResponseEntity<TrackedShowApiResponse> {
-        val shows = trackedShowsService.getOngoingShows().map { it.toApiModel() }
+        val shows = trackedShowsService.getOngoingShows()
         return ResponseEntity.ok(TrackedShowApiResponse.ok(shows))
     }
 
-    @GetMapping("/watchlist")
-    fun getWatchlist(): ApiResponse<List<TrackedShowApiModel>> {
-        return ApiResponse.ok(trackedShowsService.getWatchlistedShows().map { it.toApiModel() })
+    @GetMapping(Endpoints.Path.FINISHED)
+    fun getFinished(): ResponseEntity<TrackedShowApiResponse> {
+        val shows = trackedShowsService.getFinishedShows()
+        return ResponseEntity.ok(TrackedShowApiResponse.ok(shows))
     }
 
-    @GetMapping("/finished")
-    fun getFinished(): ApiResponse<List<TrackedShowApiModel>> {
-        return ApiResponse.ok(trackedShowsService.getFinishedShows().map { it.toApiModel() })
+    @GetMapping(Endpoints.Path.WATCHLISTED)
+    fun getWatchlist(): ResponseEntity<TrackedShowApiResponse> {
+        val shows = trackedShowsService.getWatchlistedShows()
+        return ResponseEntity.ok(TrackedShowApiResponse.ok(shows))
     }
 }

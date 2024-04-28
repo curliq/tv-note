@@ -13,8 +13,8 @@ data class TrackedShowApiModel(
 ) {
     @Serializable
     data class WatchedEpisodeApiModel(
-        @SerialName("id") val id: Int,
-        @SerialName("stored_episode_id") val storedEpisodeId: String,
+        @SerialName("id") val id: String,
+        @SerialName("stored_episode_id") val storedEpisodeId: Int,
     )
 
     @Serializable
@@ -28,7 +28,7 @@ data class TrackedShowApiModel(
 
     @Serializable
     data class StoredEpisodeApiModel(
-        @SerialName("id") val id: String,
+        @SerialName("id") val id: Int,
         @SerialName("season") val season: Int,
         @SerialName("episode") val episode: Int,
         @SerialName("air_date") val airDate: String?,

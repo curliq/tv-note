@@ -1,4 +1,4 @@
-package com.free.tvtracker.screens.watching
+package com.free.tvtracker.domain
 
 import com.free.tvtracker.tracked.response.TrackedShowApiModel
 

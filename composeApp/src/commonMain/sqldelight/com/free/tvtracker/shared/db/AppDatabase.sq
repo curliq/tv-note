@@ -14,14 +14,14 @@ CREATE TABLE tracked_shows(
 );
 
 CREATE TABLE watched_episodes(
-    id INTEGER NOT NULL PRIMARY KEY,
-    stored_episode_id TEXT NOT NULL,
+    id TEXT NOT NULL PRIMARY KEY,
+    stored_episode_id INTEGER NOT NULL,
     tracked_show INTEGER NOT NULL,
     FOREIGN KEY (tracked_show) REFERENCES tracked_shows(id)
 );
 
 CREATE TABLE stored_episodes(
-    id TEXT NOT NULL PRIMARY KEY,
+    id INTEGER NOT NULL PRIMARY KEY,
     season INTEGER NOT NULL,
     episode INTEGER NOT NULL,
     stored_show INTEGER NOT NULL,
@@ -32,7 +32,7 @@ CREATE TABLE stored_episodes(
 CREATE TABLE episode_watched_order(
     id TEXT NOT NULL PRIMARY KEY,
     show_id INTEGER NOT NULL,
-    stored_episode_id TEXT NOT NULL
+    stored_episode_id INTEGER NOT NULL
 );
 
 selectAllTrackedShows:

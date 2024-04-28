@@ -30,8 +30,16 @@ data class TmdbConfigData(
         }
     }
 
-    fun getPosterUrl(path: String?): String {
-        return "${images?.secureBaseUrl}${images?.posterSizes?.get(3)}${path ?: ""}"
+    fun getPosterUrl(path: String?, size: Int = 3): String {
+        return "${images?.secureBaseUrl}${images?.posterSizes?.get(size)}${path ?: ""}"
+    }
+
+    fun getStillUrl(path: String?): String {
+        return "${images?.secureBaseUrl}${images?.stillSizes?.get(1)}${path ?: ""}"
+    }
+
+    fun getLogoUrl(path: String?): String {
+        return "${images?.secureBaseUrl}${images?.logoSizes?.get(4)}${path ?: ""}"
     }
 }
 
