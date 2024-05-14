@@ -8,8 +8,9 @@ import com.free.tvtracker.discover.response.TmdbShowDetailsApiModel
 import com.free.tvtracker.discover.response.TmdbShowDetailsApiResponse
 import com.free.tvtracker.domain.GetTrackedShowUseCase
 import com.free.tvtracker.screens.details.mappers.ShowUiModelMapper
-import com.free.tvtracker.tracked.response.TmdbShowStatus
+import com.free.tvtracker.discover.response.TmdbShowStatus
 import com.free.tvtracker.tracked.response.TrackedShowApiModel
+import com.free.tvtracker.utils.buildDetailsUiModel
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -56,8 +57,8 @@ class DetailsViewModelTest {
         coEvery { searchRepository.getShow(any()) } returns TmdbShowDetailsApiResponse.ok(
             TmdbShowDetailsApiModel(1, "game of thrones", TmdbShowStatus.ENDED.status)
         )
-        every { mapper.map(any(), any()) } returns DetailsUiModel(
-            0, "", "", "", "", null, null, seasons = listOf(
+        every { mapper.map(any(), any()) } returns buildDetailsUiModel(
+            seasons = listOf(
                 DetailsUiModel.Season(
                     seasonId = 1, tmdbShowId = 1, "", false, true, episodes = listOf(
                         DetailsUiModel.Season.Episode(
@@ -68,7 +69,7 @@ class DetailsViewModelTest {
                         ),
                     )
                 )
-            ), castFirst = null, castSecond = null, watchProviders = emptyList()
+            )
         )
         viewModel.setId(1)
         viewModel.action(DetailsViewModel.DetailsAction.MarkSeasonWatched(1, 1))
@@ -83,8 +84,8 @@ class DetailsViewModelTest {
         every {
             trackedShowsRepository.getShowByTmdbId(1)
         } returns TrackedShowApiModel(1, "", emptyList(), mockk(), false)
-        every { mapper.map(any(), any()) } returns DetailsUiModel(
-            0, "", "", "", "", null, null, seasons = listOf(
+        every { mapper.map(any(), any()) } returns buildDetailsUiModel(
+            seasons = listOf(
                 DetailsUiModel.Season(
                     seasonId = 1, tmdbShowId = 1, "", false, true, episodes = listOf(
                         DetailsUiModel.Season.Episode(
@@ -95,7 +96,7 @@ class DetailsViewModelTest {
                         ),
                     )
                 )
-            ), castFirst = null, castSecond = null, watchProviders = emptyList()
+            )
         )
         viewModel.setId(1)
         viewModel.action(DetailsViewModel.DetailsAction.MarkSeasonWatched(1, 1))
@@ -114,8 +115,8 @@ class DetailsViewModelTest {
         coEvery { searchRepository.getShow(any()) } returns TmdbShowDetailsApiResponse.ok(
             TmdbShowDetailsApiModel(1, "game of thrones", TmdbShowStatus.ENDED.status)
         )
-        every { mapper.map(any(), any()) } returns DetailsUiModel(
-            0, "", "", "", "", null, null, seasons = listOf(
+        every { mapper.map(any(), any()) } returns buildDetailsUiModel(
+            seasons = listOf(
                 DetailsUiModel.Season(
                     seasonId = 1, tmdbShowId = 1, "", false, true, episodes = listOf(
                         DetailsUiModel.Season.Episode(
@@ -126,7 +127,7 @@ class DetailsViewModelTest {
                         ),
                     )
                 )
-            ), castFirst = null, castSecond = null, watchProviders = emptyList()
+            )
         )
         viewModel.setId(1)
         viewModel.action(DetailsViewModel.DetailsAction.MarkSeasonWatched(1, 1))

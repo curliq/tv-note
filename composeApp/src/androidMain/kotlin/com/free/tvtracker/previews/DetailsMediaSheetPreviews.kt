@@ -6,17 +6,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.free.tvtracker.core.theme.TvTrackerTheme
 import com.free.tvtracker.previews.DetailsScreenPreviews.uimodel
-import com.free.tvtracker.screens.details.dialogs.DetailsEpisodesContent
+import com.free.tvtracker.screens.details.dialogs.DetailsMediaSheetContent
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@Preview(heightDp = 1200)
+@Preview(heightDp = 1700)
 @Composable
-fun DetailsEpisodesSheetPreview() {
+fun DetailsMediaSheetPreview() {
     TvTrackerTheme {
         Scaffold { padding ->
-            DetailsEpisodesContent(
-                uimodel,
-                { }
+            DetailsMediaSheetContent(
+                uimodel, { }
             )
         }
     }

@@ -4,10 +4,8 @@ import com.free.tvtracker.core.ui.ViewModel
 import com.free.tvtracker.data.search.SearchRepository
 import com.free.tvtracker.data.tracked.MarkEpisodeWatched
 import com.free.tvtracker.data.tracked.TrackedShowsRepository
-import com.free.tvtracker.discover.response.TmdbShowDetailsApiModel
 import com.free.tvtracker.domain.GetTrackedShowUseCase
 import com.free.tvtracker.screens.details.mappers.ShowUiModelMapper
-import com.free.tvtracker.utils.TmdbConfigData
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -24,6 +22,8 @@ class DetailsViewModel(
 ) : ViewModel() {
 
     val result: MutableStateFlow<DetailsUiState> = MutableStateFlow(DetailsUiState.Loading)
+
+    fun getShareLink(): String = (result.value as? DetailsUiState.Ok)?.data?.homepageUrl ?: "Error: missing url"
 
     fun setId(tmdbShowId: Int) {
         result.value = DetailsUiState.Loading
@@ -76,12 +76,20 @@ data class DetailsUiModel(
     val posterUrl: String,
     val releaseStatus: String,
     val trackingStatus: String,
+    val homepageUrl: String?,
     val description: String?,
     val seasonsInfo: String?,
     val seasons: List<Season>?,
     val castFirst: Cast?,
     val castSecond: Cast?,
     val watchProviders: List<WatchProvider>,
+    val mediaTrailer: Video?,
+    val mediaVideosTrailers: List<Video>,
+    val mediaVideosTeasers: List<Video>,
+    val mediaVideosBehindTheScenes: List<Video>,
+    val mediaMostPopularImage: String?,
+    val mediaImagesPosters: List<String>,
+    val mediaImagesBackdrops: List<String>
 ) {
     data class Cast(val irlName: String, val characterName: String, val photo: String)
 
@@ -104,14 +112,7 @@ data class DetailsUiModel(
         )
     }
 
-    data class WatchProvider(val logo: String, val deeplink: String) {
-        companion object {
-            fun TmdbShowDetailsApiModel.WatchProvider.toUiModel(): WatchProvider {
-                return WatchProvider(
-                    logo = TmdbConfigData.get().getLogoUrl(this.logoPath ?: ""),
-                    deeplink = this.providerName ?: ""
-                )
-            }
-        }
-    }
+    data class WatchProvider(val logo: String, val deeplink: String)
+
+    data class Video(val thumbnail: String, val videoUrl: String, val title: String?)
 }

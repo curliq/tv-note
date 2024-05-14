@@ -41,3 +41,5 @@ fun TvImage(imageUrl: String, roundCorner: Boolean = true, modifier: Modifier = 
 }
 
 fun posterRatio() = 1f / 1.5f
+
+fun backdropRatio() = 1.78f / 1f

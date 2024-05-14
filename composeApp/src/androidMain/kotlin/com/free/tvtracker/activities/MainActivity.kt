@@ -33,18 +33,12 @@ class MainActivity : BaseActivity() {
             }?.second
             TvTrackerTheme {
                 Scaffold(
-                    bottomBar = {
-                        BottomNavBar(
-                            appNavController = appNavController,
-                        )
-                    },
+                    bottomBar = { BottomNavBar(appNavController = appNavController) },
                     topBar = {
                         MediumTopAppBar(
                             title = {
                                 BottomNavBarItems.entries.forEach { item ->
-                                    if (currentDestination?.hierarchy?.any {
-                                            it.route == item.destinationId
-                                        } == true) {
+                                    if (currentDestination?.hierarchy?.any { it.route == item.destinationId } == true) {
                                         Text(
                                             text = item.title,
                                             style = TvTrackerTheme.Typography.headlineMedium

@@ -2,14 +2,15 @@ package com.free.tvtracker.screens.details
 
 import com.free.tvtracker.discover.response.TmdbShowDetailsApiModel
 import com.free.tvtracker.screens.details.mappers.ShowUiModelMapper
-import com.free.tvtracker.tracked.response.TmdbShowStatus
+import com.free.tvtracker.discover.response.TmdbShowStatus
 import io.mockk.mockk
 import org.junit.Assert.assertEquals
 import kotlin.test.Test
 
 class ShowUiModelMapperTest {
 
-    private val sut = ShowUiModelMapper(mockk(relaxed = true), mockk(relaxed = true))
+    private val sut =
+        ShowUiModelMapper(mockk(relaxed = true), mockk(relaxed = true), mockk(relaxed = true), mockk(relaxed = true))
 
     @Test
     fun `GIVEN ongoing show from 2015 THEN copy is ongoing`() {

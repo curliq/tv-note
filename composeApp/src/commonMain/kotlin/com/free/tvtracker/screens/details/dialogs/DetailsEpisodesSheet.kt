@@ -2,7 +2,6 @@ package com.free.tvtracker.screens.details.dialogs
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -21,6 +20,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LocalMinimumInteractiveComponentEnforcement
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,6 +29,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextLayoutResult
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import com.free.tvtracker.core.composables.TvImage
 import com.free.tvtracker.core.theme.TvTrackerTheme
@@ -51,7 +55,7 @@ fun DetailsEpisodesContent(
     action: (DetailsViewModel.DetailsAction) -> Unit,
     bottomPadding: Float = 0f
 ) {
-    LazyColumn(contentPadding = PaddingValues(bottom = bottomPadding.dp)) {
+    LazyColumn {
         show.seasons?.forEach { season ->
             stickyHeader {
                 Column(Modifier.fillParentMaxWidth().background(MaterialTheme.colorScheme.surfaceContainerLow)) {
@@ -111,7 +115,19 @@ fun DetailsEpisodesContent(
                         )
                         Spacer(modifier = Modifier.width(TvTrackerTheme.sidePadding))
                         Row(modifier = Modifier.align(Alignment.Top), verticalAlignment = Alignment.CenterVertically) {
-                            Text(ep.number)
+                            val textMeasurer = rememberTextMeasurer()
+                            val textLayoutResult: TextLayoutResult =
+                                textMeasurer.measure(
+                                    text = AnnotatedString(
+                                        if (season.episodes.size <= 9) "0"
+                                        else if (season.episodes.size <= 99) "00"
+                                        else "000"
+                                    ),
+                                    style = LocalTextStyle.current
+                                )
+                            val textSize = textLayoutResult.size
+                            val density = LocalDensity.current
+                            Text(ep.number, modifier = Modifier.width(with(density) { textSize.width.toDp() }))
                             Box(Modifier.padding(horizontal = 8.dp), contentAlignment = Alignment.Center) {
                                 Box(
                                     Modifier.size(4.dp).clip(CircleShape)
@@ -144,6 +160,9 @@ fun DetailsEpisodesContent(
                     Spacer(modifier = Modifier.height(8.dp))
                 }
             }
+        }
+        item {
+            Spacer(modifier = Modifier.height(bottomPadding.dp))
         }
     }
 }

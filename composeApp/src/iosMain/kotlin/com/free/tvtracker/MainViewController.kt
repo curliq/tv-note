@@ -8,14 +8,12 @@ import com.free.tvtracker.screens.finished.FinishedScreen
 import com.free.tvtracker.screens.search.AddTrackedScreen
 import com.free.tvtracker.screens.search.AddTrackedViewModel
 import com.free.tvtracker.screens.settings.SettingsScreen
-import com.free.tvtracker.screens.watching.NavAction
-import com.free.tvtracker.screens.watching.WatchingItem
-import com.free.tvtracker.screens.watching.WatchingItemUiModel
+import com.free.tvtracker.screens.watching.WatchingScreenNavAction
 import com.free.tvtracker.screens.watching.WatchingScreen
 import com.free.tvtracker.screens.watching.WatchingViewModel
 import com.free.tvtracker.screens.watchlist.WatchlistScreen
 
-fun WatchingScreenViewController(navigate: (NavAction) -> Unit, watchingViewModel: WatchingViewModel) =
+fun WatchingScreenViewController(navigate: (WatchingScreenNavAction) -> Unit, watchingViewModel: WatchingViewModel) =
     ComposeUIViewController {
         WatchingScreen(navigate, watchingViewModel)
     }

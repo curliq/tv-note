@@ -34,6 +34,10 @@ data class TmdbConfigData(
         return "${images?.secureBaseUrl}${images?.posterSizes?.get(size)}${path ?: ""}"
     }
 
+    fun getBackdropUrl(path: String?, size: Int = 1): String {
+        return "${images?.secureBaseUrl}${images?.backdropSizes?.get(size)}${path ?: ""}"
+    }
+
     fun getStillUrl(path: String?): String {
         return "${images?.secureBaseUrl}${images?.stillSizes?.get(1)}${path ?: ""}"
     }

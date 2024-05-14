@@ -17,6 +17,8 @@ import com.free.tvtracker.screens.details.mappers.ShowCastUiModelMapper
 import com.free.tvtracker.screens.details.mappers.ShowEpisodeUiModelMapper
 import com.free.tvtracker.screens.details.mappers.ShowSeasonUiModelMapper
 import com.free.tvtracker.screens.details.mappers.ShowUiModelMapper
+import com.free.tvtracker.screens.details.mappers.ShowVideoUiModelMapper
+import com.free.tvtracker.screens.details.mappers.ShowWatchProviderUiModelMapper
 import com.free.tvtracker.screens.watching.GetWatchingShowsUseCase
 import com.free.tvtracker.shared.db.AppDatabase
 import com.squareup.sqldelight.db.SqlDriver
@@ -40,7 +42,9 @@ fun appModules() = module {
     factory<ShowEpisodeUiModelMapper> { ShowEpisodeUiModelMapper() }
     factory<ShowSeasonUiModelMapper> { ShowSeasonUiModelMapper(get()) }
     factory<ShowCastUiModelMapper> { ShowCastUiModelMapper() }
-    factory<ShowUiModelMapper> { ShowUiModelMapper(get(), get()) }
+    factory<ShowWatchProviderUiModelMapper> { ShowWatchProviderUiModelMapper() }
+    factory<ShowVideoUiModelMapper> { ShowVideoUiModelMapper() }
+    factory<ShowUiModelMapper> { ShowUiModelMapper(get(), get(), get(), get()) }
     single<SearchRepository> { SearchRepository(get()) }
     factory<GetNextUnwatchedEpisodeUseCase> { GetNextUnwatchedEpisodeUseCase() }
 }

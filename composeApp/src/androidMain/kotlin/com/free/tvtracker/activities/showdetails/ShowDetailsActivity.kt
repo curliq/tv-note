@@ -1,5 +1,7 @@
 package com.free.tvtracker.activities.showdetails
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Box
@@ -30,8 +32,12 @@ import androidx.compose.ui.unit.dp
 import com.free.tvtracker.core.theme.TvTrackerTheme
 import com.free.tvtracker.core.ui.BaseActivity
 import com.free.tvtracker.screens.details.DetailsScreen
+import com.free.tvtracker.screens.details.DetailsScreenNavAction
+import com.free.tvtracker.screens.details.DetailsViewModel
 import com.free.tvtracker.screens.details.dialogs.DetailsEpisodesSheet
+import com.free.tvtracker.screens.details.dialogs.DetailsMediaSheet
 import org.koin.androidx.compose.koinViewModel
+
 
 class ShowDetailsActivity : BaseActivity() {
     companion object Extras {
@@ -48,7 +54,28 @@ class ShowDetailsActivity : BaseActivity() {
             var showBottomSheet: ShowDetailsNavDestinations? by remember { mutableStateOf(null) }
             val context = LocalContext.current as ShowDetailsActivity
             val modalMaxHeight = LocalConfiguration.current.screenHeightDp.dp.times(0.7f)
+            val navActions: (DetailsScreenNavAction) -> Unit = { action ->
+                when (action) {
+                    DetailsScreenNavAction.GoAllEpisodes -> {
+                        showBottomSheet = ShowDetailsNavDestinations.EPISODES
+                    }
+
+                    is DetailsScreenNavAction.GoYoutube -> {
+                        startActivity(
+                            Intent(
+                                Intent.ACTION_VIEW,
+                                Uri.parse(action.webUrl)
+                            )
+                        )
+                    }
+
+                    DetailsScreenNavAction.GoMedia -> {
+                        showBottomSheet = ShowDetailsNavDestinations.MEDIA
+                    }
+                }
+            }
             TvTrackerTheme {
+                val viewModel: DetailsViewModel = koinViewModel(owner = context)
                 Scaffold(
                     topBar = {
                         TopAppBar(
@@ -61,7 +88,16 @@ class ShowDetailsActivity : BaseActivity() {
                                 }
                             },
                             actions = {
-                                IconButton(onClick = { /* do something */ }) {
+                                IconButton(onClick = {
+                                    val sendIntent: Intent = Intent().apply {
+                                        action = Intent.ACTION_SEND
+                                        putExtra(Intent.EXTRA_TEXT, viewModel.getShareLink())
+                                        type = "text/plain"
+                                    }
+
+                                    val shareIntent = Intent.createChooser(sendIntent, null)
+                                    startActivity(shareIntent)
+                                }) {
                                     Icon(
                                         imageVector = Icons.Rounded.Share,
                                         contentDescription = "Share"
@@ -72,12 +108,13 @@ class ShowDetailsActivity : BaseActivity() {
                     },
                 ) { padding ->
                     DetailsScreen(
-                        viewModel = koinViewModel(owner = context),
+                        viewModel = viewModel,
                         showId = showId,
-                        { showBottomSheet = ShowDetailsNavDestinations.EPISODES },
-                        modifier = Modifier.padding(padding).nestedScroll(scrollBehavior.nestedScrollConnection)
+                        navActions,
+                        modifier = Modifier
+                            .padding(padding)
+                            .nestedScroll(scrollBehavior.nestedScrollConnection)
                     )
-
                     if (showBottomSheet != null) {
                         ModalBottomSheet(
                             onDismissRequest = {
@@ -94,7 +131,13 @@ class ShowDetailsActivity : BaseActivity() {
                                             padding.calculateBottomPadding().value
                                         )
                                     }
-
+                                    ShowDetailsNavDestinations.MEDIA -> {
+                                        DetailsMediaSheet(
+                                            viewModel = koinViewModel(owner = context),
+                                            navActions,
+                                            padding.calculateBottomPadding().value
+                                        )
+                                    }
                                     null -> {}
                                 }
                             }

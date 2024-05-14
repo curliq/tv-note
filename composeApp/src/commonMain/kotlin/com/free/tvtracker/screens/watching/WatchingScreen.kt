@@ -54,16 +54,13 @@ import com.free.tvtracker.core.composables.posterRatio
 import com.free.tvtracker.core.theme.ScreenContentAnimation
 import com.free.tvtracker.core.theme.TvTrackerTheme
 
-sealed class NavAction {
-    data class GoShowDetails(val showId: Int) : NavAction()
-    data object GoAddShow : NavAction()
+sealed class WatchingScreenNavAction {
+    data class GoShowDetails(val tmdbShowId: Int) : WatchingScreenNavAction()
+    data object GoAddShow : WatchingScreenNavAction()
 }
 
 @Composable
-fun WatchingScreen(
-    navigate: (NavAction) -> Unit,
-    viewModel: WatchingViewModel
-) {
+fun WatchingScreen(navigate: (WatchingScreenNavAction) -> Unit, viewModel: WatchingViewModel) {
     val shows = viewModel.shows.collectAsState().value
     TvTrackerTheme {
         AnimatedContent(
@@ -83,7 +80,11 @@ fun WatchingScreen(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun WatchingOk(navigate: (NavAction) -> Unit, markWatched: (Int?, Int?) -> Unit, shows: WatchingUiState.Ok) {
+fun WatchingOk(
+    navigate: (WatchingScreenNavAction) -> Unit,
+    markWatched: (Int?, Int?) -> Unit,
+    shows: WatchingUiState.Ok
+) {
     FabContainer(navigate) {
         LazyColumn(modifier = Modifier.fillMaxHeight(), contentPadding = PaddingValues(vertical = 8.dp)) {
             itemsIndexed(
@@ -92,7 +93,7 @@ fun WatchingOk(navigate: (NavAction) -> Unit, markWatched: (Int?, Int?) -> Unit,
             ) { index, show ->
                 WatchingItem(
                     show,
-                    onClick = { navigate(NavAction.GoShowDetails(show.tmdbId)) },
+                    onClick = { navigate(WatchingScreenNavAction.GoShowDetails(show.tmdbId)) },
                     onMarkWatched = markWatched,
                     modifier = Modifier
                 )
@@ -115,7 +116,7 @@ fun WatchingOk(navigate: (NavAction) -> Unit, markWatched: (Int?, Int?) -> Unit,
                 ) { index, show ->
                     WatchingItem(
                         show,
-                        onClick = { navigate(NavAction.GoShowDetails(show.tmdbId)) },
+                        onClick = { navigate(WatchingScreenNavAction.GoShowDetails(show.tmdbId)) },
                         onMarkWatched = markWatched
                     )
                 }
@@ -125,7 +126,7 @@ fun WatchingOk(navigate: (NavAction) -> Unit, markWatched: (Int?, Int?) -> Unit,
 }
 
 @Composable
-fun WatchingEmpty(navigate: (NavAction) -> Unit) {
+fun WatchingEmpty(navigate: (WatchingScreenNavAction) -> Unit) {
     FabContainer(navigate) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Text(
@@ -138,14 +139,14 @@ fun WatchingEmpty(navigate: (NavAction) -> Unit) {
 }
 
 @Composable
-private fun FabContainer(navigate: (NavAction) -> Unit, content: @Composable (PaddingValues) -> Unit) {
+private fun FabContainer(navigate: (WatchingScreenNavAction) -> Unit, content: @Composable (PaddingValues) -> Unit) {
     Scaffold(
         contentWindowInsets = WindowInsets(0.dp, 0.dp, 0.dp, 0.dp),
         modifier = Modifier.fillMaxSize(),
         floatingActionButtonPosition = FabPosition.EndOverlay,
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { navigate(NavAction.GoAddShow) },
+                onClick = { navigate(WatchingScreenNavAction.GoAddShow) },
             ) {
                 Icon(Icons.Default.Add, "")
             }
