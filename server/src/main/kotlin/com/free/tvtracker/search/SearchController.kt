@@ -1,6 +1,7 @@
 package com.free.tvtracker.search
 
 import com.free.tvtracker.Endpoints
+import com.free.tvtracker.constants.SEASON_SPECIAL_NUMBER
 import com.free.tvtracker.core.logging.TvtrackerLogger
 import com.free.tvtracker.core.tmdb.data.TmdbSearchMultiResponse
 import com.free.tvtracker.core.tmdb.data.TmdbShowBigResponse
@@ -138,7 +139,7 @@ fun TmdbShowBigResponse.toApiModel(episodes: List<TmdbShowDetailsApiModel.Season
     posterPath = this.posterPath,
     productionCompanies = this.productionCompanies.map { it.toApiModel() },
     productionCountries = this.productionCountries.map { it.toApiModel() },
-    seasons = this.seasons.filter { (it.episodeCount ?: 0) > 0 }
+    seasons = this.seasons.filter { it.seasonNumber != SEASON_SPECIAL_NUMBER }
         .map { it.toApiModel(episodes.filter { ep -> ep.seasonNumber == it.seasonNumber }) },
     tagline = this.tagline,
     type = this.type,

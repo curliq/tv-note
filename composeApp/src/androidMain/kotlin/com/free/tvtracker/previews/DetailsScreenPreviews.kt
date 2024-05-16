@@ -21,6 +21,18 @@ object DetailsScreenPreviews {
         seasonsInfo = "2 seasons - 16 episodes - 0h40m each",
         castFirst = DetailsUiModel.Cast("William Dicksdoor 2 lines", "King Joffrey", ""),
         castSecond = DetailsUiModel.Cast("Peter O'mo", "Joffrey's brother", ""),
+        cast = listOf(
+            DetailsUiModel.Cast("William Dicksdoor 2 lines", "King Joffrey", ""),
+            DetailsUiModel.Cast("William Dicksdoor 2 lines", "King Joffrey", ""),
+            DetailsUiModel.Cast("William Dicksdoor 2 lines", "King Joffrey", ""),
+            DetailsUiModel.Cast("William Dicksdoor 2 lines", "King Joffrey", ""),
+        ),
+        crew = listOf(
+            DetailsUiModel.Crew("William Dicksdoor 2 lines", "Director", ""),
+            DetailsUiModel.Crew("William Dicksdoor 2 lines", "Director", ""),
+            DetailsUiModel.Crew("William Dicksdoor 2 lines", "Director", ""),
+            DetailsUiModel.Crew("William Dicksdoor 2 lines", "Director", ""),
+        ),
         watchProviders = listOf(
             DetailsUiModel.WatchProvider("", ""),
             DetailsUiModel.WatchProvider("", ""),

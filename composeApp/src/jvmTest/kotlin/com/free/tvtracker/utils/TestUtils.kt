@@ -2,6 +2,7 @@ package com.free.tvtracker.utils
 
 import com.free.tvtracker.screens.details.DetailsUiModel
 import com.free.tvtracker.screens.details.DetailsUiModel.Cast
+import com.free.tvtracker.screens.details.DetailsUiModel.Crew
 import com.free.tvtracker.screens.details.DetailsUiModel.Season
 import com.free.tvtracker.screens.details.DetailsUiModel.Video
 import com.free.tvtracker.screens.details.DetailsUiModel.WatchProvider
@@ -18,6 +19,8 @@ fun buildDetailsUiModel(
     seasons: List<Season>? = null,
     castFirst: Cast? = null,
     castSecond: Cast? = null,
+    casts: List<Cast>? = null,
+    crew: List<Crew>? = null,
     watchProviders: List<WatchProvider> = emptyList(),
     mediaTrailer: Video? = null,
     mediaVideosTrailers: List<Video> = emptyList(),
@@ -38,6 +41,8 @@ fun buildDetailsUiModel(
     seasons = seasons,
     castFirst = castFirst,
     castSecond = castSecond,
+    cast = casts,
+    crew = crew,
     watchProviders = watchProviders,
     mediaTrailer = mediaTrailer,
     mediaVideosTrailers = mediaVideosTrailers,

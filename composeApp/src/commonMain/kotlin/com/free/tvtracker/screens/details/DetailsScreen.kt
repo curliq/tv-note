@@ -61,6 +61,7 @@ sealed class DetailsScreenNavAction {
     data class GoYoutube(val webUrl: String) : DetailsScreenNavAction()
     data object GoAllEpisodes : DetailsScreenNavAction()
     data object GoMedia : DetailsScreenNavAction()
+    data object GoCastAndCrew : DetailsScreenNavAction()
 }
 
 @Composable
@@ -190,7 +191,7 @@ fun DetailsScreenContent(show: DetailsUiModel, navAction: (DetailsScreenNavActio
             show.castFirst?.let { Box(Modifier.fillMaxWidth().weight(0.4f)) { CastCard(it) } }
             show.castSecond?.let { Box(Modifier.fillMaxWidth().weight(0.4f)) { CastCard(it) } }
             Box(Modifier.fillMaxWidth().weight(0.2f).fillMaxHeight()) {
-                SeeAllCard({ })
+                SeeAllCard { navAction(DetailsScreenNavAction.GoCastAndCrew) }
             }
         }
         Spacer(Modifier.height(24.dp))
@@ -251,18 +252,18 @@ private fun BoxScope.SeeAllCard(onClick: () -> Unit) {
 }
 
 @Composable
-private fun CastCard(cast: DetailsUiModel.Cast) {
+internal fun CastCard(person: DetailsUiModel.Person) {
     Card(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
         modifier = Modifier.fillMaxSize()
     ) {
         Box(Modifier.aspectRatio(1f)) {
-            TvImage(cast.photo, modifier = Modifier.fillMaxHeight().fillMaxWidth())
+            TvImage(person.photo, modifier = Modifier.fillMaxSize())
         }
         Spacer(Modifier.width(8.dp))
         Column(Modifier.padding(8.dp)) {
             Text(
-                cast.irlName,
+                person.irlName,
                 minLines = 1,
                 maxLines = 2,
                 overflow = Ellipsis,
@@ -270,7 +271,9 @@ private fun CastCard(cast: DetailsUiModel.Cast) {
             )
             Spacer(Modifier.height(8.dp))
             Text(
-                cast.characterName,
+                when (person) {
+                    is DetailsUiModel.Cast -> person.characterName; is DetailsUiModel.Crew -> person.job
+                },
                 minLines = 1,
                 maxLines = 2,
                 overflow = Ellipsis,

@@ -4,6 +4,7 @@ import com.free.tvtracker.core.ui.ViewModel
 import com.free.tvtracker.data.search.SearchRepository
 import com.free.tvtracker.data.tracked.MarkEpisodeWatched
 import com.free.tvtracker.data.tracked.TrackedShowsRepository
+import com.free.tvtracker.discover.response.TmdbShowDetailsApiModel
 import com.free.tvtracker.domain.GetTrackedShowUseCase
 import com.free.tvtracker.screens.details.mappers.ShowUiModelMapper
 import kotlinx.coroutines.CoroutineDispatcher
@@ -82,6 +83,8 @@ data class DetailsUiModel(
     val seasons: List<Season>?,
     val castFirst: Cast?,
     val castSecond: Cast?,
+    val cast: List<Cast>,
+    val crew: List<Crew>,
     val watchProviders: List<WatchProvider>,
     val mediaTrailer: Video?,
     val mediaVideosTrailers: List<Video>,
@@ -91,7 +94,13 @@ data class DetailsUiModel(
     val mediaImagesPosters: List<String>,
     val mediaImagesBackdrops: List<String>
 ) {
-    data class Cast(val irlName: String, val characterName: String, val photo: String)
+    sealed interface Person {
+        val irlName: String;
+        val photo: String
+    }
+
+    data class Cast(override val irlName: String, val characterName: String, override val photo: String) : Person
+    data class Crew(override val irlName: String, val job: String, override val photo: String) : Person
 
     data class Season(
         val seasonId: Int,

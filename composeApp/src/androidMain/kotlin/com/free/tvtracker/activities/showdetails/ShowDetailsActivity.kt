@@ -34,6 +34,7 @@ import com.free.tvtracker.core.ui.BaseActivity
 import com.free.tvtracker.screens.details.DetailsScreen
 import com.free.tvtracker.screens.details.DetailsScreenNavAction
 import com.free.tvtracker.screens.details.DetailsViewModel
+import com.free.tvtracker.screens.details.dialogs.DetailsCastCrewSheet
 import com.free.tvtracker.screens.details.dialogs.DetailsEpisodesSheet
 import com.free.tvtracker.screens.details.dialogs.DetailsMediaSheet
 import org.koin.androidx.compose.koinViewModel
@@ -72,6 +73,9 @@ class ShowDetailsActivity : BaseActivity() {
                     DetailsScreenNavAction.GoMedia -> {
                         showBottomSheet = ShowDetailsNavDestinations.MEDIA
                     }
+                    DetailsScreenNavAction.GoCastAndCrew -> {
+                        showBottomSheet = ShowDetailsNavDestinations.CASTCREW
+                    }
                 }
             }
             TvTrackerTheme {
@@ -94,7 +98,6 @@ class ShowDetailsActivity : BaseActivity() {
                                         putExtra(Intent.EXTRA_TEXT, viewModel.getShareLink())
                                         type = "text/plain"
                                     }
-
                                     val shareIntent = Intent.createChooser(sendIntent, null)
                                     startActivity(shareIntent)
                                 }) {
@@ -135,6 +138,13 @@ class ShowDetailsActivity : BaseActivity() {
                                         DetailsMediaSheet(
                                             viewModel = koinViewModel(owner = context),
                                             navActions,
+                                            padding.calculateBottomPadding().value
+                                        )
+                                    }
+                                    ShowDetailsNavDestinations.CASTCREW -> {
+                                        DetailsCastCrewSheet(
+                                            viewModel = koinViewModel(owner = context),
+
                                             padding.calculateBottomPadding().value
                                         )
                                     }

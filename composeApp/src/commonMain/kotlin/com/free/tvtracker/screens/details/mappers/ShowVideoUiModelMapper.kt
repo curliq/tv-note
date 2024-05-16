@@ -2,7 +2,7 @@ package com.free.tvtracker.screens.details.mappers
 
 import com.free.tvtracker.base.Mapper
 import com.free.tvtracker.discover.response.TmdbShowDetailsApiModel
-import com.free.tvtracker.discover.response.TmdbVideoSite
+import com.free.tvtracker.constants.TmdbVideoSite
 import com.free.tvtracker.screens.details.DetailsUiModel.Video
 
 class ShowVideoUiModelMapper : Mapper<TmdbShowDetailsApiModel.Video, Video?> {

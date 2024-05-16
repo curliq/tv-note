@@ -2,8 +2,6 @@ package com.free.tvtracker.stored.shows.domain
 
 import com.free.tvtracker.core.tmdb.data.TmdbShowBigResponse
 import com.free.tvtracker.search.SearchService
-import com.free.tvtracker.stored.shows.data.StoredEpisodeEntity
-import com.free.tvtracker.stored.shows.data.StoredEpisodeJpaRepository
 import com.free.tvtracker.stored.shows.data.StoredShowEntity
 import com.free.tvtracker.stored.shows.data.StoredShowJpaRepository
 import org.springframework.stereotype.Service
@@ -17,16 +15,14 @@ import kotlin.contracts.contract
 @Service
 class StoredShowsService(
     private val storedShowJpaRepository: StoredShowJpaRepository,
-    private val storedEpisodeJpaRepository: StoredEpisodeJpaRepository,
     private val searchService: SearchService,
     private val storedEpisodesService: StoredEpisodesService
 ) {
 
-    fun createOrUpdateStoredShow(tmdbShowId: Int): Pair<StoredShowEntity, List<StoredEpisodeEntity>> {
+    fun createOrUpdateStoredShow(tmdbShowId: Int): StoredShowEntity {
         val storedShow = storedShowJpaRepository.findByTmdbId(tmdbShowId)
         if (isStoredShowCacheValid(storedShow)) {
-            val eps = storedEpisodeJpaRepository.findAllByStoredShowIdIs(storedShow.id)
-            return storedShow to eps
+            return storedShow
         }
         val tmdbShowResponse = searchService.getShow(tmdbShowId)
         val newStoredShow = buildStoredShow(tmdbShowResponse)
@@ -36,8 +32,9 @@ class StoredShowsService(
         }
         storedShowJpaRepository.save(newStoredShow)
         val episodes = storedEpisodesService.getOrCreateEpisodes(tmdbShowResponse, newStoredShow)
+        // assign episodes just for this instance to include them in the api response
         newStoredShow.storedEpisodes = episodes
-        return newStoredShow to episodes
+        return newStoredShow
     }
 
     private fun isStoredShowCacheValid(storedShow: StoredShowEntity?): Boolean {

@@ -14,6 +14,7 @@ import com.free.tvtracker.domain.GetWatchlistedShowsUseCase
 import com.free.tvtracker.domain.IsTrackedShowWatchableUseCase
 import com.free.tvtracker.domain.TrackedShowReducer
 import com.free.tvtracker.screens.details.mappers.ShowCastUiModelMapper
+import com.free.tvtracker.screens.details.mappers.ShowCrewUiModelMapper
 import com.free.tvtracker.screens.details.mappers.ShowEpisodeUiModelMapper
 import com.free.tvtracker.screens.details.mappers.ShowSeasonUiModelMapper
 import com.free.tvtracker.screens.details.mappers.ShowUiModelMapper
@@ -42,9 +43,10 @@ fun appModules() = module {
     factory<ShowEpisodeUiModelMapper> { ShowEpisodeUiModelMapper() }
     factory<ShowSeasonUiModelMapper> { ShowSeasonUiModelMapper(get()) }
     factory<ShowCastUiModelMapper> { ShowCastUiModelMapper() }
+    factory<ShowCrewUiModelMapper> { ShowCrewUiModelMapper() }
     factory<ShowWatchProviderUiModelMapper> { ShowWatchProviderUiModelMapper() }
     factory<ShowVideoUiModelMapper> { ShowVideoUiModelMapper() }
-    factory<ShowUiModelMapper> { ShowUiModelMapper(get(), get(), get(), get()) }
+    factory<ShowUiModelMapper> { ShowUiModelMapper(get(), get(), get(), get(), get()) }
     single<SearchRepository> { SearchRepository(get()) }
     factory<GetNextUnwatchedEpisodeUseCase> { GetNextUnwatchedEpisodeUseCase() }
 }

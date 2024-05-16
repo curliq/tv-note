@@ -1,5 +1,6 @@
 package com.free.tvtracker.stored.shows.domain
 
+import com.free.tvtracker.constants.SEASON_SPECIAL_NUMBER
 import com.free.tvtracker.core.tmdb.TmdbClient
 import com.free.tvtracker.core.tmdb.data.TmdbSeasonResponse
 import com.free.tvtracker.core.tmdb.data.TmdbShowBigResponse
@@ -24,10 +25,9 @@ class StoredEpisodesService(
         tmdbShowResponse: TmdbShowBigResponse,
         storedShow: StoredShowEntity
     ): List<StoredEpisodeEntity> {
-        val seasonBehindTheScenesNumber = 0
         val episodes = arrayListOf<StoredEpisodeEntity>()
         val seasons = tmdbShowResponse.seasons
-            .filterNot { it.seasonNumber == seasonBehindTheScenesNumber }
+            .filterNot { it.seasonNumber == SEASON_SPECIAL_NUMBER }
             .map { it.seasonNumber!! to it.episodeCount!! }
         seasons.forEach { season ->
             if (shouldFetchSeason(season.first, storedShow)) {

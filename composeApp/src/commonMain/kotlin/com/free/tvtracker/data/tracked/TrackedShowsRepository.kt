@@ -125,6 +125,7 @@ class TrackedShowsRepository(
     fun getShowByTmdbId(tmdbShowId: Int): TrackedShowApiModel? {
         return allShows.value.firstOrNull { it.storedShow.tmdbId == tmdbShowId }
     }
+
     fun getShowByTmdbIdFlow(tmdbShowId: Int): Flow<TrackedShowApiModel> {
         return allShows.map { it.firstOrNull { it.storedShow.tmdbId == tmdbShowId } }.filterNotNull()
     }

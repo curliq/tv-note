@@ -60,25 +60,25 @@ fun DetailsMediaSheetContent(
     fun onClick(url: String) = run { navAction(DetailsScreenNavAction.GoYoutube(url)) }
     LazyColumn {
         stickyHeader {
-            Header("Trailers")
+            DetailsSheetHeader("Trailers")
         }
         item {
             VideosGrid(show.mediaVideosTrailers, ::onClick)
         }
         stickyHeader {
-            Header("Teasers")
+            DetailsSheetHeader("Teasers")
         }
         item {
             VideosGrid(show.mediaVideosTeasers, ::onClick)
         }
         stickyHeader {
-            Header("Behind the scenes")
+            DetailsSheetHeader("Behind the scenes")
         }
         item {
             VideosGrid(show.mediaVideosBehindTheScenes, ::onClick)
         }
         stickyHeader {
-            Header("Photos: thumbnails")
+            DetailsSheetHeader("Photos: thumbnails")
         }
         item {
             if (show.mediaImagesBackdrops.isEmpty()) {
@@ -103,7 +103,7 @@ fun DetailsMediaSheetContent(
             }
         }
         stickyHeader {
-            Header("Photos: posters")
+            DetailsSheetHeader("Photos: posters")
         }
         item {
             if (show.mediaImagesPosters.isEmpty()) {
@@ -132,7 +132,7 @@ fun DetailsMediaSheetContent(
 }
 
 @Composable
-private fun LazyItemScope.Header(text: String) {
+internal fun LazyItemScope.DetailsSheetHeader(text: String) {
     Column(Modifier.fillParentMaxWidth().background(MaterialTheme.colorScheme.surfaceContainerLow)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(

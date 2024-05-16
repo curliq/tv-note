@@ -1,4 +1,4 @@
-package com.free.tvtracker.discover.response
+package com.free.tvtracker.constants
 
 
 enum class TmdbVideoSite(val site: String) {

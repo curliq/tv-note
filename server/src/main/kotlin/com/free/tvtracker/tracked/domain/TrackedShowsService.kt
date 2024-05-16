@@ -32,7 +32,7 @@ class TrackedShowsService(
         val trackedShow = TrackedShowEntity(
             userId = userId,
             watchlisted = body.wishlisted,
-            storedShow = storedShow.first,
+            storedShow = storedShow,
         )
         trackedShowJdbcRepository.save(trackedShow)
         return trackedShow
@@ -54,7 +54,7 @@ class TrackedShowsService(
         val userId = sessionService.getSessionUserId()
         val trackedShow = trackedShowJpaRepository.findByUserIdAndWatchlisted(userId, watchlisted = false).map {
             val storedShow = storedShowsService.createOrUpdateStoredShow(it.storedShow.tmdbId)
-            it.copy(storedShow = storedShow.first)
+            it.copy(storedShow = storedShow)
         }.map { it.toApiModel() }
         return isTrackedShowWatchableUseCase.watchable(trackedShow)
     }

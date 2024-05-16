@@ -2,8 +2,8 @@ package com.free.tvtracker.screens.details.mappers
 
 import com.free.tvtracker.base.MapperWithOptions
 import com.free.tvtracker.discover.response.TmdbShowDetailsApiModel
-import com.free.tvtracker.discover.response.TmdbShowStatus
-import com.free.tvtracker.discover.response.TmdbVideoType
+import com.free.tvtracker.constants.TmdbShowStatus
+import com.free.tvtracker.constants.TmdbVideoType
 import com.free.tvtracker.screens.details.DetailsUiModel
 import com.free.tvtracker.tracked.response.TrackedShowApiModel
 import com.free.tvtracker.utils.TmdbConfigData
@@ -11,6 +11,7 @@ import com.free.tvtracker.utils.TmdbConfigData
 class ShowUiModelMapper(
     private val seasonUiModelMapper: ShowSeasonUiModelMapper,
     private val castMapper: ShowCastUiModelMapper,
+    private val crewMapper: ShowCrewUiModelMapper,
     private val showWatchProviderUiModelMapper: ShowWatchProviderUiModelMapper,
     private val showVideoUiModelMapper: ShowVideoUiModelMapper,
 ) : MapperWithOptions<TmdbShowDetailsApiModel, DetailsUiModel, TrackedShowApiModel?> {
@@ -32,6 +33,8 @@ class ShowUiModelMapper(
             seasons = from.seasons.map { seasonUiModelMapper.map(it, ShowSeasonUiModelMapper.O(from.id, options)) },
             castFirst = castMapper.map(from.cast?.getOrNull(0)),
             castSecond = castMapper.map(from.cast?.getOrNull(1)),
+            cast = from.cast?.map { castMapper.map(it) } ?: emptyList(),
+            crew = from.crew?.map { crewMapper.map(it) } ?: emptyList(),
             watchProviders = from.watchProvider?.map { showWatchProviderUiModelMapper.map(it) } ?: emptyList(),
             mediaTrailer = from.videos?.firstOrNull { it.type == TmdbVideoType.TRAILER.type }
                 ?.run { showVideoUiModelMapper.map(this) },

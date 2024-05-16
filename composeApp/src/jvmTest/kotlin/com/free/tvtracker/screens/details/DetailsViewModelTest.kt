@@ -8,7 +8,7 @@ import com.free.tvtracker.discover.response.TmdbShowDetailsApiModel
 import com.free.tvtracker.discover.response.TmdbShowDetailsApiResponse
 import com.free.tvtracker.domain.GetTrackedShowUseCase
 import com.free.tvtracker.screens.details.mappers.ShowUiModelMapper
-import com.free.tvtracker.discover.response.TmdbShowStatus
+import com.free.tvtracker.constants.TmdbShowStatus
 import com.free.tvtracker.tracked.response.TrackedShowApiModel
 import com.free.tvtracker.utils.buildDetailsUiModel
 import io.mockk.coEvery

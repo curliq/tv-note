@@ -1,7 +1,7 @@
 package com.free.tvtracker.domain
 
 import com.free.tvtracker.domain.TrackedShowFiltering.COMING_SOON_DAYS_AWAY
-import com.free.tvtracker.discover.response.TmdbShowStatus
+import com.free.tvtracker.constants.TmdbShowStatus
 import com.free.tvtracker.tracked.response.TrackedShowApiModel
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
