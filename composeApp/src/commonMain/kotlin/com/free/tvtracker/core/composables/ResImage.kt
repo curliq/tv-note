@@ -1,9 +1,9 @@
 package com.free.tvtracker.core.composables
 
+import androidx.compose.foundation.Image
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -16,12 +16,20 @@ import org.jetbrains.compose.resources.painterResource
 @Composable
 fun ResImage(res: DrawableResource, contentDescription: String, modifier: Modifier = Modifier, tint: Color? = null) {
     if (!LocalInspectionMode.current) { //not in @Preview, previews break with this
-        Icon(
-            painter = painterResource(res),
-            contentDescription = contentDescription,
-            modifier = modifier,
-            tint = tint ?: LocalContentColor.current
-        )
+        if (tint != null) {
+            Icon(
+                painter = painterResource(res),
+                contentDescription = contentDescription,
+                modifier = modifier,
+                tint = tint
+            )
+        } else {
+            Image(
+                painter = painterResource(res),
+                contentDescription = contentDescription,
+                modifier = modifier,
+            )
+        }
     } else {
         Icon(Icons.Default.ThumbUp, "", modifier = modifier)
     }

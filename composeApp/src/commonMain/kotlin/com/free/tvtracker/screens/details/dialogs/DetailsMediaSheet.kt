@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -132,8 +133,8 @@ fun DetailsMediaSheetContent(
 }
 
 @Composable
-internal fun LazyItemScope.DetailsSheetHeader(text: String) {
-    Column(Modifier.fillParentMaxWidth().background(MaterialTheme.colorScheme.surfaceContainerLow)) {
+internal fun DetailsSheetHeader(text: String) {
+    Column(Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.surfaceContainerLow)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text,
@@ -169,7 +170,8 @@ private fun VideosGrid(videos: List<DetailsUiModel.Video>, onClick: (String) -> 
             val video = videos[index]
             Card(
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
-                modifier = Modifier.fillMaxWidth().clickable { onClick(video.videoUrl) },
+                onClick = { onClick(video.videoUrl) },
+                modifier = Modifier.fillMaxSize(),
             ) {
                 MediaVideoCard(trailer = video)
                 Spacer(Modifier.width(8.dp))

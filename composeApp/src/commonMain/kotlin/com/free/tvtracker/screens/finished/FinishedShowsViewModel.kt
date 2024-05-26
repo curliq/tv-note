@@ -2,10 +2,8 @@ package com.free.tvtracker.screens.finished
 
 import com.free.tvtracker.core.ui.ViewModel
 import com.free.tvtracker.data.tracked.TrackedShowsRepository
-import com.free.tvtracker.domain.IsTrackedShowWatchableUseCase
 import com.free.tvtracker.domain.GetShowsUseCase
-import com.free.tvtracker.tracked.response.TrackedShowApiModel
-import com.free.tvtracker.utils.TmdbConfigData
+import com.free.tvtracker.domain.IsTrackedShowWatchableUseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -16,6 +14,7 @@ class FinishedShowsViewModel(
     private val trackedShowsRepository: TrackedShowsRepository,
     private val getShowsUseCase: GetShowsUseCase,
     private val isTrackedShowWatchableUseCase: IsTrackedShowWatchableUseCase,
+    private val mapper: FinishedShowUiModelMapper,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : ViewModel() {
     val shows: MutableStateFlow<FinishedUiState> = MutableStateFlow(FinishedUiState.Loading)
@@ -24,11 +23,12 @@ class FinishedShowsViewModel(
         viewModelScope.launch(ioDispatcher) {
             getShowsUseCase(trackedShowsRepository.finishedShows).collect { data ->
                 data.data.asSuccess {
-                    if (data.data.data.isNullOrEmpty()) {
+                    val res = isTrackedShowWatchableUseCase.unwatchable(data.data.data ?: emptyList())
+                    if (res.isEmpty()) {
                         shows.value = FinishedUiState.Empty
                     } else {
                         shows.value = FinishedUiState.Ok(
-                            shows = isTrackedShowWatchableUseCase.unwatchable(data.data.data!!).map { it.toUiModel() }
+                            shows = res.map(mapper.map())
                         )
                     }
                 }
@@ -43,7 +43,7 @@ class FinishedShowsViewModel(
     fun refresh() {
         shows.value = FinishedUiState.Loading
         viewModelScope.launch(ioDispatcher) {
-            trackedShowsRepository.emitLatestFinished()
+            trackedShowsRepository.updateFinished()
         }
     }
 }
@@ -56,21 +56,8 @@ sealed class FinishedUiState {
 }
 
 data class FinishedShowUiModel(
-    val trackedShowId: Int,
     val tmdbId: Int,
     val title: String,
     val image: String,
     val status: String,
-    val nextEpisode: String?,
 )
-
-fun TrackedShowApiModel.toUiModel(): FinishedShowUiModel {
-    return FinishedShowUiModel(
-        trackedShowId = this.id,
-        tmdbId = this.storedShow.tmdbId,
-        title = this.storedShow.title,
-        image = TmdbConfigData.get().getPosterUrl(this.storedShow.posterImage),
-        nextEpisode = "",
-        status = this.storedShow.status
-    )
-}

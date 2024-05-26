@@ -1,6 +1,6 @@
 package com.free.tvtracker.screens.watchlist
 
-import androidx.compose.foundation.border
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,44 +15,76 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.free.tvtracker.core.composables.ErrorScreen
 import com.free.tvtracker.core.composables.LoadingScreen
 import com.free.tvtracker.core.composables.TvImage
 import com.free.tvtracker.core.composables.posterRatio
+import com.free.tvtracker.core.theme.ScreenContentAnimation
 import com.free.tvtracker.core.theme.TvTrackerTheme
+import com.free.tvtracker.screens.watching.FabContainer
+
+sealed class WatchlistScreenNavAction {
+    data class GoShowDetails(val tmdbShowId: Int) : WatchlistScreenNavAction()
+    data object GoAddShow : WatchlistScreenNavAction()
+}
 
 @Composable
-fun WatchlistScreen(viewModel: WatchlistedShowsViewModel) {
+fun WatchlistScreen(viewModel: WatchlistedShowsViewModel, navigate: (WatchlistScreenNavAction) -> Unit) {
     val shows = viewModel.shows.collectAsState().value
     TvTrackerTheme {
-        when (shows) {
-            WatchlistUiState.Empty -> {}
-            WatchlistUiState.Error -> ErrorScreen { viewModel.refresh() }
-            WatchlistUiState.Loading -> LoadingScreen()
-            is WatchlistUiState.Ok -> {
-                LazyColumn(modifier = Modifier.fillMaxSize(), contentPadding = PaddingValues(top = 8.dp)) {
-                    items(shows.shows) { model ->
-                        WatchingItem(model) { }
-                    }
+        FabContainer({ navigate(WatchlistScreenNavAction.GoAddShow) }) {
+            AnimatedContent(
+                shows,
+                transitionSpec = ScreenContentAnimation(),
+                contentKey = { targetState -> targetState::class }
+            ) { targetState ->
+                when (targetState) {
+                    WatchlistUiState.Empty -> WatchlistEmpty { navigate(WatchlistScreenNavAction.GoAddShow) }
+                    WatchlistUiState.Error -> ErrorScreen { viewModel.refresh() }
+                    WatchlistUiState.Loading -> LoadingScreen()
+                    is WatchlistUiState.Ok -> WatchlistOk(targetState, navigate)
                 }
             }
         }
+    }
+}
 
+@Composable
+private fun WatchlistEmpty(navigate: (WatchlistScreenNavAction) -> Unit) {
+    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Text(
+            text = "Haven't watchlisted any show yet.",
+            style = MaterialTheme.typography.labelMedium,
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
+@Composable
+private fun WatchlistOk(shows: WatchlistUiState.Ok, navigate: (WatchlistScreenNavAction) -> Unit) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(vertical = TvTrackerTheme.sidePadding)
+    ) {
+        items(shows.shows) { model ->
+            WatchingItem(model) { navigate(WatchlistScreenNavAction.GoShowDetails(model.tmdbId)) }
+        }
     }
 }
 
 @Composable
 fun WatchingItem(uiModel: WatchlistShowUiModel, onClick: () -> Unit) {
-    OutlinedCard(
+    Card(
         Modifier
             .height(IntrinsicSize.Max)
             .fillMaxWidth()
@@ -65,11 +97,9 @@ fun WatchingItem(uiModel: WatchlistShowUiModel, onClick: () -> Unit) {
                 TvImage(uiModel.image)
             }
             Column(Modifier.padding(16.dp)) {
-                androidx.compose.material3.Text(uiModel.title, maxLines = 1)
+                Text(uiModel.title, maxLines = 1)
                 Spacer(modifier = Modifier.height(8.dp))
-                androidx.compose.material3.Text(uiModel.status)
-                Spacer(modifier = Modifier.height(8.dp))
-                androidx.compose.material3.Text(uiModel.nextEpisode ?: "")
+                Text(uiModel.status, style = TvTrackerTheme.Typography.bodyMedium)
             }
         }
     }

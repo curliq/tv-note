@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.free.tvtracker.screens.search.AddTrackedItemUiModel
 import com.free.tvtracker.screens.search.AddTrackedScreenGrid
+import com.free.tvtracker.screens.search.AddTrackedScreenOriginScreen
 
 @Preview
 @Composable
@@ -17,6 +18,6 @@ fun AddTrackedShowGridPreview() {
         AddTrackedItemUiModel(5, "game of  4", "", true),
     )
     MaterialTheme {
-        AddTrackedScreenGrid(shows, {})
+        AddTrackedScreenGrid(shows, AddTrackedScreenOriginScreen.Watchlist, {}, {})
     }
 }

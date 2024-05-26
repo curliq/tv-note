@@ -16,12 +16,7 @@ class GetWatchingShowsUseCase(
     operator fun invoke(): Flow<ShowsDataStatus> = getShowsUseCase.invoke(trackedShowsRepository.watchingShows).map {
         it.copy(
             data = it.data.copy(
-                data =
-                if (it.data.data != null) {
-                    isTrackedShowWatchableUseCase.watchable(it.data.data!!)
-                } else {
-                    null
-                }
+                data = isTrackedShowWatchableUseCase.watchable(it.data.data ?: emptyList()).filterNot { it.watchlisted }
             )
         )
     }

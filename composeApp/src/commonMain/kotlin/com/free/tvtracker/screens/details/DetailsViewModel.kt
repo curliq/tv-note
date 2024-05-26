@@ -1,44 +1,42 @@
 package com.free.tvtracker.screens.details
 
 import com.free.tvtracker.core.ui.ViewModel
-import com.free.tvtracker.data.search.SearchRepository
 import com.free.tvtracker.data.tracked.MarkEpisodeWatched
 import com.free.tvtracker.data.tracked.TrackedShowsRepository
-import com.free.tvtracker.discover.response.TmdbShowDetailsApiModel
-import com.free.tvtracker.domain.GetTrackedShowUseCase
+import com.free.tvtracker.domain.GetTrackedShowByTmdbIdUseCase
 import com.free.tvtracker.screens.details.mappers.ShowUiModelMapper
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.onEmpty
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class DetailsViewModel(
-    private val searchRepository: SearchRepository,
     private val showUiModelMapper: ShowUiModelMapper,
     private val trackedShowsRepository: TrackedShowsRepository,
-    private val getTrackedShowUseCase: GetTrackedShowUseCase,
+    private val getTrackedShowByTmdbIdUseCase: GetTrackedShowByTmdbIdUseCase,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : ViewModel() {
 
     val result: MutableStateFlow<DetailsUiState> = MutableStateFlow(DetailsUiState.Loading)
 
-    fun getShareLink(): String = (result.value as? DetailsUiState.Ok)?.data?.homepageUrl ?: "Error: missing url"
+    fun getShareLink(): String = (result.value as? DetailsUiState.Ok)?.data?.homepageUrl ?: "Missing url"
 
     fun setId(tmdbShowId: Int) {
         result.value = DetailsUiState.Loading
         viewModelScope.launch(ioDispatcher) {
-            searchRepository.getShow(tmdbShowId)
-                .coAsSuccess { data ->
-                    getTrackedShowUseCase.invoke(tmdbShowId).onEmpty {
-                        result.value = DetailsUiState.Ok(showUiModelMapper.map(data, null))
-                    }.collect { trackedShow ->
-                        result.value = DetailsUiState.Ok(showUiModelMapper.map(data, trackedShow))
-                    }
-                }.asError {
+            getTrackedShowByTmdbIdUseCase.invoke(tmdbShowId).catch {
+                result.value = DetailsUiState.Error
+            }.collect { trackedShowResult ->
+                trackedShowResult.showData.coAsSuccess { data ->
+                    result.value = DetailsUiState.Ok(showUiModelMapper.map(data, trackedShowResult.tracked))
+                }
+                trackedShowResult.showData.asError {
                     result.value = DetailsUiState.Error
                 }
+            }
         }
     }
 
@@ -47,7 +45,7 @@ class DetailsViewModel(
             is DetailsAction.MarkSeasonWatched -> {
                 val trackedShow = trackedShowsRepository.getShowByTmdbId(action.tmdbShowId) ?: return
                 val season =
-                    (result.value as DetailsUiState.Ok).data.seasons?.firstOrNull { it.seasonId == action.seasonId }
+                    (result.value as? DetailsUiState.Ok)?.data?.seasons?.firstOrNull { it.seasonId == action.seasonId }
                 if (season == null) return
                 viewModelScope.launch(ioDispatcher) {
                     val episodes = season.episodes
@@ -57,11 +55,52 @@ class DetailsViewModel(
                     trackedShowsRepository.markEpisodeAsWatched(episodes)
                 }
             }
+
+            is DetailsAction.TrackingAction -> {
+                result.update {
+                    if (it is DetailsUiState.Ok) it.copy(
+                        data = it.data.copy(
+                            trackingStatus = it.data.trackingStatus.copy(
+                                isLoading = true
+                            )
+                        )
+                    ) else it
+                }
+                viewModelScope.launch(ioDispatcher) {
+                    when (action.trackingAction) {
+                        DetailsUiModel.TrackingStatus.Action.RemoveFromWatchlist -> {
+                        }
+
+                        DetailsUiModel.TrackingStatus.Action.RemoveFromWatching -> {
+
+                        }
+
+                        DetailsUiModel.TrackingStatus.Action.TrackWatchlist -> {
+                        }
+
+                        DetailsUiModel.TrackingStatus.Action.TrackWatching -> {
+                            trackedShowsRepository.addTrackedShow(action.tmdbShowId)
+                        }
+
+                        DetailsUiModel.TrackingStatus.Action.MoveToWatchlist -> {
+
+                        }
+
+                        DetailsUiModel.TrackingStatus.Action.MoveToWatching -> {
+
+                        }
+                    }
+                }
+            }
         }
     }
 
     sealed class DetailsAction {
         data class MarkSeasonWatched(val seasonId: Int, val tmdbShowId: Int) : DetailsAction()
+        data class TrackingAction(
+            val tmdbShowId: Int,
+            val trackingAction: DetailsUiModel.TrackingStatus.Action
+        ) : DetailsAction()
     }
 }
 
@@ -76,9 +115,10 @@ data class DetailsUiModel(
     val name: String,
     val posterUrl: String,
     val releaseStatus: String,
-    val trackingStatus: String,
+    val trackingStatus: TrackingStatus,
     val homepageUrl: String?,
     val description: String?,
+    val genres: String?,
     val seasonsInfo: String?,
     val seasons: List<Season>?,
     val castFirst: Cast?,
@@ -92,15 +132,40 @@ data class DetailsUiModel(
     val mediaVideosBehindTheScenes: List<Video>,
     val mediaMostPopularImage: String?,
     val mediaImagesPosters: List<String>,
-    val mediaImagesBackdrops: List<String>
+    val mediaImagesBackdrops: List<String>,
+    val ratingTmdbVoteAverage: String,
+    val ratingTmdbVoteCount: String,
 ) {
     sealed interface Person {
-        val irlName: String;
+        val tmdbId: Int
+        val irlName: String
         val photo: String
     }
 
-    data class Cast(override val irlName: String, val characterName: String, override val photo: String) : Person
-    data class Crew(override val irlName: String, val job: String, override val photo: String) : Person
+    data class Cast(
+        override val tmdbId: Int,
+        override val irlName: String,
+        override val photo: String,
+        val characterName: String,
+    ) : Person
+
+    data class Crew(
+        override val tmdbId: Int,
+        override val irlName: String,
+        override val photo: String,
+        val job: String,
+    ) : Person
+
+    data class TrackingStatus(val action1: Action?, val action2: Action?, val isLoading: Boolean = false) {
+        enum class Action {
+            RemoveFromWatchlist,
+            RemoveFromWatching,
+            TrackWatchlist,
+            TrackWatching,
+            MoveToWatchlist,
+            MoveToWatching,
+        }
+    }
 
     data class Season(
         val seasonId: Int,

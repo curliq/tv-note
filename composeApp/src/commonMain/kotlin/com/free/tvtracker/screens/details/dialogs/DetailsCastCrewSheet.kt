@@ -18,15 +18,20 @@ import androidx.compose.ui.unit.dp
 import com.free.tvtracker.core.composables.NonLazyGrid
 import com.free.tvtracker.core.theme.TvTrackerTheme
 import com.free.tvtracker.screens.details.CastCard
+import com.free.tvtracker.screens.details.DetailsScreenNavAction
 import com.free.tvtracker.screens.details.DetailsUiModel
 import com.free.tvtracker.screens.details.DetailsUiState
 import com.free.tvtracker.screens.details.DetailsViewModel
 
 @Composable
-fun DetailsCastCrewSheet(viewModel: DetailsViewModel, bottomPadding: Float = 0f) {
+fun DetailsCastCrewSheet(
+    viewModel: DetailsViewModel,
+    navActions: (DetailsScreenNavAction) -> Unit,
+    bottomPadding: Float = 0f
+) {
     val show = viewModel.result.collectAsState().value as DetailsUiState.Ok
     TvTrackerTheme {
-        DetailsCastCrewContent(show.data, viewModel::action, bottomPadding)
+        DetailsCastCrewContent(show.data, navActions, bottomPadding)
     }
 }
 
@@ -34,7 +39,7 @@ fun DetailsCastCrewSheet(viewModel: DetailsViewModel, bottomPadding: Float = 0f)
 @Composable
 fun DetailsCastCrewContent(
     show: DetailsUiModel,
-    action: (DetailsViewModel.DetailsAction) -> Unit,
+    navActions: (DetailsScreenNavAction) -> Unit,
     bottomPadding: Float = 0f
 ) {
     LazyColumn {
@@ -44,7 +49,7 @@ fun DetailsCastCrewContent(
         item {
             PersonGrid(show.cast) { item ->
                 val cast = item as DetailsUiModel.Cast
-                CastCard(cast)
+                CastCard(cast) { navActions(DetailsScreenNavAction.GoCastAndCrewDetails(item.tmdbId))}
             }
         }
         stickyHeader {
@@ -53,7 +58,7 @@ fun DetailsCastCrewContent(
         item {
             PersonGrid(show.crew) { item ->
                 val crew = item as DetailsUiModel.Crew
-                CastCard(crew)
+                CastCard(crew) { navActions(DetailsScreenNavAction.GoCastAndCrewDetails(item.tmdbId))}
             }
         }
         item {

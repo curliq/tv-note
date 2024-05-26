@@ -66,7 +66,8 @@ class IsTrackedShowWatchableUseCase(
     fun unwatchable(shows: List<TrackedShowApiModel>): List<TrackedShowApiModel> {
         val order = mapOf(
             TmdbShowStatus.RETURNING.status to 1,
-            TmdbShowStatus.ENDED.status to 2
+            TmdbShowStatus.ENDED.status to 2,
+            TmdbShowStatus.CANCELED.status to 3
         )
         return shows.filter {
             allEpisodesWatched().invoke(it) || !isNextEpisodeSoon().invoke(it)

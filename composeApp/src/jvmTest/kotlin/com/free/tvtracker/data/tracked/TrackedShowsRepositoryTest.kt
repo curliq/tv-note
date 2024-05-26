@@ -1,7 +1,5 @@
 package com.free.tvtracker.data.tracked
 
-import com.free.tvtracker.Endpoints
-import com.free.tvtracker.core.data.http.TvHttpClient
 import com.free.tvtracker.tracked.response.TrackedShowApiModel
 import com.free.tvtracker.tracked.response.TrackedShowApiResponse
 import io.mockk.coEvery
@@ -32,7 +30,7 @@ class TrackedShowsRepositoryTest {
             localDataSource = mockk(relaxed = true),
             watchedEpisodesTaskQueue = mockk(relaxed = true),
         )
-        sut.emitLatestWatching()
+        sut.updateWatching()
         assertEquals(0, sut.watchingShows.first().data.data?.first()?.id)
     }
 }

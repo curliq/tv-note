@@ -31,6 +31,7 @@ class WatchedEpisodesTaskQueue(
     }
 
     private suspend fun trySync(orders: List<MarkEpisodeWatchedOrderClientEntity>) {
+        if (orders.isEmpty()) return
         try {
             val eps = orders.map { AddEpisodesRequest.Episode(it.showId.toInt(), it.episodeId.toInt()) }
             remoteDataSource.call(

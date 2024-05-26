@@ -133,7 +133,7 @@ class IsTrackedShowWatchableUseCaseTest {
     }
 
     @Test
-    fun `GIVEN show with 3 ep watched and 1 unwatched coming out in 9 weeks WHEN get upcoming THEN show not shown`() {
+    fun `GIVEN show with 3 ep watched and 1 unwatched coming out in 3 months WHEN get upcoming THEN show not shown`() {
         val shows = listOf(
             TrackedShowApiModel(
                 1, "",
@@ -147,6 +147,35 @@ class IsTrackedShowWatchableUseCaseTest {
                         TrackedShowApiModel.StoredEpisodeApiModel(1, 1, 1, "2011-01-01"),
                         TrackedShowApiModel.StoredEpisodeApiModel(2, 1, 2, "2011-01-01"),
                         TrackedShowApiModel.StoredEpisodeApiModel(3, 1, 3, "2020-03-07"),
+                    ), "", ""
+                ),
+                false
+            )
+        )
+        val sut = IsTrackedShowWatchableUseCase(
+            GetNextUnwatchedEpisodeUseCase(),
+            clockNow = Instant.parse("2020-01-01T00:00:00Z")
+        )
+        assertEquals(1, sut.canWatchSoon(shows).size)
+        assertEquals(0, sut.canWatchNow(shows).size)
+        assertEquals(0, sut.unwatchable(shows).size)
+    }
+
+    @Test
+    fun `GIVEN show with 3 ep watched and 1 unwatched coming out in 7 months WHEN get upcoming THEN show not shown`() {
+        val shows = listOf(
+            TrackedShowApiModel(
+                1, "",
+                watchedEpisodes = listOf(
+                    TrackedShowApiModel.WatchedEpisodeApiModel("1", 1),
+                    TrackedShowApiModel.WatchedEpisodeApiModel("2", 2),
+                ),
+                storedShow = TrackedShowApiModel.StoredShowApiModel(
+                    1, "title",
+                    storedEpisodes = listOf(
+                        TrackedShowApiModel.StoredEpisodeApiModel(1, 1, 1, "2011-01-01"),
+                        TrackedShowApiModel.StoredEpisodeApiModel(2, 1, 2, "2011-01-01"),
+                        TrackedShowApiModel.StoredEpisodeApiModel(3, 1, 3, "2020-07-07"),
                     ), "", ""
                 ),
                 false

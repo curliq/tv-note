@@ -1,8 +1,13 @@
 package com.free.tvtracker
 
 import com.free.tvtracker.base.ApiResponse
+import com.free.tvtracker.discover.request.RecommendedContentApiRequest
+import com.free.tvtracker.discover.request.TmdbPersonRequestBody
 import com.free.tvtracker.discover.request.TmdbShowDetailsRequestBody
+import com.free.tvtracker.discover.response.RecommendedContentApiResponse
+import com.free.tvtracker.discover.response.TmdbPersonDetailsApiResponse
 import com.free.tvtracker.discover.response.TmdbShowDetailsApiResponse
+import com.free.tvtracker.discover.response.TmdbShowTrendingApiResponse
 import com.free.tvtracker.search.request.SearchApiRequestBody
 import com.free.tvtracker.search.response.SearchApiResponse
 import com.free.tvtracker.tracked.request.AddEpisodesRequest
@@ -15,26 +20,31 @@ import kotlin.reflect.KClass
 
 object Endpoints {
     object Path {
-        const val GET_USER: String = "track/shows/watching"
-        const val WATCHING: String = "track/shows/watching"
-        const val FINISHED: String = "track/shows/finished"
-        const val WATCHLISTED: String = "track/shows/watchlisted"
-        const val ADD_TRACKED: String = "track/shows"
-        const val ADD_EPISODES: String = "track/episodes"
-        const val TOGGLE_WATCHLIST: String = "track/shows/toggle-watchlist"
-        const val SEARCH: String = "search"
-        const val GET_TMDB_SHOW: String = "search/show"
+        const val GET_USER = "track/shows/watching"
+        const val GET_WATCHING = "track/shows/watching"
+        const val GET_FINISHED = "track/shows/finished"
+        const val GET_WATCHLISTED = "track/shows/watchlisted"
+        const val ADD_TRACKED = "track/shows"
+        const val ADD_EPISODES = "track/episodes"
+        const val TOGGLE_WATCHLIST = "track/shows/toggle-watchlist"
+        const val SEARCH = "search"
+        const val GET_TMDB_SHOW = "search/show"
+        const val GET_TMDB_PERSON = "search/person"
+        const val GET_TRENDING_WEEKLY = "discover/trending"
+        const val GET_RELEASED_SOON = "discover/released-soon"
+        const val GET_RECOMMENDED_CONTENT = "discover/recommended"
     }
 
     val getUser = EndpointNoBody(Path.GET_USER, UserApiResponse::class, Endpoint.Verb.GET)
-    val getWatching = EndpointNoBody(Path.WATCHING, TrackedShowApiResponse::class, Endpoint.Verb.GET)
-    val getFinished = EndpointNoBody(Path.FINISHED, TrackedShowApiResponse::class, Endpoint.Verb.GET)
-    val getWatchlisted = EndpointNoBody(Path.WATCHLISTED, TrackedShowApiResponse::class, Endpoint.Verb.GET)
+    val getWatching = EndpointNoBody(Path.GET_WATCHING, TrackedShowApiResponse::class, Endpoint.Verb.GET)
+    val getFinished = EndpointNoBody(Path.GET_FINISHED, TrackedShowApiResponse::class, Endpoint.Verb.GET)
+    val getWatchlisted = EndpointNoBody(Path.GET_WATCHLISTED, TrackedShowApiResponse::class, Endpoint.Verb.GET)
     val addTracked =
         Endpoint(Path.ADD_TRACKED, AddTrackedShowApiResponse::class, AddShowRequest::class, Endpoint.Verb.POST)
     val addEpisodes =
         Endpoint(Path.ADD_EPISODES, AddTrackedEpisodesApiResponse::class, AddEpisodesRequest::class, Endpoint.Verb.POST)
-//    val toggleWatchlist = Endpoint(Path.TOGGLE_WATCHLIST, )
+
+    //    val toggleWatchlist = Endpoint(Path.TOGGLE_WATCHLIST, )
     val search = Endpoint(Path.SEARCH, SearchApiResponse::class, SearchApiRequestBody::class, Endpoint.Verb.POST)
     val getTmdbShow = Endpoint(
         Path.GET_TMDB_SHOW,
@@ -42,6 +52,23 @@ object Endpoints {
         TmdbShowDetailsRequestBody::class,
         Endpoint.Verb.POST
     )
+    val getTmdbPerson = Endpoint(
+        Path.GET_TMDB_PERSON,
+        TmdbPersonDetailsApiResponse::class,
+        TmdbPersonRequestBody::class,
+        Endpoint.Verb.POST
+    )
+    val getTrendingWeekly =
+        EndpointNoBody(Path.GET_TRENDING_WEEKLY, TmdbShowTrendingApiResponse::class, Endpoint.Verb.GET)
+    val getNewEpisodeReleasedSoon =
+        EndpointNoBody(Path.GET_RELEASED_SOON, TmdbShowTrendingApiResponse::class, Endpoint.Verb.GET)
+    val getRecommendedContent =
+        Endpoint(
+            Path.GET_RECOMMENDED_CONTENT,
+            RecommendedContentApiResponse::class,
+            RecommendedContentApiRequest::class,
+            Endpoint.Verb.POST
+        )
 }
 
 open class Endpoint<ReturnType : ApiResponse<out Any>, BodyType : Any>(

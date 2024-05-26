@@ -1,7 +1,7 @@
 package com.free.tvtracker.security
 
-import com.free.tvtracker.user.data.UserEntity
-import com.free.tvtracker.user.data.UserJpaRepository
+import com.free.tvtracker.features.user.data.UserEntity
+import com.free.tvtracker.features.user.data.UserJpaRepository
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService

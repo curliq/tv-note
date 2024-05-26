@@ -1,7 +1,7 @@
 package com.free.tvtracker.security
 
-import com.free.tvtracker.core.logging.RequestLoggingInterceptor
-import com.free.tvtracker.user.data.UserJpaRepository
+import com.free.tvtracker.logging.RequestLoggingInterceptor
+import com.free.tvtracker.features.user.data.UserJpaRepository
 import kotlinx.serialization.json.Json
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean

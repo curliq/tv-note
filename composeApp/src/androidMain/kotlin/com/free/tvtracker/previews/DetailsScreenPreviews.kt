@@ -5,33 +5,33 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.free.tvtracker.core.theme.TvTrackerTheme
-import com.free.tvtracker.previews.DetailsScreenPreviews.uimodel
+import com.free.tvtracker.previews.DetailsScreenPreviews.showDetailsUiModel
 import com.free.tvtracker.screens.details.DetailsScreenContent
 import com.free.tvtracker.screens.details.DetailsUiModel
 
 object DetailsScreenPreviews {
-    val uimodel = DetailsUiModel(
+    val showDetailsUiModel = DetailsUiModel(
         tmdbId = 1,
-        name = "game of thrones",
+        name = "game of thrones thrones thornes",
         posterUrl = "",
         homepageUrl = "",
         releaseStatus = "2014 - Ongoing",
-        trackingStatus = "currently watching",
+        trackingStatus = DetailsUiModel.TrackingStatus(null, null),
         description = "game of thrones is a show about society",
         seasonsInfo = "2 seasons - 16 episodes - 0h40m each",
-        castFirst = DetailsUiModel.Cast("William Dicksdoor 2 lines", "King Joffrey", ""),
-        castSecond = DetailsUiModel.Cast("Peter O'mo", "Joffrey's brother", ""),
+        castFirst = DetailsUiModel.Cast(1, "William Dicksdoor 2 lines", "King Joffrey", ""),
+        castSecond = DetailsUiModel.Cast(1, "Peter O'mo", "Joffrey's brother", ""),
         cast = listOf(
-            DetailsUiModel.Cast("William Dicksdoor 2 lines", "King Joffrey", ""),
-            DetailsUiModel.Cast("William Dicksdoor 2 lines", "King Joffrey", ""),
-            DetailsUiModel.Cast("William Dicksdoor 2 lines", "King Joffrey", ""),
-            DetailsUiModel.Cast("William Dicksdoor 2 lines", "King Joffrey", ""),
+            DetailsUiModel.Cast(1, "William Dicksdoor 2 lines", "King Joffrey", ""),
+            DetailsUiModel.Cast(1, "William Dicksdoor 2 lines", "King Joffrey", ""),
+            DetailsUiModel.Cast(1, "William Dicksdoor 2 lines", "King Joffrey", ""),
+            DetailsUiModel.Cast(1, "William Dicksdoor 2 lines", "King Joffrey", ""),
         ),
         crew = listOf(
-            DetailsUiModel.Crew("William Dicksdoor 2 lines", "Director", ""),
-            DetailsUiModel.Crew("William Dicksdoor 2 lines", "Director", ""),
-            DetailsUiModel.Crew("William Dicksdoor 2 lines", "Director", ""),
-            DetailsUiModel.Crew("William Dicksdoor 2 lines", "Director", ""),
+            DetailsUiModel.Crew(1, "William Dicksdoor 2 lines", "Director", ""),
+            DetailsUiModel.Crew(1, "William Dicksdoor 2 lines", "Director", ""),
+            DetailsUiModel.Crew(1, "William Dicksdoor 2 lines", "Director", ""),
+            DetailsUiModel.Crew(1, "William Dicksdoor 2 lines", "Director", ""),
         ),
         watchProviders = listOf(
             DetailsUiModel.WatchProvider("", ""),
@@ -80,7 +80,7 @@ object DetailsScreenPreviews {
         mediaTrailer = DetailsUiModel.Video("thumbnail url", "video url", "video title"),
         mediaVideosTrailers = listOf(
             DetailsUiModel.Video("thumbnail url", "video url", "video title"),
-            DetailsUiModel.Video("thumbnail url", "video url", "video title"),
+            DetailsUiModel.Video("thumbnail url", "video url", "video title title itle rijelrj er"),
             DetailsUiModel.Video("thumbnail url", "video url", "video title"),
             DetailsUiModel.Video("thumbnail url", "video url", "video title"),
             DetailsUiModel.Video("thumbnail url", "video url", "video title"),
@@ -96,17 +96,20 @@ object DetailsScreenPreviews {
         ),
         mediaMostPopularImage = "url",
         mediaImagesPosters = listOf("url", "url", "url", "url", "url", "url", "url"),
-        mediaImagesBackdrops = listOf("url", "url", "url", "url", "url", "url", "url")
+        mediaImagesBackdrops = listOf("url", "url", "url", "url", "url", "url", "url"),
+        genres = "action, anime",
+        ratingTmdbVoteAverage = "9/10",
+        ratingTmdbVoteCount = "40k"
     )
 }
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@Preview(heightDp = 1200)
+@Preview(heightDp = 1600)
 @Composable
 fun DetailsScreenPreview() {
     TvTrackerTheme {
         Scaffold { padding ->
-            DetailsScreenContent(uimodel, {})
+            DetailsScreenContent(showDetailsUiModel, {}, {})
         }
     }
 }

@@ -1,13 +1,13 @@
 package com.free.tvtracker.activities
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MediumTopAppBar
@@ -16,26 +16,64 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import com.free.tvtracker.R
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
+import com.free.tvtracker.activities.showdetails.ShowDetailsActivity
 import com.free.tvtracker.core.theme.TvTrackerTheme
 import com.free.tvtracker.core.ui.BaseActivity
 import com.free.tvtracker.screens.search.AddTrackedScreen
+import com.free.tvtracker.screens.search.AddTrackedScreenNavAction
+import com.free.tvtracker.screens.search.AddTrackedScreenOriginScreen
 import com.free.tvtracker.screens.search.AddTrackedViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 class AddShowActivity : BaseActivity() {
+    companion object {
+        fun createIntent(context: Context, origin: AddTrackedScreenOriginScreen) =
+            Intent(context, AddShowActivity::class.java).apply {
+                putExtra(
+                    EXTRA_ORIGIN_SCREEN, origin.ordinal
+                )
+            }
+
+        const val EXTRA_ORIGIN_SCREEN = "EXTRA_ORIGIN_SCREEN"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             val viewModel: AddTrackedViewModel = koinViewModel()
+            val origin = AddTrackedScreenOriginScreen.entries[intent.getIntExtra(
+                EXTRA_ORIGIN_SCREEN,
+                AddTrackedScreenOriginScreen.Watching.ordinal
+            )]
+            val context = LocalContext.current as AddShowActivity
             val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+            val navActions = { action: AddTrackedScreenNavAction ->
+                when (action) {
+                    is AddTrackedScreenNavAction.GoContentDetails -> {
+                        context.startActivity(
+                            Intent(
+                                context,
+                                ShowDetailsActivity::class.java
+                            ).putExtra(ShowDetailsActivity.EXTRA_SHOW_ID, action.showTmdbId)
+                        )
+                    }
+                }
+            }
+            val title = when (origin) {
+                AddTrackedScreenOriginScreen.Watching -> "Add to tracking"
+                AddTrackedScreenOriginScreen.Finished -> "Add to tracking"
+                AddTrackedScreenOriginScreen.Watchlist -> "Add to watchlist"
+                AddTrackedScreenOriginScreen.Discover -> "Search"
+            }
             TvTrackerTheme {
                 Scaffold(
+                    modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
                     topBar = {
                         MediumTopAppBar(
-                            title = { Text(text = "Add to tracking") },
+                            title = { Text(text = title) },
                             scrollBehavior = scrollBehavior,
                             colors = TopAppBarDefaults.mediumTopAppBarColors(),
                             navigationIcon = {
@@ -44,19 +82,14 @@ class AddShowActivity : BaseActivity() {
                                 }
                             }
                         )
-                    },
-                    floatingActionButton = {
-                        FloatingActionButton(
-                            onClick = {
-                                viewModel.focusSearch()
-                            },
-                            modifier = Modifier.imePadding()
-                        ) {
-                            Icon(painterResource(id = R.drawable.ic_keyboard_up_ic), "")
-                        }
                     }
                 ) { padding ->
-                    AddTrackedScreen(viewModel = viewModel, modifier = Modifier.padding(padding))
+                    AddTrackedScreen(
+                        viewModel = viewModel,
+                        navActions = navActions,
+                        originScreen = origin,
+                        modifier = Modifier.padding(padding)
+                    )
                 }
             }
         }

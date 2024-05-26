@@ -9,6 +9,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.navigation.NavDestination.Companion.hierarchy
 import com.free.tvtracker.core.theme.TvTrackerTheme
 import com.free.tvtracker.core.ui.BaseActivity
@@ -30,9 +32,10 @@ class MainActivity : BaseActivity() {
             }
             val scroll = scrollBehaviors.firstOrNull { scroll ->
                 currentDestination?.hierarchy?.any { dest -> dest.route == scroll.first } == true
-            }?.second
+            }?.second ?: TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
             TvTrackerTheme {
                 Scaffold(
+                    modifier = Modifier.nestedScroll(scroll.nestedScrollConnection),
                     bottomBar = { BottomNavBar(appNavController = appNavController) },
                     topBar = {
                         MediumTopAppBar(

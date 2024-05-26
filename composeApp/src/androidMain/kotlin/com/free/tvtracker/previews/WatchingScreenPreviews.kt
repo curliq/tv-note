@@ -13,7 +13,7 @@ import com.free.tvtracker.screens.watching.WatchingEmpty
 @Composable
 fun WatchingEmptyPreview() {
     TvTrackerTheme {
-        WatchingEmpty(navigate = {})
+        WatchingEmpty()
     }
 }
 
@@ -39,6 +39,7 @@ fun WatchingOkNoWaitingPreview() {
                             season = "S1",
                             seasonNumber = 1,
                         ),
+                        nextEpisodeCountdown = "null"
                     ),
                     WatchingItemUiModel(
                         trackedShowId = 2,
@@ -52,7 +53,8 @@ fun WatchingOkNoWaitingPreview() {
                             episodeNumber = 1,
                             season = "S1",
                             seasonNumber = 1,
-                        )
+                        ),
+                        nextEpisodeCountdown = "null"
                     )
                 ),
                 waitingNextEpisode = emptyList()
@@ -83,6 +85,7 @@ fun WatchingOkWithWaitingPreview() {
                             season = "S1",
                             seasonNumber = 1,
                         ),
+                        nextEpisodeCountdown = "null"
                     ),
                     WatchingItemUiModel(
                         trackedShowId = 2,
@@ -96,7 +99,8 @@ fun WatchingOkWithWaitingPreview() {
                             episodeNumber = 1,
                             season = "S1",
                             seasonNumber = 1,
-                        )
+                        ),
+                        nextEpisodeCountdown = "null"
                     )
                 ),
                 waitingNextEpisode = listOf(
@@ -113,6 +117,7 @@ fun WatchingOkWithWaitingPreview() {
                             season = "S1",
                             seasonNumber = 1,
                         ),
+                        nextEpisodeCountdown = "null"
                     )
                 )
             ),
@@ -144,6 +149,7 @@ fun WatchingOkNoWatchablePreview() {
                             season = "S1",
                             seasonNumber = 1,
                         ),
+                        nextEpisodeCountdown = "null"
                     )
                 )
             ),

@@ -8,6 +8,7 @@ import com.free.tvtracker.utils.TmdbConfigData
 class ShowCastUiModelMapper : Mapper<TmdbShowDetailsApiModel.Cast?, Cast> {
     override fun map(from: TmdbShowDetailsApiModel.Cast?): Cast {
         return Cast(
+            tmdbId = from?.id ?: 0,
             irlName = from?.name ?: "",
             characterName = from?.character ?: "",
             photo = TmdbConfigData.get().getPosterUrl(from?.profilePath ?: "")

@@ -29,6 +29,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.free.tvtracker.activities.person.PersonDetailsActivity
 import com.free.tvtracker.core.theme.TvTrackerTheme
 import com.free.tvtracker.core.ui.BaseActivity
 import com.free.tvtracker.screens.details.DetailsScreen
@@ -43,6 +44,12 @@ import org.koin.androidx.compose.koinViewModel
 class ShowDetailsActivity : BaseActivity() {
     companion object Extras {
         const val EXTRA_SHOW_ID = "EXTRA_SHOW_ID"
+    }
+
+    enum class ShowDetailsNavDestinations {
+        EPISODES,
+        MEDIA,
+        CASTCREW,
     }
 
     @OptIn(ExperimentalMaterial3Api::class)
@@ -73,14 +80,25 @@ class ShowDetailsActivity : BaseActivity() {
                     DetailsScreenNavAction.GoMedia -> {
                         showBottomSheet = ShowDetailsNavDestinations.MEDIA
                     }
+
                     DetailsScreenNavAction.GoCastAndCrew -> {
                         showBottomSheet = ShowDetailsNavDestinations.CASTCREW
+                    }
+
+                    is DetailsScreenNavAction.GoCastAndCrewDetails -> {
+                        startActivity(
+                            Intent(
+                                context,
+                                PersonDetailsActivity::class.java
+                            ).putExtra(PersonDetailsActivity.EXTRA_PERSON_ID, action.personTmdbId)
+                        )
                     }
                 }
             }
             TvTrackerTheme {
                 val viewModel: DetailsViewModel = koinViewModel(owner = context)
                 Scaffold(
+                    modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
                     topBar = {
                         TopAppBar(
                             title = { },
@@ -134,6 +152,7 @@ class ShowDetailsActivity : BaseActivity() {
                                             padding.calculateBottomPadding().value
                                         )
                                     }
+
                                     ShowDetailsNavDestinations.MEDIA -> {
                                         DetailsMediaSheet(
                                             viewModel = koinViewModel(owner = context),
@@ -141,13 +160,15 @@ class ShowDetailsActivity : BaseActivity() {
                                             padding.calculateBottomPadding().value
                                         )
                                     }
+
                                     ShowDetailsNavDestinations.CASTCREW -> {
                                         DetailsCastCrewSheet(
                                             viewModel = koinViewModel(owner = context),
-
+                                            navActions,
                                             padding.calculateBottomPadding().value
                                         )
                                     }
+
                                     null -> {}
                                 }
                             }

@@ -9,7 +9,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -29,12 +28,10 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Search
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DockedSearchBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -64,9 +61,20 @@ import com.free.tvtracker.core.composables.posterRatio
 import com.free.tvtracker.core.theme.TvTrackerTheme
 import com.free.tvtracker.core.theme.TvTrackerTheme.sidePadding
 
+sealed class AddTrackedScreenNavAction {
+    data class GoContentDetails(val showTmdbId: Int) : AddTrackedScreenNavAction()
+}
+
+enum class AddTrackedScreenOriginScreen { Watching, Finished, Watchlist, Discover }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddTrackedScreen(viewModel: AddTrackedViewModel, modifier: Modifier = Modifier) {
+fun AddTrackedScreen(
+    viewModel: AddTrackedViewModel,
+    navActions: (AddTrackedScreenNavAction) -> Unit,
+    originScreen: AddTrackedScreenOriginScreen,
+    modifier: Modifier = Modifier
+) {
     val query = viewModel.searchQuery.collectAsState().value
     val results = viewModel.results.collectAsState().value
     val focusRequester = remember { FocusRequester() }
@@ -117,7 +125,13 @@ fun AddTrackedScreen(viewModel: AddTrackedViewModel, modifier: Modifier = Modifi
                     "Search again"
                 ) { viewModel.searchRefresh() }
 
-                is AddTrackedUiState.Ok -> AddTrackedScreenGrid(results.data, viewModel::action)
+                is AddTrackedUiState.Ok -> AddTrackedScreenGrid(
+                    results.data,
+                    originScreen,
+                    viewModel::action,
+                    navActions
+                )
+
                 is AddTrackedUiState.Empty -> EmptyView()
             }
         }
@@ -126,7 +140,13 @@ fun AddTrackedScreen(viewModel: AddTrackedViewModel, modifier: Modifier = Modifi
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun AddTrackedScreenGrid(results: List<AddTrackedItemUiModel>, action: (AddTrackedViewModel.Action) -> Unit) {
+fun AddTrackedScreenGrid(
+    results: List<AddTrackedItemUiModel>,
+    originScreen: AddTrackedScreenOriginScreen,
+    action: (AddTrackedViewModel.Action) -> Unit,
+    navActions: (AddTrackedScreenNavAction) -> Unit,
+) {
+    val trackText = if (originScreen == AddTrackedScreenOriginScreen.Watchlist) "Watchlist" else "Track"
     LazyVerticalGrid(
         modifier = Modifier.fillMaxWidth(),
         columns = GridCells.Fixed(3),
@@ -134,8 +154,11 @@ fun AddTrackedScreenGrid(results: List<AddTrackedItemUiModel>, action: (AddTrack
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        items(results, key = { item -> item.id }) { item ->
-            OutlinedCard(Modifier.fillMaxHeight().animateItemPlacement()) {
+        items(results, key = { item -> item.tmdbId }) { item ->
+            OutlinedCard(
+                modifier = Modifier.fillMaxHeight().animateItemPlacement(),
+                onClick = { navActions(AddTrackedScreenNavAction.GoContentDetails(item.tmdbId)) },
+            ) {
                 Box(Modifier.aspectRatio(posterRatio())) {
                     TvImage(item.image, modifier = Modifier.fillMaxHeight().fillMaxWidth())
                 }
@@ -148,17 +171,18 @@ fun AddTrackedScreenGrid(results: List<AddTrackedItemUiModel>, action: (AddTrack
                         overflow = Ellipsis,
                         style = TvTrackerTheme.Typography.labelMedium
                     )
+                    if (originScreen == AddTrackedScreenOriginScreen.Discover) return@Column
                     Spacer(Modifier.height(16.dp))
                     val tracked = item.tracked
                     Row(modifier = Modifier.height(40.dp), verticalAlignment = Alignment.CenterVertically) {
                         Surface(
-                            shape = RoundedCornerShape(40.dp),
+                            shape = TvTrackerTheme.ShapeButton,
                             color = MaterialTheme.colorScheme.secondaryContainer,
                             modifier = Modifier
                                 .height(40.dp)
-                                .clip(RoundedCornerShape(40.dp))
+                                .clip(TvTrackerTheme.ShapeButton)
                                 .clickable(enabled = !tracked) {
-                                    action(AddTrackedViewModel.Action.AddToTracked(item.id))
+                                    action(AddTrackedViewModel.Action.AddToTracked(item.tmdbId, originScreen))
                                 }
                         ) {
                             Box(
@@ -187,9 +211,9 @@ fun AddTrackedScreenGrid(results: List<AddTrackedItemUiModel>, action: (AddTrack
                                     exit = fadeOut(animationSpec = tween(220))
                                 ) {
                                     Text(
-                                        "Track",
+                                        trackText,
                                         style = TvTrackerTheme.Typography.labelLarge,
-                                        modifier = Modifier.padding(ButtonDefaults.ContentPadding)
+                                        modifier = Modifier.padding(horizontal = 12.dp).align(Alignment.Center),
                                     )
                                 }
                             }

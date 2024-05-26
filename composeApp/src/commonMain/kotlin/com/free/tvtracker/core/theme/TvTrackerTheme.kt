@@ -1,6 +1,7 @@
 package com.free.tvtracker.core.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
@@ -16,6 +17,8 @@ object TvTrackerTheme {
     val ShapeCornerMedium = 12.dp
     val FilledButtonHeight = 40.dp
     val sidePadding = 16.dp
+
+    val ShapeButton = RoundedCornerShape(8.dp)
 
     val Typography = Typography(
         headlineMedium = Typography().headlineMedium.copy(fontWeight = FontWeight.Bold),

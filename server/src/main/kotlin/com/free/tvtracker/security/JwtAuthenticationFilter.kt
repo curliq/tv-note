@@ -1,6 +1,6 @@
 package com.free.tvtracker.security
 
-import com.free.tvtracker.core.logging.TvtrackerLogger
+import com.free.tvtracker.logging.TvtrackerLogger
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse

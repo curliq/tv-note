@@ -19,6 +19,10 @@ abstract class ApiResponse<T> {
         return data != null
     }
 
+    fun isError(): Boolean {
+        return data == null
+    }
+
     fun failedToParse(): Boolean {
         return data == null && application_error == null
     }

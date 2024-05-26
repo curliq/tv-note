@@ -28,6 +28,6 @@ fun MainNavHost(padding: PaddingValues, navController: AppNavController) {
         popEnterTransition = { fadeIn(animationSpec = tween(durationMillis = 0)) },
         popExitTransition = { fadeOut(animationSpec = tween(durationMillis = 0)) }
     ) {
-        mainNavGraph(navController, context)
+        mainNavGraph(navController, context, padding)
     }
 }

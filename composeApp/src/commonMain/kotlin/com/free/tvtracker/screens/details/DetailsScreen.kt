@@ -2,6 +2,7 @@ package com.free.tvtracker.screens.details
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -21,16 +22,21 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowForward
+import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material.icons.rounded.PlayArrow
+import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -46,7 +52,9 @@ import androidx.compose.ui.text.style.TextOverflow.Companion.Ellipsis
 import androidx.compose.ui.unit.dp
 import besttvtracker.composeapp.generated.resources.Res
 import besttvtracker.composeapp.generated.resources.justwatch_logo_lightmode
+import besttvtracker.composeapp.generated.resources.tmdb_logo
 import com.free.tvtracker.core.composables.ErrorScreen
+import com.free.tvtracker.core.composables.LoadingIndicator
 import com.free.tvtracker.core.composables.LoadingScreen
 import com.free.tvtracker.core.composables.NonLazyGrid
 import com.free.tvtracker.core.composables.ResImage
@@ -55,6 +63,7 @@ import com.free.tvtracker.core.composables.posterRatio
 import com.free.tvtracker.core.theme.ScreenContentAnimation
 import com.free.tvtracker.core.theme.TvTrackerTheme
 import com.free.tvtracker.core.theme.TvTrackerTheme.sidePadding
+import com.free.tvtracker.screens.details.DetailsUiModel.TrackingStatus.Action.*
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 
 sealed class DetailsScreenNavAction {
@@ -62,6 +71,7 @@ sealed class DetailsScreenNavAction {
     data object GoAllEpisodes : DetailsScreenNavAction()
     data object GoMedia : DetailsScreenNavAction()
     data object GoCastAndCrew : DetailsScreenNavAction()
+    data class GoCastAndCrewDetails(val personTmdbId: Int) : DetailsScreenNavAction()
 }
 
 @Composable
@@ -73,15 +83,19 @@ fun DetailsScreen(
 ) {
     TvTrackerTheme {
         Scaffold(modifier.fillMaxSize()) {
-            LaunchedEffect(viewModel) {
+            LaunchedEffect(showId) {
                 viewModel.setId(showId)
             }
             val show = viewModel.result.collectAsState().value
-            AnimatedContent(show, transitionSpec = ScreenContentAnimation()) { targetState ->
+            AnimatedContent(
+                show,
+                transitionSpec = ScreenContentAnimation(),
+                contentKey = { targetState -> targetState::class }
+            ) { targetState ->
                 when (targetState) {
                     DetailsUiState.Error -> ErrorScreen { viewModel.setId(showId) }
                     DetailsUiState.Loading -> LoadingScreen()
-                    is DetailsUiState.Ok -> DetailsScreenContent(targetState.data, navAction)
+                    is DetailsUiState.Ok -> DetailsScreenContent(targetState.data, navAction, viewModel::action)
                 }
             }
         }
@@ -90,12 +104,16 @@ fun DetailsScreen(
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-fun DetailsScreenContent(show: DetailsUiModel, navAction: (DetailsScreenNavAction) -> Unit) {
+fun DetailsScreenContent(
+    show: DetailsUiModel,
+    navAction: (DetailsScreenNavAction) -> Unit,
+    showAction: (DetailsViewModel.DetailsAction) -> Unit
+) {
     Column(Modifier.padding(horizontal = sidePadding).fillMaxWidth().verticalScroll(rememberScrollState())) {
         Row(Modifier.fillMaxWidth().padding(vertical = 16.dp)) {
             OutlinedCard {
                 Box(
-                    Modifier.width(80.dp).aspectRatio(posterRatio())
+                    Modifier.width(100.dp).aspectRatio(posterRatio())
                 ) {
                     TvImage(show.posterUrl, modifier = Modifier.fillMaxWidth())
                 }
@@ -107,16 +125,58 @@ fun DetailsScreenContent(show: DetailsUiModel, navAction: (DetailsScreenNavActio
                 Text(text = show.releaseStatus, style = TvTrackerTheme.Typography.bodySmall)
             }
         }
-        Text(text = show.trackingStatus)
-        Button(onClick = {}, modifier = Modifier.fillMaxWidth()) {
-            Text("Add to watchlist")
+        Row {
+            fun text(action: DetailsUiModel.TrackingStatus.Action?): String = when (action) {
+                RemoveFromWatchlist -> "De-watchlist"
+                RemoveFromWatching -> "De-list"
+                TrackWatchlist -> "Add to watchlist"
+                TrackWatching -> "Add to watching"
+                MoveToWatchlist -> "Move to watchlist"
+                MoveToWatching -> "Move to watching"
+                null -> ""
+            }
+            show.trackingStatus.action1?.let { action ->
+                Button(
+                    onClick = { showAction(DetailsViewModel.DetailsAction.TrackingAction(show.tmdbId, action)) },
+                    modifier = Modifier.weight(0.5f, true)
+                ) {
+                    if (!show.trackingStatus.isLoading) {
+                        Text(text(action))
+                    } else {
+                        LoadingIndicator(
+                            modifier = Modifier.height(24.dp).aspectRatio(1f),
+                            color = MaterialTheme.colorScheme.onPrimary
+                        )
+                    }
+                }
+            }
+            Spacer(Modifier.width(8.dp))
+            show.trackingStatus.action2?.let { action ->
+                OutlinedButton(
+                    onClick = { showAction(DetailsViewModel.DetailsAction.TrackingAction(show.tmdbId, action)) },
+                    modifier = Modifier.weight(0.5f, true)
+                ) {
+                    val color = when (action) {
+                        RemoveFromWatchlist, RemoveFromWatching -> Color.Red
+                        else -> Color.Unspecified
+                    }
+                    if (!show.trackingStatus.isLoading) {
+                        Text(text(show.trackingStatus.action2), color = color)
+                    } else {
+                        LoadingIndicator(
+                            modifier = Modifier.height(24.dp).aspectRatio(1f),
+                        )
+                    }
+                }
+            }
         }
         Spacer(Modifier.height(24.dp))
+
         Text("Where to watch", style = TvTrackerTheme.Typography.titleLarge)
         Row(verticalAlignment = Alignment.Bottom) {
             Text("Source:  ", style = TvTrackerTheme.Typography.labelSmall)
-            //todo test on ios
             val tint = if (isSystemInDarkTheme()) {
+                //todo test on ios
                 Color(0xffFBD446)
             } else {
                 null
@@ -136,10 +196,29 @@ fun DetailsScreenContent(show: DetailsUiModel, navAction: (DetailsScreenNavActio
             }
         }
         Spacer(Modifier.height(24.dp))
+
         Text("Plot", style = TvTrackerTheme.Typography.titleLarge)
         Spacer(Modifier.height(8.dp))
         Text(text = show.description ?: "No description available")
         Spacer(Modifier.height(24.dp))
+
+        if (!show.genres.isNullOrEmpty()) {
+            Text("Genres", style = TvTrackerTheme.Typography.titleLarge)
+            Text(text = show.genres)
+            Spacer(Modifier.height(24.dp))
+        }
+
+        Text(text = "Episodes", style = TvTrackerTheme.Typography.titleLarge)
+        Spacer(Modifier.height(8.dp))
+        Text(text = show.seasonsInfo ?: "No seasons available")
+        Spacer(Modifier.height(8.dp))
+        FilledTonalButton(
+            onClick = { navAction(DetailsScreenNavAction.GoAllEpisodes) },
+            content = { Text("See all episodes") },
+            shape = TvTrackerTheme.ShapeButton
+        )
+        Spacer(Modifier.height(24.dp))
+
         Text("Trailers & photos", style = TvTrackerTheme.Typography.titleLarge)
         Spacer(Modifier.height(8.dp))
         Row(
@@ -150,8 +229,8 @@ fun DetailsScreenContent(show: DetailsUiModel, navAction: (DetailsScreenNavActio
                 Box(Modifier.fillMaxWidth().weight(0.4f)) {
                     Card(
                         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
+                        onClick = { navAction(DetailsScreenNavAction.GoYoutube(trailer.videoUrl)) },
                         modifier = Modifier.fillMaxSize()
-                            .clickable { navAction(DetailsScreenNavAction.GoYoutube(trailer.videoUrl)) }
                     ) {
                         MediaVideoCard(trailer = trailer)
                     }
@@ -174,32 +253,69 @@ fun DetailsScreenContent(show: DetailsUiModel, navAction: (DetailsScreenNavActio
             }
         }
         Spacer(Modifier.height(24.dp))
-        Text(text = "Episodes", style = TvTrackerTheme.Typography.titleLarge)
-        Spacer(Modifier.height(8.dp))
-        Text(text = show.seasonsInfo ?: "No seasons available")
-        Spacer(Modifier.height(8.dp))
-        FilledTonalButton(
-            onClick = { navAction(DetailsScreenNavAction.GoAllEpisodes) },
-            content = { Text("See all episodes") })
-        Spacer(Modifier.height(24.dp))
+
         Text(text = "Cast & crew", style = TvTrackerTheme.Typography.titleLarge)
         Spacer(Modifier.height(8.dp))
         Row(
             modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            show.castFirst?.let { Box(Modifier.fillMaxWidth().weight(0.4f)) { CastCard(it) } }
-            show.castSecond?.let { Box(Modifier.fillMaxWidth().weight(0.4f)) { CastCard(it) } }
+            show.castFirst?.let {
+                Box(Modifier.fillMaxWidth().weight(0.4f)) {
+                    CastCard(it) { navAction(DetailsScreenNavAction.GoCastAndCrewDetails(it.tmdbId)) }
+                }
+            }
+            show.castSecond?.let {
+                Box(Modifier.fillMaxWidth().weight(0.4f)) {
+                    CastCard(it) { navAction(DetailsScreenNavAction.GoCastAndCrewDetails(it.tmdbId)) }
+                }
+            }
             Box(Modifier.fillMaxWidth().weight(0.2f).fillMaxHeight()) {
                 SeeAllCard { navAction(DetailsScreenNavAction.GoCastAndCrew) }
             }
         }
         Spacer(Modifier.height(24.dp))
-        Text(text = "Reviews", style = TvTrackerTheme.Typography.titleLarge)
+
+        Text(text = "Reviews & ratings", style = TvTrackerTheme.Typography.titleLarge)
         Spacer(Modifier.height(8.dp))
-        Row {
-            //todo
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Card(
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
+                modifier = Modifier.fillMaxWidth(0.3f)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .border(
+                            1.dp,
+                            MaterialTheme.colorScheme.outlineVariant,
+                            RoundedCornerShape(TvTrackerTheme.ShapeCornerMedium)
+                        )
+                        .clip(RoundedCornerShape(TvTrackerTheme.ShapeCornerMedium))
+                        .padding(8.dp)
+                        .fillMaxWidth()
+                ) {
+                    ResImage(Res.drawable.tmdb_logo, "tmdb", modifier = Modifier.fillMaxWidth().aspectRatio(1f))
+                }
+                Column(modifier = Modifier.padding(8.dp)) {
+                    Row {
+                        Icon(Icons.Rounded.Star, "rating", Modifier.size(20.dp))
+                        Spacer(Modifier.width(4.dp))
+                        Text(show.ratingTmdbVoteAverage)
+                    }
+                    Row {
+                        Icon(Icons.Rounded.Person, "person", Modifier.size(20.dp))
+                        Spacer(Modifier.width(4.dp))
+                        Text(show.ratingTmdbVoteCount)
+                    }
+                }
+            }
+            Text(
+                "I will add IMDB and rotten tomatoes at some point.",
+                style = TvTrackerTheme.Typography.labelMedium,
+                modifier = Modifier.padding(horizontal = 24.dp).align(Alignment.CenterVertically)
+            )
         }
+        Spacer(Modifier.height(24.dp))
     }
 }
 
@@ -223,7 +339,7 @@ fun MediaVideoCard(trailer: DetailsUiModel.Video) {
 }
 
 @Composable
-private fun BoxScope.SeeAllCard(onClick: () -> Unit) {
+fun BoxScope.SeeAllCard(onClick: () -> Unit) {
     Card(
         modifier = Modifier.fillMaxSize().align(Alignment.Center),
         colors = CardDefaults.cardColors(
@@ -252,9 +368,10 @@ private fun BoxScope.SeeAllCard(onClick: () -> Unit) {
 }
 
 @Composable
-internal fun CastCard(person: DetailsUiModel.Person) {
+internal fun CastCard(person: DetailsUiModel.Person, onClick: () -> Unit) {
     Card(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
+        onClick = { onClick() },
         modifier = Modifier.fillMaxSize()
     ) {
         Box(Modifier.aspectRatio(1f)) {

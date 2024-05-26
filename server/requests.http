@@ -82,3 +82,27 @@ Content-Type: application/json
 GET {{host}}/track/shows/finished
 Authorization: Bearer {{tokenUser1}}
 Content-Type: application/json
+
+### get show by id
+POST {{host}}/search/show
+Authorization: Bearer {{tokenUser1}}
+Content-Type: application/json
+
+{
+  "tmdb_id": "1399"
+}
+
+### get recommended
+POST {{host}}/discover/recommended
+Authorization: Bearer {{tokenUser1}}
+Content-Type: application/json
+
+{
+  "related_shows_tmdb_ids": ["1399", "37680"]
+}
+
+### get shows with episode released soon
+GET {{host}}/discover/released-soon
+Authorization: Bearer {{tokenUser1}}
+Content-Type: application/json
+

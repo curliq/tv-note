@@ -11,9 +11,9 @@ logging:
         tvtracker:
           core:
             logging:
-              OutRequestLoggingInterceptor: off
-              RequestLoggingInterceptor: INFO
-              TvtrackerLogger: DEBUG
+              com.free.tvtracker.logging.OutRequestLoggingInterceptor: off
+              com.free.tvtracker.logging.RequestLoggingInterceptor: INFO
+              com.free.tvtracker.logging.TvtrackerLogger: DEBUG
     httpclient:
       wire: off
     org:

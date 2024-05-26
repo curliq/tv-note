@@ -8,12 +8,18 @@ import com.free.tvtracker.data.tracked.entities.MarkEpisodeWatchedOrderClientEnt
 import com.free.tvtracker.tracked.request.AddShowRequest
 import com.free.tvtracker.tracked.response.TrackedShowApiModel
 import com.free.tvtracker.tracked.response.TrackedShowApiResponse
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 data class ShowsDataStatus(
     val data: TrackedShowApiResponse,
@@ -37,7 +43,7 @@ class TrackedShowsRepository(
     private val localDataSource: LocalSqlDataProvider,
     private val watchedEpisodesTaskQueue: WatchedEpisodesTaskQueue
 ) {
-    private val allShows = MutableStateFlow<List<TrackedShowApiModel>>(emptyList())
+    val allShows = MutableStateFlow<List<TrackedShowApiModel>>(emptyList())
 
     // these also contain all other shows, so they still must be filtered using the usecases before consumption
     private val _watchingShows = MutableStateFlow<ShowsDataStatus?>(null)
@@ -49,17 +55,21 @@ class TrackedShowsRepository(
 
     private fun MutableStateFlow<ShowsDataStatus?>.combineWithAllShows(): Flow<ShowsDataStatus> {
         return this.filterNotNull()
-            .combine(allShows) { watching, all ->
-                watching.copy(
-                    data = watching.data.copy(watching.data.data?.plus(all)?.distinctBy { it.id })
-                )
-            }
             .onEach { response ->
                 allShows.emit(allShows.value.plus(response.data.data ?: emptyList()).distinctBy { it.id })
             }
+            .combine(allShows) { watching, all ->
+                val asd = all.filterNot { watching.data.data?.map { it.id }?.contains(it.id) == true }
+                watching.copy(
+                    data = watching.data.copy(watching.data.data?.plus(asd))
+                )
+            }
     }
 
-    suspend fun emitLatestWatching() {
+    suspend fun updateWatching(forceUpdate: Boolean = true) {
+        if (!forceUpdate && _watchingShows.value != null) {
+            return
+        }
         watchedEpisodesTaskQueue.emitOrders()
         val localWatching = localDataSource.getTrackedShows().map { it.toApiModel() }
         if (localWatching.isNotEmpty()) {
@@ -68,11 +78,17 @@ class TrackedShowsRepository(
         fetch(_watchingShows, remoteDataSource::getTrackedShows)
     }
 
-    suspend fun emitLatestFinished() {
+    suspend fun updateFinished(forceUpdate: Boolean = true) {
+        if (!forceUpdate && _finishedShows.value != null) {
+            return
+        }
         fetch(_finishedShows, remoteDataSource::getFinishedShows)
     }
 
-    suspend fun emitLatestWatchlisted() {
+    suspend fun updateWatchlisted(forceUpdate: Boolean = true) {
+        if (!forceUpdate && _watchlistedShows.value != null) {
+            return
+        }
         fetch(_watchlistedShows, remoteDataSource::getWatchlistedShows)
     }
 
@@ -91,12 +107,8 @@ class TrackedShowsRepository(
         }
     }
 
-    suspend fun getOrUpdateWatchingShows(): TrackedShowApiResponse {
-        if (_watchingShows.value?.data != null) {
-            return _watchingShows.value!!.data
-        }
-        emitLatestWatching()
-        return _watchingShows.value!!.data
+    fun getOrUpdateWatchingShows(): List<TrackedShowApiModel> {
+        return allShows.value
     }
 
     suspend fun markEpisodeAsWatched(episodes: List<MarkEpisodeWatched>) {
@@ -111,14 +123,18 @@ class TrackedShowsRepository(
         return remoteDataSource.toggleWatchlist(showId)
     }
 
-    suspend fun addTrackedShow(showId: Int) {
-        try {
-            val res = remoteDataSource.addTracked(AddShowRequest(showId, false))
-            res.coAsSuccess { newShow ->
-                allShows.emit(allShows.value.plus(newShow))
+    @OptIn(DelicateCoroutinesApi::class)
+    suspend fun addTrackedShow(showId: Int, watchlisted: Boolean = false) {
+        // Use global scope because this should finish even if the user closes the search activity
+        GlobalScope.launch(Dispatchers.IO) {
+            try {
+                val res = remoteDataSource.addTracked(AddShowRequest(showId, watchlisted = watchlisted))
+                res.coAsSuccess { newShow ->
+                    allShows.update { it.plus(newShow) }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
-        } catch (e: Exception) {
-
         }
     }
 
@@ -126,8 +142,8 @@ class TrackedShowsRepository(
         return allShows.value.firstOrNull { it.storedShow.tmdbId == tmdbShowId }
     }
 
-    fun getShowByTmdbIdFlow(tmdbShowId: Int): Flow<TrackedShowApiModel> {
-        return allShows.map { it.firstOrNull { it.storedShow.tmdbId == tmdbShowId } }.filterNotNull()
+    fun getShowByTmdbIdFlow(tmdbShowId: Int): Flow<TrackedShowApiModel?> {
+        return allShows.map { it.firstOrNull { it.storedShow.tmdbId == tmdbShowId } }
     }
 }
 

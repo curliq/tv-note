@@ -4,8 +4,6 @@ import com.free.tvtracker.core.ui.ViewModel
 import com.free.tvtracker.data.tracked.TrackedShowsRepository
 import com.free.tvtracker.domain.GetShowsUseCase
 import com.free.tvtracker.domain.GetWatchlistedShowsUseCase
-import com.free.tvtracker.tracked.response.TrackedShowApiModel
-import com.free.tvtracker.utils.TmdbConfigData
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -16,6 +14,7 @@ class WatchlistedShowsViewModel(
     private val trackedShowsRepository: TrackedShowsRepository,
     private val getShowsUseCase: GetShowsUseCase,
     private val getWatchlistedShowsUseCase: GetWatchlistedShowsUseCase,
+    private val mapper: WatchlistShowUiModelMapper,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : ViewModel() {
     val shows: MutableStateFlow<WatchlistUiState> = MutableStateFlow(WatchlistUiState.Loading)
@@ -24,11 +23,12 @@ class WatchlistedShowsViewModel(
         viewModelScope.launch(ioDispatcher) {
             getShowsUseCase(trackedShowsRepository.watchlistedShows).collect { data ->
                 data.data.asSuccess {
-                    if (data.data.data.isNullOrEmpty()) {
+                    val res = getWatchlistedShowsUseCase(data.data.data ?: emptyList())
+                    if (res.isEmpty()) {
                         shows.value = WatchlistUiState.Empty
                     } else {
                         shows.value = WatchlistUiState.Ok(
-                            shows = getWatchlistedShowsUseCase(data.data.data!!).map { it.toUiModel() }
+                            shows = res.map(mapper.map())
                         )
                     }
                 }
@@ -43,7 +43,7 @@ class WatchlistedShowsViewModel(
     fun refresh() {
         shows.value = WatchlistUiState.Loading
         viewModelScope.launch(ioDispatcher) {
-            trackedShowsRepository.emitLatestWatchlisted()
+            trackedShowsRepository.updateWatchlisted()
         }
     }
 }
@@ -56,21 +56,8 @@ sealed class WatchlistUiState {
 }
 
 data class WatchlistShowUiModel(
-    val trackedShowId: Int,
     val tmdbId: Int,
     val title: String,
     val image: String,
     val status: String,
-    val nextEpisode: String?,
 )
-
-fun TrackedShowApiModel.toUiModel(): WatchlistShowUiModel {
-    return WatchlistShowUiModel(
-        trackedShowId = this.id,
-        tmdbId = this.storedShow.tmdbId,
-        title = this.storedShow.title,
-        image = TmdbConfigData.get().getPosterUrl(this.storedShow.posterImage),
-        nextEpisode = "",
-        status = this.storedShow.status
-    )
-}

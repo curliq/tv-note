@@ -28,7 +28,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ButtonDefaults
@@ -38,6 +37,7 @@ import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LargeFloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -45,6 +45,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.free.tvtracker.core.composables.ErrorScreen
@@ -63,16 +64,18 @@ sealed class WatchingScreenNavAction {
 fun WatchingScreen(navigate: (WatchingScreenNavAction) -> Unit, viewModel: WatchingViewModel) {
     val shows = viewModel.shows.collectAsState().value
     TvTrackerTheme {
-        AnimatedContent(
-            shows,
-            transitionSpec = ScreenContentAnimation(),
-            contentKey = { targetState -> targetState::class }
-        ) { targetState ->
-            when (targetState) {
-                is WatchingUiState.Ok -> WatchingOk(navigate, viewModel::markEpisodeWatched, targetState)
-                WatchingUiState.Error -> ErrorScreen { viewModel.refresh() }
-                WatchingUiState.Loading -> LoadingScreen()
-                WatchingUiState.Empty -> WatchingEmpty(navigate)
+        FabContainer({ navigate(WatchingScreenNavAction.GoAddShow) }) {
+            AnimatedContent(
+                shows,
+                transitionSpec = ScreenContentAnimation(),
+                contentKey = { targetState -> targetState::class }
+            ) { targetState ->
+                when (targetState) {
+                    is WatchingUiState.Ok -> WatchingOk(navigate, viewModel::markEpisodeWatched, targetState)
+                    WatchingUiState.Error -> ErrorScreen { viewModel.refresh() }
+                    WatchingUiState.Loading -> LoadingScreen()
+                    WatchingUiState.Empty -> WatchingEmpty()
+                }
             }
         }
     }
@@ -85,70 +88,93 @@ fun WatchingOk(
     markWatched: (Int?, Int?) -> Unit,
     shows: WatchingUiState.Ok
 ) {
-    FabContainer(navigate) {
-        LazyColumn(modifier = Modifier.fillMaxHeight(), contentPadding = PaddingValues(vertical = 8.dp)) {
+    LazyColumn(modifier = Modifier.fillMaxHeight(), contentPadding = PaddingValues(vertical = TvTrackerTheme.sidePadding)) {
+        if (shows.watching.isEmpty()) {
+            item {
+                Box(
+                    Modifier.padding(start = TvTrackerTheme.sidePadding, bottom = 32.dp)
+                ) {
+                    Text(
+                        text = "Nothing to watch. :(",
+                        style = MaterialTheme.typography.labelMedium,
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+        }
+        itemsIndexed(
+            shows.watching,
+            key = { _, item -> item.tmdbId }
+        ) { index, show ->
+            WatchingItem(
+                show,
+                onClick = { navigate(WatchingScreenNavAction.GoShowDetails(show.tmdbId)) },
+                onMarkWatched = markWatched,
+                isWatchable = true
+            )
+        }
+        if (shows.waitingNextEpisode.isNotEmpty()) {
+            item(key = -1) {
+                Column(Modifier.animateItemPlacement()) {
+                    Spacer(modifier = Modifier.height(24.dp))
+                    Text(
+                        "Waiting for next episode",
+                        style = MaterialTheme.typography.titleLarge,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
+            }
             itemsIndexed(
-                shows.watching,
+                shows.waitingNextEpisode,
                 key = { _, item -> item.tmdbId }
             ) { index, show ->
                 WatchingItem(
                     show,
                     onClick = { navigate(WatchingScreenNavAction.GoShowDetails(show.tmdbId)) },
                     onMarkWatched = markWatched,
-                    modifier = Modifier
+                    isWatchable = false,
                 )
             }
-            if (shows.waitingNextEpisode.isNotEmpty()) {
-                item(key = -123) {
-                    Column(Modifier.animateItemPlacement()) {
-                        Spacer(modifier = Modifier.height(24.dp))
-                        Text(
-                            "Waiting for next episode",
-                            style = MaterialTheme.typography.titleLarge,
-                            modifier = Modifier.padding(horizontal = 16.dp)
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                    }
-                }
-                itemsIndexed(
-                    shows.waitingNextEpisode,
-                    key = { _, item -> item.tmdbId }
-                ) { index, show ->
-                    WatchingItem(
-                        show,
-                        onClick = { navigate(WatchingScreenNavAction.GoShowDetails(show.tmdbId)) },
-                        onMarkWatched = markWatched
-                    )
-                }
-            }
         }
     }
 }
 
 @Composable
-fun WatchingEmpty(navigate: (WatchingScreenNavAction) -> Unit) {
-    FabContainer(navigate) {
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text(
-                text = "Not tracking any show yet.",
-                style = MaterialTheme.typography.labelMedium,
-                textAlign = TextAlign.Center
-            )
-        }
+fun WatchingEmpty() {
+    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Text(
+            text = "Not tracking any show yet.",
+            style = MaterialTheme.typography.labelMedium,
+            textAlign = TextAlign.Center
+        )
     }
 }
 
 @Composable
-private fun FabContainer(navigate: (WatchingScreenNavAction) -> Unit, content: @Composable (PaddingValues) -> Unit) {
+fun FabContainer(
+    navigate: () -> Unit,
+    icon: ImageVector = Icons.Default.Add,
+    largeFab: Boolean = false,
+    content: @Composable (PaddingValues) -> Unit
+) {
     Scaffold(
         contentWindowInsets = WindowInsets(0.dp, 0.dp, 0.dp, 0.dp),
         modifier = Modifier.fillMaxSize(),
         floatingActionButtonPosition = FabPosition.EndOverlay,
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = { navigate(WatchingScreenNavAction.GoAddShow) },
-            ) {
-                Icon(Icons.Default.Add, "")
+            if (largeFab) {
+                LargeFloatingActionButton(
+                    onClick = { navigate() },
+                ) {
+                    Icon(icon, "")
+                }
+            } else {
+                FloatingActionButton(
+                    onClick = { navigate() },
+                ) {
+                    Icon(icon, "")
+                }
             }
         },
         content = content
@@ -161,6 +187,7 @@ fun LazyItemScope.WatchingItem(
     uiModel: WatchingItemUiModel,
     onClick: () -> Unit,
     onMarkWatched: (Int?, Int?) -> Unit,
+    isWatchable: Boolean,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -183,14 +210,25 @@ fun LazyItemScope.WatchingItem(
                     WatchingItemNextEpisode(uiModel.nextEpisode)
                 }
                 Spacer(Modifier.height(24.dp))
-                FilledTonalButton(
-                    modifier = Modifier.height(28.dp),
-                    contentPadding = PaddingValues(vertical = 0.dp, horizontal = 24.dp),
-                    shape = RoundedCornerShape(8.dp),
-                    colors = ButtonDefaults.filledTonalButtonColors(containerColor = MaterialTheme.colorScheme.tertiaryContainer),
-                    onClick = { onMarkWatched(uiModel.trackedShowId, uiModel.nextEpisode?.id) },
-                ) {
-                    Text(text = "Mark episode as watched", style = TvTrackerTheme.Typography.labelMedium)
+                if (isWatchable) {
+                    FilledTonalButton(
+                        modifier = Modifier.height(28.dp),
+                        contentPadding = PaddingValues(vertical = 0.dp, horizontal = 24.dp),
+                        shape = TvTrackerTheme.ShapeButton,
+                        colors = ButtonDefaults.filledTonalButtonColors(containerColor = MaterialTheme.colorScheme.tertiaryContainer),
+                        onClick = { onMarkWatched(uiModel.trackedShowId, uiModel.nextEpisode?.id) },
+                    ) {
+                        Text(
+                            text = "Mark episode as watched",
+                            style = TvTrackerTheme.Typography.labelMedium,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                } else {
+                    Text(
+                        text = "Available on ${uiModel.nextEpisodeCountdown}",
+                        style = TvTrackerTheme.Typography.labelMedium
+                    )
                 }
             }
         }

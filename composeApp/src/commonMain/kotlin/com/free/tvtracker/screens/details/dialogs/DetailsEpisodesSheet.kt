@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
@@ -71,7 +70,7 @@ fun DetailsEpisodesContent(
                                 FilledTonalButton(
                                     modifier = Modifier.height(28.dp),
                                     contentPadding = PaddingValues(vertical = 0.dp, horizontal = 24.dp),
-                                    shape = RoundedCornerShape(8.dp),
+                                    shape = TvTrackerTheme.ShapeButton,
                                     colors = ButtonDefaults.filledTonalButtonColors(
                                         containerColor = MaterialTheme.colorScheme.tertiaryContainer
                                     ),

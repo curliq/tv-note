@@ -22,7 +22,7 @@ class RemoteDataSource(private val tvHttpClient: TvHttpClient) {
         return tvHttpClient.call(Endpoints.addTracked, body)
     }
 
-    suspend fun toggleWatchlist(showId:Int): Boolean {
+    suspend fun toggleWatchlist(showId: Int): Boolean {
         return true
         //todo
     }

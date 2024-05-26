@@ -5,7 +5,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.free.tvtracker.core.theme.TvTrackerTheme
-import com.free.tvtracker.previews.DetailsScreenPreviews.uimodel
+import com.free.tvtracker.previews.DetailsScreenPreviews.showDetailsUiModel
 import com.free.tvtracker.screens.details.dialogs.DetailsEpisodesContent
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -15,7 +15,7 @@ fun DetailsEpisodesSheetPreview() {
     TvTrackerTheme {
         Scaffold { padding ->
             DetailsEpisodesContent(
-                uimodel,
+                showDetailsUiModel,
                 { }
             )
         }

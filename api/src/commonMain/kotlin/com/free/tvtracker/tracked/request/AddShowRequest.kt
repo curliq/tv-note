@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class AddShowRequest(
     @SerialName("tmdb_id") val tmdbShowId: Int,
-    @SerialName("wishlisted") val wishlisted: Boolean
+    @SerialName("watchlisted") val watchlisted: Boolean
 )

@@ -15,6 +15,7 @@ data class TmdbShowDetailsApiModel(
     @SerialName("homepage") var homepage: String? = null,
     @SerialName("in_production") var inProduction: Boolean? = null,
     @SerialName("languages") var languages: List<String> = emptyList(),
+    @SerialName("genres") var genres: List<String> = emptyList(),
     @SerialName("last_air_date") var lastAirDate: String? = null,
     @SerialName("last_episode_to_air") var lastEpisodeToAir: Episode? = null,
     @SerialName("next_episode_to_air") var nextEpisodeToAir: Episode? = null,
@@ -103,8 +104,8 @@ data class TmdbShowDetailsApiModel(
 
     @Serializable
     data class Crew(
+        @SerialName("id") var id: Int,
         @SerialName("gender") var gender: Int? = null,
-        @SerialName("id") var id: Int? = null,
         @SerialName("known_for_department") var knownForDepartment: String? = null,
         @SerialName("name") var name: String? = null,
         @SerialName("original_name") var originalName: String? = null,
@@ -117,8 +118,8 @@ data class TmdbShowDetailsApiModel(
 
     @Serializable
     data class Cast(
+        @SerialName("id") var id: Int,
         @SerialName("gender") var gender: Int? = null,
-        @SerialName("id") var id: Int? = null,
         @SerialName("known_for_department") var knownForDepartment: String? = null,
         @SerialName("name") var name: String? = null,
         @SerialName("original_name") var originalName: String? = null,

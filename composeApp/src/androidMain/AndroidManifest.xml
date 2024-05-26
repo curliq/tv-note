@@ -25,6 +25,8 @@
         </activity>
         <activity android:name=".activities.showdetails.ShowDetailsActivity"/>
         <activity android:name=".activities.AddShowActivity"/>
+        <activity android:name=".activities.person.PersonDetailsActivity"/>
+        <activity android:name=".activities.discover.RecommendationsActivity"/>
     </application>
 
 </manifest>
