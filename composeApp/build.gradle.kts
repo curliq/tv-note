@@ -1,3 +1,4 @@
+import org.flywaydb.gradle.task.AbstractFlywayTask
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
@@ -6,6 +7,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.sqldelight)
+    alias(libs.plugins.googleServicesAndroid)
 }
 
 kotlin {
@@ -43,6 +45,8 @@ kotlin {
             implementation(libs.koin.android)
             implementation(libs.koin.androidx.compose)
             implementation(libs.sqldelight.android.driver)
+            implementation(libs.firebase.fcm.android)
+            implementation(libs.firebase.fcm.android.ktx)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
@@ -148,5 +152,11 @@ sqldelight {
     database("AppDatabase") {
         packageName = "com.free.tvtracker.shared.db"
         dialect = "sqlite:3.24"
+    }
+}
+
+tasks {
+    withType<AbstractFlywayTask> {
+        notCompatibleWithConfigurationCache("because https://github.com/flyway/flyway/issues/3550")
     }
 }

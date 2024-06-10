@@ -55,7 +55,7 @@ class ShowUiModelMapper(
                 ?: emptyList(),
             mediaImagesBackdrops = from.images?.backdrops?.map { TmdbConfigData.get().getBackdropUrl(it.filePath) }
                 ?: emptyList(),
-            ratingTmdbVoteCount = getFormatedNumber(from.voteCount ?: 0),
+            ratingTmdbVoteCount = formatVoteCount(from.voteCount ?: 0),
             ratingTmdbVoteAverage = stringUtils.roundDouble((from.voteAverage ?: 0.toDouble()), 1) + "/10",
         )
     }
@@ -88,7 +88,7 @@ class ShowUiModelMapper(
         }
     }
 
-    private fun getFormatedNumber(count: Int): String {
+    private fun formatVoteCount(count: Int): String {
         if (count < 1000) return "" + count
         val exp = (ln(count.toDouble()) / ln(1000.0)).toInt()
         val shortenChar = count / 1000.0.pow(exp.toDouble())

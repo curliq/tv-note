@@ -1,3 +1,5 @@
+import org.flywaydb.gradle.task.AbstractFlywayTask
+
 plugins {
     application
     alias(libs.plugins.kotlinJvm)
@@ -36,10 +38,17 @@ dependencies {
     implementation(libs.logback.classic)
     implementation(libs.ktor.client.contentNegotiation)
     implementation(libs.kotlinx.datetime)
+    implementation(libs.firebase.admin)
 
     testImplementation(libs.testSpringBoot)
     testImplementation(libs.testSpringBootSecurity)
     testImplementation(libs.kotlin.test)
     testImplementation(libs.mockk)
     testImplementation(libs.kotlinx.coroutines.test)
+}
+
+tasks {
+    withType<AbstractFlywayTask> {
+        notCompatibleWithConfigurationCache("because https://github.com/flyway/flyway/issues/3550")
+    }
 }

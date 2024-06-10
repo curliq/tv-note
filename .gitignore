@@ -41,7 +41,6 @@ out/
 !**/src/main/**/out/
 !**/src/test/**/out/
 
-### VS Code ###
-.vscode/
-
 server/http-client.private.env.json
+composeApp/google-services.json
+iosApp/iosApp/GoogleService-Info.plist

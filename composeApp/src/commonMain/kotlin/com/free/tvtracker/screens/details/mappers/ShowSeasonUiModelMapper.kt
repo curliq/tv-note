@@ -15,7 +15,7 @@ class ShowSeasonUiModelMapper(
     data class O(val tmdbShowId: Int, val trackedShowApiModel: TrackedShowApiModel?)
 
     override fun map(from: TmdbShowDetailsApiModel.Season, options: O): DetailsUiModel.Season {
-        val eps = from.episodes?.map { episodeMapper.map(it, options) }?.sortedBy { it.number } ?: emptyList()
+        val eps = from.episodes?.sortedBy { it.number }?.map { episodeMapper.map(it, options) } ?: emptyList()
         return DetailsUiModel.Season(
             seasonId = from.id,
             tmdbShowId = options.tmdbShowId,

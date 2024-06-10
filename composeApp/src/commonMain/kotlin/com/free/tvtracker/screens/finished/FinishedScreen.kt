@@ -42,7 +42,7 @@ sealed class FinishedScreenNavAction {
 fun FinishedScreen(navigate: (FinishedScreenNavAction) -> Unit, viewModel: FinishedShowsViewModel) {
     val shows = viewModel.shows.collectAsState().value
     TvTrackerTheme {
-        FabContainer({ navigate(FinishedScreenNavAction.GoAddShow) }) {
+        FabContainer({ navigate(FinishedScreenNavAction.GoAddShow) }, content = {
             AnimatedContent(
                 shows,
                 transitionSpec = ScreenContentAnimation(),
@@ -55,7 +55,7 @@ fun FinishedScreen(navigate: (FinishedScreenNavAction) -> Unit, viewModel: Finis
                     is FinishedUiState.Ok -> FinishedOk(targetState, navigate)
                 }
             }
-        }
+        })
     }
 }
 

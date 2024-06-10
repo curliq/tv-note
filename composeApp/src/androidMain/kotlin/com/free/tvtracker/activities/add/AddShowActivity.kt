@@ -1,4 +1,4 @@
-package com.free.tvtracker.activities
+package com.free.tvtracker.activities.add
 
 import android.content.Context
 import android.content.Intent
@@ -63,8 +63,8 @@ class AddShowActivity : BaseActivity() {
                 }
             }
             val title = when (origin) {
-                AddTrackedScreenOriginScreen.Watching -> "Add to tracking"
-                AddTrackedScreenOriginScreen.Finished -> "Add to tracking"
+                AddTrackedScreenOriginScreen.Watching -> "Add to currently watching"
+                AddTrackedScreenOriginScreen.Finished -> "Add to finished watching"
                 AddTrackedScreenOriginScreen.Watchlist -> "Add to watchlist"
                 AddTrackedScreenOriginScreen.Discover -> "Search"
             }

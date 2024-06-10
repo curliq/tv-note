@@ -1,5 +1,7 @@
 package com.free.tvtracker.base
 
+import com.free.tvtracker.discover.response.TmdbShowDetailsApiModel
+import com.free.tvtracker.discover.response.TmdbShowDetailsApiResponse
 import kotlinx.serialization.Serializable
 
 /**
@@ -46,6 +48,19 @@ abstract class ApiResponse<T> {
             run(application_error!!)
         }
         return this
+    }
+
+    @Serializable
+    class EmptyApiResponse(override val data: Int?, override val application_error: ApiError?) : ApiResponse<Int>() {
+        companion object {
+            fun ok(): EmptyApiResponse {
+                return EmptyApiResponse(data = 0, application_error = null)
+            }
+
+            fun error(application_error: ApiError): EmptyApiResponse {
+                return EmptyApiResponse(data = null, application_error = application_error)
+            }
+        }
     }
 }
 

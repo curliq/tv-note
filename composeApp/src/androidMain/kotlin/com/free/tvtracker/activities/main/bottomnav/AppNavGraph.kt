@@ -1,9 +1,8 @@
-package com.free.tvtracker.navigation.bottomnav
+package com.free.tvtracker.activities.main.bottomnav
 
 import android.app.Activity
 import android.content.Intent
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.heightIn
@@ -20,11 +19,11 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.free.tvtracker.activities.AddShowActivity
+import com.free.tvtracker.activities.add.AddShowActivity
 import com.free.tvtracker.activities.discover.RecommendationsActivity
 import com.free.tvtracker.activities.showdetails.ShowDetailsActivity
 import com.free.tvtracker.activities.showdetails.ShowDetailsActivity.Extras.EXTRA_SHOW_ID
-import com.free.tvtracker.navigation.AppNavController
+import com.free.tvtracker.activities.main.AppNavController
 import com.free.tvtracker.screens.discover.DiscoverScreen
 import com.free.tvtracker.screens.discover.DiscoverScreenNavActions
 import com.free.tvtracker.screens.discover.dialogs.DiscoverNewReleasesSheet
@@ -43,7 +42,7 @@ import org.koin.androidx.compose.get
 
 @ExperimentalMaterial3Api
 @ExperimentalMaterialNavigationApi
-fun NavGraphBuilder.mainNavGraph(navController: AppNavController, context: Activity, padding: PaddingValues) {
+fun NavGraphBuilder.mainNavGraph(navController: AppNavController, context: Activity) {
     composable(AppNavDestinations.WATCHING.id) {
         WatchingScreen(
             navigate = { action ->

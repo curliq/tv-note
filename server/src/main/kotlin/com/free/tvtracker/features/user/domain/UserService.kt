@@ -1,13 +1,12 @@
 package com.free.tvtracker.features.user.domain
 
+import com.free.tvtracker.features.user.data.UserEntity
+import com.free.tvtracker.features.user.data.UserJpaRepository
 import com.free.tvtracker.logging.TvtrackerLogger
 import com.free.tvtracker.security.SessionService
 import com.free.tvtracker.security.TokenService
-import com.free.tvtracker.features.user.data.UserEntity
-import com.free.tvtracker.features.user.data.UserJpaRepository
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 
@@ -72,5 +71,11 @@ class UserService(
     fun createBearerToken(): String? {
         val user = getAuthenticatedUser() ?: return null
         return tokenService.generate(user)
+    }
+
+    fun saveFcmToken(token: String) {
+        val user = getAuthenticatedUser() ?: return
+        user.fcmToken = token
+        userJpaRepository.save(user)
     }
 }

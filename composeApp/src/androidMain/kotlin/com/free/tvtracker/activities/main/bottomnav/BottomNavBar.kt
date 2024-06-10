@@ -1,9 +1,9 @@
-package com.free.tvtracker.navigation.bottomnav
+package com.free.tvtracker.activities.main.bottomnav
 
 import androidx.compose.material3.NavigationBar
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavDestination.Companion.hierarchy
-import com.free.tvtracker.navigation.AppNavController
+import com.free.tvtracker.activities.main.AppNavController
 
 @Composable
 fun BottomNavBar(appNavController: AppNavController) {

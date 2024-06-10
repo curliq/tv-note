@@ -21,5 +21,6 @@ plugins {
     alias(libs.plugins.springBootKotlin) apply false
     alias(libs.plugins.flyway) apply false
     alias(libs.plugins.sqldelight) apply false
+    alias(libs.plugins.googleServicesAndroid) apply false
 }
 

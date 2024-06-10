@@ -1,4 +1,4 @@
-package com.free.tvtracker.navigation.bottomnav
+package com.free.tvtracker.activities.main.bottomnav
 
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material3.Icon
@@ -9,7 +9,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import com.free.tvtracker.R
-import com.free.tvtracker.navigation.AppNavController
 
 enum class BottomNavBarItems(val label: String, val title: String, val icon: Int, val iconSelected: Int, val destinationId: String) {
     WATCHING(

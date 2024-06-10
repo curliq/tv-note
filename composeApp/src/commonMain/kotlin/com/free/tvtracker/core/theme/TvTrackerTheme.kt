@@ -29,13 +29,7 @@ object TvTrackerTheme {
 
 @Composable
 fun TvTrackerTheme(content: @Composable () -> Unit) {
-    val colorsLight = lightColorScheme(
-        background = if (OsPlatform().get() == OsPlatform.Platform.IOS) {
-            Color.White
-        } else {
-            MaterialTheme.colorScheme.background
-        },
-    )
+    val colorsLight = lightColorScheme()
     val colorsDark = darkColorScheme()
     MaterialTheme(
         colorScheme = if (isSystemInDarkTheme()) colorsDark else colorsLight,

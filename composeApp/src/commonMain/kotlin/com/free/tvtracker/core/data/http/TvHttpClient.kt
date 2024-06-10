@@ -65,7 +65,8 @@ open class TvHttpClient {
             headers {
                 append(
                     "Authorization",
-                    "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzEzODcwMjIwLCJleHAiOjE3Mjk0MjIyMjAsInJvbGUiOiJ3YXRjaGVyIn0.6JmtaE6pZ_b1H-bX3ZpZUreMoyHJ959sR7SlYXcu3OOxGVdK1LwUL5C7KHcVCmlAoTwSIB2VfI0PIGmmWCJWAQ"
+//                    "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzEzODcwMjIwLCJleHAiOjE3Mjk0MjIyMjAsInJvbGUiOiJ3YXRjaGVyIn0.6JmtaE6pZ_b1H-bX3ZpZUreMoyHJ959sR7SlYXcu3OOxGVdK1LwUL5C7KHcVCmlAoTwSIB2VfI0PIGmmWCJWAQ"
+                    "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMiIsImlhdCI6MTcxNzk0ODYwNiwiZXhwIjoxNzMzNTAwNjA2LCJyb2xlIjoid2F0Y2hlciJ9.vq2wSg-gMPEY-RSfQgdfVS3YSOKG3m8wJEBnuDkHDN6OBxpHNPPi6HAOBt_-wjwbMfBaeyb_5Q5Yc_vTbSKIXg"
                 )
             }
         }

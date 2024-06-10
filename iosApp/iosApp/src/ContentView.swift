@@ -8,18 +8,21 @@ struct ContentView: View {
     @State private var selectedShowId: Int32 = -1
     let vm1 = ViewModelsModule().watchingViewModel
     let vm2 = ViewModelsModule().addTrackedViewModel
-    
+    let finishedViewModel = ViewModelsModule().finishedShowsViewModel
+    let watchlistedViewModel = ViewModelsModule().watchlistedShowsViewModel
+    let discoverViewModel = ViewModelsModule().discoverViewModel
+
     var body: some View {
         TabView {
             NavigationView {
                 VStack {
-                    let navActions: (NavAction) -> Void = { navAction in
+                    let navActions: (WatchingScreenNavAction) -> Void = { navAction in
                         switch navAction {
-                        case _ as NavAction.GoAddShow:
+                        case _ as WatchingScreenNavAction.GoAddShow:
                             selection = "addShow"
                             //                                showCategorySelector.toggle()
-                        case let action as NavAction.GoShowDetails:
-                            selectedShowId = action.showId
+                        case let action as WatchingScreenNavAction.GoShowDetails:
+                            selectedShowId = action.tmdbShowId
                             selection = "showDetails"
                         default: break
                         }
@@ -31,11 +34,12 @@ struct ContentView: View {
                             navigate: navActions,
                             watchingViewModel: vm1
                         )
-                        .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height * 2)
+                        .navigationTitle("helo")
+//                        .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height * 2)
                     }
                     .ignoresSafeArea(.keyboard)
-                    .navigationTitle("Watching")
-                    .toolbar {
+//                    .navigationTitle("Watching")
+//                    .toolbar {
 //                        ToolbarItemGroup(placement: .primaryAction) {
 //                            Button {
 //                                navActions(NavAction.GoAddShow())
@@ -43,7 +47,7 @@ struct ContentView: View {
 //                                Image(systemName: "plus.circle")
 //                            }
 //                        }
-                    }
+//                    }
                 }
             }
             .sheet(isPresented: $showCategorySelector) {
@@ -53,26 +57,46 @@ struct ContentView: View {
             .tabItem {
                 Label("Watching", systemImage: "play.tv.fill")
             }
+            .navigationTitle("Watching")
             
-            FinishedScreen()
+            NavigationView {
+                FinishedScreen(finishedViewModel: finishedViewModel)
+                    .navigationTitle("finishh")
+//                Text("hey..")
+            }
                 .tabItem {
                     Label("Finished", systemImage: "flag.checkered")
                 }
+                .navigationTitle("Finished watching")
             
-            WatchlistScreen()
+            WatchlistScreen(watchlistViewModel: watchlistedViewModel)
                 .tabItem {
                     Label("Watchlist", systemImage: "star.square")
                 }
+                .navigationViewStyle(StackNavigationViewStyle())
+                .navigationTitle("Watchlist")
+
+            DiscoverScreen(discoverViewModel: discoverViewModel)
+
+                    .tabItem {
+                        Label("Discover", systemImage: "safari")
+                    }
+                    .ignoresSafeArea(.keyboard)
+                    .edgesIgnoringSafeArea(.top)
             
-            DiscoverScreen()
-                .tabItem {
-                    Label("Discover", systemImage: "safari")
-                }
             
             SettingsScreen()
                 .tabItem {
                     Label("Settings", systemImage: "gear")
                 }
+        }
+        .onAppear() {
+            let standardAppearance = UITabBarAppearance()
+//            standardAppearance.backgroundImage = UIImage()
+//            standardAppearance.shadowColor = UIColor(Color.black)
+            standardAppearance.configureWithTransparentBackground()
+            standardAppearance.backgroundColor = UIColor.systemGray6
+            UITabBar.appearance().standardAppearance = standardAppearance
         }
     }
 }

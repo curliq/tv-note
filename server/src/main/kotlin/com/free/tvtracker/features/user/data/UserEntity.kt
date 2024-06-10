@@ -28,5 +28,8 @@ class UserEntity(
     val password: String = "",
 
     @Column
-    val role: UserRole = UserRole.WATCHER
+    val role: UserRole = UserRole.WATCHER,
+
+    @Column(nullable = true)
+    var fcmToken: String? = null,
 )

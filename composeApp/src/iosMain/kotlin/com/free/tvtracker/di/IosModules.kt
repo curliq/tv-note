@@ -1,18 +1,9 @@
 package com.free.tvtracker.di
 
-import com.free.tvtracker.screens.details.DetailsViewModel
-import com.free.tvtracker.screens.search.AddTrackedViewModel
-import com.free.tvtracker.screens.watching.WatchingViewModel
-import org.koin.core.context.startKoin
-import org.koin.dsl.module
+import com.free.tvtracker.data.user.UserRepository
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
-fun startKoin() {
-    startKoin {
-        modules(appModules())
-        modules(module {
-            single { AddTrackedViewModel(get(), get()) }
-            single { WatchingViewModel(get(), get(), get(), get()) }
-            single { DetailsViewModel(get(), get(), get()) }
-        })
-    }
+class IosModules : KoinComponent {
+    val userRepository: UserRepository by inject()
 }

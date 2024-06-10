@@ -42,7 +42,7 @@ sealed class WatchlistScreenNavAction {
 fun WatchlistScreen(viewModel: WatchlistedShowsViewModel, navigate: (WatchlistScreenNavAction) -> Unit) {
     val shows = viewModel.shows.collectAsState().value
     TvTrackerTheme {
-        FabContainer({ navigate(WatchlistScreenNavAction.GoAddShow) }) {
+        FabContainer({ navigate(WatchlistScreenNavAction.GoAddShow) }, content = {
             AnimatedContent(
                 shows,
                 transitionSpec = ScreenContentAnimation(),
@@ -55,7 +55,7 @@ fun WatchlistScreen(viewModel: WatchlistedShowsViewModel, navigate: (WatchlistSc
                     is WatchlistUiState.Ok -> WatchlistOk(targetState, navigate)
                 }
             }
-        }
+        })
     }
 }
 

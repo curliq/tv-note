@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -56,26 +57,41 @@ sealed class DiscoverScreenNavActions {
 }
 
 @Composable
-fun DiscoverScreen(viewModel: DiscoverViewModel, navigate: (DiscoverScreenNavActions) -> Unit) {
+fun DiscoverScreen(
+    viewModel: DiscoverViewModel,
+    navigate: (DiscoverScreenNavActions) -> Unit,
+    paddingValues: PaddingValues = PaddingValues()
+) {
     val data = viewModel.uiModel.collectAsState().value
+    LazyColumn(modifier = Modifier.fillMaxWidth()) {
+
+        (0..200).forEach {
+            item {
+                Text("test")
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+        }
+    }
+
     TvTrackerTheme {
         FabContainer(
             navigate = { navigate(DiscoverScreenNavActions.GoAddShow) },
             icon = Icons.Rounded.Search,
-            largeFab = true
-        ) {
-            AnimatedContent(
-                data,
-                transitionSpec = ScreenContentAnimation(),
-                contentKey = { targetState -> targetState::class }
-            ) { targetState ->
-                when (targetState) {
-                    DiscoverUiState.Error -> ErrorScreen { viewModel.refresh() }
-                    DiscoverUiState.Loading -> LoadingScreen()
-                    is DiscoverUiState.Ok -> DiscoverOk(targetState, navigate)
+            content = {
+                AnimatedContent(
+                    data,
+                    transitionSpec = ScreenContentAnimation(),
+                    contentKey = { targetState -> targetState::class }
+                ) { targetState ->
+                    when (targetState) {
+                        DiscoverUiState.Error -> ErrorScreen { viewModel.refresh() }
+                        DiscoverUiState.Loading -> LoadingScreen()
+                        is DiscoverUiState.Ok -> DiscoverOk(targetState, navigate)
+                    }
                 }
-            }
-        }
+            },
+            modifier = Modifier.padding(paddingValues)
+        )
     }
 }
 

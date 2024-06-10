@@ -17,8 +17,9 @@ fun SettingsScreen() {
         Column(Modifier.fillMaxSize().background(Color.Green), horizontalAlignment = Alignment.CenterHorizontally) {
             Button(onClick = {
             }) {
-                Text("Click me!")
+                Text("account!!!")
             }
+            Text("TO DO")
         }
     }
 }

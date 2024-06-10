@@ -1,4 +1,4 @@
-package com.free.tvtracker.navigation.bottomnav
+package com.free.tvtracker.activities.main.bottomnav
 
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -10,8 +10,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
-import com.free.tvtracker.activities.MainActivity
-import com.free.tvtracker.navigation.AppNavController
+import com.free.tvtracker.activities.main.MainActivity
+import com.free.tvtracker.activities.main.AppNavController
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 
 @ExperimentalMaterial3Api
@@ -28,6 +28,6 @@ fun MainNavHost(padding: PaddingValues, navController: AppNavController) {
         popEnterTransition = { fadeIn(animationSpec = tween(durationMillis = 0)) },
         popExitTransition = { fadeOut(animationSpec = tween(durationMillis = 0)) }
     ) {
-        mainNavGraph(navController, context, padding)
+        mainNavGraph(navController, context)
     }
 }

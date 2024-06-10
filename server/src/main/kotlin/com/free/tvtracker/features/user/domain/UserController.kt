@@ -1,8 +1,10 @@
 package com.free.tvtracker.features.user.domain
 
+import com.free.tvtracker.Endpoints
 import com.free.tvtracker.base.ApiError
 import com.free.tvtracker.user.response.UserApiResponse
 import com.free.tvtracker.logging.TvtrackerLogger
+import com.free.tvtracker.user.request.PostFcmTokenRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -12,15 +14,18 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping(
-    "/user",
-    produces = ["application/json"]
-)
+@RequestMapping(produces = ["application/json"])
 class UserController(val logger: TvtrackerLogger, val service: UserService) {
 
     data class CreateUserRequest(val email: String, val password: String)
     data class LoginRequest(val email: String, val password: String)
     data class CreateUserResponse(val accessToken: String, val userId: Int)
+
+    @PostMapping(Endpoints.Path.POST_FCM_TOKEN)
+    fun postFcmToken(@RequestBody body: PostFcmTokenRequest): ResponseEntity<Any> {
+        service.saveFcmToken(body.fcmToken)
+        return ResponseEntity(HttpStatus.OK)
+    }
 
     @GetMapping("")
     fun root(): ResponseEntity<UserApiResponse> {

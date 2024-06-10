@@ -64,7 +64,7 @@ sealed class WatchingScreenNavAction {
 fun WatchingScreen(navigate: (WatchingScreenNavAction) -> Unit, viewModel: WatchingViewModel) {
     val shows = viewModel.shows.collectAsState().value
     TvTrackerTheme {
-        FabContainer({ navigate(WatchingScreenNavAction.GoAddShow) }) {
+        FabContainer({ navigate(WatchingScreenNavAction.GoAddShow) }, content = {
             AnimatedContent(
                 shows,
                 transitionSpec = ScreenContentAnimation(),
@@ -77,7 +77,7 @@ fun WatchingScreen(navigate: (WatchingScreenNavAction) -> Unit, viewModel: Watch
                     WatchingUiState.Empty -> WatchingEmpty()
                 }
             }
-        }
+        })
     }
 }
 
@@ -88,7 +88,10 @@ fun WatchingOk(
     markWatched: (Int?, Int?) -> Unit,
     shows: WatchingUiState.Ok
 ) {
-    LazyColumn(modifier = Modifier.fillMaxHeight(), contentPadding = PaddingValues(vertical = TvTrackerTheme.sidePadding)) {
+    LazyColumn(
+        modifier = Modifier.fillMaxHeight(),
+        contentPadding = PaddingValues(vertical = TvTrackerTheme.sidePadding)
+    ) {
         if (shows.watching.isEmpty()) {
             item {
                 Box(
@@ -156,11 +159,12 @@ fun FabContainer(
     navigate: () -> Unit,
     icon: ImageVector = Icons.Default.Add,
     largeFab: Boolean = false,
-    content: @Composable (PaddingValues) -> Unit
+    content: @Composable (PaddingValues) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Scaffold(
         contentWindowInsets = WindowInsets(0.dp, 0.dp, 0.dp, 0.dp),
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         floatingActionButtonPosition = FabPosition.EndOverlay,
         floatingActionButton = {
             if (largeFab) {

@@ -1,5 +1,6 @@
 package com.free.tvtracker
 
+import com.free.tvtracker.base.ApiError
 import com.free.tvtracker.base.ApiResponse
 import com.free.tvtracker.discover.request.RecommendedContentApiRequest
 import com.free.tvtracker.discover.request.TmdbPersonRequestBody
@@ -15,12 +16,14 @@ import com.free.tvtracker.tracked.request.AddShowRequest
 import com.free.tvtracker.tracked.response.AddTrackedEpisodesApiResponse
 import com.free.tvtracker.tracked.response.AddTrackedShowApiResponse
 import com.free.tvtracker.tracked.response.TrackedShowApiResponse
+import com.free.tvtracker.user.request.PostFcmTokenRequest
 import com.free.tvtracker.user.response.UserApiResponse
 import kotlin.reflect.KClass
 
 object Endpoints {
     object Path {
-        const val GET_USER = "track/shows/watching"
+        const val GET_USER = ""
+        const val POST_FCM_TOKEN = "user/fcm-token"
         const val GET_WATCHING = "track/shows/watching"
         const val GET_FINISHED = "track/shows/finished"
         const val GET_WATCHLISTED = "track/shows/watchlisted"
@@ -36,6 +39,12 @@ object Endpoints {
     }
 
     val getUser = EndpointNoBody(Path.GET_USER, UserApiResponse::class, Endpoint.Verb.GET)
+    val postFcmToken = Endpoint(
+        Path.POST_FCM_TOKEN,
+        ApiResponse.EmptyApiResponse::class,
+        PostFcmTokenRequest::class,
+        Endpoint.Verb.POST
+    )
     val getWatching = EndpointNoBody(Path.GET_WATCHING, TrackedShowApiResponse::class, Endpoint.Verb.GET)
     val getFinished = EndpointNoBody(Path.GET_FINISHED, TrackedShowApiResponse::class, Endpoint.Verb.GET)
     val getWatchlisted = EndpointNoBody(Path.GET_WATCHLISTED, TrackedShowApiResponse::class, Endpoint.Verb.GET)

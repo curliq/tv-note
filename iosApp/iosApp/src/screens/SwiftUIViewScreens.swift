@@ -7,15 +7,16 @@
 //
 
 import SwiftUI
+import UIKit
 import ComposeApp
 
 struct WatchingScreen: UIViewControllerRepresentable {
     
-    let navigate: (NavAction) -> Void
+    let navigate: (WatchingScreenNavAction) -> Void
     let watchingViewModel: WatchingViewModel
 //    let model: WatchingItemUiModel
 
-    init(navigate: @escaping (NavAction) -> Void,  watchingViewModel: WatchingViewModel) {
+    init(navigate: @escaping (WatchingScreenNavAction) -> Void,  watchingViewModel: WatchingViewModel) {
         self.navigate = navigate
         self.watchingViewModel = watchingViewModel
     }
@@ -23,7 +24,7 @@ struct WatchingScreen: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UIViewController {
         MainViewControllerKt.WatchingScreenViewController(
             navigate: navigate,
-            watchingViewModel: watchingViewModel
+            viewModel: watchingViewModel
         )
 //        MainViewControllerKt.WatchingItemViewController(
 //            navigate: navigate,
@@ -46,7 +47,7 @@ struct ShowDetailsScreen: UIViewControllerRepresentable {
     }
 
     func makeUIViewController(context: Context) -> UIViewController {
-        MainViewControllerKt.ShowDetailsScreenViewController(detailsViewModel: detailsViewModel, showId: showId)
+        MainViewControllerKt.ShowDetailsScreenViewController(detailsViewModel: detailsViewModel, showId: showId, navigate: { _ in })
     }
     
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
@@ -61,7 +62,11 @@ struct AddTrackedScreen: UIViewControllerRepresentable {
     }
     
     func makeUIViewController(context: Context) -> UIViewController {
-        MainViewControllerKt.AddTrackedScreenViewController(addTrackedViewModel: addTrackedViewModel)
+        MainViewControllerKt.AddTrackedScreenViewController(
+            addTrackedViewModel: addTrackedViewModel,
+            navigate: { _ in  },
+            originScreen: AddTrackedScreenOriginScreen.discover //todo
+        )
     }
     
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
@@ -70,8 +75,17 @@ struct AddTrackedScreen: UIViewControllerRepresentable {
 
 struct FinishedScreen: UIViewControllerRepresentable {
 
+    let finishedViewModel: FinishedShowsViewModel
+
+    init(finishedViewModel: FinishedShowsViewModel) {
+        self.finishedViewModel = finishedViewModel
+    }
+    
     func makeUIViewController(context: Context) -> UIViewController {
-        MainViewControllerKt.FinishedScreenViewController()
+        MainViewControllerKt.FinishedScreenViewController(
+            navigate:{ _ in },
+            viewModel: finishedViewModel
+        )
     }
 
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
@@ -79,8 +93,17 @@ struct FinishedScreen: UIViewControllerRepresentable {
 
 struct WatchlistScreen: UIViewControllerRepresentable {
 
+    let watchlistViewModel: WatchlistedShowsViewModel
+
+    init(watchlistViewModel: WatchlistedShowsViewModel) {
+        self.watchlistViewModel = watchlistViewModel
+    }
+
     func makeUIViewController(context: Context) -> UIViewController {
-        MainViewControllerKt.WatchlistScreenViewController()
+        MainViewControllerKt.WatchlistScreenViewController(
+            navigate: {_ in },
+            viewModel: watchlistViewModel
+        )
     }
 
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
@@ -88,8 +111,20 @@ struct WatchlistScreen: UIViewControllerRepresentable {
 
 struct DiscoverScreen: UIViewControllerRepresentable {
 
+    let discoverViewModel: DiscoverViewModel
+
+    init(discoverViewModel: DiscoverViewModel) {
+        self.discoverViewModel = discoverViewModel
+    }
+
     func makeUIViewController(context: Context) -> UIViewController {
-        MainViewControllerKt.DiscoverScreenViewController()
+        
+        let c = MainViewControllerKt.DiscoverScreenViewController(
+            navigate: { _ in },
+            viewModel: discoverViewModel
+        )
+        
+        return c
     }
 
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
