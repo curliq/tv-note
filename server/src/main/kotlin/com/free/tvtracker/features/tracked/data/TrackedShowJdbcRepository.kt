@@ -23,6 +23,7 @@ class TrackedShowJdbcRepository {
             WHERE air_date::date = current_date
               AND tracked_shows.watchlisted = false
               AND users.fcm_token IS NOT NULL
+              AND users.preferences_push_allowed = true
             ;
         """.trimIndent()
         )
