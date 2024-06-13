@@ -40,6 +40,7 @@ bin/
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
+.run/
 
 server/http-client.private.env.json
 composeApp/google-services.json
