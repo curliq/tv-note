@@ -32,4 +32,7 @@ class UserEntity(
 
     @Column(nullable = true)
     var fcmToken: String? = null,
+
+    @Column(name = "preferences_push_allowed", nullable = true)
+    var preferencesPushAllowed: Boolean = true,
 )

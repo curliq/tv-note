@@ -26,11 +26,6 @@ data class TrackedShowEntity(
     @Column(name = "created_at_datetime", nullable = false, columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     val createdAtDatetime: String = "",
 
-//    @ManyToOne(fetch = FetchType.LAZY, cascade = [(CascadeType.PERSIST)])
-//    @JoinColumn(name = "user_id", updatable = false, insertable = false, nullable = false)
-//    @OnDelete(action = OnDeleteAction.CASCADE)
-//    val user: UserEntity = UserEntity(),
-
     @Column(name = "user_id", nullable = false)
     val userId: Int = 0,
 
@@ -41,5 +36,6 @@ data class TrackedShowEntity(
     @JoinColumn(name = "storedshow_id", nullable = false)
     val storedShow: StoredShowEntity = StoredShowEntity(),
 
+    @Column(name = "watchlisted", nullable = false)
     val watchlisted: Boolean = false
 )
