@@ -1,3 +1,4 @@
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 create table stored_episodes
 (
     id                  integer                             not null,
@@ -41,13 +42,14 @@ create table tracked_shows
 );
 create table users
 (
-    id                       serial  not null,
+    id                       serial       not null,
     created_at_datetime      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    username                 varchar(255) not null,
     email                    varchar(255),
     password                 varchar(255),
     role                     smallint check (role between 0 and 1),
     fcm_token                varchar(255),
-    preferences_push_allowed boolean not null,
+    preferences_push_allowed boolean   default true,
     primary key (id)
 );
 alter table if exists stored_shows
@@ -66,12 +68,16 @@ alter table if exists users
     drop constraint if exists UK_6dotkott2kjsp8vw4d0m25fb7;
 alter table if exists users
     add constraint UK_6dotkott2kjsp8vw4d0m25fb7 unique (email);
+alter table if exists users
+    drop constraint if exists UK_2ywh4w6lfiljcxg7w0esfj4fd;
+alter table if exists users
+    add constraint UK_2ywh4w6lfiljcxg7w0esfj4fd unique (username);
 alter table if exists stored_episodes
     add constraint FKkptq9jjny2e63wrtk21kdhgnv foreign key (storedshow_id) references stored_shows;
 alter table if exists tracked_episodes
     add constraint FK1tl34598si8jbuvgynimkqdks foreign key (storedepisode_id) references stored_episodes;
 alter table if exists tracked_episodes
-    add constraint FKq6eq9ur4bdkr5rcpbya9s4arx foreign key (trackedshow_id) references tracked_shows;
+    add constraint FKq6eq9ur4bdkr5rcpbya9s4arx foreign key (trackedshow_id) references tracked_shows on delete cascade;
 alter table if exists tracked_shows
     add constraint FK3kdaak4msxympk9ll7gcd6dij foreign key (storedshow_id) references stored_shows;
 alter table if exists tracked_shows

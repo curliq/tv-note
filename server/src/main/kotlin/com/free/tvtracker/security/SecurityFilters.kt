@@ -1,5 +1,6 @@
 package com.free.tvtracker.security
 
+import com.free.tvtracker.Endpoints
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationProvider
@@ -25,7 +26,12 @@ class SecurityFilters(private val authenticationProvider: AuthenticationProvider
             .csrf { it.disable() }
             .authorizeHttpRequests { authz: Matcher ->
                 authz
-                    .requestMatchers("/user/login", "/user/create", "/error").permitAll()
+                    .requestMatchers(
+                        Endpoints.Path.CREATE_ANON_USER,
+                        "/user/login",
+                        "/user/create",
+                        "/error"
+                    ).permitAll()
                     .requestMatchers("/admin").hasRole("ADMIN")
                     .anyRequest().fullyAuthenticated()
             }

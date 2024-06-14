@@ -12,11 +12,11 @@ class SpringUserDetailsService(
     private val userJpaRepository: UserJpaRepository
 ) : UserDetailsService {
     override fun loadUserByUsername(username: String): UserDetails? =
-        userJpaRepository.findByEmailIs(username)?.mapToUserDetails()
+        userJpaRepository.findByUsernameIs(username)?.mapToUserDetails()
 
     private fun UserEntity.mapToUserDetails(): UserDetails =
         User.builder()
-            .username(this.email)
+            .username(this.username)
             .password(this.password)
             .roles(this.role.key)
             .build()

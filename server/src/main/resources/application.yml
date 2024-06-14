@@ -1,19 +1,12 @@
 jwt:
-  access-token-expiration: 15552000000 # 6 months
   key: ${JWT_PRIVATE_KEY}
-  refresh-token-expiration: 0
 logging:
   file:
     path: ./logs
   level:
-    com:
-      free:
-        tvtracker:
-          core:
-            logging:
-              com.free.tvtracker.logging.OutRequestLoggingInterceptor: off
-              com.free.tvtracker.logging.RequestLoggingInterceptor: INFO
-              com.free.tvtracker.logging.TvtrackerLogger: DEBUG
+    com.free.tvtracker.logging.OutRequestLoggingInterceptor: off
+    com.free.tvtracker.logging.RequestLoggingInterceptor: INFO
+    com.free.tvtracker.logging.TvtrackerLogger: DEBUG
     httpclient:
       wire: off
     org:
@@ -35,7 +28,7 @@ spring:
   datasource:
     driver-class-name: org.postgresql.Driver
     password: admin
-    url: jdbc:postgresql://localhost:5432/tvtracker3
+    url: jdbc:postgresql://localhost:5432/tvtracker5
     username: admin2
   flyway:
     create-schemas: true
@@ -43,7 +36,7 @@ spring:
     enabled: false
     group: true
     password: admin
-    url: jdbc:postgresql://localhost:5432/tvtracker3
+    url: jdbc:postgresql://localhost:5432/tvtracker5
     user: admin
   jpa:
     generate-ddl: false

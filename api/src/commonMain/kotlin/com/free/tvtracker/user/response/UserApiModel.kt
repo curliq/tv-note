@@ -10,7 +10,8 @@ data class UserApiModel(
     @SerialName("created_at_datetime")
     val createdAtDatetime: String,
     val id: Int,
-    val email: String,
+    val username: String?,
+    val email: String?,
 )
 
 @Serializable

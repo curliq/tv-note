@@ -2,6 +2,7 @@ package com.free.tvtracker.features.tracked.data
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.core.queryForList
 import org.springframework.stereotype.Repository
 
 @Repository
@@ -34,5 +35,23 @@ class TrackedShowJdbcRepository {
                 userFcmToken = it["fcm_token"] as String,
             )
         }
+    }
+
+    /**
+     * Change the user_id FK of the tracked shows that belong to [fromUserId]
+     * If [toUserId] already has a tracked show with the same stored_show_id, then it's ignored,
+     * meaning the tracked show on the [fromUserId] is lost, as intended
+     */
+    fun batchChangeUser(fromUserId: Int, toUserId: Int) {
+        jdbcTemplate.update(
+            """
+            update tracked_shows t
+            set user_id = $toUserId
+            from (select id from tracked_shows where user_id = $fromUserId) as data_table
+            where t.id = data_table.id
+              and not exists(SELECT 1 FROM tracked_shows WHERE storedshow_id = t.storedshow_id AND user_id = $toUserId)
+            ;
+        """.trimIndent()
+        )
     }
 }

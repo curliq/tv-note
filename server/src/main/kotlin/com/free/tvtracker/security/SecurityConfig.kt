@@ -1,13 +1,10 @@
 package com.free.tvtracker.security
 
-import com.free.tvtracker.logging.RequestLoggingInterceptor
+import com.free.tvtracker.core.logging.RequestLoggingInterceptor
 import com.free.tvtracker.features.user.data.UserJpaRepository
-import kotlinx.serialization.json.Json
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.http.converter.HttpMessageConverter
-import org.springframework.http.converter.json.KotlinSerializationJsonHttpMessageConverter
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider

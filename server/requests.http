@@ -1,18 +1,25 @@
-### create user
-POST {{host}}/user/create
+### create anon user
+POST {{host}}/user/create-anon
 Content-Type: application/json
+
+### set user credentials
+POST {{host}}/user/complete-credentials
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzE4MzcxMTMxLCJleHAiOjI1MzQwMjMwMDgwMCwicm9sZSI6IndhdGNoZXIifQ.uLsm_dpwVTD_VC9AqGlvjPVUi815FmcibtwICyD0oLSRb2S2QBDpTUeJemBVhyLgBGZp1H5H-7iKGl4YpsDAxg
 
 {
   "email": "1@test.com",
+  "username": "miguel",
   "password": "password"
 }
 
 ### login
 POST {{host}}/user/login
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI0IiwiaWF0IjoxNzE4MzcxNDM2LCJleHAiOjI1MzQwMjMwMDgwMCwicm9sZSI6IndhdGNoZXIifQ.6nUJxN1w49-XPeSb5-kt7lVZMo26hfLuWfYrpairCtkxLcZrt0JyoyZBR1abbiLo89iL9kArt5FMjeoDy3kShg
 
 {
-  "email": "1@test.com",
+  "username": "miguel",
   "password": "password"
 }
 

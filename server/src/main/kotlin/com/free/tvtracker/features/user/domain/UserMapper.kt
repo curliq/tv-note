@@ -7,6 +7,7 @@ fun UserEntity.toApiModel(): UserApiModel {
     return UserApiModel(
         createdAtDatetime = this.createdAtDatetime,
         id = this.id,
+        username = this.username,
         email = this.email
     )
 }

@@ -23,6 +23,9 @@ import kotlin.reflect.KClass
 object Endpoints {
     object Path {
         const val GET_USER = ""
+        const val POST_USER_CREDENTIALS = "user/complete-credentials"
+        const val CREATE_ANON_USER = "user/create-anon"
+        const val LOGIN = "user/login"
         const val POST_FCM_TOKEN = "user/fcm-token"
         const val GET_WATCHING = "track/shows/watching"
         const val GET_FINISHED = "track/shows/finished"

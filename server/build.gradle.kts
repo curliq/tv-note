@@ -13,7 +13,7 @@ group = "com.free.tvtracker"
 version = "1.0.0"
 
 flyway {
-    url = "jdbc:postgresql://localhost:5432/tvtracker3"
+    url = "jdbc:postgresql://localhost:5432/tvtracker5"
     user = "postgres"
     password = ""
     driver = "org.postgresql.Driver"

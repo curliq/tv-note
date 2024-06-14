@@ -5,6 +5,8 @@ import com.free.tvtracker.base.ApiError
 import com.free.tvtracker.user.response.UserApiResponse
 import com.free.tvtracker.logging.TvtrackerLogger
 import com.free.tvtracker.user.request.PostFcmTokenRequest
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -17,8 +19,17 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping(produces = ["application/json"])
 class UserController(val logger: TvtrackerLogger, val service: UserService) {
 
-    data class CreateUserRequest(val email: String, val password: String)
-    data class LoginRequest(val email: String, val password: String)
+    data class SignupRequest(
+        val username: String,
+        val password: String,
+        val email: String? = null
+    )
+
+    @Serializable
+    data class LoginRequest(
+        val username: String,
+        val password: String
+    )
     data class CreateUserResponse(val accessToken: String, val userId: Int)
 
     @PostMapping(Endpoints.Path.POST_FCM_TOKEN)
@@ -34,15 +45,24 @@ class UserController(val logger: TvtrackerLogger, val service: UserService) {
         return ResponseEntity.ok(UserApiResponse.ok(user.toApiModel()))
     }
 
-    @PostMapping("/create")
-    fun signup(@RequestBody body: CreateUserRequest): CreateUserResponse {
-        val result = service.createUser(body.email, body.password)
+    /**
+     * This comes from a signup form
+     */
+    @PostMapping(Endpoints.Path.POST_USER_CREDENTIALS)
+    fun setUserCredentials(@RequestBody body: SignupRequest): CreateUserResponse {
+        val result = service.setUserCredentials(body)
         return CreateUserResponse("token: ${result?.token}", result?.user?.id ?: -1)
     }
 
-    @PostMapping("/login")
+    @PostMapping(Endpoints.Path.CREATE_ANON_USER)
+    fun createAnonUser(): CreateUserResponse {
+        val result = service.createAnonUser()
+        return CreateUserResponse("token: ${result?.token}", result?.user?.id ?: -1)
+    }
+
+    @PostMapping(Endpoints.Path.LOGIN)
     fun login(@RequestBody body: LoginRequest): Any {
-        val result = service.login(body.email, body.password)
+        val result = service.login(body)
         result?.let {
             return CreateUserResponse("token: ${result.token}", result.user.id)
         } ?: run {
