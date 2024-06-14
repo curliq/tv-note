@@ -1,13 +1,18 @@
 package com.free.tvtracker.features.user.domain
 
+import com.free.tvtracker.base.Mapper
 import com.free.tvtracker.user.response.UserApiModel
-import com.free.tvtracker.features.user.data.UserEntity
+import org.springframework.stereotype.Component
 
-fun UserEntity.toApiModel(): UserApiModel {
-    return UserApiModel(
-        createdAtDatetime = this.createdAtDatetime,
-        id = this.id,
-        username = this.username,
-        email = this.email
-    )
+@Component
+class UserApiModelMapper : Mapper<UserService.AuthenticatedUser, UserApiModel> {
+    override fun map(from: UserService.AuthenticatedUser): UserApiModel {
+        return UserApiModel(
+            createdAtDatetime = from.user.createdAtDatetime,
+            id = from.user.id,
+            username = from.user.username,
+            email = from.user.email,
+            authToken = from.token
+        )
+    }
 }

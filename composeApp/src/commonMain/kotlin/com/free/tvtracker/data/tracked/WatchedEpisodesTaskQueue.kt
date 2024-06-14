@@ -4,7 +4,7 @@ import com.free.tvtracker.Endpoints
 import com.free.tvtracker.core.data.http.TvHttpClient
 import com.free.tvtracker.core.data.sql.LocalSqlDataProvider
 import com.free.tvtracker.data.tracked.entities.MarkEpisodeWatchedOrderClientEntity
-import com.free.tvtracker.tracked.request.AddEpisodesRequest
+import com.free.tvtracker.tracked.request.AddEpisodesApiRequestBody
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -33,10 +33,10 @@ class WatchedEpisodesTaskQueue(
     private suspend fun trySync(orders: List<MarkEpisodeWatchedOrderClientEntity>) {
         if (orders.isEmpty()) return
         try {
-            val eps = orders.map { AddEpisodesRequest.Episode(it.showId.toInt(), it.episodeId.toInt()) }
+            val eps = orders.map { AddEpisodesApiRequestBody.Episode(it.showId.toInt(), it.episodeId.toInt()) }
             remoteDataSource.call(
                 Endpoints.addEpisodes,
-                AddEpisodesRequest(eps)
+                AddEpisodesApiRequestBody(eps)
             )
                 .asSuccess { data ->
                     val watchedEps = data.map { responseEp ->

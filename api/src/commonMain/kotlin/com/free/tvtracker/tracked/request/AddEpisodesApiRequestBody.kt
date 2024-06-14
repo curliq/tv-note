@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class AddEpisodesRequest(
+data class AddEpisodesApiRequestBody(
     @SerialName("episodes") val episodes: List<Episode>
 ) {
     @Serializable

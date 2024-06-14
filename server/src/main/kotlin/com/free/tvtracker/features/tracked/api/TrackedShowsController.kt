@@ -3,8 +3,8 @@ package com.free.tvtracker.features.tracked.api
 import com.free.tvtracker.Endpoints
 import com.free.tvtracker.logging.TvtrackerLogger
 import com.free.tvtracker.features.tracked.domain.TrackedShowsService
-import com.free.tvtracker.tracked.request.AddEpisodesRequest
-import com.free.tvtracker.tracked.request.AddShowRequest
+import com.free.tvtracker.tracked.request.AddEpisodesApiRequestBody
+import com.free.tvtracker.tracked.request.AddShowApiRequestBody
 import com.free.tvtracker.tracked.response.AddTrackedEpisodesApiResponse
 import com.free.tvtracker.tracked.response.AddTrackedShowApiResponse
 import com.free.tvtracker.tracked.response.ErrorShowAlreadyAdded
@@ -28,7 +28,7 @@ class TrackedShowsController(
 ) {
 
     @PostMapping(Endpoints.Path.ADD_TRACKED)
-    fun addShow(@RequestBody body: AddShowRequest): ResponseEntity<AddTrackedShowApiResponse> {
+    fun addShow(@RequestBody body: AddShowApiRequestBody): ResponseEntity<AddTrackedShowApiResponse> {
         val res = try {
             trackedShowsService.addShow(body)
         } catch (e: org.springframework.dao.DataIntegrityViolationException) {
@@ -48,7 +48,7 @@ class TrackedShowsController(
     }
 
     @PostMapping(Endpoints.Path.ADD_EPISODES)
-    fun episodeWatched(@RequestBody body: AddEpisodesRequest): ResponseEntity<AddTrackedEpisodesApiResponse> {
+    fun episodeWatched(@RequestBody body: AddEpisodesApiRequestBody): ResponseEntity<AddTrackedEpisodesApiResponse> {
         val show = trackedShowsService.addEpisode(body)
         return ResponseEntity.ok(AddTrackedEpisodesApiResponse.ok(show.map { it.toApiModel() }))
     }

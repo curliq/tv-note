@@ -3,9 +3,9 @@ package com.free.tvtracker.data.search
 import com.free.tvtracker.Endpoints
 import com.free.tvtracker.base.ApiError
 import com.free.tvtracker.core.data.http.TvHttpClient
-import com.free.tvtracker.discover.request.RecommendedContentApiRequest
-import com.free.tvtracker.discover.request.TmdbPersonRequestBody
-import com.free.tvtracker.discover.request.TmdbShowDetailsRequestBody
+import com.free.tvtracker.discover.request.RecommendedContentApiRequestBody
+import com.free.tvtracker.discover.request.TmdbPersonApiRequestBody
+import com.free.tvtracker.discover.request.TmdbShowDetailsApiRequestBody
 import com.free.tvtracker.discover.response.RecommendedContentApiResponse
 import com.free.tvtracker.discover.response.TmdbPersonDetailsApiResponse
 import com.free.tvtracker.discover.response.TmdbShowDetailsApiResponse
@@ -35,7 +35,7 @@ class SearchRepository(private val httpClient: TvHttpClient) {
     }
 
     suspend fun getShow(showTmdbId: Int, includeEpisodes: Boolean): TmdbShowDetailsApiResponse {
-        val body = TmdbShowDetailsRequestBody(showTmdbId, includeEpisodes)
+        val body = TmdbShowDetailsApiRequestBody(showTmdbId, includeEpisodes)
         return try {
             httpClient.call(Endpoints.getTmdbShow, body)
         } catch (e: Throwable) {
@@ -44,7 +44,7 @@ class SearchRepository(private val httpClient: TvHttpClient) {
     }
 
     suspend fun getPerson(tmdbPersonId: Int): TmdbPersonDetailsApiResponse {
-        val body = TmdbPersonRequestBody(tmdbPersonId)
+        val body = TmdbPersonApiRequestBody(tmdbPersonId)
         return try {
             httpClient.call(Endpoints.getTmdbPerson, body)
         } catch (e: Throwable) {
@@ -70,7 +70,7 @@ class SearchRepository(private val httpClient: TvHttpClient) {
 
     suspend fun getRecommended(relatedShows: List<Int>): RecommendedContentApiResponse {
         return try {
-            val body = RecommendedContentApiRequest(relatedShows)
+            val body = RecommendedContentApiRequestBody(relatedShows)
             httpClient.call(Endpoints.getRecommendedContent, body)
         } catch (e: Throwable) {
             RecommendedContentApiResponse.error(ApiError.Network)

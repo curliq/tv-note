@@ -5,7 +5,7 @@ import com.free.tvtracker.base.ApiError
 import com.free.tvtracker.core.data.http.RemoteDataSource
 import com.free.tvtracker.core.data.sql.LocalSqlDataProvider
 import com.free.tvtracker.data.tracked.entities.MarkEpisodeWatchedOrderClientEntity
-import com.free.tvtracker.tracked.request.AddShowRequest
+import com.free.tvtracker.tracked.request.AddShowApiRequestBody
 import com.free.tvtracker.tracked.response.TrackedShowApiModel
 import com.free.tvtracker.tracked.response.TrackedShowApiResponse
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -128,7 +128,7 @@ class TrackedShowsRepository(
         // Use global scope because this should finish even if the user closes the search activity
         GlobalScope.launch(Dispatchers.IO) {
             try {
-                val res = remoteDataSource.addTracked(AddShowRequest(showId, watchlisted = watchlisted))
+                val res = remoteDataSource.addTracked(AddShowApiRequestBody(showId, watchlisted = watchlisted))
                 res.coAsSuccess { newShow ->
                     allShows.update { it.plus(newShow) }
                 }

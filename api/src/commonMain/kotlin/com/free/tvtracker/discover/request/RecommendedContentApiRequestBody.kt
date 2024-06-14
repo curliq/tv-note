@@ -4,4 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class TmdbPersonRequestBody(@SerialName("tmdb_id") val tmdbId: Int)
+data class RecommendedContentApiRequestBody(
+    @SerialName("related_shows_tmdb_ids")
+    val relatedShowsTmdbIds: List<Int>
+)

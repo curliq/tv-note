@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class AddShowRequest(
+data class AddShowApiRequestBody(
     @SerialName("tmdb_id") val tmdbShowId: Int,
     @SerialName("watchlisted") val watchlisted: Boolean
 )

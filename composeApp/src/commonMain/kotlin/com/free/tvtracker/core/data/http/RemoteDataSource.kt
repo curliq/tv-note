@@ -1,7 +1,7 @@
 package com.free.tvtracker.core.data.http
 
 import com.free.tvtracker.Endpoints
-import com.free.tvtracker.tracked.request.AddShowRequest
+import com.free.tvtracker.tracked.request.AddShowApiRequestBody
 import com.free.tvtracker.tracked.response.AddTrackedShowApiResponse
 import com.free.tvtracker.tracked.response.TrackedShowApiResponse
 
@@ -18,7 +18,7 @@ class RemoteDataSource(private val tvHttpClient: TvHttpClient) {
         return tvHttpClient.call(Endpoints.getWatchlisted)
     }
 
-    suspend fun addTracked(body: AddShowRequest): AddTrackedShowApiResponse {
+    suspend fun addTracked(body: AddShowApiRequestBody): AddTrackedShowApiResponse {
         return tvHttpClient.call(Endpoints.addTracked, body)
     }
 

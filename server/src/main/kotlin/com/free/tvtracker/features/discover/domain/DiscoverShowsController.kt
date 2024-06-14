@@ -1,7 +1,7 @@
 package com.free.tvtracker.features.discover.domain
 
 import com.free.tvtracker.Endpoints
-import com.free.tvtracker.discover.request.RecommendedContentApiRequest
+import com.free.tvtracker.discover.request.RecommendedContentApiRequestBody
 import com.free.tvtracker.discover.response.RecommendedContentApiModel
 import com.free.tvtracker.discover.response.RecommendedContentApiResponse
 import com.free.tvtracker.discover.response.TmdbShowTrendingApiResponse
@@ -36,7 +36,7 @@ class DiscoverShowsController(
     }
 
     @PostMapping(Endpoints.Path.GET_RECOMMENDED_CONTENT)
-    fun recommended(@RequestBody body: RecommendedContentApiRequest): ResponseEntity<RecommendedContentApiResponse>? {
+    fun recommended(@RequestBody body: RecommendedContentApiRequestBody): ResponseEntity<RecommendedContentApiResponse>? {
         val res = discoverShowsService.getRecommended(body)
         return res
     }

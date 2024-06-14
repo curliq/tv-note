@@ -23,11 +23,6 @@ Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI0IiwiaWF0IjoxNzE4MzcxNDM2L
   "password": "password"
 }
 
-### refresh token
-POST {{host}}/user/refresh-token
-Content-Type: application/json
-Authorization: Bearer {{tokenUser1}}
-
 ### get user
 GET {{host}}/user
 Authorization: Bearer {{tokenUser1}}

@@ -10,8 +10,8 @@ import com.free.tvtracker.features.tracked.data.TrackedShowJdbcRepository
 import com.free.tvtracker.features.tracked.data.TrackedShowJpaRepository
 import com.free.tvtracker.security.SessionService
 import com.free.tvtracker.storage.shows.domain.StoredShowsService
-import com.free.tvtracker.tracked.request.AddEpisodesRequest
-import com.free.tvtracker.tracked.request.AddShowRequest
+import com.free.tvtracker.tracked.request.AddEpisodesApiRequestBody
+import com.free.tvtracker.tracked.request.AddShowApiRequestBody
 import com.free.tvtracker.tracked.response.TrackedShowApiModel
 import org.springframework.stereotype.Service
 
@@ -25,7 +25,7 @@ class TrackedShowsService(
     private val searchService: SearchService,
     private val isTrackedShowWatchableUseCase: IsTrackedShowWatchableUseCase
 ) {
-    fun addShow(body: AddShowRequest): TrackedShowEntity? {
+    fun addShow(body: AddShowApiRequestBody): TrackedShowEntity? {
         val userId = sessionService.getSessionUserId()
         var storedShow = storedShowsService.getStoredShow(body.tmdbShowId)
         if (storedShow == null) {
@@ -41,7 +41,7 @@ class TrackedShowsService(
         return trackedShow
     }
 
-    fun addEpisode(body: AddEpisodesRequest): List<TrackedShowEpisodeEntity> {
+    fun addEpisode(body: AddEpisodesApiRequestBody): List<TrackedShowEpisodeEntity> {
         val episodes = body.episodes.map {
             TrackedShowEpisodeEntity(
                 id = "t_${it.episodeId}",

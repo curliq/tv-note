@@ -1,22 +1,21 @@
 package com.free.tvtracker
 
-import com.free.tvtracker.base.ApiError
 import com.free.tvtracker.base.ApiResponse
-import com.free.tvtracker.discover.request.RecommendedContentApiRequest
-import com.free.tvtracker.discover.request.TmdbPersonRequestBody
-import com.free.tvtracker.discover.request.TmdbShowDetailsRequestBody
+import com.free.tvtracker.discover.request.RecommendedContentApiRequestBody
+import com.free.tvtracker.discover.request.TmdbPersonApiRequestBody
+import com.free.tvtracker.discover.request.TmdbShowDetailsApiRequestBody
 import com.free.tvtracker.discover.response.RecommendedContentApiResponse
 import com.free.tvtracker.discover.response.TmdbPersonDetailsApiResponse
 import com.free.tvtracker.discover.response.TmdbShowDetailsApiResponse
 import com.free.tvtracker.discover.response.TmdbShowTrendingApiResponse
 import com.free.tvtracker.search.request.SearchApiRequestBody
 import com.free.tvtracker.search.response.SearchApiResponse
-import com.free.tvtracker.tracked.request.AddEpisodesRequest
-import com.free.tvtracker.tracked.request.AddShowRequest
+import com.free.tvtracker.tracked.request.AddEpisodesApiRequestBody
+import com.free.tvtracker.tracked.request.AddShowApiRequestBody
 import com.free.tvtracker.tracked.response.AddTrackedEpisodesApiResponse
 import com.free.tvtracker.tracked.response.AddTrackedShowApiResponse
 import com.free.tvtracker.tracked.response.TrackedShowApiResponse
-import com.free.tvtracker.user.request.PostFcmTokenRequest
+import com.free.tvtracker.user.request.PostFcmTokenApiRequestBody
 import com.free.tvtracker.user.response.UserApiResponse
 import kotlin.reflect.KClass
 
@@ -24,6 +23,7 @@ object Endpoints {
     object Path {
         const val GET_USER = ""
         const val POST_USER_CREDENTIALS = "user/complete-credentials"
+        const val UPDATE_PREFERENCES_PUSH_NOTIFICATIONS = "user/update-push-notifications"
         const val CREATE_ANON_USER = "user/create-anon"
         const val LOGIN = "user/login"
         const val POST_FCM_TOKEN = "user/fcm-token"
@@ -42,32 +42,42 @@ object Endpoints {
     }
 
     val getUser = EndpointNoBody(Path.GET_USER, UserApiResponse::class, Endpoint.Verb.GET)
+    val createAnonUser = EndpointNoBody(Path.CREATE_ANON_USER, UserApiResponse::class, Endpoint.Verb.POST)
+    val postUserCredentials =
+        Endpoint(Path.POST_USER_CREDENTIALS, ApiResponse.EmptyApiResponse::class, Nothing::class, Endpoint.Verb.POST)
+    val login = Endpoint(Path.LOGIN, UserApiResponse::class, Nothing::class, Endpoint.Verb.POST)
+    val updateUserPreferences = Endpoint(
+        Path.UPDATE_PREFERENCES_PUSH_NOTIFICATIONS,
+        ApiResponse.EmptyApiResponse::class,
+        Nothing::class,
+        Endpoint.Verb.POST
+    )
     val postFcmToken = Endpoint(
         Path.POST_FCM_TOKEN,
         ApiResponse.EmptyApiResponse::class,
-        PostFcmTokenRequest::class,
+        PostFcmTokenApiRequestBody::class,
         Endpoint.Verb.POST
     )
     val getWatching = EndpointNoBody(Path.GET_WATCHING, TrackedShowApiResponse::class, Endpoint.Verb.GET)
     val getFinished = EndpointNoBody(Path.GET_FINISHED, TrackedShowApiResponse::class, Endpoint.Verb.GET)
     val getWatchlisted = EndpointNoBody(Path.GET_WATCHLISTED, TrackedShowApiResponse::class, Endpoint.Verb.GET)
     val addTracked =
-        Endpoint(Path.ADD_TRACKED, AddTrackedShowApiResponse::class, AddShowRequest::class, Endpoint.Verb.POST)
+        Endpoint(Path.ADD_TRACKED, AddTrackedShowApiResponse::class, AddShowApiRequestBody::class, Endpoint.Verb.POST)
     val addEpisodes =
-        Endpoint(Path.ADD_EPISODES, AddTrackedEpisodesApiResponse::class, AddEpisodesRequest::class, Endpoint.Verb.POST)
+        Endpoint(Path.ADD_EPISODES, AddTrackedEpisodesApiResponse::class, AddEpisodesApiRequestBody::class, Endpoint.Verb.POST)
 
     //    val toggleWatchlist = Endpoint(Path.TOGGLE_WATCHLIST, )
     val search = Endpoint(Path.SEARCH, SearchApiResponse::class, SearchApiRequestBody::class, Endpoint.Verb.POST)
     val getTmdbShow = Endpoint(
         Path.GET_TMDB_SHOW,
         TmdbShowDetailsApiResponse::class,
-        TmdbShowDetailsRequestBody::class,
+        TmdbShowDetailsApiRequestBody::class,
         Endpoint.Verb.POST
     )
     val getTmdbPerson = Endpoint(
         Path.GET_TMDB_PERSON,
         TmdbPersonDetailsApiResponse::class,
-        TmdbPersonRequestBody::class,
+        TmdbPersonApiRequestBody::class,
         Endpoint.Verb.POST
     )
     val getTrendingWeekly =
@@ -78,7 +88,7 @@ object Endpoints {
         Endpoint(
             Path.GET_RECOMMENDED_CONTENT,
             RecommendedContentApiResponse::class,
-            RecommendedContentApiRequest::class,
+            RecommendedContentApiRequestBody::class,
             Endpoint.Verb.POST
         )
 }

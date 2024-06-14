@@ -10,6 +10,8 @@ data class UserApiModel(
     @SerialName("created_at_datetime")
     val createdAtDatetime: String,
     val id: Int,
+    @SerialName("token")
+    val authToken: String,
     val username: String?,
     val email: String?,
 )
@@ -30,3 +32,6 @@ data class UserApiResponse(
         }
     }
 }
+
+@Serializable
+object ErrorInvalidCredentials : ApiError("invalid_creds")

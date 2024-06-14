@@ -70,7 +70,7 @@ class UserService(
     }
 
     fun createAnonUser(): AuthenticatedUser? {
-        val user = UserEntity(username = UUID.randomUUID().toString(),)
+        val user = UserEntity(username = UUID.randomUUID().toString())
         try {
             userJpaRepository.save(user)
         } catch (e: Exception) {
@@ -99,8 +99,8 @@ class UserService(
         val user = userJpaRepository.findByUsernameIs(body.username)!!
         trackedShowsService.migrateShows(currentAnonUserId, user.id)
         userJpaRepository.deleteById(currentAnonUserId)
-        logger.get.debug("Successfully logged in user: ${user.username}")
         val accessToken = tokenService.generate(user.id, user.role) ?: return null
+        logger.get.debug("Successfully logged in user: ${user.username}")
         return AuthenticatedUser(user = user, token = accessToken)
     }
 

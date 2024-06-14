@@ -1,6 +1,6 @@
 package com.free.tvtracker.features.discover
 
-import com.free.tvtracker.discover.request.RecommendedContentApiRequest
+import com.free.tvtracker.discover.request.RecommendedContentApiRequestBody
 import com.free.tvtracker.discover.response.RecommendedContentApiModel
 import com.free.tvtracker.discover.response.RecommendedContentApiModel.RelatedContent
 import com.free.tvtracker.features.discover.domain.DiscoverShowsService
@@ -39,7 +39,7 @@ class DiscoverShowsServiceRecommendationTest {
             )
         }
         val sut = DiscoverShowsService(mockk(), tmdbClient)
-        val data = RecommendedContentApiRequest(listOf(1, 2))
+        val data = RecommendedContentApiRequestBody(listOf(1, 2))
         val res = sut.getRecommended(data)
         assertContentEquals(listOf(RecommendedContentApiModel.Data(101, "")), res?.body?.data?.results)
         assertContentEquals(listOf(RelatedContent(1), RelatedContent(2)), res?.body?.data?.relatedContent)
@@ -80,7 +80,7 @@ class DiscoverShowsServiceRecommendationTest {
             )
         }
         val sut = DiscoverShowsService(mockk(), tmdbClient)
-        val data = RecommendedContentApiRequest(listOf(1, 2, 3))
+        val data = RecommendedContentApiRequestBody(listOf(1, 2, 3))
         val res = sut.getRecommended(data)
         assertContentEquals(listOf(RecommendedContentApiModel.Data(101, "")), res?.body?.data?.results)
         assertContentEquals(

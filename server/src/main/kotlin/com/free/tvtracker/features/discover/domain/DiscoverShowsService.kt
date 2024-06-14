@@ -1,9 +1,8 @@
 package com.free.tvtracker.features.discover.domain
 
-import com.free.tvtracker.discover.request.RecommendedContentApiRequest
+import com.free.tvtracker.discover.request.RecommendedContentApiRequestBody
 import com.free.tvtracker.discover.response.ErrorRecommendedNotShowTracked
 import com.free.tvtracker.discover.response.RecommendedContentApiResponse
-import com.free.tvtracker.features.tracked.domain.TrackedShowsService
 import com.free.tvtracker.logging.TvtrackerLogger
 import com.free.tvtracker.tmdb.TmdbClient
 import com.free.tvtracker.tmdb.data.TmdbRecommendedShowsResponse
@@ -40,7 +39,7 @@ class DiscoverShowsService(
         return respEntity.body!!
     }
 
-    fun getRecommended(body: RecommendedContentApiRequest): ResponseEntity<RecommendedContentApiResponse>? {
+    fun getRecommended(body: RecommendedContentApiRequestBody): ResponseEntity<RecommendedContentApiResponse>? {
         val res: ArrayList<TmdbShowSmallResponse> = arrayListOf()
         val relatedShows = body.relatedShowsTmdbIds.takeIf { it.isNotEmpty() } ?: return ResponseEntity(
             RecommendedContentApiResponse.error(ErrorRecommendedNotShowTracked),

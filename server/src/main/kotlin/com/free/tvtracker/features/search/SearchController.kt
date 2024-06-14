@@ -4,8 +4,8 @@ import com.free.tvtracker.Endpoints
 import com.free.tvtracker.logging.TvtrackerLogger
 import com.free.tvtracker.tmdb.data.TmdbSearchMultiResponse
 import com.free.tvtracker.tmdb.data.enums.TmdbContentType
-import com.free.tvtracker.discover.request.TmdbPersonRequestBody
-import com.free.tvtracker.discover.request.TmdbShowDetailsRequestBody
+import com.free.tvtracker.discover.request.TmdbPersonApiRequestBody
+import com.free.tvtracker.discover.request.TmdbShowDetailsApiRequestBody
 import com.free.tvtracker.discover.response.TmdbPersonDetailsApiResponse
 import com.free.tvtracker.discover.response.TmdbShowDetailsApiResponse
 import com.free.tvtracker.search.request.MediaType
@@ -16,7 +16,6 @@ import com.free.tvtracker.search.response.SearchMovieApiModel
 import com.free.tvtracker.search.response.SearchPersonApiModel
 import com.free.tvtracker.search.response.SearchShowApiModel
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -60,7 +59,7 @@ class SearchController(
     }
 
     @PostMapping(Endpoints.Path.GET_TMDB_SHOW)
-    fun getTmdbShow(@RequestBody body: TmdbShowDetailsRequestBody): ResponseEntity<TmdbShowDetailsApiResponse> {
+    fun getTmdbShow(@RequestBody body: TmdbShowDetailsApiRequestBody): ResponseEntity<TmdbShowDetailsApiResponse> {
         return ResponseEntity.ok(
             TmdbShowDetailsApiResponse.ok(
                 searchService.getShowApiModel(tmdbShowId = body.tmdbId, alwaysIncludeEpisodes = body.includeEpisodes)
@@ -69,7 +68,7 @@ class SearchController(
     }
 
     @PostMapping(Endpoints.Path.GET_TMDB_PERSON)
-    fun getTmdbPerson(@RequestBody body: TmdbPersonRequestBody): ResponseEntity<TmdbPersonDetailsApiResponse> {
+    fun getTmdbPerson(@RequestBody body: TmdbPersonApiRequestBody): ResponseEntity<TmdbPersonDetailsApiResponse> {
         return ResponseEntity.ok(
             TmdbPersonDetailsApiResponse.ok(
                 searchService.getPersonApiModel(tmdbPersonId = body.tmdbId)
