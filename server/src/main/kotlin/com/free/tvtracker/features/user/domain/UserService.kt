@@ -6,6 +6,9 @@ import com.free.tvtracker.features.user.data.UserJpaRepository
 import com.free.tvtracker.logging.TvtrackerLogger
 import com.free.tvtracker.security.SessionService
 import com.free.tvtracker.security.TokenService
+import com.free.tvtracker.user.request.LoginApiRequestBody
+import com.free.tvtracker.user.request.SignupApiRequestBody
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -51,7 +54,7 @@ class UserService(
         return userJpaRepository.getReferenceById(userId)
     }
 
-    fun setUserCredentials(body: UserController.SignupRequest): AuthenticatedUser? {
+    fun setUserCredentials(body: SignupApiRequestBody): AuthenticatedUser? {
         if (body.password.isEmpty() || body.username.isEmpty()) return null
         val anonUserId = sessionService.getSessionUserId()
         logger.get.debug("setting credentials for user: $anonUserId")
@@ -81,7 +84,7 @@ class UserService(
         return AuthenticatedUser(user = user, token = accessToken)
     }
 
-    fun login(body: UserController.LoginRequest): AuthenticatedUser? {
+    fun login(body: LoginApiRequestBody): AuthenticatedUser? {
         if (body.password.isEmpty() || body.username.isEmpty()) return null
         val currentAnonUserId = sessionService.getSessionUserId()
         try {
@@ -97,21 +100,26 @@ class UserService(
             return null
         }
         val user = userJpaRepository.findByUsernameIs(body.username)!!
-        trackedShowsService.migrateShows(currentAnonUserId, user.id)
-        userJpaRepository.deleteById(currentAnonUserId)
+        migrateUser(currentAnonUserId, user)
         val accessToken = tokenService.generate(user.id, user.role) ?: return null
         logger.get.debug("Successfully logged in user: ${user.username}")
         return AuthenticatedUser(user = user, token = accessToken)
-    }
-
-    fun createBearerToken(): String? {
-        val user = getAuthenticatedUser() ?: return null
-        return tokenService.generate(user.id, user.role)
     }
 
     fun saveFcmToken(token: String) {
         val user = getAuthenticatedUser() ?: return
         user.fcmToken = token
         userJpaRepository.save(user)
+    }
+
+    private fun migrateUser(fromAnonUser: Int, toUser: UserEntity) {
+        trackedShowsService.migrateShows(fromAnonUser, toUser.id)
+        val fcmToken = userJpaRepository.findByIdOrNull(fromAnonUser)?.fcmToken
+        fcmToken?.let {
+            toUser.fcmToken = fcmToken
+            userJpaRepository.save(toUser)
+        }
+        userJpaRepository.deleteById(fromAnonUser)
+
     }
 }
