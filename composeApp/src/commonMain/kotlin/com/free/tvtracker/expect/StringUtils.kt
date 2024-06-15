@@ -1,4 +1,4 @@
-package com.free.tvtracker.utils
+package com.free.tvtracker.expect
 
 class CommonStringUtils : StringUtils() {
     fun listToString(list: List<String>): String {

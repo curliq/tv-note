@@ -1,8 +1,8 @@
-package com.free.tvtracker.utils
+package com.free.tvtracker.expect
 
 actual open class StringUtils actual constructor() {
     actual fun roundDouble(d: Double, decimalPoints: Int): String {
-        return "" //todo
+        return "%.${decimalPoints}f".format(d)
     }
 
     actual fun shortenDouble(
@@ -10,6 +10,6 @@ actual open class StringUtils actual constructor() {
         decimalPoints: Int,
         shortenCharacter: Char
     ): String {
-        return ""//todo
+        return "%.${decimalPoints}f%c".format(d, shortenCharacter)
     }
 }

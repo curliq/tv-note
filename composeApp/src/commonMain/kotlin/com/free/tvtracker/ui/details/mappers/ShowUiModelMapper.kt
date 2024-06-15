@@ -7,7 +7,7 @@ import com.free.tvtracker.domain.GetShowStatusUseCase
 import com.free.tvtracker.domain.IsTrackedShowWatchableUseCase
 import com.free.tvtracker.ui.details.DetailsUiModel
 import com.free.tvtracker.tracked.response.TrackedShowApiModel
-import com.free.tvtracker.utils.CommonStringUtils
+import com.free.tvtracker.expect.CommonStringUtils
 import com.free.tvtracker.utils.TmdbConfigData
 import kotlin.math.ln
 import kotlin.math.pow
