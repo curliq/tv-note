@@ -29,7 +29,7 @@ class WelcomeViewModel(
         }
     }
 
-    fun goToHome() {
+    fun actionOk() {
         status.update {
             when (it) {
                 Status.Initialising -> Status.Loading

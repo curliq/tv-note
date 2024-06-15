@@ -2,11 +2,8 @@ package com.free.tvtracker.ui.welcome
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
@@ -51,7 +48,7 @@ fun WelcomeScreen(
                     Text("- Looks nice imo")
                 }
 
-                Button(modifier = Modifier.width(150.dp), onClick = viewModel::goToHome) {
+                Button(modifier = Modifier.width(150.dp), onClick = viewModel::actionOk) {
                     Text("OK")
                     Spacer(Modifier.width(16.dp))
                     Box(contentAlignment = Alignment.Center, ) {

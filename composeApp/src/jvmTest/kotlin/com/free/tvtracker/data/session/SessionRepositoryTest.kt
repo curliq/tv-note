@@ -1,7 +1,6 @@
 package com.free.tvtracker.data.session
 
 import io.mockk.mockk
-import org.junit.Assert.*
 import kotlin.test.Test
 
 class SessionRepositoryTest {
