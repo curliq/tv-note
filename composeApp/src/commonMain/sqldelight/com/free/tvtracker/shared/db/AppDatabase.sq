@@ -1,3 +1,5 @@
+import com.android.build.gradle.internal.dsl.decorator.SupportedPropertyType.Var.Boolean;
+
 CREATE TABLE stored_shows(
     tmdb_id INTEGER NOT NULL PRIMARY KEY,
     title TEXT NOT NULL,
@@ -34,6 +36,14 @@ CREATE TABLE episode_watched_order(
     show_id INTEGER NOT NULL,
     stored_episode_id INTEGER NOT NULL
 );
+
+CREATE TABLE local_preferences(
+    welcome_complete INTEGER AS Boolean DEFAULT 0
+);
+
+-- CREATE TABLE session(
+--
+-- )
 
 selectAllTrackedShows:
 SELECT *
@@ -85,3 +95,10 @@ VALUES(?,?,?);
 deleteWatchedEpisodeOrder:
 DELETE FROM episode_watched_order
 WHERE id=?;
+
+getLocalPreferences:
+SELECT * FROM local_preferences;
+
+saveLocalPreferences:
+INSERT INTO local_preferences(welcome_complete)
+VALUES(?);

@@ -2,7 +2,7 @@ package com.free.tvtracker.ui.search
 
 import com.free.tvtracker.base.MapperWithOptions
 import com.free.tvtracker.search.response.SearchShowApiModel
-import com.free.tvtracker.utils.TmdbConfigData
+import com.free.tvtracker.ui.common.TmdbConfigData
 
 class ShowSearchUiModelMapper : MapperWithOptions<SearchShowApiModel, AddTrackedItemUiModel, Boolean> {
     override fun map(from: SearchShowApiModel, options: Boolean): AddTrackedItemUiModel {

@@ -1,4 +1,4 @@
-package com.free.tvtracker.utils
+package com.free.tvtracker.ui.common
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

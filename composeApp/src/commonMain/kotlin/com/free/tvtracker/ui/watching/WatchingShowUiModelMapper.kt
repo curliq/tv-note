@@ -3,7 +3,7 @@ package com.free.tvtracker.ui.watching
 import com.free.tvtracker.base.Mapper
 import com.free.tvtracker.domain.GetNextUnwatchedEpisodeUseCase
 import com.free.tvtracker.tracked.response.TrackedShowApiModel
-import com.free.tvtracker.utils.TmdbConfigData
+import com.free.tvtracker.ui.common.TmdbConfigData
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.format
 import kotlinx.datetime.format.MonthNames

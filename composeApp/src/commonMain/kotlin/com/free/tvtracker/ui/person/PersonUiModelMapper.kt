@@ -4,7 +4,7 @@ import com.free.tvtracker.base.Mapper
 import com.free.tvtracker.discover.response.Profile
 import com.free.tvtracker.discover.response.TmdbPersonDetailsApiModel
 import com.free.tvtracker.discover.response.TvCredits
-import com.free.tvtracker.utils.TmdbConfigData
+import com.free.tvtracker.ui.common.TmdbConfigData
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate

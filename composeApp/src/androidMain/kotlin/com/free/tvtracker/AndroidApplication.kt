@@ -9,8 +9,10 @@ import com.free.tvtracker.ui.finished.FinishedShowsViewModel
 import com.free.tvtracker.ui.person.PersonViewModel
 import com.free.tvtracker.ui.search.AddTrackedViewModel
 import com.free.tvtracker.ui.settings.SettingsViewModel
+import com.free.tvtracker.ui.splash.SplashViewModel
 import com.free.tvtracker.ui.watching.WatchingViewModel
 import com.free.tvtracker.ui.watchlist.WatchlistedShowsViewModel
+import com.free.tvtracker.ui.welcome.WelcomeViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
@@ -27,6 +29,8 @@ class AndroidApplication : Application() {
             modules(appModules())
             modules(
                 module {
+                    viewModel { SplashViewModel(get()) }
+                    viewModel { WelcomeViewModel(get(), get()) }
                     viewModel { AddTrackedViewModel(get(), get(), get()) }
                     viewModel { WatchingViewModel(get(), get(), get(), get()) }
                     viewModel { FinishedShowsViewModel(get(), get(), get(), get()) }

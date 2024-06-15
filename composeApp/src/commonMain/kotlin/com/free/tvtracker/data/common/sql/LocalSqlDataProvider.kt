@@ -78,4 +78,12 @@ class LocalSqlDataProvider(appDatabase: AppDatabase) {
             }
         }
     }
+
+    fun getLocalPreferencesWelcomeComplete(): Boolean {
+        val res = dbQuery.getLocalPreferences {
+            it == true
+        }.executeAsOneOrNull()
+        return res ?: false
+    }
+
 }

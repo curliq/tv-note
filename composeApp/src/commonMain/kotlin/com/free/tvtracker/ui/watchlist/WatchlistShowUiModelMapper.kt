@@ -3,7 +3,7 @@ package com.free.tvtracker.ui.watchlist
 import com.free.tvtracker.base.Mapper
 import com.free.tvtracker.domain.GetShowStatusUseCase
 import com.free.tvtracker.tracked.response.TrackedShowApiModel
-import com.free.tvtracker.utils.TmdbConfigData
+import com.free.tvtracker.ui.common.TmdbConfigData
 
 class WatchlistShowUiModelMapper(
     private val getShowStatusUseCase: GetShowStatusUseCase,

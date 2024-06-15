@@ -1,7 +1,7 @@
 package com.free.tvtracker.ui.details.mappers
 
 import com.free.tvtracker.base.MapperWithOptions
-import com.free.tvtracker.utils.TmdbConfigData
+import com.free.tvtracker.ui.common.TmdbConfigData
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone

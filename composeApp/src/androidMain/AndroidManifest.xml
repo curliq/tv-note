@@ -14,15 +14,18 @@
         android:theme="@android:style/Theme.Material.Light.NoActionBar">
         <activity
             android:exported="true"
-            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|mnc|colorMode|density|fontScale|fontWeightAdjustment|keyboard|layoutDirection|locale|mcc|navigation|smallestScreenSize|touchscreen|uiMode"
-            android:windowSoftInputMode="adjustResize"
-            android:name=".activities.main.MainActivity">
+            android:name=".activities.splash.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <activity
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|mnc|colorMode|density|fontScale|fontWeightAdjustment|keyboard|layoutDirection|locale|mcc|navigation|smallestScreenSize|touchscreen|uiMode"
+            android:windowSoftInputMode="adjustResize"
+            android:name=".activities.main.MainActivity"/>
+        <activity android:name=".activities.welcome.WelcomeActivity"/>
         <activity android:name=".activities.showdetails.ShowDetailsActivity"/>
         <activity android:name=".activities.add.AddShowActivity"/>
         <activity android:name=".activities.person.PersonDetailsActivity"/>
@@ -35,7 +38,7 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>
         </service>
->
+
 <!--        <meta-data-->
 <!--            android:name="com.google.firebase.messaging.default_notification_icon"-->
 <!--            android:resource="@drawable/ic_stat_ic_notification"/>-->

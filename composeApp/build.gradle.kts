@@ -47,6 +47,7 @@ kotlin {
             implementation(libs.sqldelight.android.driver)
             implementation(libs.firebase.fcm.android)
             implementation(libs.firebase.fcm.android.ktx)
+            implementation ("androidx.core:core-splashscreen:1.0.1")
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
