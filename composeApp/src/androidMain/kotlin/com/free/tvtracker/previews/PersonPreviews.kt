@@ -5,8 +5,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.free.tvtracker.previews.PersonPreviews.personUiModel
-import com.free.tvtracker.screens.person.PersonContent
-import com.free.tvtracker.screens.person.PersonUiModel
+import com.free.tvtracker.ui.person.PersonContent
+import com.free.tvtracker.ui.person.PersonUiModel
 
 object PersonPreviews {
     val personUiModel = PersonUiModel(

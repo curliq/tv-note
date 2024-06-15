@@ -2,7 +2,9 @@ package com.free.tvtracker.data.search
 
 import com.free.tvtracker.Endpoints
 import com.free.tvtracker.base.ApiError
-import com.free.tvtracker.core.data.http.TvHttpClient
+import com.free.tvtracker.data.common.AuthenticatedRepository
+import com.free.tvtracker.data.session.SessionRepository
+import com.free.tvtracker.expect.data.TvHttpClient
 import com.free.tvtracker.discover.request.RecommendedContentApiRequestBody
 import com.free.tvtracker.discover.request.TmdbPersonApiRequestBody
 import com.free.tvtracker.discover.request.TmdbShowDetailsApiRequestBody
@@ -15,16 +17,20 @@ import com.free.tvtracker.search.request.SearchApiRequestBody
 import com.free.tvtracker.search.response.SearchApiResponse
 import io.ktor.utils.io.CancellationException
 
-class SearchRepository(private val httpClient: TvHttpClient) {
+class SearchRepository(
+    httpClient: TvHttpClient,
+    sessionRepository: SessionRepository
+) : AuthenticatedRepository(httpClient, sessionRepository) {
+
     suspend fun searchAll(term: String): SearchApiResponse {
         val body = SearchApiRequestBody(term, MediaType.ALL)
         return httpClient.call(Endpoints.search, body)
     }
 
     suspend fun searchTvShows(term: String): SearchApiResponse {
-        val body = SearchApiRequestBody(term, MediaType.TV_SHOWS)
         return try {
-            httpClient.call(Endpoints.search, body)
+            val body = SearchApiRequestBody(term, MediaType.TV_SHOWS)
+            super.call(Endpoints.search, body)
         } catch (e: Throwable) {
             if (e is CancellationException) {
                 SearchApiResponse.error(ApiError.Cancelled)
@@ -37,7 +43,7 @@ class SearchRepository(private val httpClient: TvHttpClient) {
     suspend fun getShow(showTmdbId: Int, includeEpisodes: Boolean): TmdbShowDetailsApiResponse {
         val body = TmdbShowDetailsApiRequestBody(showTmdbId, includeEpisodes)
         return try {
-            httpClient.call(Endpoints.getTmdbShow, body)
+            super.call(Endpoints.getTmdbShow, body)
         } catch (e: Throwable) {
             TmdbShowDetailsApiResponse.error(ApiError.Network)
         }
@@ -46,7 +52,7 @@ class SearchRepository(private val httpClient: TvHttpClient) {
     suspend fun getPerson(tmdbPersonId: Int): TmdbPersonDetailsApiResponse {
         val body = TmdbPersonApiRequestBody(tmdbPersonId)
         return try {
-            httpClient.call(Endpoints.getTmdbPerson, body)
+            super.call(Endpoints.getTmdbPerson, body)
         } catch (e: Throwable) {
             TmdbPersonDetailsApiResponse.error(ApiError.Network)
         }
@@ -54,7 +60,7 @@ class SearchRepository(private val httpClient: TvHttpClient) {
 
     suspend fun getTrendingWeekly(): TmdbShowTrendingApiResponse {
         return try {
-            httpClient.call(Endpoints.getTrendingWeekly)
+            super.callNoBody(Endpoints.getTrendingWeekly)
         } catch (e: Throwable) {
             TmdbShowTrendingApiResponse.error(ApiError.Network)
         }
@@ -62,7 +68,7 @@ class SearchRepository(private val httpClient: TvHttpClient) {
 
     suspend fun getNewEpisodeReleasedSoon(): TmdbShowTrendingApiResponse {
         return try {
-            httpClient.call(Endpoints.getNewEpisodeReleasedSoon)
+            super.callNoBody(Endpoints.getNewEpisodeReleasedSoon)
         } catch (e: Throwable) {
             TmdbShowTrendingApiResponse.error(ApiError.Network)
         }
@@ -71,7 +77,7 @@ class SearchRepository(private val httpClient: TvHttpClient) {
     suspend fun getRecommended(relatedShows: List<Int>): RecommendedContentApiResponse {
         return try {
             val body = RecommendedContentApiRequestBody(relatedShows)
-            httpClient.call(Endpoints.getRecommendedContent, body)
+            super.call(Endpoints.getRecommendedContent, body)
         } catch (e: Throwable) {
             RecommendedContentApiResponse.error(ApiError.Network)
         }

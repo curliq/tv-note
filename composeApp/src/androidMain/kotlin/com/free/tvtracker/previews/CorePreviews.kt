@@ -2,9 +2,9 @@ package com.free.tvtracker.previews
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import com.free.tvtracker.core.composables.ErrorScreen
-import com.free.tvtracker.core.composables.LoadingScreen
-import com.free.tvtracker.core.theme.TvTrackerTheme
+import com.free.tvtracker.ui.common.composables.ErrorScreen
+import com.free.tvtracker.ui.common.composables.LoadingScreen
+import com.free.tvtracker.ui.common.theme.TvTrackerTheme
 
 
 @Preview

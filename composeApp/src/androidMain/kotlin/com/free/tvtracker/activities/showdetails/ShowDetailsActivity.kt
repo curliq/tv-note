@@ -30,14 +30,14 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.free.tvtracker.activities.person.PersonDetailsActivity
-import com.free.tvtracker.core.theme.TvTrackerTheme
+import com.free.tvtracker.ui.common.theme.TvTrackerTheme
 import com.free.tvtracker.core.ui.BaseActivity
-import com.free.tvtracker.screens.details.DetailsScreen
-import com.free.tvtracker.screens.details.DetailsScreenNavAction
-import com.free.tvtracker.screens.details.DetailsViewModel
-import com.free.tvtracker.screens.details.dialogs.DetailsCastCrewSheet
-import com.free.tvtracker.screens.details.dialogs.DetailsEpisodesSheet
-import com.free.tvtracker.screens.details.dialogs.DetailsMediaSheet
+import com.free.tvtracker.ui.details.DetailsScreen
+import com.free.tvtracker.ui.details.DetailsScreenNavAction
+import com.free.tvtracker.ui.details.DetailsViewModel
+import com.free.tvtracker.ui.details.dialogs.DetailsCastCrewSheet
+import com.free.tvtracker.ui.details.dialogs.DetailsEpisodesSheet
+import com.free.tvtracker.ui.details.dialogs.DetailsMediaSheet
 import org.koin.androidx.compose.koinViewModel
 
 

@@ -1,11 +1,11 @@
 package com.free.tvtracker.utils
 
-import com.free.tvtracker.screens.details.DetailsUiModel
-import com.free.tvtracker.screens.details.DetailsUiModel.Cast
-import com.free.tvtracker.screens.details.DetailsUiModel.Crew
-import com.free.tvtracker.screens.details.DetailsUiModel.Season
-import com.free.tvtracker.screens.details.DetailsUiModel.Video
-import com.free.tvtracker.screens.details.DetailsUiModel.WatchProvider
+import com.free.tvtracker.ui.details.DetailsUiModel
+import com.free.tvtracker.ui.details.DetailsUiModel.Cast
+import com.free.tvtracker.ui.details.DetailsUiModel.Crew
+import com.free.tvtracker.ui.details.DetailsUiModel.Season
+import com.free.tvtracker.ui.details.DetailsUiModel.Video
+import com.free.tvtracker.ui.details.DetailsUiModel.WatchProvider
 
 fun buildDetailsUiModel(
     tmdbId: Int = 0,

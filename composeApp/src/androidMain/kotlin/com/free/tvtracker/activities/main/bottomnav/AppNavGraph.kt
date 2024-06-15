@@ -24,18 +24,19 @@ import com.free.tvtracker.activities.discover.RecommendationsActivity
 import com.free.tvtracker.activities.showdetails.ShowDetailsActivity
 import com.free.tvtracker.activities.showdetails.ShowDetailsActivity.Extras.EXTRA_SHOW_ID
 import com.free.tvtracker.activities.main.AppNavController
-import com.free.tvtracker.screens.discover.DiscoverScreen
-import com.free.tvtracker.screens.discover.DiscoverScreenNavActions
-import com.free.tvtracker.screens.discover.dialogs.DiscoverNewReleasesSheet
-import com.free.tvtracker.screens.discover.dialogs.DiscoverTrendingSheet
-import com.free.tvtracker.screens.finished.FinishedScreen
-import com.free.tvtracker.screens.finished.FinishedScreenNavAction
-import com.free.tvtracker.screens.search.AddTrackedScreenOriginScreen
-import com.free.tvtracker.screens.settings.SettingsScreen
-import com.free.tvtracker.screens.watching.WatchingScreenNavAction
-import com.free.tvtracker.screens.watching.WatchingScreen
-import com.free.tvtracker.screens.watchlist.WatchlistScreen
-import com.free.tvtracker.screens.watchlist.WatchlistScreenNavAction
+import com.free.tvtracker.ui.discover.DiscoverScreen
+import com.free.tvtracker.ui.discover.DiscoverScreenNavActions
+import com.free.tvtracker.ui.discover.DiscoverViewModel
+import com.free.tvtracker.ui.discover.dialogs.DiscoverNewReleasesSheet
+import com.free.tvtracker.ui.discover.dialogs.DiscoverTrendingSheet
+import com.free.tvtracker.ui.finished.FinishedScreen
+import com.free.tvtracker.ui.finished.FinishedScreenNavAction
+import com.free.tvtracker.ui.search.AddTrackedScreenOriginScreen
+import com.free.tvtracker.ui.settings.SettingsScreen
+import com.free.tvtracker.ui.watching.WatchingScreenNavAction
+import com.free.tvtracker.ui.watching.WatchingScreen
+import com.free.tvtracker.ui.watchlist.WatchlistScreen
+import com.free.tvtracker.ui.watchlist.WatchlistScreenNavAction
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import org.koin.androidx.compose.koinViewModel
 import org.koin.androidx.compose.get
@@ -153,7 +154,8 @@ fun NavGraphBuilder.mainNavGraph(navController: AppNavController, context: Activ
                 }
             }
         }
-        DiscoverScreen(viewModel = get(), action)
+        val discoverViewModel: DiscoverViewModel = get() // get() instead of viewmodel() to share between activities
+        DiscoverScreen(viewModel = discoverViewModel, action)
         val sheetState = rememberModalBottomSheetState()
         val modalMaxHeight = LocalConfiguration.current.screenHeightDp.dp.times(0.7f)
         if (showBottomSheet != null) {
@@ -168,7 +170,7 @@ fun NavGraphBuilder.mainNavGraph(navController: AppNavController, context: Activ
                     when (showBottomSheet) {
                         DiscoverNavDestinations.TRENDING -> {
                             DiscoverTrendingSheet(
-                                viewModel = get(),
+                                viewModel = discoverViewModel,
                                 navActions = action,
                                 bottomPadding = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding().value
                             )
@@ -176,7 +178,7 @@ fun NavGraphBuilder.mainNavGraph(navController: AppNavController, context: Activ
 
                         DiscoverNavDestinations.RELEASES_SOON -> {
                             DiscoverNewReleasesSheet(
-                                viewModel = get(),
+                                viewModel = discoverViewModel,
                                 navActions = action,
                                 bottomPadding = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding().value
                             )
@@ -188,7 +190,7 @@ fun NavGraphBuilder.mainNavGraph(navController: AppNavController, context: Activ
         }
     }
     composable(AppNavDestinations.SETTINGS.id) {
-        SettingsScreen()
+        SettingsScreen(viewModel = koinViewModel())
     }
 
 }

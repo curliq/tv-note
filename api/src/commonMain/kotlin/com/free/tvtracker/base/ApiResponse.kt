@@ -1,7 +1,5 @@
 package com.free.tvtracker.base
 
-import com.free.tvtracker.discover.response.TmdbShowDetailsApiModel
-import com.free.tvtracker.discover.response.TmdbShowDetailsApiResponse
 import kotlinx.serialization.Serializable
 
 /**

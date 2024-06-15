@@ -3,13 +3,14 @@ package com.free.tvtracker
 import android.app.Application
 import android.content.Context
 import com.free.tvtracker.di.appModules
-import com.free.tvtracker.screens.details.DetailsViewModel
-import com.free.tvtracker.screens.discover.DiscoverViewModel
-import com.free.tvtracker.screens.finished.FinishedShowsViewModel
-import com.free.tvtracker.screens.person.PersonViewModel
-import com.free.tvtracker.screens.search.AddTrackedViewModel
-import com.free.tvtracker.screens.watching.WatchingViewModel
-import com.free.tvtracker.screens.watchlist.WatchlistedShowsViewModel
+import com.free.tvtracker.ui.details.DetailsViewModel
+import com.free.tvtracker.ui.discover.DiscoverViewModel
+import com.free.tvtracker.ui.finished.FinishedShowsViewModel
+import com.free.tvtracker.ui.person.PersonViewModel
+import com.free.tvtracker.ui.search.AddTrackedViewModel
+import com.free.tvtracker.ui.settings.SettingsViewModel
+import com.free.tvtracker.ui.watching.WatchingViewModel
+import com.free.tvtracker.ui.watchlist.WatchlistedShowsViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
@@ -32,8 +33,9 @@ class AndroidApplication : Application() {
                     viewModel { WatchlistedShowsViewModel(get(), get(), get(), get()) }
                     viewModel { DetailsViewModel(get(), get(), get()) }
                     viewModel { PersonViewModel(get(), get()) }
+                    viewModel { SettingsViewModel(get()) }
                     single {
-                        // why single and not viewmodel? to share it between discover and recommendations activities
+                        // why single and not viewmodel? to share it between the discover and recommendations activities
                         DiscoverViewModel(get(), get(), get(), get())
                     }
                 }

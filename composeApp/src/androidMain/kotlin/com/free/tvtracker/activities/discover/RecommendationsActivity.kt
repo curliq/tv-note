@@ -18,11 +18,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import com.free.tvtracker.activities.showdetails.ShowDetailsActivity
-import com.free.tvtracker.core.theme.TvTrackerTheme
+import com.free.tvtracker.ui.common.theme.TvTrackerTheme
 import com.free.tvtracker.core.ui.BaseActivity
-import com.free.tvtracker.screens.discover.DiscoverViewModel
-import com.free.tvtracker.screens.discover.RecommendedScreen
-import com.free.tvtracker.screens.discover.RecommendedScreenNavActions
+import com.free.tvtracker.ui.discover.DiscoverViewModel
+import com.free.tvtracker.ui.discover.RecommendedScreen
+import com.free.tvtracker.ui.discover.RecommendedScreenNavActions
 import org.koin.androidx.compose.get
 
 @OptIn(ExperimentalMaterial3Api::class)

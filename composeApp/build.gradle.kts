@@ -74,7 +74,6 @@ kotlin {
             implementation(libs.sqldelight.runtime)
             implementation(libs.uuid)
             implementation(libs.kotlinx.datetime)
-            implementation(kotlin("script-runtime"))
         }
         jvmMain.dependencies {
             implementation(libs.ktor.client.cio)

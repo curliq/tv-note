@@ -8,6 +8,7 @@ import com.free.tvtracker.security.SessionService
 import com.free.tvtracker.security.TokenService
 import com.free.tvtracker.user.request.LoginApiRequestBody
 import com.free.tvtracker.user.request.SignupApiRequestBody
+import com.free.tvtracker.user.request.UpdatePreferencesApiRequestBody
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -121,5 +122,14 @@ class UserService(
         }
         userJpaRepository.deleteById(fromAnonUser)
 
+    }
+
+    fun updatePreferences(body: UpdatePreferencesApiRequestBody): UserEntity? {
+        val user = getAuthenticatedUser() ?: return null
+        body.pushPrefsAllowed?.let {
+            user.preferencesPushAllowed = it
+        }
+        userJpaRepository.save(user)
+        return user
     }
 }

@@ -4,9 +4,9 @@ import android.annotation.SuppressLint
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import com.free.tvtracker.core.theme.TvTrackerTheme
+import com.free.tvtracker.ui.common.theme.TvTrackerTheme
 import com.free.tvtracker.previews.DetailsScreenPreviews.showDetailsUiModel
-import com.free.tvtracker.screens.details.dialogs.DetailsEpisodesContent
+import com.free.tvtracker.ui.details.dialogs.DetailsEpisodesContent
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Preview(heightDp = 1200)

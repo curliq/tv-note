@@ -1,27 +1,26 @@
 package com.free.tvtracker
 
 import androidx.compose.ui.window.ComposeUIViewController
-import com.free.tvtracker.screens.IosDiscoverScreen
-import com.free.tvtracker.screens.details.DetailsScreen
-import com.free.tvtracker.screens.details.DetailsScreenNavAction
-import com.free.tvtracker.screens.details.DetailsViewModel
-import com.free.tvtracker.screens.discover.DiscoverScreen
-import com.free.tvtracker.screens.discover.DiscoverScreenNavActions
-import com.free.tvtracker.screens.discover.DiscoverViewModel
-import com.free.tvtracker.screens.finished.FinishedScreen
-import com.free.tvtracker.screens.finished.FinishedScreenNavAction
-import com.free.tvtracker.screens.finished.FinishedShowsViewModel
-import com.free.tvtracker.screens.search.AddTrackedScreen
-import com.free.tvtracker.screens.search.AddTrackedScreenNavAction
-import com.free.tvtracker.screens.search.AddTrackedScreenOriginScreen
-import com.free.tvtracker.screens.search.AddTrackedViewModel
-import com.free.tvtracker.screens.settings.SettingsScreen
-import com.free.tvtracker.screens.watching.WatchingScreenNavAction
-import com.free.tvtracker.screens.watching.WatchingScreen
-import com.free.tvtracker.screens.watching.WatchingViewModel
-import com.free.tvtracker.screens.watchlist.WatchlistScreen
-import com.free.tvtracker.screens.watchlist.WatchlistScreenNavAction
-import com.free.tvtracker.screens.watchlist.WatchlistedShowsViewModel
+import com.free.tvtracker.ui.IosDiscoverScreen
+import com.free.tvtracker.ui.details.DetailsScreen
+import com.free.tvtracker.ui.details.DetailsScreenNavAction
+import com.free.tvtracker.ui.details.DetailsViewModel
+import com.free.tvtracker.ui.discover.DiscoverScreenNavActions
+import com.free.tvtracker.ui.discover.DiscoverViewModel
+import com.free.tvtracker.ui.finished.FinishedScreen
+import com.free.tvtracker.ui.finished.FinishedScreenNavAction
+import com.free.tvtracker.ui.finished.FinishedShowsViewModel
+import com.free.tvtracker.ui.search.AddTrackedScreen
+import com.free.tvtracker.ui.search.AddTrackedScreenNavAction
+import com.free.tvtracker.ui.search.AddTrackedScreenOriginScreen
+import com.free.tvtracker.ui.search.AddTrackedViewModel
+import com.free.tvtracker.ui.settings.SettingsScreen
+import com.free.tvtracker.ui.watching.WatchingScreenNavAction
+import com.free.tvtracker.ui.watching.WatchingScreen
+import com.free.tvtracker.ui.watching.WatchingViewModel
+import com.free.tvtracker.ui.watchlist.WatchlistScreen
+import com.free.tvtracker.ui.watchlist.WatchlistScreenNavAction
+import com.free.tvtracker.ui.watchlist.WatchlistedShowsViewModel
 
 fun WatchingScreenViewController(navigate: (WatchingScreenNavAction) -> Unit, viewModel: WatchingViewModel) =
     ComposeUIViewController {

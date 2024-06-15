@@ -16,6 +16,7 @@ import com.free.tvtracker.tracked.response.AddTrackedEpisodesApiResponse
 import com.free.tvtracker.tracked.response.AddTrackedShowApiResponse
 import com.free.tvtracker.tracked.response.TrackedShowApiResponse
 import com.free.tvtracker.user.request.PostFcmTokenApiRequestBody
+import com.free.tvtracker.user.request.UpdatePreferencesApiRequestBody
 import com.free.tvtracker.user.response.UserApiResponse
 import kotlin.reflect.KClass
 
@@ -23,7 +24,7 @@ object Endpoints {
     object Path {
         const val GET_USER = ""
         const val POST_USER_CREDENTIALS = "user/complete-credentials"
-        const val UPDATE_PREFERENCES_PUSH_NOTIFICATIONS = "user/update-push-notifications"
+        const val UPDATE_PREFERENCES = "user/update-push-notifications"
         const val CREATE_ANON_USER = "user/create-anon"
         const val LOGIN = "user/login"
         const val POST_FCM_TOKEN = "user/fcm-token"
@@ -47,9 +48,9 @@ object Endpoints {
         Endpoint(Path.POST_USER_CREDENTIALS, ApiResponse.EmptyApiResponse::class, Nothing::class, Endpoint.Verb.POST)
     val login = Endpoint(Path.LOGIN, UserApiResponse::class, Nothing::class, Endpoint.Verb.POST)
     val updateUserPreferences = Endpoint(
-        Path.UPDATE_PREFERENCES_PUSH_NOTIFICATIONS,
-        ApiResponse.EmptyApiResponse::class,
-        Nothing::class,
+        Path.UPDATE_PREFERENCES,
+        UserApiResponse::class,
+        UpdatePreferencesApiRequestBody::class,
         Endpoint.Verb.POST
     )
     val postFcmToken = Endpoint(

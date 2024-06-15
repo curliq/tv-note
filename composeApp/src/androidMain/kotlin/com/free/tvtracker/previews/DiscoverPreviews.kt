@@ -5,10 +5,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.free.tvtracker.previews.DiscoverPreviews.shows
-import com.free.tvtracker.screens.discover.DiscoverOk
-import com.free.tvtracker.screens.discover.DiscoverUiModel
-import com.free.tvtracker.screens.discover.DiscoverUiState
-import com.free.tvtracker.screens.discover.dialogs.DiscoverTrendingSheetContent
+import com.free.tvtracker.ui.discover.DiscoverOk
+import com.free.tvtracker.ui.discover.DiscoverUiModel
+import com.free.tvtracker.ui.discover.DiscoverUiState
+import com.free.tvtracker.ui.discover.dialogs.DiscoverTrendingSheetContent
 
 object DiscoverPreviews {
     val shows = DiscoverUiState.Ok(

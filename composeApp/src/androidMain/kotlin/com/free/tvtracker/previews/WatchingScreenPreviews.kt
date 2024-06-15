@@ -2,11 +2,11 @@ package com.free.tvtracker.previews
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import com.free.tvtracker.screens.watching.WatchingItemUiModel
-import com.free.tvtracker.screens.watching.WatchingOk
-import com.free.tvtracker.screens.watching.WatchingUiState
-import com.free.tvtracker.core.theme.TvTrackerTheme
-import com.free.tvtracker.screens.watching.WatchingEmpty
+import com.free.tvtracker.ui.watching.WatchingItemUiModel
+import com.free.tvtracker.ui.watching.WatchingOk
+import com.free.tvtracker.ui.watching.WatchingUiState
+import com.free.tvtracker.ui.common.theme.TvTrackerTheme
+import com.free.tvtracker.ui.watching.WatchingEmpty
 
 
 @Preview

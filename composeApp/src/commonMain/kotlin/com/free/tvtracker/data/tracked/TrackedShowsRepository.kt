@@ -2,8 +2,8 @@ package com.free.tvtracker.data.tracked
 
 import com.benasher44.uuid.uuid4
 import com.free.tvtracker.base.ApiError
-import com.free.tvtracker.core.data.http.RemoteDataSource
-import com.free.tvtracker.core.data.sql.LocalSqlDataProvider
+import com.free.tvtracker.data.common.http.RemoteDataSource
+import com.free.tvtracker.data.common.sql.LocalSqlDataProvider
 import com.free.tvtracker.data.tracked.entities.MarkEpisodeWatchedOrderClientEntity
 import com.free.tvtracker.tracked.request.AddShowApiRequestBody
 import com.free.tvtracker.tracked.response.TrackedShowApiModel

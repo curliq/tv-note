@@ -3,9 +3,9 @@ package com.free.tvtracker.previews
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import com.free.tvtracker.screens.search.AddTrackedItemUiModel
-import com.free.tvtracker.screens.search.AddTrackedScreenGrid
-import com.free.tvtracker.screens.search.AddTrackedScreenOriginScreen
+import com.free.tvtracker.ui.search.AddTrackedItemUiModel
+import com.free.tvtracker.ui.search.AddTrackedScreenGrid
+import com.free.tvtracker.ui.search.AddTrackedScreenOriginScreen
 
 @Preview
 @Composable

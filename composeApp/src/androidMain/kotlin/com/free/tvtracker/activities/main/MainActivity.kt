@@ -18,7 +18,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDestination.Companion.hierarchy
-import com.free.tvtracker.core.theme.TvTrackerTheme
+import com.free.tvtracker.ui.common.theme.TvTrackerTheme
 import com.free.tvtracker.core.ui.BaseActivity
 import com.free.tvtracker.activities.main.bottomnav.BottomNavBar
 import com.free.tvtracker.activities.main.bottomnav.BottomNavBarItems
