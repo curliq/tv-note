@@ -28,8 +28,11 @@ class SplashActivity : BaseActivity() {
             SplashViewModel.Destination.Home -> {
                 startActivity(Intent(this, MainActivity::class.java))
             }
-        }
 
+            SplashViewModel.Destination.Error -> {
+                startActivity(Intent(this, SplashErrorActivity::class.java))
+            }
+        }
         finish()
     }
 }

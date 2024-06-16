@@ -41,9 +41,13 @@ CREATE TABLE local_preferences(
     welcome_complete INTEGER AS Boolean DEFAULT 0
 );
 
--- CREATE TABLE session(
---
--- )
+CREATE TABLE session(
+    token TEXT NOT NULL,
+    createdAtDatetime TEXT NOT NULL,
+    id INTEGER NOT NULL,
+    username TEXT,
+    email TEXT
+);
 
 selectAllTrackedShows:
 SELECT *
@@ -102,3 +106,10 @@ SELECT * FROM local_preferences;
 saveLocalPreferences:
 INSERT INTO local_preferences(welcome_complete)
 VALUES(?);
+
+getSession:
+SELECT * FROM session;
+
+saveSession:
+INSERT INTO session(id, username, token, createdAtDatetime, email)
+VALUES(?,?,?,?,?);

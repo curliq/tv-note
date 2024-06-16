@@ -1,21 +1,23 @@
 package com.free.tvtracker.di
 
-import com.free.tvtracker.data.common.http.RemoteDataSource
-import com.free.tvtracker.expect.data.TvHttpClient
-import com.free.tvtracker.expect.data.DatabaseDriverFactory
 import com.free.tvtracker.data.common.sql.LocalSqlDataProvider
 import com.free.tvtracker.data.search.SearchRepository
 import com.free.tvtracker.data.session.SessionRepository
+import com.free.tvtracker.data.session.SessionStore
 import com.free.tvtracker.data.tracked.TrackedShowsRepository
 import com.free.tvtracker.data.tracked.WatchedEpisodesTaskQueue
 import com.free.tvtracker.data.user.UserRepository
 import com.free.tvtracker.domain.GetNextUnwatchedEpisodeUseCase
 import com.free.tvtracker.domain.GetShowStatusUseCase
-import com.free.tvtracker.domain.GetTrackedShowByTmdbIdUseCase
 import com.free.tvtracker.domain.GetShowsUseCase
+import com.free.tvtracker.domain.GetTrackedShowByTmdbIdUseCase
 import com.free.tvtracker.domain.GetWatchlistedShowsUseCase
 import com.free.tvtracker.domain.IsTrackedShowWatchableUseCase
 import com.free.tvtracker.domain.TrackedShowReducer
+import com.free.tvtracker.expect.data.DatabaseDriverFactory
+import com.free.tvtracker.expect.data.TvHttpClient
+import com.free.tvtracker.expect.data.TvHttpClientEndpoints
+import com.free.tvtracker.shared.db.AppDatabase
 import com.free.tvtracker.ui.details.mappers.ShowCastUiModelMapper
 import com.free.tvtracker.ui.details.mappers.ShowCrewUiModelMapper
 import com.free.tvtracker.ui.details.mappers.ShowEpisodeUiModelMapper
@@ -34,21 +36,21 @@ import com.free.tvtracker.ui.search.ShowSearchUiModelMapper
 import com.free.tvtracker.ui.watching.GetWatchingShowsUseCase
 import com.free.tvtracker.ui.watching.WatchingShowUiModelMapper
 import com.free.tvtracker.ui.watchlist.WatchlistShowUiModelMapper
-import com.free.tvtracker.shared.db.AppDatabase
 import com.squareup.sqldelight.db.SqlDriver
 import org.koin.dsl.module
 
 fun appModules() = module {
-    single<TvHttpClient> { TvHttpClient() }
+    single<SessionStore> { SessionStore() }
+    single<TvHttpClient> { TvHttpClient(get()) }
     single<DatabaseDriverFactory> { DatabaseDriverFactory() }
     single<SqlDriver> { get<DatabaseDriverFactory>().createDriver() }
     single<AppDatabase> { AppDatabase(get()) }
     single<LocalSqlDataProvider> { LocalSqlDataProvider(get()) }
-    single<RemoteDataSource> { RemoteDataSource(get()) }
-    single<SessionRepository> { SessionRepository(get()) }
+    single<TvHttpClientEndpoints> { TvHttpClientEndpoints(get()) }
+    single<SessionRepository> { SessionRepository(get(), get(), get()) }
     single<TrackedShowsRepository> { TrackedShowsRepository(get(), get(), get()) }
     single<WatchedEpisodesTaskQueue> { WatchedEpisodesTaskQueue(get(), get()) }
-    single<SearchRepository> { SearchRepository(get(), get()) }
+    single<SearchRepository> { SearchRepository(get()) }
     single<UserRepository> { UserRepository(get()) }
     factory<ShowSearchUiModelMapper> { ShowSearchUiModelMapper() }
     factory<GetWatchlistedShowsUseCase> { GetWatchlistedShowsUseCase() }

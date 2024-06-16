@@ -20,9 +20,16 @@ class WelcomeViewModel(
 
     init {
         viewModelScope.launch(ioDispatcher) {
-            val anonSession = sessionRepository.createAnonymousSession()
-            if (anonSession.isSuccess()) {
-                status.emit(Status.GoToHome)
+            val sessionCreated = sessionRepository.createAnonSession()
+            if (sessionCreated) {
+                status.update {
+                    if (it == Status.Loading) {
+                        goHome()
+                        Status.GoToHome
+                    } else {
+                        Status.GreenLight
+                    }
+                }
             } else {
                 status.emit(Status.InitialisationError)
             }
@@ -34,11 +41,44 @@ class WelcomeViewModel(
             when (it) {
                 Status.Initialising -> Status.Loading
                 Status.Loading -> Status.Loading
-                Status.GreenLight -> Status.GoToHome
+                Status.GreenLight -> {
+                    goHome()
+                    Status.GoToHome
+                }
+
                 else -> it
             }
         }
     }
 
-    enum class Status { Initialising, Loading, GreenLight, GoToHome, InitialisationError }
+    private fun goHome() {
+        localDataSource.setLocalPreferencesWelcomeComplete()
+    }
+
+    enum class Status {
+        /**
+         * Making background http call, but dont show loading until user taps it
+         */
+        Initialising,
+
+        /**
+         * Still making background calls, but user tapped it, so now we show loading
+         */
+        Loading,
+
+        /**
+         * Finished background calls, ready to be tapped
+         */
+        GreenLight,
+
+        /**
+         * Trigger navigation to go to the home screen
+         */
+        GoToHome,
+
+        /**
+         * Error making calls, probably no network
+         */
+        InitialisationError
+    }
 }

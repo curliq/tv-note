@@ -29,7 +29,7 @@ class AndroidApplication : Application() {
             modules(appModules())
             modules(
                 module {
-                    viewModel { SplashViewModel(get()) }
+                    viewModel { SplashViewModel(get(), get()) }
                     viewModel { WelcomeViewModel(get(), get()) }
                     viewModel { AddTrackedViewModel(get(), get(), get()) }
                     viewModel { WatchingViewModel(get(), get(), get(), get()) }
@@ -39,7 +39,7 @@ class AndroidApplication : Application() {
                     viewModel { PersonViewModel(get(), get()) }
                     viewModel { SettingsViewModel(get()) }
                     single {
-                        // why single and not viewmodel? to share it between the discover and recommendations activities
+                        // why `single` and not `viewmodel`? to share it between the discover and recommendations activities
                         DiscoverViewModel(get(), get(), get(), get())
                     }
                 }

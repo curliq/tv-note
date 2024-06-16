@@ -17,6 +17,8 @@ import com.free.tvtracker.tracked.response.AddTrackedShowApiResponse
 import com.free.tvtracker.tracked.response.TrackedShowApiResponse
 import com.free.tvtracker.user.request.PostFcmTokenApiRequestBody
 import com.free.tvtracker.user.request.UpdatePreferencesApiRequestBody
+import com.free.tvtracker.user.response.SessionApiModel
+import com.free.tvtracker.user.response.SessionApiResponse
 import com.free.tvtracker.user.response.UserApiResponse
 import kotlin.reflect.KClass
 
@@ -43,10 +45,10 @@ object Endpoints {
     }
 
     val getUser = EndpointNoBody(Path.GET_USER, UserApiResponse::class, Endpoint.Verb.GET)
-    val createAnonUser = EndpointNoBody(Path.CREATE_ANON_USER, UserApiResponse::class, Endpoint.Verb.POST)
+    val createAnonUser = EndpointNoBody(Path.CREATE_ANON_USER, SessionApiResponse::class, Endpoint.Verb.POST)
     val postUserCredentials =
-        Endpoint(Path.POST_USER_CREDENTIALS, ApiResponse.EmptyApiResponse::class, Nothing::class, Endpoint.Verb.POST)
-    val login = Endpoint(Path.LOGIN, UserApiResponse::class, Nothing::class, Endpoint.Verb.POST)
+        Endpoint(Path.POST_USER_CREDENTIALS, SessionApiResponse::class, Nothing::class, Endpoint.Verb.POST)
+    val login = Endpoint(Path.LOGIN, SessionApiResponse::class, Nothing::class, Endpoint.Verb.POST)
     val updateUserPreferences = Endpoint(
         Path.UPDATE_PREFERENCES,
         UserApiResponse::class,

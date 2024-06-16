@@ -1,11 +1,13 @@
 package com.free.tvtracker.data.tracked
 
 import com.benasher44.uuid.uuid4
+import com.free.tvtracker.Endpoints
 import com.free.tvtracker.base.ApiError
-import com.free.tvtracker.data.common.http.RemoteDataSource
 import com.free.tvtracker.data.common.sql.LocalSqlDataProvider
 import com.free.tvtracker.data.tracked.entities.MarkEpisodeWatchedOrderClientEntity
+import com.free.tvtracker.expect.data.TvHttpClientEndpoints
 import com.free.tvtracker.tracked.request.AddShowApiRequestBody
+import com.free.tvtracker.tracked.response.AddTrackedShowApiResponse
 import com.free.tvtracker.tracked.response.TrackedShowApiModel
 import com.free.tvtracker.tracked.response.TrackedShowApiResponse
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -39,7 +41,7 @@ data class ShowsDataStatus(
 }
 
 class TrackedShowsRepository(
-    private val remoteDataSource: RemoteDataSource,
+    private val httpClient: TvHttpClientEndpoints,
     private val localDataSource: LocalSqlDataProvider,
     private val watchedEpisodesTaskQueue: WatchedEpisodesTaskQueue
 ) {
@@ -75,21 +77,21 @@ class TrackedShowsRepository(
         if (localWatching.isNotEmpty()) {
             _watchingShows.tryEmit(ShowsDataStatus(TrackedShowApiResponse.ok(localWatching), fetched = false))
         }
-        fetch(_watchingShows, remoteDataSource::getTrackedShows)
+        fetch(_watchingShows, ::getTrackedShows)
     }
 
     suspend fun updateFinished(forceUpdate: Boolean = true) {
         if (!forceUpdate && _finishedShows.value != null) {
             return
         }
-        fetch(_finishedShows, remoteDataSource::getFinishedShows)
+        fetch(_finishedShows, ::getFinishedShows)
     }
 
     suspend fun updateWatchlisted(forceUpdate: Boolean = true) {
         if (!forceUpdate && _watchlistedShows.value != null) {
             return
         }
-        fetch(_watchlistedShows, remoteDataSource::getWatchlistedShows)
+        fetch(_watchlistedShows, ::getWatchlistedShows)
     }
 
     private suspend fun fetch(flow: MutableStateFlow<ShowsDataStatus?>, call: suspend () -> TrackedShowApiResponse) {
@@ -120,7 +122,7 @@ class TrackedShowsRepository(
     }
 
     suspend fun toggleWatchlist(showId: Int): Boolean {
-        return remoteDataSource.toggleWatchlist(showId)
+        return toggleWatchlist(showId)
     }
 
     @OptIn(DelicateCoroutinesApi::class)
@@ -128,7 +130,7 @@ class TrackedShowsRepository(
         // Use global scope because this should finish even if the user closes the search activity
         GlobalScope.launch(Dispatchers.IO) {
             try {
-                val res = remoteDataSource.addTracked(AddShowApiRequestBody(showId, watchlisted = watchlisted))
+                val res = addTracked(AddShowApiRequestBody(showId, watchlisted = watchlisted))
                 res.coAsSuccess { newShow ->
                     allShows.update { it.plus(newShow) }
                 }
@@ -144,6 +146,22 @@ class TrackedShowsRepository(
 
     fun getShowByTmdbIdFlow(tmdbShowId: Int): Flow<TrackedShowApiModel?> {
         return allShows.map { it.firstOrNull { it.storedShow.tmdbId == tmdbShowId } }
+    }
+
+    private suspend fun getTrackedShows(): TrackedShowApiResponse {
+        return httpClient.getWatching()
+    }
+
+    private suspend fun getFinishedShows(): TrackedShowApiResponse {
+        return httpClient.getFinished()
+    }
+
+    private suspend fun getWatchlistedShows(): TrackedShowApiResponse {
+        return httpClient.getWatchlisted()
+    }
+
+    private suspend fun addTracked(body: AddShowApiRequestBody): AddTrackedShowApiResponse {
+        return httpClient.call(Endpoints.addTracked, body)
     }
 }
 

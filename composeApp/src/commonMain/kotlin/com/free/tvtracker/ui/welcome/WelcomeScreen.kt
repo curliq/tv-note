@@ -51,7 +51,7 @@ fun WelcomeScreen(
                 Button(modifier = Modifier.width(150.dp), onClick = viewModel::actionOk) {
                     Text("OK")
                     Spacer(Modifier.width(16.dp))
-                    Box(contentAlignment = Alignment.Center, ) {
+                    Box(contentAlignment = Alignment.Center) {
                         if (status == WelcomeViewModel.Status.Loading) {
                             LoadingIndicator(
                                 modifier = Modifier.height(24.dp).aspectRatio(1f),
@@ -61,6 +61,9 @@ fun WelcomeScreen(
                             Icon(Icons.AutoMirrored.Rounded.ArrowForward, "ok")
                         }
                     }
+                }
+                if (status == WelcomeViewModel.Status.InitialisationError) {
+                    Text("Error setting up the app, either the server is broken or you're not connected to the internet")
                 }
             }
         }

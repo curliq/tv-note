@@ -3,16 +3,19 @@ package com.free.tvtracker.expect.data
 import com.free.tvtracker.Endpoint
 import com.free.tvtracker.EndpointNoBody
 import com.free.tvtracker.base.ApiResponse
+import com.free.tvtracker.data.session.SessionStore
 import io.ktor.client.HttpClient
 import io.ktor.client.HttpClientConfig
 import io.ktor.client.call.body
 import io.ktor.client.plugins.DefaultRequest
+import io.ktor.client.plugins.HttpSend
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.DEFAULT
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
+import io.ktor.client.plugins.plugin
 import io.ktor.client.request.accept
 import io.ktor.client.request.headers
 import io.ktor.client.request.request
@@ -29,21 +32,18 @@ import kotlinx.serialization.json.Json
 expect fun getHttpClient(block: HttpClientConfig<*>.() -> Unit): HttpClient
 
 @OptIn(ExperimentalSerializationApi::class)
-open class TvHttpClient {
+open class TvHttpClient(private val sessionStore: SessionStore) {
 
     val localhostAndroid = "10.0.2.2"
     val localhostiOS = "localhost"
     val localhostiOSPhone = "192.168.1.137"
     val tempWifi = "192.168.160.79"
 
-    val cli = getHttpClient {
-
-//        if (OsPlatform().get() != OsPlatform.Platform.Android) {
+    fun cli() = getHttpClient {
         install(Logging) {
             logger = Logger.DEFAULT
             level = LogLevel.ALL
         }
-//        }
         install(ContentNegotiation) {
             json(Json {
                 prettyPrint = true
@@ -64,25 +64,35 @@ open class TvHttpClient {
             contentType(ContentType.Application.Json)
             accept(ContentType.Application.Json)
         }
+    }.apply {
+        this.plugin(HttpSend).intercept { request ->
+            request.headers {
+                sessionStore.token?.let {
+                    append(
+                        "Authorization",
+                        "Bearer $it"
+                    )
+                }
+            }
+            execute(request)
+        }
     }
 
-    inline val client get() = cli
+    inline val client get() = cli()
 
     @Throws(Throwable::class)
     suspend inline fun <reified ReturnType : ApiResponse<out Any>, reified BodyType : Any> call(
         endpointType: Endpoint<ReturnType, BodyType>,
         body: BodyType,
-        authToken: String? = null
     ): ReturnType {
-        return _makeRequest<ReturnType>(endpointType.verb, endpointType.path, body = body, authToken = authToken)
+        return _makeRequest<ReturnType>(endpointType.verb, endpointType.path, body = body)
     }
 
     @Throws(Throwable::class)
     suspend inline fun <reified ReturnType : ApiResponse<out Any>> call(
         endpointType: EndpointNoBody<ReturnType>,
-        authToken: String? = null
     ): ReturnType {
-        return _makeRequest<ReturnType>(endpointType.verb, endpointType.path, body = null, authToken = authToken)
+        return _makeRequest<ReturnType>(endpointType.verb, endpointType.path, body = null)
     }
 
     @Throws(Throwable::class)
@@ -90,7 +100,6 @@ open class TvHttpClient {
         verb: Endpoint.Verb,
         path: String,
         body: Any?,
-        authToken: String? = null
     ): ReturnType {
         return try {
             val res = client.request {
@@ -103,14 +112,6 @@ open class TvHttpClient {
                 }
                 body?.let {
                     setBody(it)
-                }
-                headers {
-                    authToken?.let {
-                        append(
-                            "Authorization",
-                            "Bearer $it"
-                        )
-                    }
                 }
             }.body<ReturnType>()
             if (res.failedToParse()) {

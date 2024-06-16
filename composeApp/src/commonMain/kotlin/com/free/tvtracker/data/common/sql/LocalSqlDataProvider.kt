@@ -1,5 +1,7 @@
 package com.free.tvtracker.data.common.sql
 
+import com.free.tvtracker.data.session.LocalPreferencesClientEntity
+import com.free.tvtracker.data.session.SessionClientEntity
 import com.free.tvtracker.data.tracked.entities.MarkEpisodeWatchedOrderClientEntity
 import com.free.tvtracker.data.tracked.entities.StoredEpisodeClientEntity
 import com.free.tvtracker.data.tracked.entities.TrackedShowClientEntity
@@ -79,11 +81,21 @@ class LocalSqlDataProvider(appDatabase: AppDatabase) {
         }
     }
 
-    fun getLocalPreferencesWelcomeComplete(): Boolean {
-        val res = dbQuery.getLocalPreferences {
-            it == true
-        }.executeAsOneOrNull()
-        return res ?: false
+    fun getLocalPreferencesWelcomeComplete(): LocalPreferencesClientEntity {
+        return dbQuery.getLocalPreferences(LocalPreferencesClientEntity::fromSql).executeAsOneOrNull()
+            ?: LocalPreferencesClientEntity(welcomeComplete = false)
     }
 
+    fun setLocalPreferencesWelcomeComplete() {
+        dbQuery.saveLocalPreferences(true)
+    }
+
+    fun getSession(): SessionClientEntity? {
+        val res = dbQuery.getSession(SessionClientEntity::fromSql).executeAsOneOrNull()
+        return res
+    }
+
+    fun saveSession(session: SessionClientEntity) {
+        dbQuery.saveSession(session.id, session.username, session.token, session.createdAtDatetime, session.email)
+    }
 }

@@ -2,16 +2,15 @@ package com.free.tvtracker.ui.welcome
 
 import com.free.tvtracker.base.ApiError
 import com.free.tvtracker.data.session.SessionRepository
+import com.free.tvtracker.user.response.SessionApiModel
+import com.free.tvtracker.user.response.SessionApiResponse
 import com.free.tvtracker.user.response.UserApiModel
-import com.free.tvtracker.user.response.UserApiResponse
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.every
 import io.mockk.mockk
-import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
 import kotlin.test.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -20,16 +19,27 @@ class WelcomeViewModelTest {
     fun `GIVEN init THEN anon session is created`() {
         val sessionRepository: SessionRepository = mockk()
         WelcomeViewModel(mockk(), sessionRepository)
-        coVerify(exactly = 1) { sessionRepository.createAnonymousSession() }
+        coVerify(exactly = 1) { sessionRepository.createAnonSession() }
     }
 
     @Test
-    fun `GIVEN creating session succeeds THEN proceed to home screen`() {
+    fun `GIVEN creating session succeeds THEN green light`() {
         val dispatcher = UnconfinedTestDispatcher()
         val sessionRepository: SessionRepository = mockk {
-            coEvery { createAnonymousSession() } returns UserApiResponse.ok(UserApiModel("", 1, null, null))
+            coEvery { createAnonSession() } returns true
         }
         val sut = WelcomeViewModel(mockk(), sessionRepository, dispatcher)
+        assertEquals(WelcomeViewModel.Status.GreenLight, sut.status.value)
+    }
+
+    @Test
+    fun `GIVEN creating session succeeds WHEN user taps ok THEN proceed home`() {
+        val dispatcher = UnconfinedTestDispatcher()
+        val sessionRepository: SessionRepository = mockk {
+            coEvery { createAnonSession() } returns true
+        }
+        val sut = WelcomeViewModel(mockk(relaxed = true), sessionRepository, dispatcher)
+        sut.actionOk()
         assertEquals(WelcomeViewModel.Status.GoToHome, sut.status.value)
     }
 
@@ -37,7 +47,7 @@ class WelcomeViewModelTest {
     fun `GIVEN creating session fails THEN stay in welcome screen`() {
         val dispatcher = UnconfinedTestDispatcher()
         val sessionRepository: SessionRepository = mockk {
-            coEvery { createAnonymousSession() } returns UserApiResponse.error(ApiError.Unknown)
+            coEvery { createAnonSession() } returns false
         }
         val sut = WelcomeViewModel(mockk(), sessionRepository, dispatcher)
         assertEquals(WelcomeViewModel.Status.InitialisationError, sut.status.value)
