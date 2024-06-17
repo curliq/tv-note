@@ -22,6 +22,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".activities.splash.SplashErrorActivity"/>
+        <activity android:name=".activities.settings.SettingsActivity"/>
         <activity
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|mnc|colorMode|density|fontScale|fontWeightAdjustment|keyboard|layoutDirection|locale|mcc|navigation|smallestScreenSize|touchscreen|uiMode"
             android:windowSoftInputMode="adjustResize"

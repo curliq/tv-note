@@ -178,7 +178,7 @@ private fun VideosGrid(videos: List<DetailsUiModel.Video>, onClick: (String) -> 
                         minLines = 1,
                         maxLines = 3,
                         overflow = Ellipsis,
-                        style = TvTrackerTheme.Typography.labelMedium
+                        style = MaterialTheme.typography.labelMedium
                     )
                 }
             }

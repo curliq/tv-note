@@ -33,6 +33,7 @@ import com.free.tvtracker.ui.person.PersonCrewUiModelMapper
 import com.free.tvtracker.ui.person.PersonPhotoUiModelMapper
 import com.free.tvtracker.ui.person.PersonUiModelMapper
 import com.free.tvtracker.ui.search.ShowSearchUiModelMapper
+import com.free.tvtracker.ui.settings.SettingsUiModelMapper
 import com.free.tvtracker.ui.watching.GetWatchingShowsUseCase
 import com.free.tvtracker.ui.watching.WatchingShowUiModelMapper
 import com.free.tvtracker.ui.watchlist.WatchlistShowUiModelMapper
@@ -75,6 +76,7 @@ fun appModules() = module {
     factory<WatchlistShowUiModelMapper> { WatchlistShowUiModelMapper(get()) }
     factory<FinishedShowUiModelMapper> { FinishedShowUiModelMapper(get()) }
     factory<RecommendedShowUiModelMapper> { RecommendedShowUiModelMapper() }
+    factory<SettingsUiModelMapper> { SettingsUiModelMapper() }
     factory<GetShowStatusUseCase> { GetShowStatusUseCase() }
     factory<GetNextUnwatchedEpisodeUseCase> { GetNextUnwatchedEpisodeUseCase() }
 }

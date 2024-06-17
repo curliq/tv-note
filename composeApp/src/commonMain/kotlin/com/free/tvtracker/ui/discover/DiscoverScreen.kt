@@ -102,7 +102,7 @@ fun DiscoverOk(data: DiscoverUiState.Ok, navigate: (DiscoverScreenNavActions) ->
     LazyColumn(Modifier.padding(horizontal = TvTrackerTheme.sidePadding)) {
         item {
             Spacer(Modifier.height(16.dp))
-            Text("Recommended", style = TvTrackerTheme.Typography.titleLarge)
+            Text("Recommended", style = MaterialTheme.typography.titleLarge)
             Row(verticalAlignment = Alignment.CenterVertically) {
                 ResultsBasedOnText(
                     data.uiModel.showsRecommended.selectionActiveText,
@@ -131,7 +131,7 @@ fun DiscoverOk(data: DiscoverUiState.Ok, navigate: (DiscoverScreenNavActions) ->
             )
             Spacer(Modifier.height(24.dp))
 
-            Text("Trending this week", style = TvTrackerTheme.Typography.titleLarge)
+            Text("Trending this week", style = MaterialTheme.typography.titleLarge)
             Spacer(Modifier.height(8.dp))
             DiscoverRow(
                 data.showsTrendingWeeklyPreview,
@@ -139,7 +139,7 @@ fun DiscoverOk(data: DiscoverUiState.Ok, navigate: (DiscoverScreenNavActions) ->
                 seeAllAction = { navigate(DiscoverScreenNavActions.GoTrending) })
             Spacer(Modifier.height(24.dp))
 
-            Text("New episode out soon", style = TvTrackerTheme.Typography.titleLarge)
+            Text("New episode out soon", style = MaterialTheme.typography.titleLarge)
             Spacer(Modifier.height(8.dp))
             DiscoverRow(
                 data.showsReleasedSoonPreview,
@@ -153,7 +153,7 @@ fun DiscoverOk(data: DiscoverUiState.Ok, navigate: (DiscoverScreenNavActions) ->
 @Composable
 fun ResultsBasedOnText(rec: String, modifier: Modifier = Modifier) {
     Row(modifier = modifier) {
-        Text("Based on: ", style = TvTrackerTheme.Typography.bodyMedium)
+        Text("Based on: ", style = MaterialTheme.typography.bodyMedium)
         Text(
             text = buildAnnotatedString {
                 append(rec)
@@ -178,7 +178,7 @@ fun ResultsBasedOnText(rec: String, modifier: Modifier = Modifier) {
                     }
                 }
             },
-            style = TvTrackerTheme.Typography.bodyMedium,
+            style = MaterialTheme.typography.bodyMedium,
             overflow = Ellipsis,
             maxLines = 1,
             fontWeight = FontWeight.Bold
@@ -222,7 +222,7 @@ private fun DiscoverRow(
                                 minLines = 1,
                                 maxLines = 3,
                                 overflow = Ellipsis,
-                                style = TvTrackerTheme.Typography.labelMedium
+                                style = MaterialTheme.typography.labelMedium
                             )
                         }
                     }

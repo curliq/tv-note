@@ -12,6 +12,10 @@ import com.free.tvtracker.ui.settings.SettingsUiModel
 fun SettingsPreview() {
     val data = SettingsUiModel(
         pushNotificationEnabled = false,
+        isAnon = true,
+        personalInfo = SettingsUiModel.PersonalInfo(
+            "username", "email"
+        )
     )
     TvTrackerTheme {
         Scaffold { a ->

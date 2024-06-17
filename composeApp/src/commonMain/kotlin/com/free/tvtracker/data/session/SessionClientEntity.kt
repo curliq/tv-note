@@ -3,20 +3,28 @@ package com.free.tvtracker.data.session
 data class SessionClientEntity(
     val token: String,
     val createdAtDatetime: String,
-    val id: Long,
+    val userId: Long,
     val username: String?,
     val email: String?,
+    val preferencesPushAllowed: Boolean
 ) {
     companion object {
         fun fromSql(
-            token: String, createdAtDatetime: String, id: Long, username: String?, email: String?
+            localSessionId: Long,
+            token: String,
+            createdAtDatetime: String,
+            userId: Long,
+            username: String?,
+            email: String?,
+            preferencesPushAllowed: Boolean?
         ): SessionClientEntity =
             SessionClientEntity(
                 token = token,
                 createdAtDatetime = createdAtDatetime,
-                id = id,
+                userId = userId,
                 username = username,
                 email = email,
+                preferencesPushAllowed = preferencesPushAllowed == true
             )
     }
 }

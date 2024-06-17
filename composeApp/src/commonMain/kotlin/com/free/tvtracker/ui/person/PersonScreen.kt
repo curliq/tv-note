@@ -85,9 +85,9 @@ fun PersonContent(person: PersonUiModel, navAction: (PersonScreenNavAction) -> U
             }
             Spacer(Modifier.width(16.dp))
             Column {
-                Text(text = person.name, style = TvTrackerTheme.Typography.headlineSmall)
+                Text(text = person.name, style = MaterialTheme.typography.headlineSmall)
                 Spacer(Modifier.height(8.dp))
-                Text(text = person.job, style = TvTrackerTheme.Typography.bodySmall)
+                Text(text = person.job, style = MaterialTheme.typography.bodySmall)
                 Spacer(Modifier.height(8.dp))
                 if (person.instagramTag != null) {
                     FilledTonalButton(
@@ -108,7 +108,7 @@ fun PersonContent(person: PersonUiModel, navAction: (PersonScreenNavAction) -> U
         }
         Spacer(Modifier.height(24.dp))
 
-        Text("About", style = TvTrackerTheme.Typography.titleLarge)
+        Text("About", style = MaterialTheme.typography.titleLarge)
         Spacer(Modifier.height(8.dp))
         Text("Birthday: ${person.dob}")
         Text("Birthplace: ${person.bornIn}")
@@ -116,17 +116,17 @@ fun PersonContent(person: PersonUiModel, navAction: (PersonScreenNavAction) -> U
         Text(person.bio)
         Spacer(Modifier.height(24.dp))
 
-//        Text("Movies (${person.movies.size})", style = TvTrackerTheme.Typography.titleLarge)
+//        Text("Movies (${person.movies.size})", style = MaterialTheme.typography.titleLarge)
 //        Spacer(Modifier.height(8.dp))
 //        MoviesOrShowsRow(person.firstTwoMovies)
 //        Spacer(Modifier.height(24.dp))
 
-        Text("Tv shows (${person.tvShowsCount})", style = TvTrackerTheme.Typography.titleLarge)
+        Text("Tv shows (${person.tvShowsCount})", style = MaterialTheme.typography.titleLarge)
         Spacer(Modifier.height(8.dp))
         MoviesOrShowsRow(person.firstTwoTvShows, navAction)
         Spacer(Modifier.height(24.dp))
 
-        Text("Photos", style = TvTrackerTheme.Typography.titleLarge)
+        Text("Photos", style = MaterialTheme.typography.titleLarge)
         Row(
             modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -178,7 +178,7 @@ private fun MoviesOrShowsRow(moviesOrShows: List<PersonUiModel.Credit>, navActio
                             minLines = 1,
                             maxLines = 3,
                             overflow = Ellipsis,
-                            style = TvTrackerTheme.Typography.labelMedium
+                            style = MaterialTheme.typography.labelMedium
                         )
                     }
                 }

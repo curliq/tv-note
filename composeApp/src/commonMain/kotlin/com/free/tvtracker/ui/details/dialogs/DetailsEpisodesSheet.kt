@@ -85,7 +85,7 @@ fun DetailsEpisodesContent(
                                 ) {
                                     Text(
                                         text = "Mark season as watched",
-                                        style = TvTrackerTheme.Typography.labelMedium
+                                        style = MaterialTheme.typography.labelMedium
                                     )
                                 }
                             }

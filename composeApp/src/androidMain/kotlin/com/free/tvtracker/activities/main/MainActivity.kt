@@ -1,12 +1,16 @@
 package com.free.tvtracker.activities.main
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -15,14 +19,19 @@ import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.painterResource
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
+import com.free.tvtracker.R
+import com.free.tvtracker.activities.main.bottomnav.AppNavDestinations
 import com.free.tvtracker.ui.common.theme.TvTrackerTheme
 import com.free.tvtracker.core.ui.BaseActivity
 import com.free.tvtracker.activities.main.bottomnav.BottomNavBar
 import com.free.tvtracker.activities.main.bottomnav.BottomNavBarItems
 import com.free.tvtracker.activities.main.bottomnav.MainNavHost
+import com.free.tvtracker.activities.settings.SettingsActivity
 import com.free.tvtracker.data.user.UserRepository
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.google.android.gms.tasks.OnCompleteListener
@@ -55,13 +64,28 @@ class MainActivity : BaseActivity() {
                                     if (currentDestination?.hierarchy?.any { it.route == item.destinationId } == true) {
                                         Text(
                                             text = item.title,
-                                            style = TvTrackerTheme.Typography.headlineMedium
+                                            style = MaterialTheme.typography.headlineMedium
                                         )
                                     }
                                 }
                             },
                             scrollBehavior = scroll,
+                            actions = {
+                                if (currentDestination?.route == AppNavDestinations.WATCHING.id) {
+                                    IconButton(
+                                        onClick = {
+                                            startActivity(Intent(this@MainActivity, SettingsActivity::class.java))
+                                        }
+                                    ) {
+                                        Icon(
+                                            painter = painterResource(id = R.drawable.ic_settings_heart),
+                                            contentDescription = "My Button"
+                                        )
+                                    }
+                                }
+                            }
                         )
+
                     }
                 ) { padding ->
                     MainNavHost(padding = padding, navController = appNavController)

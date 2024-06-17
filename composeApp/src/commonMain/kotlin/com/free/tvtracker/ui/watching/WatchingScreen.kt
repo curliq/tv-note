@@ -224,14 +224,14 @@ fun LazyItemScope.WatchingItem(
                     ) {
                         Text(
                             text = "Mark episode as watched",
-                            style = TvTrackerTheme.Typography.labelMedium,
+                            style = MaterialTheme.typography.labelMedium,
                             color = MaterialTheme.colorScheme.primary
                         )
                     }
                 } else {
                     Text(
                         text = "Available on ${uiModel.nextEpisodeCountdown}",
-                        style = TvTrackerTheme.Typography.labelMedium
+                        style = MaterialTheme.typography.labelMedium
                     )
                 }
             }
@@ -242,7 +242,7 @@ fun LazyItemScope.WatchingItem(
 @Composable
 private fun WatchingItemNextEpisode(nextEpisode: WatchingItemUiModel.NextEpisode) {
     Row {
-        val style = TvTrackerTheme.Typography.bodyMedium
+        val style = MaterialTheme.typography.bodyMedium
         Text(nextEpisode.body, style = style)
         AnimatedContent(
             targetState = nextEpisode,

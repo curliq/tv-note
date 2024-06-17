@@ -39,13 +39,6 @@ enum class BottomNavBarItems(val label: String, val title: String, val icon: Int
         R.drawable.ic_explore_filled_24px,
         AppNavDestinations.DISCOVER.id
     ),
-    SETTINGS(
-        "Settings",
-        "Settings & Account",
-        R.drawable.ic_settings_24px,
-        R.drawable.ic_settings_filled_24px,
-        AppNavDestinations.SETTINGS.id
-    ),
 }
 
 @Composable

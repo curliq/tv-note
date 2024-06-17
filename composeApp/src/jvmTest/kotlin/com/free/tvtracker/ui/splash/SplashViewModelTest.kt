@@ -13,7 +13,7 @@ class SplashViewModelTest {
     @Test
     fun `GIVEN has completed welcome THEN local session is fetched`() {
         val localStore: LocalSqlDataProvider = mockk {
-            every { getLocalPreferencesWelcomeComplete() } returns LocalPreferencesClientEntity(true)
+            every { getLocalPreferences() } returns LocalPreferencesClientEntity(true)
         }
         val sessionRepository: SessionRepository = mockk(relaxed = true)
         val sut = SplashViewModel(localStore, sessionRepository)
@@ -24,7 +24,7 @@ class SplashViewModelTest {
     @Test
     fun `GIVEN has completed welcome AND local session is fetched THEN go home`() {
         val localStore: LocalSqlDataProvider = mockk {
-            every { getLocalPreferencesWelcomeComplete() } returns LocalPreferencesClientEntity(true)
+            every { getLocalPreferences() } returns LocalPreferencesClientEntity(true)
         }
         val sessionRepository: SessionRepository = mockk {
             every { loadSession() } returns true

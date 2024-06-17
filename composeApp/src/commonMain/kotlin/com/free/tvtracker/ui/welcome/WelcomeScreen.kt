@@ -45,7 +45,7 @@ fun WelcomeScreen(
                 Text("- No account required")
                 Text("- Data is backed up (email optional)")
                 if (OsPlatform().get() == OsPlatform.Platform.Android) {
-                    Text("- Looks nice imo")
+                    Text("- Looks nice")
                 }
 
                 Button(modifier = Modifier.width(150.dp), onClick = viewModel::actionOk) {

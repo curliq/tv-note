@@ -9,7 +9,7 @@ class SplashViewModel(
     private val sessionRepository: SessionRepository
 ) : ViewModel() {
     fun initialDestination(): Destination {
-        return if (localDataSource.getLocalPreferencesWelcomeComplete().welcomeComplete) {
+        return if (localDataSource.getLocalPreferences().welcomeComplete) {
             val session = sessionRepository.loadSession()
             if (session) {
                 Destination.Home

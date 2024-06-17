@@ -20,6 +20,11 @@ class WelcomeViewModel(
 
     init {
         viewModelScope.launch(ioDispatcher) {
+            val sessionAlreadyExists = sessionRepository.loadSession()
+            if (sessionAlreadyExists) {
+                status.emit(Status.GreenLight)
+                return@launch
+            }
             val sessionCreated = sessionRepository.createAnonSession()
             if (sessionCreated) {
                 status.update {

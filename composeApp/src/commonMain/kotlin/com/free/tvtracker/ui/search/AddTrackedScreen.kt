@@ -169,7 +169,7 @@ fun AddTrackedScreenGrid(
                         minLines = 2,
                         maxLines = 2,
                         overflow = Ellipsis,
-                        style = TvTrackerTheme.Typography.labelMedium
+                        style = MaterialTheme.typography.labelMedium
                     )
                     if (originScreen == AddTrackedScreenOriginScreen.Discover) return@Column
                     Spacer(Modifier.height(16.dp))
@@ -212,7 +212,7 @@ fun AddTrackedScreenGrid(
                                 ) {
                                     Text(
                                         trackText,
-                                        style = TvTrackerTheme.Typography.labelLarge,
+                                        style = MaterialTheme.typography.labelLarge,
                                         modifier = Modifier.padding(horizontal = 12.dp).align(Alignment.Center),
                                     )
                                 }

@@ -99,7 +99,7 @@ fun WatchingItem(uiModel: FinishedShowUiModel, onClick: () -> Unit) {
             Column(Modifier.padding(16.dp)) {
                 Text(uiModel.title, maxLines = 1)
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(uiModel.status, style = TvTrackerTheme.Typography.bodyMedium)
+                Text(uiModel.status, style = MaterialTheme.typography.bodyMedium)
             }
         }
     }

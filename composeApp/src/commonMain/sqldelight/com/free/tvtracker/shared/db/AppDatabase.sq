@@ -42,11 +42,14 @@ CREATE TABLE local_preferences(
 );
 
 CREATE TABLE session(
+    -- local session id to enforce only 1 row existing
+    local_session_id INTEGER NOT NULL PRIMARY KEY,
     token TEXT NOT NULL,
     createdAtDatetime TEXT NOT NULL,
-    id INTEGER NOT NULL,
+    user_id INTEGER NOT NULL,
     username TEXT,
-    email TEXT
+    email TEXT,
+    preferences_push_allowed INTEGER AS Boolean DEFAULT 1
 );
 
 selectAllTrackedShows:
@@ -111,5 +114,13 @@ getSession:
 SELECT * FROM session;
 
 saveSession:
-INSERT INTO session(id, username, token, createdAtDatetime, email)
-VALUES(?,?,?,?,?);
+INSERT INTO session(local_session_id, user_id, username, token, createdAtDatetime, email, preferences_push_allowed)
+VALUES(?, ?,?,?,?,?, ?)
+ON CONFLICT(local_session_id)
+  DO UPDATE SET
+  user_id = excluded.user_id,
+  username = excluded.username,
+  token = excluded.token,
+  createdAtDatetime = excluded.createdAtDatetime,
+  email = excluded.email,
+  preferences_push_allowed = excluded.preferences_push_allowed;

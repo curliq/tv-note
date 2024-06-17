@@ -12,6 +12,8 @@ data class UserApiModel(
     val id: Int,
     val username: String?,
     val email: String?,
+    @SerialName("preferences_push_allowed")
+    val preferencesPushAllowed: Boolean
 )
 
 @Serializable

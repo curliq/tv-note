@@ -81,7 +81,7 @@ class LocalSqlDataProvider(appDatabase: AppDatabase) {
         }
     }
 
-    fun getLocalPreferencesWelcomeComplete(): LocalPreferencesClientEntity {
+    fun getLocalPreferences(): LocalPreferencesClientEntity {
         return dbQuery.getLocalPreferences(LocalPreferencesClientEntity::fromSql).executeAsOneOrNull()
             ?: LocalPreferencesClientEntity(welcomeComplete = false)
     }
@@ -96,6 +96,14 @@ class LocalSqlDataProvider(appDatabase: AppDatabase) {
     }
 
     fun saveSession(session: SessionClientEntity) {
-        dbQuery.saveSession(session.id, session.username, session.token, session.createdAtDatetime, session.email)
+        dbQuery.saveSession(
+            local_session_id = 1,
+            session.userId,
+            session.username,
+            session.token,
+            session.createdAtDatetime,
+            session.email,
+            session.preferencesPushAllowed
+        )
     }
 }

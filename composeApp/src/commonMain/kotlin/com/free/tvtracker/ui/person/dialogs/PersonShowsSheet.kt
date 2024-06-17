@@ -105,7 +105,7 @@ private fun ActingOrCrewShow(shows: List<PersonUiModel.Credit>, onClick: (Int) -
                     minLines = 1,
                     maxLines = 3,
                     overflow = Ellipsis,
-                    style = TvTrackerTheme.Typography.labelMedium
+                    style = MaterialTheme.typography.labelMedium
                 )
             }
         }

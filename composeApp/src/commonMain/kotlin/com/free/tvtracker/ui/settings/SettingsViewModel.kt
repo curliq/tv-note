@@ -1,5 +1,6 @@
 package com.free.tvtracker.ui.settings
 
+import com.free.tvtracker.data.session.SessionRepository
 import com.free.tvtracker.expect.ui.ViewModel
 import com.free.tvtracker.data.user.UserRepository
 import kotlinx.coroutines.CoroutineDispatcher
@@ -11,10 +12,23 @@ import kotlinx.coroutines.launch
 
 class SettingsViewModel(
     private val userRepo: UserRepository,
+    private val sessionRepository: SessionRepository,
+    private val settingsUiModelMapper: SettingsUiModelMapper,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : ViewModel() {
 
     val data: MutableStateFlow<SettingsUiState> = MutableStateFlow(SettingsUiState.Loading)
+
+    init {
+        viewModelScope.launch(ioDispatcher) {
+            val session = sessionRepository.getSession()
+            if (session != null) {
+                data.emit(SettingsUiState.Ok(settingsUiModelMapper.map(session)))
+            } else {
+                data.emit(SettingsUiState.Error)
+            }
+        }
+    }
 
     fun action(action: Action) {
         viewModelScope.launch(ioDispatcher) {
@@ -46,5 +60,9 @@ sealed class SettingsUiState {
 }
 
 data class SettingsUiModel(
-    val pushNotificationEnabled: Boolean
-)
+    val isAnon: Boolean,
+    val personalInfo: PersonalInfo?,
+    val pushNotificationEnabled: Boolean,
+) {
+    data class PersonalInfo(val username: String, val email: String?)
+}

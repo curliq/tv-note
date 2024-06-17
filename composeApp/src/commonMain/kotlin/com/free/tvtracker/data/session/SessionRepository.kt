@@ -28,9 +28,10 @@ class SessionRepository(
                     SessionClientEntity(
                         token = res.authToken,
                         createdAtDatetime = res.user.createdAtDatetime,
-                        id = res.user.id.toLong(),
+                        userId = res.user.id.toLong(),
                         username = res.user.username,
                         email = res.user.email,
+                        preferencesPushAllowed = res.user.preferencesPushAllowed
                     )
                 )
             } catch (e: Exception) {
@@ -56,5 +57,9 @@ class SessionRepository(
         } else {
             return false
         }
+    }
+
+    fun getSession(): SessionClientEntity? {
+        return localDataSource.getSession()
     }
 }

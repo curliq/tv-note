@@ -72,7 +72,7 @@ fun DiscoverTrendingSheetContent(
                         minLines = 1,
                         maxLines = 3,
                         overflow = Ellipsis,
-                        style = TvTrackerTheme.Typography.labelMedium
+                        style = MaterialTheme.typography.labelMedium
                     )
                 }
             }

@@ -95,7 +95,7 @@ private fun HasResults(
                 Spacer(Modifier.height(TvTrackerTheme.sidePadding))
                 Text(
                     "Select to filter:",
-                    style = TvTrackerTheme.Typography.titleLarge,
+                    style = MaterialTheme.typography.titleLarge,
                     modifier = Modifier.padding(horizontal = TvTrackerTheme.sidePadding)
                 )
                 Spacer(Modifier.height(TvTrackerTheme.sidePadding))
@@ -147,7 +147,7 @@ private fun HasResults(
             }
 
             Spacer(Modifier.height(24.dp))
-            Text("Results", style = TvTrackerTheme.Typography.titleLarge)
+            Text("Results", style = MaterialTheme.typography.titleLarge)
             ResultsBasedOnText(recommended.selectionActiveText)
             Spacer(Modifier.height(8.dp))
             if (recommended.results.isEmpty()) {
@@ -175,7 +175,7 @@ private fun HasResults(
                             minLines = 1,
                             maxLines = 3,
                             overflow = Ellipsis,
-                            style = TvTrackerTheme.Typography.labelMedium
+                            style = MaterialTheme.typography.labelMedium
                         )
                     }
                 }
@@ -206,7 +206,7 @@ private fun SelectionCard(
                     minLines = 2,
                     maxLines = 2,
                     overflow = Ellipsis,
-                    style = TvTrackerTheme.Typography.labelMedium,
+                    style = MaterialTheme.typography.labelMedium,
                 )
             }
         }

@@ -26,7 +26,7 @@ fun IosDiscoverScreen(viewModel: DiscoverViewModel, navigate: (DiscoverScreenNav
                 title = {
                     Text(
                         text = "Discover",
-                        style = TvTrackerTheme.Typography.headlineMedium
+                        style = MaterialTheme.typography.headlineMedium
                     )
                 },
                 scrollBehavior = scroll,

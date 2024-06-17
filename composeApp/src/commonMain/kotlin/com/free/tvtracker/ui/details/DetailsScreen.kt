@@ -119,9 +119,9 @@ fun DetailsScreenContent(
             }
             Spacer(Modifier.width(16.dp))
             Column {
-                Text(text = show.name, style = TvTrackerTheme.Typography.headlineSmall)
+                Text(text = show.name, style = MaterialTheme.typography.headlineSmall)
                 Spacer(Modifier.height(8.dp))
-                Text(text = show.releaseStatus, style = TvTrackerTheme.Typography.bodySmall)
+                Text(text = show.releaseStatus, style = MaterialTheme.typography.bodySmall)
             }
         }
         Row {
@@ -171,9 +171,9 @@ fun DetailsScreenContent(
         }
         Spacer(Modifier.height(24.dp))
 
-        Text("Where to watch", style = TvTrackerTheme.Typography.titleLarge)
+        Text("Where to watch", style = MaterialTheme.typography.titleLarge)
         Row(verticalAlignment = Alignment.Bottom) {
-            Text("Source:  ", style = TvTrackerTheme.Typography.labelSmall)
+            Text("Source:  ", style = MaterialTheme.typography.labelSmall)
             val tint = if (isSystemInDarkTheme()) {
                 //todo test on ios
                 Color(0xffFBD446)
@@ -196,18 +196,18 @@ fun DetailsScreenContent(
         }
         Spacer(Modifier.height(24.dp))
 
-        Text("Plot", style = TvTrackerTheme.Typography.titleLarge)
+        Text("Plot", style = MaterialTheme.typography.titleLarge)
         Spacer(Modifier.height(8.dp))
         Text(text = show.description ?: "No description available")
         Spacer(Modifier.height(24.dp))
 
         if (!show.genres.isNullOrEmpty()) {
-            Text("Genres", style = TvTrackerTheme.Typography.titleLarge)
+            Text("Genres", style = MaterialTheme.typography.titleLarge)
             Text(text = show.genres)
             Spacer(Modifier.height(24.dp))
         }
 
-        Text(text = "Episodes", style = TvTrackerTheme.Typography.titleLarge)
+        Text(text = "Episodes", style = MaterialTheme.typography.titleLarge)
         Spacer(Modifier.height(8.dp))
         Text(text = show.seasonsInfo ?: "No seasons available")
         Spacer(Modifier.height(8.dp))
@@ -218,7 +218,7 @@ fun DetailsScreenContent(
         )
         Spacer(Modifier.height(24.dp))
 
-        Text("Trailers & photos", style = TvTrackerTheme.Typography.titleLarge)
+        Text("Trailers & photos", style = MaterialTheme.typography.titleLarge)
         Spacer(Modifier.height(8.dp))
         Row(
             modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min),
@@ -253,7 +253,7 @@ fun DetailsScreenContent(
         }
         Spacer(Modifier.height(24.dp))
 
-        Text(text = "Cast & crew", style = TvTrackerTheme.Typography.titleLarge)
+        Text(text = "Cast & crew", style = MaterialTheme.typography.titleLarge)
         Spacer(Modifier.height(8.dp))
         Row(
             modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min),
@@ -275,7 +275,7 @@ fun DetailsScreenContent(
         }
         Spacer(Modifier.height(24.dp))
 
-        Text(text = "Reviews & ratings", style = TvTrackerTheme.Typography.titleLarge)
+        Text(text = "Reviews & ratings", style = MaterialTheme.typography.titleLarge)
         Spacer(Modifier.height(8.dp))
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Card(
@@ -310,7 +310,7 @@ fun DetailsScreenContent(
             }
             Text(
                 "I will add IMDB and rotten tomatoes at some point.",
-                style = TvTrackerTheme.Typography.labelMedium,
+                style = MaterialTheme.typography.labelMedium,
                 modifier = Modifier.padding(horizontal = 24.dp).align(Alignment.CenterVertically)
             )
         }
@@ -383,7 +383,7 @@ internal fun CastCard(person: DetailsUiModel.Person, onClick: () -> Unit) {
                 minLines = 1,
                 maxLines = 2,
                 overflow = Ellipsis,
-                style = TvTrackerTheme.Typography.labelMedium
+                style = MaterialTheme.typography.labelMedium
             )
             Spacer(Modifier.height(8.dp))
             Text(
@@ -393,7 +393,7 @@ internal fun CastCard(person: DetailsUiModel.Person, onClick: () -> Unit) {
                 minLines = 1,
                 maxLines = 2,
                 overflow = Ellipsis,
-                style = TvTrackerTheme.Typography.labelSmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
+                style = MaterialTheme.typography.labelSmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
             )
         }
     }

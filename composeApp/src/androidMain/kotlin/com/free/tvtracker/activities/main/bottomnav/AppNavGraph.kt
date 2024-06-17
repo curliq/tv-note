@@ -189,10 +189,6 @@ fun NavGraphBuilder.mainNavGraph(navController: AppNavController, context: Activ
             }
         }
     }
-    composable(AppNavDestinations.SETTINGS.id) {
-        SettingsScreen(viewModel = koinViewModel())
-    }
-
 }
 
 enum class DiscoverNavDestinations {
