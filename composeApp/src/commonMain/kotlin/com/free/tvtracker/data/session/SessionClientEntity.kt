@@ -6,7 +6,8 @@ data class SessionClientEntity(
     val userId: Long,
     val username: String?,
     val email: String?,
-    val preferencesPushAllowed: Boolean
+    val preferencesPushAllowed: Boolean,
+    val isAnonymous: Boolean,
 ) {
     companion object {
         fun fromSql(
@@ -16,7 +17,8 @@ data class SessionClientEntity(
             userId: Long,
             username: String?,
             email: String?,
-            preferencesPushAllowed: Boolean?
+            preferencesPushAllowed: Boolean?,
+            isAnonymous: Boolean
         ): SessionClientEntity =
             SessionClientEntity(
                 token = token,
@@ -24,7 +26,8 @@ data class SessionClientEntity(
                 userId = userId,
                 username = username,
                 email = email,
-                preferencesPushAllowed = preferencesPushAllowed == true
+                preferencesPushAllowed = preferencesPushAllowed == true,
+                isAnonymous = isAnonymous
             )
     }
 }

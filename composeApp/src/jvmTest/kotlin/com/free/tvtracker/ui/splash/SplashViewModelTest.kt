@@ -10,11 +10,15 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class SplashViewModelTest {
+    private val localStore: LocalSqlDataProvider = mockk {
+        every { getLocalPreferences() } returns LocalPreferencesClientEntity(
+            true,
+            LocalPreferencesClientEntity.Theme.SystemDefault
+        )
+    }
+
     @Test
     fun `GIVEN has completed welcome THEN local session is fetched`() {
-        val localStore: LocalSqlDataProvider = mockk {
-            every { getLocalPreferences() } returns LocalPreferencesClientEntity(true)
-        }
         val sessionRepository: SessionRepository = mockk(relaxed = true)
         val sut = SplashViewModel(localStore, sessionRepository)
         sut.initialDestination()
@@ -23,9 +27,6 @@ class SplashViewModelTest {
 
     @Test
     fun `GIVEN has completed welcome AND local session is fetched THEN go home`() {
-        val localStore: LocalSqlDataProvider = mockk {
-            every { getLocalPreferences() } returns LocalPreferencesClientEntity(true)
-        }
         val sessionRepository: SessionRepository = mockk {
             every { loadSession() } returns true
         }

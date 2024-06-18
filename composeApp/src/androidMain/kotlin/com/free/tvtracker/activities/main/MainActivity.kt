@@ -22,17 +22,16 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import com.free.tvtracker.R
 import com.free.tvtracker.activities.main.bottomnav.AppNavDestinations
-import com.free.tvtracker.ui.common.theme.TvTrackerTheme
-import com.free.tvtracker.core.ui.BaseActivity
 import com.free.tvtracker.activities.main.bottomnav.BottomNavBar
 import com.free.tvtracker.activities.main.bottomnav.BottomNavBarItems
 import com.free.tvtracker.activities.main.bottomnav.MainNavHost
 import com.free.tvtracker.activities.settings.SettingsActivity
-import com.free.tvtracker.data.user.UserRepository
+import com.free.tvtracker.core.ui.BaseActivity
+import com.free.tvtracker.data.session.SessionRepository
+import com.free.tvtracker.ui.common.theme.TvTrackerTheme
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
@@ -93,7 +92,7 @@ class MainActivity : BaseActivity() {
             }
         }
         askNotificationPermission()
-        val repo: UserRepository = get()
+        val repo: SessionRepository = get()
         FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
             if (!task.isSuccessful) {
                 return@OnCompleteListener

@@ -15,7 +15,9 @@ import com.free.tvtracker.tracked.request.AddShowApiRequestBody
 import com.free.tvtracker.tracked.response.AddTrackedEpisodesApiResponse
 import com.free.tvtracker.tracked.response.AddTrackedShowApiResponse
 import com.free.tvtracker.tracked.response.TrackedShowApiResponse
+import com.free.tvtracker.user.request.LoginApiRequestBody
 import com.free.tvtracker.user.request.PostFcmTokenApiRequestBody
+import com.free.tvtracker.user.request.SignupApiRequestBody
 import com.free.tvtracker.user.request.UpdatePreferencesApiRequestBody
 import com.free.tvtracker.user.response.SessionApiResponse
 import com.free.tvtracker.user.response.UserApiResponse
@@ -46,8 +48,8 @@ object Endpoints {
     val getUser = EndpointNoBody(Path.GET_USER, UserApiResponse::class, Endpoint.Verb.GET)
     val createAnonUser = EndpointNoBody(Path.CREATE_ANON_USER, SessionApiResponse::class, Endpoint.Verb.POST)
     val postUserCredentials =
-        Endpoint(Path.POST_USER_CREDENTIALS, SessionApiResponse::class, Nothing::class, Endpoint.Verb.POST)
-    val login = Endpoint(Path.LOGIN, SessionApiResponse::class, Nothing::class, Endpoint.Verb.POST)
+        Endpoint(Path.POST_USER_CREDENTIALS, SessionApiResponse::class, SignupApiRequestBody::class, Endpoint.Verb.POST)
+    val login = Endpoint(Path.LOGIN, SessionApiResponse::class, LoginApiRequestBody::class, Endpoint.Verb.POST)
     val updateUserPreferences = Endpoint(
         Path.UPDATE_PREFERENCES,
         UserApiResponse::class,
@@ -66,7 +68,12 @@ object Endpoints {
     val addTracked =
         Endpoint(Path.ADD_TRACKED, AddTrackedShowApiResponse::class, AddShowApiRequestBody::class, Endpoint.Verb.POST)
     val addEpisodes =
-        Endpoint(Path.ADD_EPISODES, AddTrackedEpisodesApiResponse::class, AddEpisodesApiRequestBody::class, Endpoint.Verb.POST)
+        Endpoint(
+            Path.ADD_EPISODES,
+            AddTrackedEpisodesApiResponse::class,
+            AddEpisodesApiRequestBody::class,
+            Endpoint.Verb.POST
+        )
 
     //    val toggleWatchlist = Endpoint(Path.TOGGLE_WATCHLIST, )
     val search = Endpoint(Path.SEARCH, SearchApiResponse::class, SearchApiRequestBody::class, Endpoint.Verb.POST)

@@ -73,6 +73,7 @@ kotlin {
             implementation(libs.ktor.serialization.kotlinx.json)
             implementation(libs.koin.core)
             implementation(libs.sqldelight.runtime)
+            implementation(libs.sqldelight.coroutines.extensions)
             implementation(libs.uuid)
             implementation(libs.kotlinx.datetime)
         }

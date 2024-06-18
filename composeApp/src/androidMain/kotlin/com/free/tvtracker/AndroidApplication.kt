@@ -9,6 +9,8 @@ import com.free.tvtracker.ui.finished.FinishedShowsViewModel
 import com.free.tvtracker.ui.person.PersonViewModel
 import com.free.tvtracker.ui.search.AddTrackedViewModel
 import com.free.tvtracker.ui.settings.SettingsViewModel
+import com.free.tvtracker.ui.settings.login.LoginViewModel
+import com.free.tvtracker.ui.settings.signup.SignupViewModel
 import com.free.tvtracker.ui.splash.SplashViewModel
 import com.free.tvtracker.ui.watching.WatchingViewModel
 import com.free.tvtracker.ui.watchlist.WatchlistedShowsViewModel
@@ -37,9 +39,11 @@ class AndroidApplication : Application() {
                     viewModel { WatchlistedShowsViewModel(get(), get(), get(), get()) }
                     viewModel { DetailsViewModel(get(), get(), get()) }
                     viewModel { PersonViewModel(get(), get()) }
+                    viewModel { LoginViewModel(get()) }
+                    viewModel { SignupViewModel(get()) }
                     single {
                         // shared on TvTrackerTheme for all activities
-                        SettingsViewModel(get(), get(), get(), get())
+                        SettingsViewModel(get(), get(), get())
                     }
                     single {
                         // why `single` and not `viewmodel`? to share it

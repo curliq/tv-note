@@ -1,6 +1,6 @@
 package com.free.tvtracker.services
 
-import com.free.tvtracker.data.user.UserRepository
+import com.free.tvtracker.data.session.SessionRepository
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import kotlinx.coroutines.CoroutineScope
@@ -19,7 +19,7 @@ class FcmService : FirebaseMessagingService() {
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
-        val repo: UserRepository = get()
+        val repo: SessionRepository = get()
         scope.launch {
             repo.postFcmToken(token)
         }

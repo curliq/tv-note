@@ -21,9 +21,9 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.free.tvtracker.activities.add.AddShowActivity
 import com.free.tvtracker.activities.discover.RecommendationsActivity
+import com.free.tvtracker.activities.main.AppNavController
 import com.free.tvtracker.activities.showdetails.ShowDetailsActivity
 import com.free.tvtracker.activities.showdetails.ShowDetailsActivity.Extras.EXTRA_SHOW_ID
-import com.free.tvtracker.activities.main.AppNavController
 import com.free.tvtracker.ui.discover.DiscoverScreen
 import com.free.tvtracker.ui.discover.DiscoverScreenNavActions
 import com.free.tvtracker.ui.discover.DiscoverViewModel
@@ -32,14 +32,13 @@ import com.free.tvtracker.ui.discover.dialogs.DiscoverTrendingSheet
 import com.free.tvtracker.ui.finished.FinishedScreen
 import com.free.tvtracker.ui.finished.FinishedScreenNavAction
 import com.free.tvtracker.ui.search.AddTrackedScreenOriginScreen
-import com.free.tvtracker.ui.settings.SettingsScreen
-import com.free.tvtracker.ui.watching.WatchingScreenNavAction
 import com.free.tvtracker.ui.watching.WatchingScreen
+import com.free.tvtracker.ui.watching.WatchingScreenNavAction
 import com.free.tvtracker.ui.watchlist.WatchlistScreen
 import com.free.tvtracker.ui.watchlist.WatchlistScreenNavAction
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
-import org.koin.androidx.compose.koinViewModel
 import org.koin.androidx.compose.get
+import org.koin.androidx.compose.koinViewModel
 
 @ExperimentalMaterial3Api
 @ExperimentalMaterialNavigationApi

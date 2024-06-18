@@ -61,7 +61,13 @@ class UserService(
         logger.get.debug("setting credentials for user: $anonUserId")
         val encryptedPassword = encoder.encode(body.password)
         val user =
-            UserEntity(id = anonUserId, username = body.username, email = body.email, password = encryptedPassword)
+            UserEntity(
+                id = anonUserId,
+                username = body.username,
+                email = body.email,
+                password = encryptedPassword,
+                isAnon = false
+            )
         try {
             logger.get.debug("Saving user: $user")
             userJpaRepository.save(user)
@@ -74,7 +80,7 @@ class UserService(
     }
 
     fun createAnonUser(): AuthenticatedUser? {
-        val user = UserEntity(username = UUID.randomUUID().toString())
+        val user = UserEntity(username = UUID.randomUUID().toString(), isAnon = true)
         try {
             userJpaRepository.save(user)
         } catch (e: Exception) {

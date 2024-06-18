@@ -7,6 +7,10 @@ import com.free.tvtracker.data.tracked.entities.StoredEpisodeClientEntity
 import com.free.tvtracker.data.tracked.entities.TrackedShowClientEntity
 import com.free.tvtracker.data.tracked.entities.WatchedEpisodeClientEntity
 import com.free.tvtracker.shared.db.AppDatabase
+import com.squareup.sqldelight.runtime.coroutines.asFlow
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.map
 
 class LocalSqlDataProvider(appDatabase: AppDatabase) {
     private val dbQuery = appDatabase.appDatabaseQueries
@@ -102,6 +106,11 @@ class LocalSqlDataProvider(appDatabase: AppDatabase) {
         return res
     }
 
+    fun getSessionFlow(): Flow<SessionClientEntity?> {
+        val res = dbQuery.getSession(SessionClientEntity::fromSql).asFlow()
+        return res.map { it.executeAsOneOrNull() }
+    }
+
     fun saveSession(session: SessionClientEntity) {
         dbQuery.saveSession(
             local_session_id = 1,
@@ -110,7 +119,8 @@ class LocalSqlDataProvider(appDatabase: AppDatabase) {
             session.token,
             session.createdAtDatetime,
             session.email,
-            session.preferencesPushAllowed
+            session.preferencesPushAllowed,
+            session.isAnonymous
         )
     }
 }

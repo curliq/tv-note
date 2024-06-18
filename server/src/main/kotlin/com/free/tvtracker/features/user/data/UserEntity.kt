@@ -38,4 +38,7 @@ class UserEntity(
 
     @Column(name = "preferences_push_allowed", nullable = true)
     var preferencesPushAllowed: Boolean = true,
+
+    @Column(name = "is_anonymous", nullable = false)
+    val isAnon: Boolean = true,
 )

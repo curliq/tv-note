@@ -50,6 +50,7 @@ create table users
     role                     smallint check (role between 0 and 1),
     fcm_token                varchar(255),
     preferences_push_allowed boolean   default true,
+    is_anonymous             boolean      not null,
     primary key (id)
 );
 alter table if exists stored_shows
@@ -64,10 +65,6 @@ alter table if exists tracked_shows
     drop constraint if exists UKrk9jk357bhb8wumxn79akkwdx;
 alter table if exists tracked_shows
     add constraint UKrk9jk357bhb8wumxn79akkwdx unique (storedshow_id, user_id);
-alter table if exists users
-    drop constraint if exists UK_6dotkott2kjsp8vw4d0m25fb7;
-alter table if exists users
-    add constraint UK_6dotkott2kjsp8vw4d0m25fb7 unique (email);
 alter table if exists users
     drop constraint if exists UK_2ywh4w6lfiljcxg7w0esfj4fd;
 alter table if exists users

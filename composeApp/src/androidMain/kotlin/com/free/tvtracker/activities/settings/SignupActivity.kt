@@ -1,7 +1,5 @@
 package com.free.tvtracker.activities.settings
 
-import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.compose.material.icons.Icons
@@ -17,33 +15,29 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import com.free.tvtracker.core.ui.BaseActivity
 import com.free.tvtracker.ui.common.theme.TvTrackerTheme
-import com.free.tvtracker.ui.settings.SettingsScreen
-import com.free.tvtracker.ui.settings.SettingsScreenNavAction
+import com.free.tvtracker.ui.settings.SignupScreen
+import com.free.tvtracker.ui.settings.SignupScreenAction
 import org.koin.androidx.compose.get
 
 @OptIn(ExperimentalMaterial3Api::class)
-class SettingsActivity : BaseActivity() {
+class SignupActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-            TvTrackerTheme {
-                val navAction = { action: SettingsScreenNavAction ->
+                val navAction = { action: SignupScreenAction ->
                     when (action) {
-                        SettingsScreenNavAction.GoLogin -> {
-                            startActivity(Intent(this, LoginActivity::class.java))
-                        }
-
-                        SettingsScreenNavAction.GoSignup -> {
-                            startActivity(Intent(this, SignupActivity::class.java))
+                        SignupScreenAction.GoBack -> {
+                            finish()
                         }
                     }
                 }
+        setContent {
+            TvTrackerTheme {
                 Scaffold(
                     topBar = {
                         MediumTopAppBar(
                             title = {
                                 Text(
-                                    text = "Settings",
+                                    text = "Create account",
                                     style = MaterialTheme.typography.headlineMedium
                                 )
                             },
@@ -57,7 +51,7 @@ class SettingsActivity : BaseActivity() {
                         )
                     }
                 ) { padding ->
-                    SettingsScreen(viewModel = get(), navAction, padding)
+                    SignupScreen(viewModel = get(), navAction, padding)
                 }
             }
         }

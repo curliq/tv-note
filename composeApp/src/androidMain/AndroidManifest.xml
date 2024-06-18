@@ -23,6 +23,8 @@
         </activity>
         <activity android:name=".activities.splash.SplashErrorActivity"/>
         <activity android:name=".activities.settings.SettingsActivity"/>
+        <activity android:name=".activities.settings.LoginActivity"/>
+        <activity android:name=".activities.settings.SignupActivity"/>
         <activity
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|mnc|colorMode|density|fontScale|fontWeightAdjustment|keyboard|layoutDirection|locale|mcc|navigation|smallestScreenSize|touchscreen|uiMode"
             android:windowSoftInputMode="adjustResize"

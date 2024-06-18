@@ -63,7 +63,10 @@ fun WelcomeScreen(
                     }
                 }
                 if (status == WelcomeViewModel.Status.InitialisationError) {
-                    Text("Error setting up the app, either the server is broken or you're not connected to the internet")
+                    Text(
+                        "Error setting up the app, either the server is broken or you're not connected to the internet",
+                        color = MaterialTheme.colorScheme.error
+                    )
                 }
             }
         }

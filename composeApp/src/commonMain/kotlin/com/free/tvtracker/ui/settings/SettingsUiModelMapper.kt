@@ -7,13 +7,13 @@ import com.free.tvtracker.data.session.SessionClientEntity
 class SettingsUiModelMapper : MapperWithOptions<SessionClientEntity, SettingsUiModel, LocalPreferencesClientEntity> {
     override fun map(from: SessionClientEntity, options: LocalPreferencesClientEntity): SettingsUiModel {
         return SettingsUiModel(
-            isAnon = from.username == null,
+            isAnon = from.isAnonymous,
             pushNotificationEnabled = from.preferencesPushAllowed,
             theme = mapTheme(options.theme),
             personalInfo = if (from.username != null) {
                 SettingsUiModel.PersonalInfo(
                     username = from.username,
-                    email = from.email
+                    email = if (from.email.isNullOrEmpty()) null else from.email
                 )
             } else {
                 null

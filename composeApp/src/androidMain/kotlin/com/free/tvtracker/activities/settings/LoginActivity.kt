@@ -1,7 +1,5 @@
 package com.free.tvtracker.activities.settings
 
-import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.compose.material.icons.Icons
@@ -17,24 +15,20 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import com.free.tvtracker.core.ui.BaseActivity
 import com.free.tvtracker.ui.common.theme.TvTrackerTheme
-import com.free.tvtracker.ui.settings.SettingsScreen
-import com.free.tvtracker.ui.settings.SettingsScreenNavAction
+import com.free.tvtracker.ui.settings.LoginScreen
+import com.free.tvtracker.ui.settings.LoginScreenNavAction
 import org.koin.androidx.compose.get
 
 @OptIn(ExperimentalMaterial3Api::class)
-class SettingsActivity : BaseActivity() {
+class LoginActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             TvTrackerTheme {
-                val navAction = { action: SettingsScreenNavAction ->
+                val navAction = { action: LoginScreenNavAction ->
                     when (action) {
-                        SettingsScreenNavAction.GoLogin -> {
-                            startActivity(Intent(this, LoginActivity::class.java))
-                        }
-
-                        SettingsScreenNavAction.GoSignup -> {
-                            startActivity(Intent(this, SignupActivity::class.java))
+                        LoginScreenNavAction.GoBack -> {
+                            finish()
                         }
                     }
                 }
@@ -43,7 +37,7 @@ class SettingsActivity : BaseActivity() {
                         MediumTopAppBar(
                             title = {
                                 Text(
-                                    text = "Settings",
+                                    text = "Login",
                                     style = MaterialTheme.typography.headlineMedium
                                 )
                             },
@@ -57,7 +51,7 @@ class SettingsActivity : BaseActivity() {
                         )
                     }
                 ) { padding ->
-                    SettingsScreen(viewModel = get(), navAction, padding)
+                    LoginScreen(viewModel = get(), navAction, padding)
                 }
             }
         }

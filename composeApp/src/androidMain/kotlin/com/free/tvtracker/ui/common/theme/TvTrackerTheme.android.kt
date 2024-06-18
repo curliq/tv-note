@@ -3,6 +3,7 @@ package com.free.tvtracker.ui.common.theme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -25,6 +26,10 @@ actual fun font(
 
 @Composable
 actual fun themePreferences(): SettingsUiModel.Theme? {
-    val settingsViewModel: SettingsViewModel = get()
-    return (settingsViewModel.data.collectAsState().value as? SettingsUiState.Ok)?.data?.theme
+    if (!LocalInspectionMode.current) { //not in @Preview, previews break with this
+        val settingsViewModel: SettingsViewModel = get()
+        return settingsViewModel.theme.collectAsState(null).value
+    } else {
+        return null
+    }
 }

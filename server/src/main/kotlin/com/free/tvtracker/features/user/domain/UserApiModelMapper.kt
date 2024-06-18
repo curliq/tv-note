@@ -13,7 +13,8 @@ class UserApiModelMapper : Mapper<UserEntity, UserApiModel> {
             id = from.id,
             username = from.username,
             email = from.email,
-            preferencesPushAllowed = from.preferencesPushAllowed
+            preferencesPushAllowed = from.preferencesPushAllowed,
+            isAnonymous = from.isAnon
         )
     }
 }

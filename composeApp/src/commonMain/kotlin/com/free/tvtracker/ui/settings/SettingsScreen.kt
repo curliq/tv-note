@@ -29,59 +29,89 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.free.tvtracker.ui.common.theme.TvTrackerTheme
 
+sealed class SettingsScreenNavAction {
+    data object GoLogin : SettingsScreenNavAction()
+    data object GoSignup : SettingsScreenNavAction()
+}
+
 @Composable
-fun SettingsScreen(viewModel: SettingsViewModel, paddingValues: PaddingValues) {
+fun SettingsScreen(
+    viewModel: SettingsViewModel,
+    navAction: (SettingsScreenNavAction) -> Unit,
+    paddingValues: PaddingValues
+) {
     val data = viewModel.data.collectAsState().value
     TvTrackerTheme {
         Scaffold(Modifier.padding(paddingValues)) {
             when (data) {
                 SettingsUiState.Error -> {}
-                SettingsUiState.Loading -> {}
-                is SettingsUiState.Ok -> SettingsContent(data.data, viewModel::action)
+                SettingsUiState.Idle -> {}
+                is SettingsUiState.Ok -> SettingsContent(data.data, navAction, viewModel::action)
             }
         }
     }
 }
 
 @Composable
-fun SettingsContent(data: SettingsUiModel, action: (SettingsViewModel.Action) -> Unit) {
-    Column() {
+fun SettingsContent(
+    data: SettingsUiModel,
+    navAction: (SettingsScreenNavAction) -> Unit,
+    action: (SettingsViewModel.Action) -> Unit
+) {
+    Column {
         Card(
             modifier = Modifier.fillMaxWidth()
                 .padding(vertical = TvTrackerTheme.sidePadding, horizontal = TvTrackerTheme.sidePadding)
         ) {
+            Spacer(modifier = Modifier.height(TvTrackerTheme.sidePadding))
             Column(modifier = Modifier.padding(horizontal = TvTrackerTheme.sidePadding)) {
-                Spacer(modifier = Modifier.height(TvTrackerTheme.sidePadding))
                 Text(
                     "Backup your content",
                     style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.onBackground
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = "You have the option to use an account to backup all your tracked content, " +
-                        "none of your data is used for any purpose other than letting you restore it when needed, " +
-                        "and no email is required",
-                    style = MaterialTheme.typography.bodySmall
-                )
-                Row(
-                    modifier = Modifier.padding(
-                        top = 24.dp,
-                        bottom = TvTrackerTheme.sidePadding
+                if (data.isAnon) {
+                    Text(
+                        text = "You have the option to use an account to backup all your tracked content, " +
+                            "none of your data is used for any purpose other than letting you restore it when needed, " +
+                            "and no email is required",
+                        style = MaterialTheme.typography.bodySmall
                     )
-                ) {
-                    Button(
-                        onClick = {},
-                        modifier = Modifier.weight(0.5f, true)
+                    Row(
+                        modifier = Modifier.padding(
+                            top = 24.dp,
+                            bottom = TvTrackerTheme.sidePadding
+                        )
                     ) {
-                        Text("Log in")
+                        Button(
+                            onClick = { navAction(SettingsScreenNavAction.GoLogin) },
+                            modifier = Modifier.weight(0.5f, true)
+                        ) {
+                            Text("Log in")
+                        }
+                        Spacer(Modifier.width(8.dp))
+                        Button(
+                            onClick = { navAction(SettingsScreenNavAction.GoSignup) },
+                            modifier = Modifier.weight(0.5f, true)
+                        ) {
+                            Text("Create account")
+                        }
                     }
-                    Spacer(Modifier.width(8.dp))
-                    Button(
-                        onClick = {},
-                        modifier = Modifier.weight(0.5f, true)
-                    ) {
-                        Text("Sign up")
+                } else {
+                    Text(
+                        text = "Logged in as ${data.personalInfo?.username}",
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                    Text(
+                        text = "Email: ${data.personalInfo?.email ?: "no email"}",
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                    Button(onClick = {}) {
+                        Text(text = if (data.personalInfo?.email == null) "Set email" else "Change email")
+                    }
+                    Button(onClick = {}) {
+                        Text(text = "Delete account")
                     }
                 }
             }
@@ -146,6 +176,12 @@ fun SettingsContent(data: SettingsUiModel, action: (SettingsViewModel.Action) ->
                 { action(SettingsViewModel.Action.SetTheme(SettingsUiModel.Theme.Dark)) }
             )
         }
+        Spacer(Modifier.weight(1f))
+        Text(
+            "Made in East London",
+            style = MaterialTheme.typography.labelMedium,
+            modifier = Modifier.padding(24.dp).align(Alignment.CenterHorizontally)
+        )
     }
 
 }

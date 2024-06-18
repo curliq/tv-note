@@ -52,7 +52,8 @@ CREATE TABLE session(
     user_id INTEGER NOT NULL,
     username TEXT,
     email TEXT,
-    preferences_push_allowed INTEGER AS Boolean DEFAULT 1
+    preferences_push_allowed INTEGER AS Boolean DEFAULT 1,
+    is_anonymous INTEGER AS Boolean NOT NULL
 );
 
 selectAllTrackedShows:
@@ -121,8 +122,8 @@ getSession:
 SELECT * FROM session;
 
 saveSession:
-INSERT INTO session(local_session_id, user_id, username, token, createdAtDatetime, email, preferences_push_allowed)
-VALUES(?, ?,?,?,?,?, ?)
+INSERT INTO session(local_session_id, user_id, username, token, createdAtDatetime, email, preferences_push_allowed, is_anonymous)
+VALUES(?, ?,?,?,?,?, ?, ?)
 ON CONFLICT(local_session_id)
   DO UPDATE SET
   user_id = excluded.user_id,
@@ -130,4 +131,5 @@ ON CONFLICT(local_session_id)
   token = excluded.token,
   createdAtDatetime = excluded.createdAtDatetime,
   email = excluded.email,
+  is_anonymous = excluded.is_anonymous,
   preferences_push_allowed = excluded.preferences_push_allowed;

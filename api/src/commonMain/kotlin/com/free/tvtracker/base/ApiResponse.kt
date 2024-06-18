@@ -41,6 +41,14 @@ abstract class ApiResponse<T> {
         return this
     }
 
+
+    suspend fun coAsError(run: suspend (error: ApiError) -> Unit): ApiResponse<T> {
+        if (!isSuccess()) {
+            run(application_error!!)
+        }
+        return this
+    }
+
     fun asError(run: (error: ApiError) -> Unit): ApiResponse<T> {
         if (!isSuccess()) {
             run(application_error!!)

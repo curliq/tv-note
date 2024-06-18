@@ -56,7 +56,7 @@ class UserServiceTest {
     @Test
     fun `GIVEN anon user WHEN login THEN existing user ID returned`() {
         every { sessionService.getSessionUserId() } returns 1
-        every { userJpaRepository.findByUsernameIs("miguel") } returns UserEntity(id = 10)
+        every { userJpaRepository.findByUsernameIs("miguel") } returns UserEntity(id = 10, isAnon = false)
         val res = sut.login(LoginApiRequestBody(username = "miguel", password = "secret"))
         assertNotNull(res)
         assertEquals(10, res.user.id)
@@ -74,9 +74,13 @@ class UserServiceTest {
     @Test
     fun `GIVEN anon user WHEN login THEN fcm token moved from anon ID to existing user ID`() {
         every { sessionService.getSessionUserId() } returns 1
-        every { userJpaRepository.save(any())} returns UserEntity() // needed for some weird mockk reason
-        every { userJpaRepository.findByIdOrNull(1) } returns UserEntity(id = 1, fcmToken = "123")
-        every { userJpaRepository.findByUsernameIs("miguel") } returns UserEntity(id = 10, fcmToken = null)
+        every { userJpaRepository.save(any())} returns UserEntity(isAnon = false) // needed for some weird mockk reason
+        every { userJpaRepository.findByIdOrNull(1) } returns UserEntity(id = 1, fcmToken = "123", isAnon = false)
+        every { userJpaRepository.findByUsernameIs("miguel") } returns UserEntity(
+            id = 10,
+            fcmToken = null,
+            isAnon = false
+        )
         sut.login(LoginApiRequestBody(username = "miguel", password = "secret"))
         verify {
             userJpaRepository.save(withArg {

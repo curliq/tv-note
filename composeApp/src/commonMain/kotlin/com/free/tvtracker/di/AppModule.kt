@@ -6,7 +6,6 @@ import com.free.tvtracker.data.session.SessionRepository
 import com.free.tvtracker.data.session.SessionStore
 import com.free.tvtracker.data.tracked.TrackedShowsRepository
 import com.free.tvtracker.data.tracked.WatchedEpisodesTaskQueue
-import com.free.tvtracker.data.user.UserRepository
 import com.free.tvtracker.domain.GetNextUnwatchedEpisodeUseCase
 import com.free.tvtracker.domain.GetShowStatusUseCase
 import com.free.tvtracker.domain.GetShowsUseCase
@@ -52,7 +51,6 @@ fun appModules() = module {
     single<TrackedShowsRepository> { TrackedShowsRepository(get(), get(), get()) }
     single<WatchedEpisodesTaskQueue> { WatchedEpisodesTaskQueue(get(), get()) }
     single<SearchRepository> { SearchRepository(get()) }
-    single<UserRepository> { UserRepository(get(), get()) }
     factory<ShowSearchUiModelMapper> { ShowSearchUiModelMapper() }
     factory<GetWatchlistedShowsUseCase> { GetWatchlistedShowsUseCase() }
     factory<TrackedShowReducer> { TrackedShowReducer() }

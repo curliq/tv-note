@@ -4,32 +4,37 @@ import com.free.tvtracker.data.common.sql.LocalSqlDataProvider
 import com.free.tvtracker.data.session.LocalPreferencesClientEntity
 import com.free.tvtracker.data.session.SessionRepository
 import com.free.tvtracker.expect.ui.ViewModel
-import com.free.tvtracker.data.user.UserRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class SettingsViewModel(
-    private val userRepo: UserRepository,
     private val sessionRepository: SessionRepository,
     private val localDataSource: LocalSqlDataProvider,
     private val settingsUiModelMapper: SettingsUiModelMapper,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : ViewModel() {
 
-    val data: MutableStateFlow<SettingsUiState> = MutableStateFlow(SettingsUiState.Loading)
+    val data: MutableStateFlow<SettingsUiState> = MutableStateFlow(SettingsUiState.Idle)
+    val theme: Flow<SettingsUiModel.Theme?> = data.map { (it as? SettingsUiState.Ok)?.data?.theme }
 
     init {
         viewModelScope.launch(ioDispatcher) {
-            val session = sessionRepository.getSession()
             val localPrefs = localDataSource.getLocalPreferences()
-            if (session != null) {
-                data.emit(SettingsUiState.Ok(settingsUiModelMapper.map(session, localPrefs)))
-            } else {
-                data.emit(SettingsUiState.Error)
+//            val session = sessionRepository.getSession()
+            sessionRepository.getSessionFlow().collect { session ->
+                println("@@@@@")
+                println(session)
+                if (session != null) {
+                    data.emit(SettingsUiState.Ok(settingsUiModelMapper.map(session, localPrefs)))
+                } else {
+                    data.emit(SettingsUiState.Error)
+                }
             }
         }
     }
@@ -45,7 +50,7 @@ class SettingsViewModel(
                             )
                         ) else it
                     }
-                    userRepo.updatePushAllowed(allowed = action.allowed)
+                    sessionRepository.updatePushAllowed(allowed = action.allowed)
                 }
 
                 is Action.SetTheme -> {
@@ -75,7 +80,7 @@ class SettingsViewModel(
 }
 
 sealed class SettingsUiState {
-    data object Loading : SettingsUiState()
+    data object Idle : SettingsUiState()
     data object Error : SettingsUiState()
     data class Ok(val data: SettingsUiModel) : SettingsUiState()
 }

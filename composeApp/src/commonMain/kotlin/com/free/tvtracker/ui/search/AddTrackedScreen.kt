@@ -78,11 +78,8 @@ fun AddTrackedScreen(
     val query = viewModel.searchQuery.collectAsState().value
     val results = viewModel.results.collectAsState().value
     val focusRequester = remember { FocusRequester() }
-    val keyboard = LocalSoftwareKeyboardController.current
 
     if (viewModel.focusSearch.collectAsState().value) {
-        focusRequester.requestFocus()
-        keyboard?.show()
         viewModel.clearFocus()
     }
 

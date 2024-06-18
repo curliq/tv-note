@@ -13,7 +13,9 @@ data class UserApiModel(
     val username: String?,
     val email: String?,
     @SerialName("preferences_push_allowed")
-    val preferencesPushAllowed: Boolean
+    val preferencesPushAllowed: Boolean,
+    @SerialName("is_anon")
+    val isAnonymous: Boolean,
 )
 
 @Serializable

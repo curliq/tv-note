@@ -32,7 +32,7 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
                 print("Error fetching FCM registration token: \(error)")
             } else if let token = token {
                 print("FCM registration token: \(token)")
-                let repo = IosModules().userRepository
+                let repo = IosModules().sessionRepository
                 repo.postFcmToken(token: token, completionHandler: { response, error in })
             }
         }
