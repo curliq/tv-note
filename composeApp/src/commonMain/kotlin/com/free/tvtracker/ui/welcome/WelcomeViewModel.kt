@@ -29,7 +29,7 @@ class WelcomeViewModel(
             if (sessionCreated) {
                 status.update {
                     if (it == Status.Loading) {
-                        goHome()
+                        updatePreferences()
                         Status.GoToHome
                     } else {
                         Status.GreenLight
@@ -47,7 +47,7 @@ class WelcomeViewModel(
                 Status.Initialising -> Status.Loading
                 Status.Loading -> Status.Loading
                 Status.GreenLight -> {
-                    goHome()
+                    updatePreferences()
                     Status.GoToHome
                 }
 
@@ -56,8 +56,9 @@ class WelcomeViewModel(
         }
     }
 
-    private fun goHome() {
-        localDataSource.setLocalPreferencesWelcomeComplete()
+    private fun updatePreferences() {
+        val prefs = localDataSource.getLocalPreferences().copy(welcomeComplete = true)
+        localDataSource.setLocalPreferences(prefs)
     }
 
     enum class Status {

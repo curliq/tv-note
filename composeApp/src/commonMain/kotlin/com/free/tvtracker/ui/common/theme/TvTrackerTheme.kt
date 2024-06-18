@@ -12,6 +12,8 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.free.tvtracker.ui.settings.SettingsUiModel
+import com.free.tvtracker.ui.settings.SettingsViewModel
 
 /**
  * https://proandroiddev.com/custom-font-magic-in-compose-multiplatform-unlock-your-creativity-dcd0c9fa7756
@@ -23,13 +25,17 @@ object TvTrackerTheme {
     val ShapeCornerMedium = 12.dp
     val FilledButtonHeight = 40.dp
     val sidePadding = 16.dp
+    val sidePaddingHalf = 8.dp
 
     val ShapeButton = RoundedCornerShape(8.dp)
-
 }
 
 @Composable
-fun TvTrackerTheme(content: @Composable () -> Unit) {
+expect fun themePreferences(): SettingsUiModel.Theme?
+
+@Composable
+fun TvTrackerTheme(themePrefs: SettingsUiModel.Theme? = themePreferences(), content: @Composable () -> Unit) {
+
     val colorsLight = lightColorScheme()
     val colorsDark = darkColorScheme()
 
@@ -64,8 +70,13 @@ fun TvTrackerTheme(content: @Composable () -> Unit) {
         labelMedium = Typography().labelMedium.copy(fontFamily = ibmSemiBold),
         labelSmall = Typography().labelSmall.copy(fontFamily = ibmSemiBold),
     )
+    val theme = when (themePrefs) {
+        SettingsUiModel.Theme.System, null -> if (isSystemInDarkTheme()) colorsDark else colorsLight
+        SettingsUiModel.Theme.Dark -> colorsDark
+        SettingsUiModel.Theme.Light -> colorsLight
+    }
     MaterialTheme(
-        colorScheme = if (isSystemInDarkTheme()) colorsDark else colorsLight,
+        colorScheme = theme,
         typography = Typography,
         content = content,
     )

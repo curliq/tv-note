@@ -17,7 +17,6 @@ import com.free.tvtracker.tracked.response.AddTrackedShowApiResponse
 import com.free.tvtracker.tracked.response.TrackedShowApiResponse
 import com.free.tvtracker.user.request.PostFcmTokenApiRequestBody
 import com.free.tvtracker.user.request.UpdatePreferencesApiRequestBody
-import com.free.tvtracker.user.response.SessionApiModel
 import com.free.tvtracker.user.response.SessionApiResponse
 import com.free.tvtracker.user.response.UserApiResponse
 import kotlin.reflect.KClass

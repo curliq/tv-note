@@ -1,5 +1,7 @@
 package com.free.tvtracker.ui.settings
 
+import com.free.tvtracker.data.common.sql.LocalSqlDataProvider
+import com.free.tvtracker.data.session.LocalPreferencesClientEntity
 import com.free.tvtracker.data.session.SessionRepository
 import com.free.tvtracker.expect.ui.ViewModel
 import com.free.tvtracker.data.user.UserRepository
@@ -13,6 +15,7 @@ import kotlinx.coroutines.launch
 class SettingsViewModel(
     private val userRepo: UserRepository,
     private val sessionRepository: SessionRepository,
+    private val localDataSource: LocalSqlDataProvider,
     private val settingsUiModelMapper: SettingsUiModelMapper,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : ViewModel() {
@@ -22,8 +25,9 @@ class SettingsViewModel(
     init {
         viewModelScope.launch(ioDispatcher) {
             val session = sessionRepository.getSession()
+            val localPrefs = localDataSource.getLocalPreferences()
             if (session != null) {
-                data.emit(SettingsUiState.Ok(settingsUiModelMapper.map(session)))
+                data.emit(SettingsUiState.Ok(settingsUiModelMapper.map(session, localPrefs)))
             } else {
                 data.emit(SettingsUiState.Error)
             }
@@ -42,7 +46,23 @@ class SettingsViewModel(
                         ) else it
                     }
                     userRepo.updatePushAllowed(allowed = action.allowed)
-                    //todo update data
+                }
+
+                is Action.SetTheme -> {
+                    data.update {
+                        if (it is SettingsUiState.Ok) it.copy(
+                            data = it.data.copy(
+                                theme = action.theme,
+                            )
+                        ) else it
+                    }
+                    val theme: LocalPreferencesClientEntity.Theme = when (action.theme) {
+                        SettingsUiModel.Theme.System -> LocalPreferencesClientEntity.Theme.SystemDefault
+                        SettingsUiModel.Theme.Dark -> LocalPreferencesClientEntity.Theme.Dark
+                        SettingsUiModel.Theme.Light -> LocalPreferencesClientEntity.Theme.Light
+                    }
+                    val prefs = localDataSource.getLocalPreferences().copy(theme = theme)
+                    localDataSource.setLocalPreferences(prefs)
                 }
             }
         }
@@ -50,6 +70,7 @@ class SettingsViewModel(
 
     sealed class Action {
         data class TogglePushAllowed(val allowed: Boolean) : Action()
+        data class SetTheme(val theme: SettingsUiModel.Theme) : Action()
     }
 }
 
@@ -63,6 +84,8 @@ data class SettingsUiModel(
     val isAnon: Boolean,
     val personalInfo: PersonalInfo?,
     val pushNotificationEnabled: Boolean,
+    val theme: Theme,
 ) {
     data class PersonalInfo(val username: String, val email: String?)
+    enum class Theme { System, Dark, Light }
 }

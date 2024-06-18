@@ -37,7 +37,10 @@ class AndroidApplication : Application() {
                     viewModel { WatchlistedShowsViewModel(get(), get(), get(), get()) }
                     viewModel { DetailsViewModel(get(), get(), get()) }
                     viewModel { PersonViewModel(get(), get()) }
-                    viewModel { SettingsViewModel(get(), get(), get()) }
+                    single {
+                        // shared on TvTrackerTheme for all activities
+                        SettingsViewModel(get(), get(), get(), get())
+                    }
                     single {
                         // why `single` and not `viewmodel`? to share it
                         // between the discover and recommendations activities

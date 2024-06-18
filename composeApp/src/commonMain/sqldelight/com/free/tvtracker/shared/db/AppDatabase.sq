@@ -38,7 +38,10 @@ CREATE TABLE episode_watched_order(
 );
 
 CREATE TABLE local_preferences(
-    welcome_complete INTEGER AS Boolean DEFAULT 0
+    -- local session id to enforce only 1 row existing
+    local_prefs_id INTEGER NOT NULL PRIMARY KEY,
+    welcome_complete INTEGER AS Boolean DEFAULT 0,
+    theme INTEGER DEFAULT 0
 );
 
 CREATE TABLE session(
@@ -107,8 +110,12 @@ getLocalPreferences:
 SELECT * FROM local_preferences;
 
 saveLocalPreferences:
-INSERT INTO local_preferences(welcome_complete)
-VALUES(?);
+INSERT INTO local_preferences(local_prefs_id, welcome_complete, theme)
+VALUES(?, ?, ?)
+ON CONFLICT(local_prefs_id)
+  DO UPDATE SET
+  welcome_complete = excluded.welcome_complete,
+  theme = excluded.theme;
 
 getSession:
 SELECT * FROM session;

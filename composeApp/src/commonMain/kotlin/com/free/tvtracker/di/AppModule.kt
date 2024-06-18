@@ -52,7 +52,7 @@ fun appModules() = module {
     single<TrackedShowsRepository> { TrackedShowsRepository(get(), get(), get()) }
     single<WatchedEpisodesTaskQueue> { WatchedEpisodesTaskQueue(get(), get()) }
     single<SearchRepository> { SearchRepository(get()) }
-    single<UserRepository> { UserRepository(get()) }
+    single<UserRepository> { UserRepository(get(), get()) }
     factory<ShowSearchUiModelMapper> { ShowSearchUiModelMapper() }
     factory<GetWatchlistedShowsUseCase> { GetWatchlistedShowsUseCase() }
     factory<TrackedShowReducer> { TrackedShowReducer() }

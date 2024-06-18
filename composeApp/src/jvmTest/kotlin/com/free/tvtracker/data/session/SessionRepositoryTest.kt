@@ -24,7 +24,7 @@ class SessionRepositoryTest {
             coEvery { createAnonUser() } returns SessionApiResponse(
                 SessionApiModel(
                     "token1",
-                    UserApiModel("", 1, "", "")
+                    UserApiModel("", 1, "", "", true)
                 )
             )
         }
@@ -42,7 +42,7 @@ class SessionRepositoryTest {
             coEvery { createAnonUser() } returns SessionApiResponse(
                 SessionApiModel(
                     "token1",
-                    UserApiModel("", 1, "", "")
+                    UserApiModel("", 1, "", "", true)
                 )
             )
         }
@@ -58,7 +58,7 @@ class SessionRepositoryTest {
     fun `GIVEN a session WHEN init THEN no new session is created`() = runTest {
         val httpClient: TvHttpClientEndpoints = mockk()
         val localStore: LocalSqlDataProvider = mockk {
-            every { getSession() } returns SessionClientEntity("token1", "", 1, "", "")
+            every { getSession() } returns SessionClientEntity("token1", "", 1, "", "", true)
         }
         val sut = SessionRepository(httpClient, localStore, sessionStore)
         sut.loadSession()
@@ -70,7 +70,7 @@ class SessionRepositoryTest {
     fun `GIVEN a session WHEN init THEN locally stored session is available`() = runTest {
         val httpClient: TvHttpClientEndpoints = mockk()
         val localStore: LocalSqlDataProvider = mockk {
-            every { getSession() } returns SessionClientEntity("token1", "", 1, "", "")
+            every { getSession() } returns SessionClientEntity("token1", "", 1, "", "", true)
         }
         val sut = SessionRepository(httpClient, localStore, sessionStore)
         sut.loadSession()
@@ -83,7 +83,7 @@ class SessionRepositoryTest {
             coEvery { createAnonUser() } returns SessionApiResponse(
                 SessionApiModel(
                     "token1",
-                    UserApiModel("", 1, "", "")
+                    UserApiModel("", 1, "", "", true)
                 )
             )
         }

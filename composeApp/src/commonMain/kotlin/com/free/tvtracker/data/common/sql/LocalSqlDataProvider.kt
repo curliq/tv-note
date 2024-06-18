@@ -83,11 +83,18 @@ class LocalSqlDataProvider(appDatabase: AppDatabase) {
 
     fun getLocalPreferences(): LocalPreferencesClientEntity {
         return dbQuery.getLocalPreferences(LocalPreferencesClientEntity::fromSql).executeAsOneOrNull()
-            ?: LocalPreferencesClientEntity(welcomeComplete = false)
+            ?: LocalPreferencesClientEntity(
+                welcomeComplete = false,
+                theme = LocalPreferencesClientEntity.Theme.SystemDefault
+            )
     }
 
-    fun setLocalPreferencesWelcomeComplete() {
-        dbQuery.saveLocalPreferences(true)
+    fun setLocalPreferences(prefs: LocalPreferencesClientEntity) {
+        dbQuery.saveLocalPreferences(
+            local_prefs_id = 1,
+            welcome_complete = prefs.welcomeComplete,
+            theme = prefs.theme.value.toLong()
+        )
     }
 
     fun getSession(): SessionClientEntity? {

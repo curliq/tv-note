@@ -15,7 +15,8 @@ fun SettingsPreview() {
         isAnon = true,
         personalInfo = SettingsUiModel.PersonalInfo(
             "username", "email"
-        )
+        ),
+        theme = SettingsUiModel.Theme.Dark
     )
     TvTrackerTheme {
         Scaffold { a ->

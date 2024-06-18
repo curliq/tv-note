@@ -15,9 +15,10 @@ import kotlin.test.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class WelcomeViewModelTest {
+    val sessionRepository: SessionRepository = mockk(relaxed = true)
+
     @Test
     fun `GIVEN init THEN anon session is created`() {
-        val sessionRepository: SessionRepository = mockk()
         WelcomeViewModel(mockk(), sessionRepository)
         coVerify(exactly = 1) { sessionRepository.createAnonSession() }
     }
@@ -25,9 +26,7 @@ class WelcomeViewModelTest {
     @Test
     fun `GIVEN creating session succeeds THEN green light`() {
         val dispatcher = UnconfinedTestDispatcher()
-        val sessionRepository: SessionRepository = mockk {
-            coEvery { createAnonSession() } returns true
-        }
+        coEvery { sessionRepository.createAnonSession() } returns true
         val sut = WelcomeViewModel(mockk(), sessionRepository, dispatcher)
         assertEquals(WelcomeViewModel.Status.GreenLight, sut.status.value)
     }
@@ -35,9 +34,7 @@ class WelcomeViewModelTest {
     @Test
     fun `GIVEN creating session succeeds WHEN user taps ok THEN proceed home`() {
         val dispatcher = UnconfinedTestDispatcher()
-        val sessionRepository: SessionRepository = mockk {
-            coEvery { createAnonSession() } returns true
-        }
+        coEvery { sessionRepository.createAnonSession() } returns true
         val sut = WelcomeViewModel(mockk(relaxed = true), sessionRepository, dispatcher)
         sut.actionOk()
         assertEquals(WelcomeViewModel.Status.GoToHome, sut.status.value)
@@ -46,9 +43,7 @@ class WelcomeViewModelTest {
     @Test
     fun `GIVEN creating session fails THEN stay in welcome screen`() {
         val dispatcher = UnconfinedTestDispatcher()
-        val sessionRepository: SessionRepository = mockk {
-            coEvery { createAnonSession() } returns false
-        }
+        coEvery { sessionRepository.createAnonSession() } returns false
         val sut = WelcomeViewModel(mockk(), sessionRepository, dispatcher)
         assertEquals(WelcomeViewModel.Status.InitialisationError, sut.status.value)
     }
