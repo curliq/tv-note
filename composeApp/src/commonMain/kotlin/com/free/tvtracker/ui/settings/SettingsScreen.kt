@@ -1,5 +1,6 @@
 package com.free.tvtracker.ui.settings
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,10 +10,14 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
@@ -30,11 +35,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
+import besttvtracker.composeapp.generated.resources.Res
+import besttvtracker.composeapp.generated.resources.open_collective_logo
+import com.free.tvtracker.ui.common.composables.ResImage
 import com.free.tvtracker.ui.common.theme.TvTrackerTheme
 
 sealed class SettingsScreenNavAction {
     data object GoLogin : SettingsScreenNavAction()
     data object GoSignup : SettingsScreenNavAction()
+    data class GoBrowser(val url: String) : SettingsScreenNavAction()
 }
 
 @Composable
@@ -61,7 +70,7 @@ fun SettingsContent(
     navAction: (SettingsScreenNavAction) -> Unit,
     action: (SettingsViewModel.Action) -> Unit
 ) {
-    Column {
+    Column(Modifier.verticalScroll(rememberScrollState())) {
         Card(
             modifier = Modifier.fillMaxWidth()
                 .padding(vertical = TvTrackerTheme.sidePadding, horizontal = TvTrackerTheme.sidePadding)
@@ -201,12 +210,44 @@ fun SettingsContent(
                 { action(SettingsViewModel.Action.SetTheme(SettingsUiModel.Theme.Dark)) }
             )
         }
+        Spacer(Modifier.height(24.dp))
+        Text(
+            "About",
+            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier.padding(horizontal = TvTrackerTheme.sidePadding)
+        )
+        Spacer(Modifier.height(8.dp))
+        Row(Modifier.padding(horizontal = TvTrackerTheme.sidePadding), verticalAlignment = Alignment.CenterVertically) {
+            Button(onClick = { navAction(SettingsScreenNavAction.GoBrowser("https://opencollective.com/free-tv-tracker/donate?interval=oneTime&amount=5&contributeAs=me")) }) {
+                Text(text = "Donate")
+            }
+            Spacer(Modifier.width(16.dp))
+            Text("Powered by", style = MaterialTheme.typography.labelSmall)
+            ResImage(
+                Res.drawable.open_collective_logo,
+                contentDescription = "justwatch",
+                modifier = Modifier.height(60.dp),
+            )
+        }
         Spacer(Modifier.weight(1f))
         Text(
             "Made in East London",
             style = MaterialTheme.typography.labelMedium,
-            modifier = Modifier.padding(24.dp).align(Alignment.CenterHorizontally)
+            modifier = Modifier.padding(top = 24.dp, bottom = 16.dp).align(Alignment.CenterHorizontally)
         )
+        Box(
+            Modifier.size(4.dp)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.outlineVariant)
+                .align(Alignment.CenterHorizontally),
+        )
+        TextButton(
+            onClick = { navAction(SettingsScreenNavAction.GoBrowser("https://github.com/curliq/best-tv-tracker")) },
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        ) {
+            Text("github.com/curliq/best-tv-tracker")
+        }
+        Spacer(Modifier.height(16.dp))
     }
 
 }
@@ -226,7 +267,7 @@ private fun RadioBtn(selected: Boolean, text: String, action: () -> Unit) {
     ) {
         RadioButton(
             selected = selected,
-            onClick = null, // null recommended for accessibility with screenreaders
+            onClick = null, // null recommended for accessibility with screen readers
             modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp)
         )
         Text(

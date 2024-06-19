@@ -31,7 +31,7 @@
             android:name=".activities.main.MainActivity"/>
         <activity android:name=".activities.welcome.WelcomeActivity"/>
         <activity android:name=".activities.showdetails.ShowDetailsActivity"/>
-        <activity android:name=".activities.add.AddShowActivity"/>
+        <activity android:name=".activities.add.AddTrackedActivity"/>
         <activity android:name=".activities.person.PersonDetailsActivity"/>
         <activity android:name=".activities.discover.RecommendationsActivity"/>
 

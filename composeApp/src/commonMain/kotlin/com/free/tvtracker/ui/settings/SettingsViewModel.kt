@@ -3,7 +3,6 @@ package com.free.tvtracker.ui.settings
 import com.free.tvtracker.data.common.sql.LocalSqlDataProvider
 import com.free.tvtracker.data.session.LocalPreferencesClientEntity
 import com.free.tvtracker.data.session.SessionRepository
-import com.free.tvtracker.data.tracked.TrackedShowsRepository
 import com.free.tvtracker.expect.ui.ViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -16,7 +15,6 @@ import kotlinx.coroutines.launch
 
 class SettingsViewModel(
     private val sessionRepository: SessionRepository,
-    private val trackedShowsRepository: TrackedShowsRepository,
     private val localDataSource: LocalSqlDataProvider,
     private val settingsUiModelMapper: SettingsUiModelMapper,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,

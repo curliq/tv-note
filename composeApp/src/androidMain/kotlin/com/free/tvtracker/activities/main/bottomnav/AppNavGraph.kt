@@ -19,7 +19,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.free.tvtracker.activities.add.AddShowActivity
+import com.free.tvtracker.activities.add.AddTrackedActivity
 import com.free.tvtracker.activities.discover.RecommendationsActivity
 import com.free.tvtracker.activities.main.AppNavController
 import com.free.tvtracker.activities.showdetails.ShowDetailsActivity
@@ -48,7 +48,7 @@ fun NavGraphBuilder.mainNavGraph(navController: AppNavController, context: Activ
             navigate = { action ->
                 when (action) {
                     WatchingScreenNavAction.GoAddShow -> context.startActivity(
-                        AddShowActivity.createIntent(
+                        AddTrackedActivity.createIntent(
                             context,
                             AddTrackedScreenOriginScreen.Watching
                         )
@@ -71,7 +71,7 @@ fun NavGraphBuilder.mainNavGraph(navController: AppNavController, context: Activ
             navigate = { action ->
                 when (action) {
                     FinishedScreenNavAction.GoAddShow -> context.startActivity(
-                        AddShowActivity.createIntent(
+                        AddTrackedActivity.createIntent(
                             context,
                             AddTrackedScreenOriginScreen.Finished
                         )
@@ -95,7 +95,7 @@ fun NavGraphBuilder.mainNavGraph(navController: AppNavController, context: Activ
             navigate = { action ->
                 when (action) {
                     WatchlistScreenNavAction.GoAddShow -> context.startActivity(
-                        AddShowActivity.createIntent(
+                        AddTrackedActivity.createIntent(
                             context,
                             AddTrackedScreenOriginScreen.Watchlist
                         )
@@ -119,7 +119,7 @@ fun NavGraphBuilder.mainNavGraph(navController: AppNavController, context: Activ
             when (action) {
                 DiscoverScreenNavActions.GoAddShow -> {
                     context.startActivity(
-                        AddShowActivity.createIntent(
+                        AddTrackedActivity.createIntent(
                             context = context,
                             origin = AddTrackedScreenOriginScreen.Discover
                         )

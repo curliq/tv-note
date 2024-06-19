@@ -43,7 +43,7 @@ class AndroidApplication : Application() {
                     viewModel { SignupViewModel(get()) }
                     single {
                         // shared on TvTrackerTheme for all activities
-                        SettingsViewModel(get(), get(), get(), get())
+                        SettingsViewModel(get(), get(), get())
                     }
                     single {
                         // why `single` and not `viewmodel`? to share it

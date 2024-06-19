@@ -2,9 +2,9 @@ package com.free.tvtracker.activities.settings
 
 import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.compose.setContent
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -17,19 +17,16 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.lifecycleScope
 import com.free.tvtracker.activities.splash.SplashActivity
 import com.free.tvtracker.core.ui.BaseActivity
 import com.free.tvtracker.expect.data.DatabaseNameAndroid
 import com.free.tvtracker.ui.common.theme.TvTrackerTheme
 import com.free.tvtracker.ui.settings.SettingsScreen
 import com.free.tvtracker.ui.settings.SettingsScreenNavAction
-import com.free.tvtracker.ui.settings.SettingsUiModel
 import com.free.tvtracker.ui.settings.SettingsViewModel
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
-import org.koin.android.ext.android.inject
 import org.koin.androidx.compose.get
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -59,9 +56,16 @@ class SettingsActivity : BaseActivity() {
                         SettingsScreenNavAction.GoSignup -> {
                             startActivity(Intent(this, SignupActivity::class.java))
                         }
+
+                        is SettingsScreenNavAction.GoBrowser -> {
+                            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(action.url))
+                            startActivity(browserIntent)
+                        }
                     }
                 }
+                val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
                 Scaffold(
+                    modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
                     topBar = {
                         MediumTopAppBar(
                             title = {
@@ -70,8 +74,7 @@ class SettingsActivity : BaseActivity() {
                                     style = MaterialTheme.typography.headlineMedium
                                 )
                             },
-                            scrollBehavior = TopAppBarDefaults
-                                .exitUntilCollapsedScrollBehavior(rememberTopAppBarState()),
+                            scrollBehavior = scrollBehavior,
                             navigationIcon = {
                                 IconButton(onClick = { this.finish() }) {
                                     Icon(Icons.AutoMirrored.Rounded.ArrowBack, "")

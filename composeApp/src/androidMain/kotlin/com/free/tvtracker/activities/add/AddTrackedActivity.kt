@@ -28,10 +28,10 @@ import com.free.tvtracker.ui.search.AddTrackedViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
-class AddShowActivity : BaseActivity() {
+class AddTrackedActivity : BaseActivity() {
     companion object {
         fun createIntent(context: Context, origin: AddTrackedScreenOriginScreen) =
-            Intent(context, AddShowActivity::class.java).apply {
+            Intent(context, AddTrackedActivity::class.java).apply {
                 putExtra(
                     EXTRA_ORIGIN_SCREEN, origin.ordinal
                 )
@@ -48,7 +48,7 @@ class AddShowActivity : BaseActivity() {
                 EXTRA_ORIGIN_SCREEN,
                 AddTrackedScreenOriginScreen.Watching.ordinal
             )]
-            val context = LocalContext.current as AddShowActivity
+            val context = LocalContext.current as AddTrackedActivity
             val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
             val navActions = { action: AddTrackedScreenNavAction ->
                 when (action) {
