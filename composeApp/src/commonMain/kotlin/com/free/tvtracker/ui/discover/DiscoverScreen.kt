@@ -95,7 +95,6 @@ fun DiscoverScreen(
     }
 }
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun DiscoverOk(data: DiscoverUiState.Ok, navigate: (DiscoverScreenNavActions) -> Unit) {
     // Column is not scrollable for some reason but LazyColumn is
@@ -103,27 +102,29 @@ fun DiscoverOk(data: DiscoverUiState.Ok, navigate: (DiscoverScreenNavActions) ->
         item {
             Spacer(Modifier.height(16.dp))
             Text("Recommended", style = MaterialTheme.typography.titleLarge)
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                ResultsBasedOnText(
-                    data.uiModel.showsRecommended.selectionActiveText,
-                    modifier = Modifier.weight(1f)
-                )
-                Spacer(Modifier.width(8.dp))
-                FilledTonalIconButton(
-                    modifier = Modifier.widthIn(min = 64.dp),
-                    shape = TvTrackerTheme.ShapeButton,
-                    colors = IconButtonDefaults.filledTonalIconButtonColors()
-                        .copy(containerColor = MaterialTheme.colorScheme.surfaceContainer),
-                    onClick = { navigate(DiscoverScreenNavActions.GoRecommendations) }
-                ) {
-                    ResImage(
-                        res = Res.drawable.ic_filter,
-                        contentDescription = "Change filters",
-                        tint = MaterialTheme.colorScheme.primary
+            if (data.uiModel.showsRecommended.selectionAvailable.isNotEmpty()) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    ResultsBasedOnText(
+                        data.uiModel.showsRecommended.selectionActiveText,
+                        modifier = Modifier.weight(1f)
                     )
+                    Spacer(Modifier.width(8.dp))
+                    FilledTonalIconButton(
+                        modifier = Modifier.widthIn(min = 64.dp),
+                        shape = TvTrackerTheme.ShapeButton,
+                        colors = IconButtonDefaults.filledTonalIconButtonColors()
+                            .copy(containerColor = MaterialTheme.colorScheme.surfaceContainer),
+                        onClick = { navigate(DiscoverScreenNavActions.GoRecommendations) }
+                    ) {
+                        ResImage(
+                            res = Res.drawable.ic_filter,
+                            contentDescription = "Change filters",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
                 }
+                Spacer(Modifier.height(8.dp))
             }
-            Spacer(Modifier.height(8.dp))
             DiscoverRow(
                 data.uiModel.showsRecommended.resultsPreview,
                 navigate,
