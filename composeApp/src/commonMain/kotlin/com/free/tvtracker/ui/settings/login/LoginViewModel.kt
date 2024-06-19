@@ -1,6 +1,7 @@
 package com.free.tvtracker.ui.settings.login
 
 import com.free.tvtracker.data.session.SessionRepository
+import com.free.tvtracker.data.tracked.TrackedShowsRepository
 import com.free.tvtracker.expect.ui.ViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -10,6 +11,7 @@ import kotlinx.coroutines.launch
 
 class LoginViewModel(
     private val sessionRepository: SessionRepository,
+    private val trackedShowsRepository: TrackedShowsRepository,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : ViewModel() {
     val result = MutableStateFlow(Result.Idle)
@@ -23,6 +25,9 @@ class LoginViewModel(
         viewModelScope.launch(ioDispatcher) {
             val response = sessionRepository.login(action.username, action.password)
             response.coAsSuccess {
+                trackedShowsRepository.updateWatching(forceUpdate = true)
+                trackedShowsRepository.updateFinished(forceUpdate = true)
+                trackedShowsRepository.updateWatchlisted(forceUpdate = true)
                 result.emit(Result.Success)
             }
             response.coAsError {

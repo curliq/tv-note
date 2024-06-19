@@ -3,6 +3,7 @@ package com.free.tvtracker.ui.settings
 import com.free.tvtracker.data.common.sql.LocalSqlDataProvider
 import com.free.tvtracker.data.session.LocalPreferencesClientEntity
 import com.free.tvtracker.data.session.SessionRepository
+import com.free.tvtracker.data.tracked.TrackedShowsRepository
 import com.free.tvtracker.expect.ui.ViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -15,6 +16,7 @@ import kotlinx.coroutines.launch
 
 class SettingsViewModel(
     private val sessionRepository: SessionRepository,
+    private val trackedShowsRepository: TrackedShowsRepository,
     private val localDataSource: LocalSqlDataProvider,
     private val settingsUiModelMapper: SettingsUiModelMapper,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
@@ -22,14 +24,12 @@ class SettingsViewModel(
 
     val data: MutableStateFlow<SettingsUiState> = MutableStateFlow(SettingsUiState.Idle)
     val theme: Flow<SettingsUiModel.Theme?> = data.map { (it as? SettingsUiState.Ok)?.data?.theme }
+    val logout = MutableStateFlow(false)
 
     init {
         viewModelScope.launch(ioDispatcher) {
             val localPrefs = localDataSource.getLocalPreferences()
-//            val session = sessionRepository.getSession()
             sessionRepository.getSessionFlow().collect { session ->
-                println("@@@@@")
-                println(session)
                 if (session != null) {
                     data.emit(SettingsUiState.Ok(settingsUiModelMapper.map(session, localPrefs)))
                 } else {
@@ -69,6 +69,10 @@ class SettingsViewModel(
                     val prefs = localDataSource.getLocalPreferences().copy(theme = theme)
                     localDataSource.setLocalPreferences(prefs)
                 }
+
+                Action.Logout -> {
+                    logout.emit(true)
+                }
             }
         }
     }
@@ -76,6 +80,7 @@ class SettingsViewModel(
     sealed class Action {
         data class TogglePushAllowed(val allowed: Boolean) : Action()
         data class SetTheme(val theme: SettingsUiModel.Theme) : Action()
+        data object Logout : Action()
     }
 }
 

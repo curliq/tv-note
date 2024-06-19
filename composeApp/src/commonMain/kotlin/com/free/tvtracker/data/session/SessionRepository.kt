@@ -11,7 +11,6 @@ import com.free.tvtracker.user.request.SignupApiRequestBody
 import com.free.tvtracker.user.request.UpdatePreferencesApiRequestBody
 import com.free.tvtracker.user.response.SessionApiModel
 import com.free.tvtracker.user.response.SessionApiResponse
-import com.free.tvtracker.user.response.UserApiModel
 import com.free.tvtracker.user.response.UserApiResponse
 import kotlinx.coroutines.flow.Flow
 
@@ -62,7 +61,7 @@ class SessionRepository(
         }
     }
 
-    fun getSession(): SessionClientEntity? {
+    fun geSession(): SessionClientEntity? {
         return localDataSource.getSession()
     }
 
@@ -119,6 +118,7 @@ class SessionRepository(
     }
 
     private fun storeSession(res: SessionApiModel) {
+        sessionStore.token = res.authToken
         localDataSource.saveSession(
             SessionClientEntity(
                 token = res.authToken,
@@ -130,10 +130,5 @@ class SessionRepository(
                 isAnonymous = res.user.isAnonymous,
             )
         )
-    }
-
-    private fun storeAndCacheSession(session: SessionClientEntity) {
-        localDataSource.saveSession(session)
-
     }
 }

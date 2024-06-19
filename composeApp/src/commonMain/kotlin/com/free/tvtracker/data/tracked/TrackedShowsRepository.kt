@@ -109,7 +109,7 @@ class TrackedShowsRepository(
         }
     }
 
-    fun getOrUpdateWatchingShows(): List<TrackedShowApiModel> {
+    fun getWatchingShows(): List<TrackedShowApiModel> {
         return allShows.value
     }
 

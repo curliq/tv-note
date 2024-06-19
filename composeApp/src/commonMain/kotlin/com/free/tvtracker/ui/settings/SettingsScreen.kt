@@ -20,8 +20,11 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -101,18 +104,40 @@ fun SettingsContent(
                 } else {
                     Text(
                         text = "Logged in as ${data.personalInfo?.username}",
-                        style = MaterialTheme.typography.bodySmall
+                        style = MaterialTheme.typography.bodyMedium
                     )
+                    Spacer(Modifier.height(4.dp))
                     Text(
-                        text = "Email: ${data.personalInfo?.email ?: "no email"}",
+                        text = "Email: ${data.personalInfo?.email ?: "n/a"}",
                         style = MaterialTheme.typography.bodySmall
                     )
-                    Button(onClick = {}) {
-                        Text(text = if (data.personalInfo?.email == null) "Set email" else "Change email")
+                    Spacer(Modifier.height(16.dp))
+                    val showLogoutConfirmation = remember { mutableStateOf(false) }
+                    if (showLogoutConfirmation.value) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Spacer(Modifier.weight(1f))
+                            Text(text = "Log out?")
+                            Spacer(Modifier.width(16.dp))
+                            TextButton(onClick = { showLogoutConfirmation.value = false }) {
+                                Text(text = "No")
+                            }
+                            TextButton(onClick = { action(SettingsViewModel.Action.Logout) }) {
+                                Text(text = "Yes", color = MaterialTheme.colorScheme.error)
+                            }
+                        }
+                    } else {
+                        Row {
+                            Spacer(Modifier.weight(1f))
+                            TextButton(onClick = {}) {
+                                Text(text = "Contact support")
+                            }
+                            Spacer(Modifier.width(8.dp))
+                            TextButton(onClick = { showLogoutConfirmation.value = true }) {
+                                Text(text = "Log out", color = MaterialTheme.colorScheme.error)
+                            }
+                        }
                     }
-                    Button(onClick = {}) {
-                        Text(text = "Delete account")
-                    }
+                    Spacer(Modifier.height(8.dp))
                 }
             }
         }

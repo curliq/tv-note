@@ -8,12 +8,14 @@ import com.squareup.sqldelight.android.AndroidSqliteDriver
 import com.squareup.sqldelight.db.SqlDriver
 import com.squareup.sqldelight.logs.LogSqliteDriver
 
+const val DatabaseNameAndroid = "tracked.db"
+
 actual class DatabaseDriverFactory {
     actual fun createDriver(): SqlDriver {
         return LogSqliteDriver(AndroidSqliteDriver(
             AppDatabase.Schema,
             AndroidApplication.context,
-            "tracked.db",
+            DatabaseNameAndroid,
             callback = object : AndroidSqliteDriver.Callback(AppDatabase.Schema) {
                 override fun onOpen(db: SupportSQLiteDatabase) {
                     db.setForeignKeyConstraintsEnabled(true)
