@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -23,6 +25,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -36,16 +39,20 @@ sealed class LoginScreenNavAction {
 }
 
 @Composable
-fun LoginScreen(viewModel: LoginViewModel, navAction:(LoginScreenNavAction)->Unit, paddingValues: PaddingValues) {
+fun LoginScreen(viewModel: LoginViewModel, navAction: (LoginScreenNavAction) -> Unit, paddingValues: PaddingValues) {
     TvTrackerTheme {
         Scaffold(modifier = Modifier.padding(paddingValues)) {
-            LoginContent(viewModel.result.collectAsState().value,navAction, viewModel::login)
+            LoginContent(viewModel.result.collectAsState().value, navAction, viewModel::login)
         }
     }
 }
 
 @Composable
-fun LoginContent(result: LoginViewModel.Result, navAction:(LoginScreenNavAction)->Unit, action: (LoginViewModel.LoginAction) -> Unit) {
+fun LoginContent(
+    result: LoginViewModel.Result,
+    navAction: (LoginScreenNavAction) -> Unit,
+    action: (LoginViewModel.LoginAction) -> Unit
+) {
     if (result == LoginViewModel.Result.Success) {
         navAction(LoginScreenNavAction.GoBack)
     }
@@ -78,15 +85,16 @@ fun LoginContent(result: LoginViewModel.Result, navAction:(LoginScreenNavAction)
             onClick = {
                 action(LoginViewModel.LoginAction(username, password))
             },
-            modifier = Modifier.align(Alignment.End)
+            modifier = Modifier.align(Alignment.End).fillMaxWidth(0.5f)
         ) {
-            if (result != LoginViewModel.Result.Loading) {
-                Text("Login")
-            } else {
+            val isLoading = result == LoginViewModel.Result.Loading
+            if (isLoading) {
                 LoadingIndicator(
                     modifier = Modifier.height(24.dp).aspectRatio(1f),
                     color = MaterialTheme.colorScheme.onPrimary
                 )
+            } else {
+                Text("Login", modifier = Modifier.alpha(if (isLoading) 0f else 1f))
             }
         }
         if (result == LoginViewModel.Result.Error) {

@@ -116,7 +116,7 @@ fun SignupContent(
             onClick = {
                 action(SignupViewModel.SignupAction(username, email, password))
             },
-            modifier = Modifier.align(Alignment.End)
+            modifier = Modifier.align(Alignment.End).fillMaxWidth(0.5f)
         ) {
             if (result != SignupViewModel.Result.Loading) {
                 Text("Create account")
