@@ -2,9 +2,11 @@ package com.free.tvtracker.ui.welcome
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowForward
@@ -34,41 +36,55 @@ fun WelcomeScreen(
     }
     TvTrackerTheme {
         Scaffold(modifier = modifier) {
-            Column {
-                Text("Welcome TV Tracker")
-                Text("Keep track of all the shows and movies you watch in one place")
-                Text("Get notified when new episodes come out")
-                Text("Look up shows, movies and people")
-                Text("Why this app is nice")
-                Text("- It's free")
-                Text("- Doesn't have ads")
-                Text("- No account required")
-                Text("- Data is backed up (email optional)")
-                if (OsPlatform().get() == OsPlatform.Platform.Android) {
-                    Text("- Looks nice")
-                }
+            WelcomeContent(status, viewModel::actionOk)
+        }
+    }
+}
 
-                Button(modifier = Modifier.width(150.dp), onClick = viewModel::actionOk) {
-                    Text("OK")
-                    Spacer(Modifier.width(16.dp))
-                    Box(contentAlignment = Alignment.Center) {
-                        if (status == WelcomeViewModel.Status.Loading) {
-                            LoadingIndicator(
-                                modifier = Modifier.height(24.dp).aspectRatio(1f),
-                                color = MaterialTheme.colorScheme.onPrimary
-                            )
-                        } else {
-                            Icon(Icons.AutoMirrored.Rounded.ArrowForward, "ok")
-                        }
+@Composable
+fun WelcomeContent(status: WelcomeViewModel.Status, actionOk: () -> Unit) {
+    Column(Modifier.padding(TvTrackerTheme.sidePadding)) {
+        Spacer(Modifier.height(24.dp))
+        Text("Welcome to NAME", style = MaterialTheme.typography.headlineMedium)
+        Spacer(Modifier.height(36.dp))
+        Text("Features", style = MaterialTheme.typography.titleLarge)
+        Spacer(Modifier.height(8.dp))
+        Text("- Keep track of all the shows and movies you watch in one place")
+        Text("- Get notified when new episodes come out")
+        Text("- Look up shows, movies and people")
+        Spacer(Modifier.height(24.dp))
+        Text("Why this app is nice", style = MaterialTheme.typography.titleLarge)
+        Spacer(Modifier.height(8.dp))
+        Text("- It's free")
+        Text("- No ads")
+        Text("- No account required")
+        Text("- Data is backed up (email optional)")
+        if (OsPlatform().get() == OsPlatform.Platform.Android) {
+            Text("- Looks nice")
+        }
+        Spacer(Modifier.height(24.dp))
+        Row() {
+            Spacer(Modifier.weight(0.5f))
+            Button(modifier = Modifier.weight(0.5f), onClick = actionOk) {
+                Text("OK")
+                Spacer(Modifier.width(16.dp))
+                Box(contentAlignment = Alignment.Center) {
+                    if (status == WelcomeViewModel.Status.Loading) {
+                        LoadingIndicator(
+                            modifier = Modifier.height(24.dp).aspectRatio(1f),
+                            color = MaterialTheme.colorScheme.onPrimary
+                        )
+                    } else {
+                        Icon(Icons.AutoMirrored.Rounded.ArrowForward, "ok")
                     }
                 }
-                if (status == WelcomeViewModel.Status.InitialisationError) {
-                    Text(
-                        "Error setting up the app, either the server is broken or you're not connected to the internet",
-                        color = MaterialTheme.colorScheme.error
-                    )
-                }
             }
+        }
+        if (status == WelcomeViewModel.Status.InitialisationError) {
+            Text(
+                "Error setting up the app, either the server is broken or you're not connected to the internet",
+                color = MaterialTheme.colorScheme.error
+            )
         }
     }
 }
