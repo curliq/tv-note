@@ -16,7 +16,7 @@ class ShowSeasonUiModelMapperTest {
             watchedEpisodes = listOf(
                 TrackedShowApiModel.WatchedEpisodeApiModel("t_1", storedEpisodeId = 1),
             ),
-            TrackedShowApiModel.StoredShowApiModel(1, "game of thrones", emptyList(), "", ""), false
+            TrackedShowApiModel.StoredShowApiModel(1, "game of thrones", emptyList(), "", "", ""), false
         )
         val sut = ShowSeasonUiModelMapper(ShowEpisodeUiModelMapper())
         val data = TmdbShowDetailsApiModel.Season(
@@ -39,7 +39,7 @@ class ShowSeasonUiModelMapperTest {
             watchedEpisodes = listOf(
                 TrackedShowApiModel.WatchedEpisodeApiModel("s_1", storedEpisodeId = 1),
             ),
-            TrackedShowApiModel.StoredShowApiModel(1, "game of thrones", emptyList(), "", ""), false
+            TrackedShowApiModel.StoredShowApiModel(1, "game of thrones", emptyList(), "", "", ""), false
         )
         val sut = ShowSeasonUiModelMapper(ShowEpisodeUiModelMapper())
         val data = TmdbShowDetailsApiModel.Season(

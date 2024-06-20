@@ -48,4 +48,7 @@ data class StoredShowEntity(
 
     @Column(name = "poster_image")
     val posterImage: String = "",
+
+    @Column(name = "backdrop_image")
+    val backdropImage: String = "",
 )

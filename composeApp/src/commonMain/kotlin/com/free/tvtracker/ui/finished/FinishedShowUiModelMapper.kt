@@ -12,7 +12,7 @@ class FinishedShowUiModelMapper(
         return FinishedShowUiModel(
             tmdbId = from.storedShow.tmdbId,
             title = from.storedShow.title,
-            image = TmdbConfigData.get().getPosterUrl(from.storedShow.posterImage),
+            image = TmdbConfigData.get().getBackdropUrl(from.storedShow.backdropImage),
             status = getShowStatusUseCase(
                 from.storedShow.status,
                 from.storedShow.storedEpisodes.firstOrNull()?.airDate,

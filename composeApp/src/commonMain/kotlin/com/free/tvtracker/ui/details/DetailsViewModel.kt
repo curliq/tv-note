@@ -67,6 +67,7 @@ class DetailsViewModel(
                     ) else it
                 }
                 viewModelScope.launch(ioDispatcher) {
+                    // todo: this loads infinitely if http call fails
                     when (action.trackingAction) {
                         DetailsUiModel.TrackingStatus.Action.RemoveFromWatchlist -> {
                         }
@@ -76,18 +77,19 @@ class DetailsViewModel(
                         }
 
                         DetailsUiModel.TrackingStatus.Action.TrackWatchlist -> {
+                            trackedShowsRepository.addTrackedShow(action.uiModel.tmdbId, watchlisted = true)
                         }
 
                         DetailsUiModel.TrackingStatus.Action.TrackWatching -> {
-                            trackedShowsRepository.addTrackedShow(action.tmdbShowId)
+                            trackedShowsRepository.addTrackedShow(action.uiModel.tmdbId)
                         }
 
                         DetailsUiModel.TrackingStatus.Action.MoveToWatchlist -> {
-
+                            trackedShowsRepository.setWatchlisted(action.uiModel.trackedShowId!!, watchlisted = true)
                         }
 
                         DetailsUiModel.TrackingStatus.Action.MoveToWatching -> {
-
+                            trackedShowsRepository.setWatchlisted(action.uiModel.trackedShowId!!, watchlisted = false)
                         }
                     }
                 }
@@ -98,7 +100,7 @@ class DetailsViewModel(
     sealed class DetailsAction {
         data class MarkSeasonWatched(val seasonId: Int, val tmdbShowId: Int) : DetailsAction()
         data class TrackingAction(
-            val tmdbShowId: Int,
+            val uiModel: DetailsUiModel,
             val trackingAction: DetailsUiModel.TrackingStatus.Action
         ) : DetailsAction()
     }
@@ -116,6 +118,7 @@ data class DetailsUiModel(
     val posterUrl: String,
     val releaseStatus: String,
     val trackingStatus: TrackingStatus,
+    val trackedShowId: Int?,
     val homepageUrl: String?,
     val description: String?,
     val genres: String?,

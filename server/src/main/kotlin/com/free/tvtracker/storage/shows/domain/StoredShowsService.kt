@@ -57,6 +57,7 @@ class StoredShowsService(
             title = tmdbShowResponse.name ?: "",
             status = tmdbShowResponse.status ?: "",
             posterImage = tmdbShowResponse.posterPath ?: "",
+            backdropImage = tmdbShowResponse.backdropPath ?: "",
         )
     }
 }

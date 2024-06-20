@@ -22,19 +22,19 @@ class WatchingViewModel(
     init {
         viewModelScope.launch(ioDispatcher) {
             getWatchingShows().collect { data ->
-                data.data.asSuccess {
-                    if (data.data.data.isNullOrEmpty()) {
+                if (data.status.success) {
+                    if (data.data.isEmpty()) {
                         shows.value = WatchingUiState.Empty
                     } else {
                         shows.value = WatchingUiState.Ok(
-                            watching = isTrackedShowWatchableUseCase.canWatchNow(data.data.data!!)
+                            watching = isTrackedShowWatchableUseCase.canWatchNow(data.data)
                                 .map(watchingShowUiModelMapper.map()),
-                            waitingNextEpisode = isTrackedShowWatchableUseCase.canWatchSoon(data.data.data!!)
+                            waitingNextEpisode = isTrackedShowWatchableUseCase.canWatchSoon(data.data)
                                 .map(watchingShowUiModelMapper.map())
                         )
                     }
                 }
-                data.data.asError {
+                else {
                     shows.value = WatchingUiState.Error
                 }
             }

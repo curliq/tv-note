@@ -32,6 +32,7 @@ fun TrackedShowApiModel.StoredShowApiModel.toClientEntity(): StoredShowClientEnt
         this.title,
         this.storedEpisodes.map { it.toClientEntity() },
         this.posterImage,
+        this.backdropImage,
         this.status
     )
 }
@@ -42,7 +43,8 @@ fun StoredShowClientEntity.toApiModel(): TrackedShowApiModel.StoredShowApiModel 
         this.title,
         this.storedEpisodes.map { it.toApiModel() },
         this.posterImage,
-        this.status
+        this.backdropImage,
+        this.status,
     )
 }
 

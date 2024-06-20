@@ -5,11 +5,13 @@ import com.free.tvtracker.logging.TvtrackerLogger
 import com.free.tvtracker.features.tracked.domain.TrackedShowsService
 import com.free.tvtracker.tracked.request.AddEpisodesApiRequestBody
 import com.free.tvtracker.tracked.request.AddShowApiRequestBody
+import com.free.tvtracker.tracked.request.SetShowWatchlistedApiRequestBody
 import com.free.tvtracker.tracked.response.AddTrackedEpisodesApiResponse
 import com.free.tvtracker.tracked.response.AddTrackedShowApiResponse
 import com.free.tvtracker.tracked.response.ErrorShowAlreadyAdded
 import com.free.tvtracker.tracked.response.ErrorShowIsGone
 import com.free.tvtracker.tracked.response.TrackedShowApiResponse
+import com.free.tvtracker.tracked.response.TrackedShowsApiResponse
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
@@ -54,20 +56,28 @@ class TrackedShowsController(
     }
 
     @GetMapping(Endpoints.Path.GET_WATCHING)
-    fun getOngoing(): ResponseEntity<TrackedShowApiResponse> {
+    fun getOngoing(): ResponseEntity<TrackedShowsApiResponse> {
         val shows = trackedShowsService.getOngoingShows()
-        return ResponseEntity.ok(TrackedShowApiResponse.ok(shows))
+        return ResponseEntity.ok(TrackedShowsApiResponse.ok(shows))
     }
 
     @GetMapping(Endpoints.Path.GET_FINISHED)
-    fun getFinished(): ResponseEntity<TrackedShowApiResponse> {
+    fun getFinished(): ResponseEntity<TrackedShowsApiResponse> {
         val shows = trackedShowsService.getFinishedShows()
-        return ResponseEntity.ok(TrackedShowApiResponse.ok(shows))
+        return ResponseEntity.ok(TrackedShowsApiResponse.ok(shows))
     }
 
     @GetMapping(Endpoints.Path.GET_WATCHLISTED)
-    fun getWatchlist(): ResponseEntity<TrackedShowApiResponse> {
+    fun getWatchlist(): ResponseEntity<TrackedShowsApiResponse> {
         val shows = trackedShowsService.getWatchlistedShows()
+        return ResponseEntity.ok(TrackedShowsApiResponse.ok(shows))
+    }
+
+    @PostMapping(Endpoints.Path.SET_SHOW_WATCHLISTED)
+    fun setShowWatchlisted(
+        @RequestBody body: SetShowWatchlistedApiRequestBody
+    ): ResponseEntity<TrackedShowApiResponse> {
+        val shows = trackedShowsService.setShowWatchlistFlag(body.trackedShowId, body.watchlisted)
         return ResponseEntity.ok(TrackedShowApiResponse.ok(shows))
     }
 }

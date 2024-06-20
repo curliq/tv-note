@@ -3,7 +3,8 @@ import com.android.build.gradle.internal.dsl.decorator.SupportedPropertyType.Var
 CREATE TABLE stored_shows(
     tmdb_id INTEGER NOT NULL PRIMARY KEY,
     title TEXT NOT NULL,
-    poster_image TEXT NOT NULL,
+    poster_image TEXT,
+    backdrop_image TEXT,
     status TEXT NOT NULL
 );
 
@@ -72,10 +73,10 @@ FROM stored_episodes
 WHERE stored_episodes.stored_show = ?;
 
 saveStoredShow:
-INSERT INTO stored_shows(tmdb_id, title, poster_image, status)
-VALUES(?,?,?,?)
+INSERT INTO stored_shows(tmdb_id, title, poster_image, backdrop_image, status)
+VALUES(?,?,?,?, ?)
 ON CONFLICT(tmdb_id) DO UPDATE SET
-title=excluded.title, poster_image=excluded.poster_image, status=excluded.status;
+title=excluded.title, poster_image=excluded.poster_image, backdrop_image=excluded.backdrop_image, status=excluded.status;
 
 saveTrackedShow:
 INSERT INTO tracked_shows(id, created_at_datetime, stored_show, watchlisted)

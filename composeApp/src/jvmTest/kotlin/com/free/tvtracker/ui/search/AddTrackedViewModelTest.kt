@@ -29,7 +29,6 @@ class AddTrackedViewModelTest {
         )
     }
     private val trackedRepo: TrackedShowsRepository = mockk(relaxed = true) {
-        coEvery { getWatchingShows() } returns emptyList()
         every { allShows } returns MutableStateFlow(emptyList())
     }
 

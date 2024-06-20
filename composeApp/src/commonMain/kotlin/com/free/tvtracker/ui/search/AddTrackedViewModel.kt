@@ -127,7 +127,7 @@ class AddTrackedViewModel(
                 results.update { AddTrackedUiState.Ok(isSearching = true, emptyList()) }
             }
         }
-        val trackedShows = trackedShowsRepository.getWatchingShows()
+        val trackedShows = trackedShowsRepository.allShows.value
         searchRepository.searchTvShows(term)
             .asSuccess { data ->
                 if (data.shows.isEmpty()) {

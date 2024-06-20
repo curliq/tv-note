@@ -46,7 +46,6 @@ import com.free.tvtracker.ui.common.theme.ScreenContentAnimation
 import com.free.tvtracker.ui.common.theme.TvTrackerTheme
 import com.free.tvtracker.ui.details.SeeAllCard
 import com.free.tvtracker.ui.watching.FabContainer
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 
 sealed class DiscoverScreenNavActions {
     data object GoAddShow : DiscoverScreenNavActions()
@@ -63,16 +62,6 @@ fun DiscoverScreen(
     paddingValues: PaddingValues = PaddingValues()
 ) {
     val data = viewModel.uiModel.collectAsState().value
-    LazyColumn(modifier = Modifier.fillMaxWidth()) {
-
-        (0..200).forEach {
-            item {
-                Text("test")
-                Spacer(modifier = Modifier.height(8.dp))
-            }
-        }
-    }
-
     TvTrackerTheme {
         FabContainer(
             navigate = { navigate(DiscoverScreenNavActions.GoAddShow) },
@@ -84,7 +73,7 @@ fun DiscoverScreen(
                     contentKey = { targetState -> targetState::class }
                 ) { targetState ->
                     when (targetState) {
-                        DiscoverUiState.Error -> ErrorScreen { viewModel.refresh() }
+                        DiscoverUiState.Error -> ErrorScreen { viewModel.refresh(true) }
                         DiscoverUiState.Loading -> LoadingScreen()
                         is DiscoverUiState.Ok -> DiscoverOk(targetState, navigate)
                     }

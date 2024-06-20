@@ -15,7 +15,8 @@ data class TrackedShowClientEntity(
             watchlisted: Boolean?,
             tmdbId: Long,
             title: String,
-            posterImage: String,
+            posterImage: String?,
+            backdropImage: String?,
             status: String,
         ): TrackedShowClientEntity {
             return TrackedShowClientEntity(
@@ -27,6 +28,7 @@ data class TrackedShowClientEntity(
                     title = title,
                     storedEpisodes = emptyList(),
                     posterImage = posterImage,
+                    backdropImage = backdropImage,
                     status = status,
                 ),
                 watchlisted = watchlisted!!,

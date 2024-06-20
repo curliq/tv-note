@@ -31,6 +31,7 @@ class ShowUiModelMapper(
             posterUrl = TmdbConfigData.get().getPosterUrl(from.posterPath),
             releaseStatus = getShowStatusUseCase(from.status, from.firstAirDate, from.lastAirDate),
             trackingStatus = getTrackingStatus(options),
+            trackedShowId = options?.id,
             description = from.overview,
             genres = from.genres.joinToString(", "),
             seasonsInfo =

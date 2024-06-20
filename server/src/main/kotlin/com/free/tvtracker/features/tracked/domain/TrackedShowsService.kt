@@ -78,5 +78,10 @@ class TrackedShowsService(
     fun migrateShows(fromUserId: Int, toUserId: Int) {
         trackedShowJdbcRepository.batchChangeUser(fromUserId, toUserId)
     }
+
+    fun setShowWatchlistFlag(trackedShowId: Int, watchlisted: Boolean): TrackedShowApiModel {
+        val show = trackedShowJpaRepository.findById(trackedShowId).get().copy(watchlisted = watchlisted)
+        return trackedShowJpaRepository.saveAndFlush(show).toApiModel()
+    }
 }
 

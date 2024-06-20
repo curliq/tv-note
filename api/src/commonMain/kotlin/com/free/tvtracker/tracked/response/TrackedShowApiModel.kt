@@ -22,7 +22,8 @@ data class TrackedShowApiModel(
         @SerialName("tmdb_id") val tmdbId: Int,
         @SerialName("title") val title: String,
         @SerialName("stored_episodes") val storedEpisodes: List<StoredEpisodeApiModel>,
-        @SerialName("poster_image") val posterImage: String,
+        @SerialName("poster_image") val posterImage: String?,
+        @SerialName("backdrop_image") val backdropImage: String?,
         @SerialName("status") val status: String,
     )
 

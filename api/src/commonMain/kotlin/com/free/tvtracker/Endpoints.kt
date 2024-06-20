@@ -12,9 +12,11 @@ import com.free.tvtracker.search.request.SearchApiRequestBody
 import com.free.tvtracker.search.response.SearchApiResponse
 import com.free.tvtracker.tracked.request.AddEpisodesApiRequestBody
 import com.free.tvtracker.tracked.request.AddShowApiRequestBody
+import com.free.tvtracker.tracked.request.SetShowWatchlistedApiRequestBody
 import com.free.tvtracker.tracked.response.AddTrackedEpisodesApiResponse
 import com.free.tvtracker.tracked.response.AddTrackedShowApiResponse
 import com.free.tvtracker.tracked.response.TrackedShowApiResponse
+import com.free.tvtracker.tracked.response.TrackedShowsApiResponse
 import com.free.tvtracker.user.request.LoginApiRequestBody
 import com.free.tvtracker.user.request.PostFcmTokenApiRequestBody
 import com.free.tvtracker.user.request.SignupApiRequestBody
@@ -36,7 +38,7 @@ object Endpoints {
         const val GET_WATCHLISTED = "track/shows/watchlisted"
         const val ADD_TRACKED = "track/shows"
         const val ADD_EPISODES = "track/episodes"
-        const val TOGGLE_WATCHLIST = "track/shows/toggle-watchlist"
+        const val SET_SHOW_WATCHLISTED = "track/shows/toggle-watchlist"
         const val SEARCH = "search"
         const val GET_TMDB_SHOW = "search/show"
         const val GET_TMDB_PERSON = "search/person"
@@ -62,11 +64,17 @@ object Endpoints {
         PostFcmTokenApiRequestBody::class,
         Endpoint.Verb.POST
     )
-    val getWatching = EndpointNoBody(Path.GET_WATCHING, TrackedShowApiResponse::class, Endpoint.Verb.GET)
-    val getFinished = EndpointNoBody(Path.GET_FINISHED, TrackedShowApiResponse::class, Endpoint.Verb.GET)
-    val getWatchlisted = EndpointNoBody(Path.GET_WATCHLISTED, TrackedShowApiResponse::class, Endpoint.Verb.GET)
+    val getWatching = EndpointNoBody(Path.GET_WATCHING, TrackedShowsApiResponse::class, Endpoint.Verb.GET)
+    val getFinished = EndpointNoBody(Path.GET_FINISHED, TrackedShowsApiResponse::class, Endpoint.Verb.GET)
+    val getWatchlisted = EndpointNoBody(Path.GET_WATCHLISTED, TrackedShowsApiResponse::class, Endpoint.Verb.GET)
     val addTracked =
         Endpoint(Path.ADD_TRACKED, AddTrackedShowApiResponse::class, AddShowApiRequestBody::class, Endpoint.Verb.POST)
+    val setShowWatchlisted = Endpoint(
+        Path.SET_SHOW_WATCHLISTED,
+        TrackedShowApiResponse::class,
+        SetShowWatchlistedApiRequestBody::class,
+        Endpoint.Verb.POST
+    )
     val addEpisodes =
         Endpoint(
             Path.ADD_EPISODES,

@@ -17,6 +17,7 @@ create table stored_shows
     id                  serial                              not null,
     created_at_datetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP not null,
     poster_image        varchar(255),
+    backdrop_image      varchar(255),
     status              varchar(255),
     title               varchar(255)                        not null,
     tmdb_id             integer                             not null,

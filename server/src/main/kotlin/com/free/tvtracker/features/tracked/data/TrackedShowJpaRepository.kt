@@ -7,5 +7,4 @@ import org.springframework.stereotype.Repository
 interface TrackedShowJpaRepository : JpaRepository<TrackedShowEntity, Int> {
 
     fun findByUserIdAndWatchlisted(userId: Int, watchlisted: Boolean): List<TrackedShowEntity>
-
 }

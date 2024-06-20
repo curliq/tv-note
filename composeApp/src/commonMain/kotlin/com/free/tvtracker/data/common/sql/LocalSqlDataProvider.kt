@@ -9,7 +9,6 @@ import com.free.tvtracker.data.tracked.entities.WatchedEpisodeClientEntity
 import com.free.tvtracker.shared.db.AppDatabase
 import com.squareup.sqldelight.runtime.coroutines.asFlow
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
 
 class LocalSqlDataProvider(appDatabase: AppDatabase) {
@@ -22,6 +21,7 @@ class LocalSqlDataProvider(appDatabase: AppDatabase) {
                     show.storedShow.tmdbId,
                     show.storedShow.title,
                     show.storedShow.posterImage,
+                    show.storedShow.backdropImage,
                     show.storedShow.status
                 )
                 dbQuery.saveTrackedShow(show.id, show.createdAtDatetime, show.storedShow.tmdbId, show.watchlisted)

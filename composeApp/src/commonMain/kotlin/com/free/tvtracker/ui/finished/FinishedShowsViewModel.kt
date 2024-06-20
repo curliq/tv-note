@@ -8,6 +8,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 
 class FinishedShowsViewModel(
@@ -21,21 +22,22 @@ class FinishedShowsViewModel(
 
     init {
         viewModelScope.launch(ioDispatcher) {
-            getShowsUseCase(trackedShowsRepository.finishedShows).collect { data ->
-                data.data.asSuccess {
-                    val res = isTrackedShowWatchableUseCase.unwatchable(data.data.data ?: emptyList())
-                    if (res.isEmpty()) {
-                        shows.value = FinishedUiState.Empty
+            getShowsUseCase(trackedShowsRepository.finishedShows)
+                .filter { it.status.fetched }
+                .collect { data ->
+                    if (data.status.success) {
+                        val res = isTrackedShowWatchableUseCase.unwatchable(data.data)
+                        if (res.isEmpty()) {
+                            shows.value = FinishedUiState.Empty
+                        } else {
+                            shows.value = FinishedUiState.Ok(
+                                shows = res.map(mapper.map())
+                            )
+                        }
                     } else {
-                        shows.value = FinishedUiState.Ok(
-                            shows = res.map(mapper.map())
-                        )
+                        shows.value = FinishedUiState.Error
                     }
                 }
-                data.data.asError {
-                    shows.value = FinishedUiState.Error
-                }
-            }
         }
         refresh()
     }

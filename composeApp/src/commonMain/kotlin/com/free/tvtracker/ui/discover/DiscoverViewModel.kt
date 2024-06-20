@@ -11,6 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.onEmpty
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -32,11 +33,13 @@ class DiscoverViewModel(
     val uiModel: MutableStateFlow<DiscoverUiState> = MutableStateFlow(DiscoverUiState.Loading)
 
     init {
-        uiModel.value = DiscoverUiState.Loading
-        refresh()
+        refresh(showLoading = true)
     }
 
-    fun refresh() {
+    fun refresh(showLoading: Boolean = false) {
+        if (showLoading) {
+            uiModel.value = DiscoverUiState.Loading
+        }
         viewModelScope.launch(ioDispatcher) {
             val trending = async { searchRepository.getTrendingWeekly() }
             val releases = async { searchRepository.getNewEpisodeReleasedSoon() }
@@ -46,7 +49,7 @@ class DiscoverViewModel(
             val recRes = rec.await()
 
             if (trendingRes.isError() && releasesRes.isError() && recRes.isError()) {
-                DiscoverUiState.Error
+                uiModel.value = DiscoverUiState.Error
             } else {
                 val selectionActive = recRes.data?.relatedContent?.map {
                     val show = trackedShowsRepository.getShowByTmdbId(it.tmdbId)
@@ -59,7 +62,9 @@ class DiscoverViewModel(
 
                 // Why not `stateIn()`? because this viewmodel doesn't have a lifecycleScope because it's a singleton,
                 // why is it a singleton? because it needs to be shared between the discover and recommended activities
-                trackedShowsRepository.allShows.collect { allShows ->
+                trackedShowsRepository.allShows.onEmpty {
+                    uiModel.value = DiscoverUiState.Error
+                }.collect { allShows ->
                     val uiModel = DiscoverUiState.Ok(
                         DiscoverUiModel(
                             showsTrendingWeekly = trendingRes.data?.results?.map(trendingMapper.map()) ?: emptyList(),

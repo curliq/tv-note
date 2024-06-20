@@ -62,8 +62,12 @@ import com.free.tvtracker.ui.common.composables.posterRatio
 import com.free.tvtracker.ui.common.theme.ScreenContentAnimation
 import com.free.tvtracker.ui.common.theme.TvTrackerTheme
 import com.free.tvtracker.ui.common.theme.TvTrackerTheme.sidePadding
-import com.free.tvtracker.ui.details.DetailsUiModel.TrackingStatus.Action.*
-import org.jetbrains.compose.resources.ExperimentalResourceApi
+import com.free.tvtracker.ui.details.DetailsUiModel.TrackingStatus.Action.MoveToWatching
+import com.free.tvtracker.ui.details.DetailsUiModel.TrackingStatus.Action.MoveToWatchlist
+import com.free.tvtracker.ui.details.DetailsUiModel.TrackingStatus.Action.RemoveFromWatching
+import com.free.tvtracker.ui.details.DetailsUiModel.TrackingStatus.Action.RemoveFromWatchlist
+import com.free.tvtracker.ui.details.DetailsUiModel.TrackingStatus.Action.TrackWatching
+import com.free.tvtracker.ui.details.DetailsUiModel.TrackingStatus.Action.TrackWatchlist
 
 sealed class DetailsScreenNavAction {
     data class GoYoutube(val webUrl: String) : DetailsScreenNavAction()
@@ -101,7 +105,6 @@ fun DetailsScreen(
     }
 }
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun DetailsScreenContent(
     show: DetailsUiModel,
@@ -136,7 +139,7 @@ fun DetailsScreenContent(
             }
             show.trackingStatus.action1?.let { action ->
                 Button(
-                    onClick = { showAction(DetailsViewModel.DetailsAction.TrackingAction(show.tmdbId, action)) },
+                    onClick = { showAction(DetailsViewModel.DetailsAction.TrackingAction(show, action)) },
                     modifier = Modifier.weight(0.5f, true)
                 ) {
                     if (!show.trackingStatus.isLoading) {
@@ -152,7 +155,7 @@ fun DetailsScreenContent(
             Spacer(Modifier.width(8.dp))
             show.trackingStatus.action2?.let { action ->
                 OutlinedButton(
-                    onClick = { showAction(DetailsViewModel.DetailsAction.TrackingAction(show.tmdbId, action)) },
+                    onClick = { showAction(DetailsViewModel.DetailsAction.TrackingAction(show, action)) },
                     modifier = Modifier.weight(0.5f, true)
                 ) {
                     val color = when (action) {

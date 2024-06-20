@@ -59,11 +59,8 @@ fun WelcomeContent(status: WelcomeViewModel.Status, actionOk: () -> Unit) {
         Text("- No ads")
         Text("- No account required")
         Text("- Data is backed up (email optional)")
-        if (OsPlatform().get() == OsPlatform.Platform.Android) {
-            Text("- Looks nice")
-        }
         Spacer(Modifier.height(24.dp))
-        Row() {
+        Row {
             Spacer(Modifier.weight(0.5f))
             Button(modifier = Modifier.weight(0.5f), onClick = actionOk) {
                 Text("OK")

@@ -1,6 +1,6 @@
 package com.free.tvtracker.ui.watching
 
-import com.free.tvtracker.data.tracked.ShowsDataStatus
+import com.free.tvtracker.data.tracked.ShowsData
 import com.free.tvtracker.data.tracked.TrackedShowsRepository
 import com.free.tvtracker.domain.GetShowsUseCase
 import com.free.tvtracker.domain.IsTrackedShowWatchableUseCase
@@ -12,12 +12,7 @@ class GetWatchingShowsUseCase(
     private val trackedShowsRepository: TrackedShowsRepository,
     private val isTrackedShowWatchableUseCase: IsTrackedShowWatchableUseCase,
 ) {
-
-    operator fun invoke(): Flow<ShowsDataStatus> = getShowsUseCase.invoke(trackedShowsRepository.watchingShows).map {
-        it.copy(
-            data = it.data.copy(
-                data = isTrackedShowWatchableUseCase.watchable(it.data.data ?: emptyList()).filterNot { it.watchlisted }
-            )
-        )
+    operator fun invoke(): Flow<ShowsData> = getShowsUseCase.invoke(trackedShowsRepository.watchingShows).map {
+        it.copy(data = isTrackedShowWatchableUseCase.watchable(it.data).filterNot { it.watchlisted })
     }
 }

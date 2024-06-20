@@ -24,10 +24,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.free.tvtracker.ui.common.composables.ErrorScreen
 import com.free.tvtracker.ui.common.composables.LoadingScreen
 import com.free.tvtracker.ui.common.composables.TvImage
+import com.free.tvtracker.ui.common.composables.backdropRatio
 import com.free.tvtracker.ui.common.composables.posterRatio
 import com.free.tvtracker.ui.common.theme.ScreenContentAnimation
 import com.free.tvtracker.ui.common.theme.TvTrackerTheme
@@ -93,11 +95,11 @@ fun WatchingItem(uiModel: FinishedShowUiModel, onClick: () -> Unit) {
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
     ) {
         Row {
-            Box(Modifier.aspectRatio(posterRatio())) {
+            Box(Modifier.aspectRatio(backdropRatio())) {
                 TvImage(uiModel.image)
             }
             Column(Modifier.padding(16.dp)) {
-                Text(uiModel.title, maxLines = 1)
+                Text(uiModel.title, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(uiModel.status, style = MaterialTheme.typography.bodyMedium)
             }

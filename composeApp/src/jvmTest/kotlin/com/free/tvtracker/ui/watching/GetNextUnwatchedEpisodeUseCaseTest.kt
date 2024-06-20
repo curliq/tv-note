@@ -25,6 +25,7 @@ class GetNextUnwatchedEpisodeUseCaseTest {
                     TrackedShowApiModel.StoredEpisodeApiModel(id = 3, season = 1, episode = 3, airDate = "2015-1-01"),
                 ),
                 posterImage = "",
+                backdropImage = null,
                 status = ""
             ),
             watchlisted = false
@@ -49,6 +50,7 @@ class GetNextUnwatchedEpisodeUseCaseTest {
                     TrackedShowApiModel.StoredEpisodeApiModel(id = 3, season = 1, episode = 3, airDate = "2022-1-1"),
                 ),
                 posterImage = "",
+                backdropImage = null,
                 status = ""
             ),
             watchlisted = false
@@ -76,6 +78,7 @@ class GetNextUnwatchedEpisodeUseCaseTest {
                     TrackedShowApiModel.StoredEpisodeApiModel(id = 3, season = 1, episode = 3, airDate = "2022-1-1"),
                 ),
                 posterImage = "",
+                backdropImage = null,
                 status = ""
             ),
             watchlisted = false
@@ -101,6 +104,7 @@ class GetNextUnwatchedEpisodeUseCaseTest {
                     TrackedShowApiModel.StoredEpisodeApiModel(id = 3, season = 1, episode = 3, airDate = "2022-1-1"),
                 ),
                 posterImage = "",
+                backdropImage = null,
                 status = ""
             ),
             watchlisted = false

@@ -61,7 +61,7 @@ fun RecommendedScreen(
                 contentKey = { targetState -> targetState::class }
             ) { targetState ->
                 when (targetState) {
-                    DiscoverUiState.Error -> ErrorScreen { viewModel.refresh() }
+                    DiscoverUiState.Error -> ErrorScreen { viewModel.refresh(false) }
                     DiscoverUiState.Loading -> LoadingScreen()
                     is DiscoverUiState.Ok -> RecommendedOk(targetState, navigate, viewModel::action)
                 }
@@ -90,7 +90,6 @@ private fun HasResults(
     LazyColumn(modifier = Modifier.fillMaxWidth()) {
         item {
             Spacer(Modifier.height(TvTrackerTheme.sidePadding))
-//            Text("These recommendations are based on multiple factors such as genre, keywords, cast, crew, trends, and filtering techniques leveraging user generated data. Provided by TMDB")
             Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)) {
                 Spacer(Modifier.height(TvTrackerTheme.sidePadding))
                 Text(

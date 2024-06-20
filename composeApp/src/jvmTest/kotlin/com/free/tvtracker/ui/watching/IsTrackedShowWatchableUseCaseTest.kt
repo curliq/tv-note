@@ -18,7 +18,7 @@ class IsTrackedShowWatchableUseCaseTest {
                     1, "title",
                     storedEpisodes = listOf(
                         TrackedShowApiModel.StoredEpisodeApiModel(1, 1, 1, "2011-01-01")
-                    ), "", ""
+                    ), "", "", ""
                 ),
                 false
             )
@@ -40,7 +40,7 @@ class IsTrackedShowWatchableUseCaseTest {
                     storedEpisodes = listOf(
                         TrackedShowApiModel.StoredEpisodeApiModel(1, 1, 1, "2011-01-01"),
                         TrackedShowApiModel.StoredEpisodeApiModel(2, 1, 2, "2011-01-01"),
-                    ), "", ""
+                    ), "", "", ""
                 ),
                 false
             )
@@ -65,7 +65,7 @@ class IsTrackedShowWatchableUseCaseTest {
                         TrackedShowApiModel.StoredEpisodeApiModel(1, 1, 1, "2011-01-01"),
                         TrackedShowApiModel.StoredEpisodeApiModel(2, 1, 2, "2011-01-01"),
                         TrackedShowApiModel.StoredEpisodeApiModel(3, 1, 3, "2011-01-01"),
-                    ), "", ""
+                    ), "", "", ""
                 ),
                 false
             )
@@ -90,7 +90,7 @@ class IsTrackedShowWatchableUseCaseTest {
                         TrackedShowApiModel.StoredEpisodeApiModel(1, 1, 1, "2011-01-01"),
                         TrackedShowApiModel.StoredEpisodeApiModel(2, 1, 2, "2011-01-01"),
                         TrackedShowApiModel.StoredEpisodeApiModel(3, 1, 3, "2020-01-15"),
-                    ), "", ""
+                    ), "", "", ""
                 ),
                 false
             )
@@ -118,7 +118,7 @@ class IsTrackedShowWatchableUseCaseTest {
                         TrackedShowApiModel.StoredEpisodeApiModel(1, 1, 1, "2011-01-01"),
                         TrackedShowApiModel.StoredEpisodeApiModel(2, 1, 2, "2011-01-01"),
                         TrackedShowApiModel.StoredEpisodeApiModel(3, 1, 3, "2020-02-15"),
-                    ), "", ""
+                    ), "", "", ""
                 ),
                 false
             )
@@ -147,7 +147,7 @@ class IsTrackedShowWatchableUseCaseTest {
                         TrackedShowApiModel.StoredEpisodeApiModel(1, 1, 1, "2011-01-01"),
                         TrackedShowApiModel.StoredEpisodeApiModel(2, 1, 2, "2011-01-01"),
                         TrackedShowApiModel.StoredEpisodeApiModel(3, 1, 3, "2020-03-07"),
-                    ), "", ""
+                    ), "", "", ""
                 ),
                 false
             )
@@ -176,7 +176,7 @@ class IsTrackedShowWatchableUseCaseTest {
                         TrackedShowApiModel.StoredEpisodeApiModel(1, 1, 1, "2011-01-01"),
                         TrackedShowApiModel.StoredEpisodeApiModel(2, 1, 2, "2011-01-01"),
                         TrackedShowApiModel.StoredEpisodeApiModel(3, 1, 3, "2020-07-07"),
-                    ), "", ""
+                    ), "", "", ""
                 ),
                 false
             )

@@ -22,6 +22,7 @@ fun TrackedShowEntity.toApiModel(): TrackedShowApiModel {
                     )
                 },
                 posterImage = posterImage,
+                backdropImage = backdropImage,
                 status = status,
             )
         },
