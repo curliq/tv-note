@@ -2,6 +2,7 @@ package com.free.tvtracker.ui.settings
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -33,9 +34,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import besttvtracker.composeapp.generated.resources.Res
+import besttvtracker.composeapp.generated.resources.bmc_full_logo
 import besttvtracker.composeapp.generated.resources.open_collective_logo
 import com.free.tvtracker.ui.common.composables.ResImage
 import com.free.tvtracker.ui.common.theme.TvTrackerTheme
@@ -218,36 +221,45 @@ fun SettingsContent(
         )
         Spacer(Modifier.height(8.dp))
         Row(Modifier.padding(horizontal = TvTrackerTheme.sidePadding), verticalAlignment = Alignment.CenterVertically) {
-            Button(onClick = { navAction(SettingsScreenNavAction.GoBrowser("https://opencollective.com/free-tv-tracker/donate?interval=oneTime&amount=5&contributeAs=me")) }) {
+            Button(onClick = { navAction(SettingsScreenNavAction.GoBrowser("https://buymeacoffee.com/freetvtracker")) }) {
                 Text(text = "Donate")
             }
             Spacer(Modifier.width(16.dp))
-            Text("Powered by", style = MaterialTheme.typography.labelSmall)
+            Text("Powered by ", style = MaterialTheme.typography.labelSmall)
+            val tint = if (isSystemInDarkTheme()) {
+                //todo test on ios
+                Color(0xffeb4034)
+            } else {
+                null
+            }
             ResImage(
-                Res.drawable.open_collective_logo,
+                Res.drawable.bmc_full_logo,
                 contentDescription = "justwatch",
-                modifier = Modifier.height(60.dp),
+                modifier = Modifier.height(24.dp),
+                tint = tint
             )
         }
         Spacer(Modifier.weight(1f))
-        Text(
-            "Made in East London",
-            style = MaterialTheme.typography.labelMedium,
-            modifier = Modifier.padding(top = 24.dp, bottom = 16.dp).align(Alignment.CenterHorizontally)
-        )
-        Box(
-            Modifier.size(4.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.outlineVariant)
-                .align(Alignment.CenterHorizontally),
-        )
+        Spacer(Modifier.height(16.dp))
         TextButton(
             onClick = { navAction(SettingsScreenNavAction.GoBrowser("https://github.com/curliq/best-tv-tracker")) },
             modifier = Modifier.align(Alignment.CenterHorizontally)
         ) {
             Text("github.com/curliq/best-tv-tracker")
         }
+        Box(
+            Modifier.size(4.dp)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.outlineVariant)
+                .align(Alignment.CenterHorizontally),
+        )
         Spacer(Modifier.height(16.dp))
+        Text(
+            "Made in East London",
+            style = MaterialTheme.typography.labelMedium,
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        )
+        Spacer(Modifier.height(24.dp))
     }
 
 }
