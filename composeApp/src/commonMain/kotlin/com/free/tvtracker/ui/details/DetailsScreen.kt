@@ -176,6 +176,7 @@ fun DetailsScreenContent(
 
         Text("Where to watch", style = MaterialTheme.typography.titleLarge)
         Row(verticalAlignment = Alignment.Bottom) {
+            Text("Country: ${show.watchProviderCountry}, ", style = MaterialTheme.typography.labelSmall)
             Text("Source:  ", style = MaterialTheme.typography.labelSmall)
             val tint = if (isSystemInDarkTheme()) {
                 //todo test on ios

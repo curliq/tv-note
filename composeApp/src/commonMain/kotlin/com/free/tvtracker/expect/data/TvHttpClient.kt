@@ -58,7 +58,7 @@ open class TvHttpClient(private val sessionStore: SessionStore) {
         install(DefaultRequest) {
             this.url {
                 protocol = URLProtocol.HTTP
-                host = localhostAndroid
+                host = localhostiOSPhone
                 port = 8080
             }
             contentType(ContentType.Application.Json)

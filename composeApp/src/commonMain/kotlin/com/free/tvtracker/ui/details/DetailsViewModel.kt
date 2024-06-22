@@ -130,6 +130,7 @@ data class DetailsUiModel(
     val cast: List<Cast>,
     val crew: List<Crew>,
     val watchProviders: List<WatchProvider>,
+    val watchProviderCountry: String,
     val mediaTrailer: Video?,
     val mediaVideosTrailers: List<Video>,
     val mediaVideosTeasers: List<Video>,

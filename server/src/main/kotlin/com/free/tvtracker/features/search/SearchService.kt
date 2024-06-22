@@ -54,14 +54,17 @@ class SearchService(
      * @param alwaysIncludeEpisodes if true then we fetch the episodes from tmdb, if false then we just get them from
      * our db, which may or may not exist depending if someone has tracked this show
      */
-    fun getShowApiModel(tmdbShowId: Int, alwaysIncludeEpisodes: Boolean): TmdbShowDetailsApiModel {
+    fun getShowApiModel(tmdbShowId: Int, alwaysIncludeEpisodes: Boolean, countryCode: String): TmdbShowDetailsApiModel {
         val showResponse = getShow(tmdbShowId)
         if (alwaysIncludeEpisodes) {
             // this also fetches the episodes and stores them if they aren't already stored
             storedShowsService.createOrUpdateStoredShow(showResponse)
         }
         val episodes = storedEpisodesService.getEpisodes(tmdbShowId = tmdbShowId)
-        return showMapper.map(showResponse, episodes.map { it.toApiModel() })
+        return showMapper.map(
+            showResponse,
+            ShowApiModelMapper.ShowApiModelMapperOptions(episodes.map { it.toApiModel() }, countryCode)
+        )
     }
 
     fun getPersonApiModel(tmdbPersonId: Int): TmdbPersonDetailsApiModel {

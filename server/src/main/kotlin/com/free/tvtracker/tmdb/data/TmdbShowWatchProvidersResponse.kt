@@ -4,162 +4,162 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.free.tvtracker.discover.response.TmdbShowDetailsApiModel
 
 data class TmdbShowWatchProvidersResponse(
-    @JsonProperty("results") var results: Results? = null
+    @JsonProperty("results") var results: Map<String, Providers>? = null
 )
 
 data class Results(
     @JsonProperty("AD")
-    val ad: Ad? = null,
+    val ad: Providers? = null,
     @JsonProperty("AL")
-    val al: Al? = null,
+    val al: Providers? = null,
     @JsonProperty("AR")
-    val ar: Ar? = null,
+    val ar: Providers? = null,
     @JsonProperty("AT")
-    val at: At? = null,
+    val at: Providers? = null,
     @JsonProperty("AU")
-    val au: Au? = null,
+    val au: Providers? = null,
     @JsonProperty("BA")
-    val ba: Ba? = null,
+    val ba: Providers? = null,
     @JsonProperty("BE")
-    val be: Be? = null,
+    val be: Providers? = null,
     @JsonProperty("BG")
-    val bg: Bg? = null,
+    val bg: Providers? = null,
     @JsonProperty("BO")
-    val bo: Bo? = null,
+    val bo: Providers? = null,
     @JsonProperty("BR")
-    val br: Br? = null,
+    val br: Providers? = null,
     @JsonProperty("BZ")
-    val bz: Bz? = null,
+    val bz: Providers? = null,
     @JsonProperty("CA")
-    val ca: Ca? = null,
+    val ca: Providers? = null,
     @JsonProperty("CH")
-    val ch: Ch? = null,
+    val ch: Providers? = null,
     @JsonProperty("CL")
-    val cl: Cl? = null,
+    val cl: Providers? = null,
     @JsonProperty("CO")
-    val co: Co? = null,
+    val co: Providers? = null,
     @JsonProperty("CR")
-    val cr: Cr? = null,
+    val cr: Providers? = null,
     @JsonProperty("CZ")
-    val cz: Cz? = null,
+    val cz: Providers? = null,
     @JsonProperty("DE")
-    val de: De? = null,
+    val de: Providers? = null,
     @JsonProperty("DK")
-    val dk: Dk? = null,
+    val dk: Providers? = null,
     @JsonProperty("DO")
-    val do_field: Do? = null,
+    val do_field: Providers? = null,
     @JsonProperty("EC")
-    val ec: Ec? = null,
+    val ec: Providers? = null,
     @JsonProperty("EE")
-    val ee: Ee? = null,
+    val ee: Providers? = null,
     @JsonProperty("EG")
-    val eg: Eg? = null,
+    val eg: Providers? = null,
     @JsonProperty("ES")
-    val es: Es? = null,
+    val es: Providers? = null,
     @JsonProperty("FI")
-    val fi: Fi? = null,
+    val fi: Providers? = null,
     @JsonProperty("FR")
-    val fr: Fr? = null,
+    val fr: Providers? = null,
     @JsonProperty("GB")
-    val gb: Gb? = null,
+    val gb: Providers? = null,
     @JsonProperty("GR")
-    val gr: Gr? = null,
+    val gr: Providers? = null,
     @JsonProperty("GT")
-    val gt: Gt? = null,
+    val gt: Providers? = null,
     @JsonProperty("HK")
-    val hk: Hk? = null,
+    val hk: Providers? = null,
     @JsonProperty("HN")
-    val hn: Hn? = null,
+    val hn: Providers? = null,
     @JsonProperty("HR")
-    val hr: Hr? = null,
+    val hr: Providers? = null,
     @JsonProperty("HU")
-    val hu: Hu? = null,
+    val hu: Providers? = null,
     @JsonProperty("ID")
-    val id: Id? = null,
+    val id: Providers? = null,
     @JsonProperty("IE")
-    val ie: Ie? = null,
+    val ie: Providers? = null,
     @JsonProperty("IN")
-    val in_field: In? = null,
+    val in_field: Providers? = null,
     @JsonProperty("IS")
-    val is_field: Is? = null,
+    val is_field: Providers? = null,
     @JsonProperty("IT")
-    val it: It? = null,
+    val it: Providers? = null,
     @JsonProperty("JM")
-    val jm: Jm? = null,
+    val jm: Providers? = null,
     @JsonProperty("JP")
-    val jp: Jp? = null,
+    val jp: Providers? = null,
     @JsonProperty("KR")
-    val kr: Kr? = null,
+    val kr: Providers? = null,
     @JsonProperty("LC")
-    val lc: Lc? = null,
+    val lc: Providers? = null,
     @JsonProperty("LI")
-    val li: Li? = null,
+    val li: Providers? = null,
     @JsonProperty("LT")
-    val lt: Lt? = null,
+    val lt: Providers? = null,
     @JsonProperty("LU")
-    val lu: Lu? = null,
+    val lu: Providers? = null,
     @JsonProperty("LV")
-    val lv: Lv? = null,
+    val lv: Providers? = null,
     @JsonProperty("ME")
-    val me: Me? = null,
+    val me: Providers? = null,
     @JsonProperty("MK")
-    val mk: Mk? = null,
+    val mk: Providers? = null,
     @JsonProperty("MT")
-    val mt: Mt? = null,
+    val mt: Providers? = null,
     @JsonProperty("MX")
-    val mx: Mx? = null,
+    val mx: Providers? = null,
     @JsonProperty("MY")
-    val my: My? = null,
+    val my: Providers? = null,
     @JsonProperty("NI")
-    val ni: Ni? = null,
+    val ni: Providers? = null,
     @JsonProperty("NL")
-    val nl: Nl? = null,
+    val nl: Providers? = null,
     @JsonProperty("NO")
-    val no: No? = null,
+    val no: Providers? = null,
     @JsonProperty("NZ")
-    val nz: Nz? = null,
+    val nz: Providers? = null,
     @JsonProperty("PA")
-    val pa: Pa? = null,
+    val pa: Providers? = null,
     @JsonProperty("PE")
-    val pe: Pe? = null,
+    val pe: Providers? = null,
     @JsonProperty("PH")
-    val ph: Ph? = null,
+    val ph: Providers? = null,
     @JsonProperty("PL")
-    val pl: Pl? = null,
+    val pl: Providers? = null,
     @JsonProperty("PT")
-    val pt: Pt? = null,
+    val pt: Providers? = null,
     @JsonProperty("PY")
-    val py: Py? = null,
+    val py: Providers? = null,
     @JsonProperty("RO")
-    val ro: Ro? = null,
+    val ro: Providers? = null,
     @JsonProperty("RS")
-    val rs: Rs? = null,
+    val rs: Providers? = null,
     @JsonProperty("SE")
-    val se: Se? = null,
+    val se: Providers? = null,
     @JsonProperty("SG")
-    val sg: Sg? = null,
+    val sg: Providers? = null,
     @JsonProperty("SI")
-    val si: Si? = null,
+    val si: Providers? = null,
     @JsonProperty("SK")
-    val sk: Sk? = null,
+    val sk: Providers? = null,
     @JsonProperty("SM")
-    val sm: Sm? = null,
+    val sm: Providers? = null,
     @JsonProperty("SV")
-    val sv: Sv? = null,
+    val sv: Providers? = null,
     @JsonProperty("TH")
-    val th: Th? = null,
+    val th: Providers? = null,
     @JsonProperty("TR")
-    val tr: Tr? = null,
+    val tr: Providers? = null,
     @JsonProperty("TT")
-    val tt: Tt? = null,
+    val tt: Providers? = null,
     @JsonProperty("TW")
-    val tw: Tw? = null,
+    val tw: Providers? = null,
     @JsonProperty("US")
-    val us: Us? = null,
+    val us: Providers? = null,
     @JsonProperty("UY")
-    val uy: Uy? = null,
+    val uy: Providers? = null,
     @JsonProperty("VE")
-    val ve: Ve? = null,
+    val ve: Providers? = null,
 )
 
 data class Flatrate(
@@ -193,383 +193,8 @@ data class Free(
     val displayPriority: Long,
 )
 
-data class Ad(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Al(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Ar(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class At(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Au(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Ba(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Be(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Bg(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Bo(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Br(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Bz(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Ca(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Ch(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Cl(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Co(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Cr(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Cz(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class De(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Dk(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Do(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Ec(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Ee(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Eg(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Es(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Fi(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Fr(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Gb(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Gr(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Gt(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Hk(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Hn(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Hr(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Hu(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Id(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Ie(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class In(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Is(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class It(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Jm(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Jp(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Kr(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Lc(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Li(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Lt(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Lu(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Lv(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Me(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Mk(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Mt(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Mx(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class My(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Ni(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Nl(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class No(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Nz(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Pa(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Pe(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Ph(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Pl(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Pt(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Py(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Ro(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Rs(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Se(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Sg(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Si(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Sk(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Sm(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Sv(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Th(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Tr(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Tt(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Tw(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Us(
+data class Providers(
     @JsonProperty("link") val link: String? = null,
     @JsonProperty("free") val free: List<Free>? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Uy(
-    @JsonProperty("link") val link: String? = null,
-    @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
-)
-
-data class Ve(
-    @JsonProperty("link") val link: String? = null,
     @JsonProperty("flatrate") val flatrate: List<Flatrate>? = null,
 )

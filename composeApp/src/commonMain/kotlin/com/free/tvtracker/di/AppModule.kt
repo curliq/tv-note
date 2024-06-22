@@ -13,7 +13,9 @@ import com.free.tvtracker.domain.GetTrackedShowByTmdbIdUseCase
 import com.free.tvtracker.domain.GetWatchlistedShowsUseCase
 import com.free.tvtracker.domain.IsTrackedShowWatchableUseCase
 import com.free.tvtracker.domain.TrackedShowReducer
+import com.free.tvtracker.expect.data.CachingLocationService
 import com.free.tvtracker.expect.data.DatabaseDriverFactory
+import com.free.tvtracker.expect.data.LocationService
 import com.free.tvtracker.expect.data.TvHttpClient
 import com.free.tvtracker.expect.data.TvHttpClientEndpoints
 import com.free.tvtracker.shared.db.AppDatabase
@@ -54,7 +56,8 @@ fun appModules() = module {
     factory<ShowSearchUiModelMapper> { ShowSearchUiModelMapper() }
     factory<GetWatchlistedShowsUseCase> { GetWatchlistedShowsUseCase() }
     factory<TrackedShowReducer> { TrackedShowReducer() }
-    factory<GetTrackedShowByTmdbIdUseCase> { GetTrackedShowByTmdbIdUseCase(get(), get(), get(), get()) }
+    factory<CachingLocationService> { CachingLocationService() }
+    factory<GetTrackedShowByTmdbIdUseCase> { GetTrackedShowByTmdbIdUseCase(get(), get(), get(), get(), get()) }
     factory<GetShowsUseCase> { GetShowsUseCase(get(), get()) }
     factory<GetWatchingShowsUseCase> { GetWatchingShowsUseCase(get(), get(), get()) }
     factory<IsTrackedShowWatchableUseCase> { IsTrackedShowWatchableUseCase(get()) }
@@ -64,7 +67,7 @@ fun appModules() = module {
     factory<ShowCrewUiModelMapper> { ShowCrewUiModelMapper() }
     factory<ShowWatchProviderUiModelMapper> { ShowWatchProviderUiModelMapper() }
     factory<ShowVideoUiModelMapper> { ShowVideoUiModelMapper() }
-    factory<ShowUiModelMapper> { ShowUiModelMapper(get(), get(), get(), get(), get(), get(), get()) }
+    factory<ShowUiModelMapper> { ShowUiModelMapper(get(), get(), get(), get(), get(), get(), get(), get()) }
     factory<PersonCastUiModelMapper> { PersonCastUiModelMapper() }
     factory<PersonCrewUiModelMapper> { PersonCrewUiModelMapper() }
     factory<PersonPhotoUiModelMapper> { PersonPhotoUiModelMapper() }

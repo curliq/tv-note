@@ -8,13 +8,19 @@ import org.springframework.stereotype.Component
 
 @Component
 class ShowApiModelMapper :
-    MapperWithOptions<TmdbShowBigResponse, TmdbShowDetailsApiModel, List<TmdbShowDetailsApiModel.Season.Episode>> {
+    MapperWithOptions<TmdbShowBigResponse, TmdbShowDetailsApiModel, ShowApiModelMapper.ShowApiModelMapperOptions> {
+
+    data class ShowApiModelMapperOptions(
+        val episodes: List<TmdbShowDetailsApiModel.Season.Episode>,
+        val countryCode: String
+    )
+
     override fun map(
         from: TmdbShowBigResponse,
-        options: List<TmdbShowDetailsApiModel.Season.Episode>
+        options: ShowApiModelMapperOptions
     ): TmdbShowDetailsApiModel {
         return TmdbShowDetailsApiModel(
-            id = from.id!!,
+            id = from.id,
             name = from.name!!,
             status = from.status!!,
             backdropPath = from.backdropPath,
@@ -39,7 +45,7 @@ class ShowApiModelMapper :
             productionCompanies = from.productionCompanies.map { it.toApiModel() },
             productionCountries = from.productionCountries.map { it.toApiModel() },
             seasons = from.seasons.filter { it.seasonNumber != SEASON_SPECIAL_NUMBER }
-                .map { it.toApiModel(options.filter { ep -> ep.seasonNumber == it.seasonNumber }) },
+                .map { it.toApiModel(options.episodes.filter { ep -> ep.seasonNumber == it.seasonNumber }) },
             tagline = from.tagline,
             type = from.type,
             voteAverage = from.voteAverage,
@@ -48,8 +54,9 @@ class ShowApiModelMapper :
             images = from.images?.toApiModel(),
             cast = from.credits?.cast?.map { it.toApiModel() },
             crew = from.credits?.crew?.map { it.toApiModel() },
-            watchProvider = from.watchProviders?.results?.gb?.flatrate?.map { it.toApiModel() }
+            watchProvider = from.watchProviders?.results?.get(options.countryCode.uppercase())?.flatrate?.map {
+                it.toApiModel()
+            }
         )
-
     }
 }

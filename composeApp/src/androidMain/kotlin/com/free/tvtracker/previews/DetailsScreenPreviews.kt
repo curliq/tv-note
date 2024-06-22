@@ -42,6 +42,7 @@ object DetailsScreenPreviews {
             DetailsUiModel.WatchProvider("", ""),
             DetailsUiModel.WatchProvider("", ""),
         ),
+        watchProviderCountry = "UK",
         seasons = listOf(
             DetailsUiModel.Season(
                 1, 1, "", false, true,

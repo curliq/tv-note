@@ -8,6 +8,7 @@ import com.free.tvtracker.domain.IsTrackedShowWatchableUseCase
 import com.free.tvtracker.ui.details.DetailsUiModel
 import com.free.tvtracker.tracked.response.TrackedShowApiModel
 import com.free.tvtracker.expect.CommonStringUtils
+import com.free.tvtracker.expect.data.CachingLocationService
 import com.free.tvtracker.ui.common.TmdbConfigData
 import kotlin.math.ln
 import kotlin.math.pow
@@ -20,6 +21,7 @@ class ShowUiModelMapper(
     private val showVideoUiModelMapper: ShowVideoUiModelMapper,
     private val isTrackedShowWatchableUseCase: IsTrackedShowWatchableUseCase,
     private val getShowStatusUseCase: GetShowStatusUseCase,
+    private val locationService: CachingLocationService,
     private val stringUtils: CommonStringUtils = CommonStringUtils(),
 ) : MapperWithOptions<TmdbShowDetailsApiModel, DetailsUiModel, TrackedShowApiModel?> {
 
@@ -42,6 +44,7 @@ class ShowUiModelMapper(
             cast = from.cast?.map { castMapper.map(it) } ?: emptyList(),
             crew = from.crew?.map { crewMapper.map(it) } ?: emptyList(),
             watchProviders = from.watchProvider?.map { showWatchProviderUiModelMapper.map(it) } ?: emptyList(),
+            watchProviderCountry = locationService.countryName(),
             mediaTrailer = from.videos?.firstOrNull { it.type == TmdbVideoType.TRAILER.type }
                 ?.run { showVideoUiModelMapper.map(this) },
             mediaVideosTrailers = from.videos?.filter { it.type == TmdbVideoType.TRAILER.type }
