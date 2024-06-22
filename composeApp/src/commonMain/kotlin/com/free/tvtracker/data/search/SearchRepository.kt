@@ -36,8 +36,8 @@ class SearchRepository(
         }
     }
 
-    suspend fun getShow(showTmdbId: Int, includeEpisodes: Boolean): TmdbShowDetailsApiResponse {
-        val body = TmdbShowDetailsApiRequestBody(showTmdbId, includeEpisodes)
+    suspend fun getShow(showTmdbId: Int, includeEpisodes: Boolean, countryCode: String): TmdbShowDetailsApiResponse {
+        val body = TmdbShowDetailsApiRequestBody(showTmdbId, includeEpisodes, countryCode)
         return try {
             httpClient.call(Endpoints.getTmdbShow, body)
         } catch (e: Throwable) {

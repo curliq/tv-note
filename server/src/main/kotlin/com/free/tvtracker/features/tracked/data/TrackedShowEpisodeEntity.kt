@@ -31,6 +31,7 @@ data class TrackedShowEpisodeEntity(
     @Column(name="storedepisode_id", nullable = false)
     val storedEpisodeId: Int = 0,
 
+    // this doesn't actually work, but keep just to show that there is a relationship
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trackedshow_id", nullable = false, updatable = false, insertable = false)
     val trackedTvShow: TrackedShowEntity = TrackedShowEntity(),

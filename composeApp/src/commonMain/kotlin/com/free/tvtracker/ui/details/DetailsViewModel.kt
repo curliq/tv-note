@@ -70,10 +70,11 @@ class DetailsViewModel(
                     // todo: this loads infinitely if http call fails
                     when (action.trackingAction) {
                         DetailsUiModel.TrackingStatus.Action.RemoveFromWatchlist -> {
+                            trackedShowsRepository.removeTracking(action.uiModel.trackedShowId!!)
                         }
 
                         DetailsUiModel.TrackingStatus.Action.RemoveFromWatching -> {
-
+                            trackedShowsRepository.removeTracking(action.uiModel.trackedShowId!!)
                         }
 
                         DetailsUiModel.TrackingStatus.Action.TrackWatchlist -> {

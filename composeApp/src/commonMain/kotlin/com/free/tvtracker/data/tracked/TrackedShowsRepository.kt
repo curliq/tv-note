@@ -131,6 +131,16 @@ class TrackedShowsRepository(
         }
     }
 
+    suspend fun removeTracking(trackedShowId: Int) {
+        val res = httpClient.removeTracked(trackedShowId)
+        res.asSuccess {
+            allShows.update {
+                val oldShow = it.first { it.id == trackedShowId }
+                it.minus(oldShow)
+            }
+        }
+    }
+
     @OptIn(DelicateCoroutinesApi::class)
     suspend fun addTrackedShow(showId: Int, watchlisted: Boolean = false) {
         // Use GlobalScope because this should finish even if the user closes the search activity

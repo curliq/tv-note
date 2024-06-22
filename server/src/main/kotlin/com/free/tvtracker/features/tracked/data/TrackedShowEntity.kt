@@ -14,6 +14,8 @@ import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 import jakarta.persistence.UniqueConstraint
 import org.hibernate.annotations.CreationTimestamp
+import org.hibernate.annotations.OnDelete
+import org.hibernate.annotations.OnDeleteAction
 
 @Entity
 @Table(name = "tracked_shows", uniqueConstraints = [UniqueConstraint(columnNames = ["storedshow_id", "user_id"])])
@@ -30,6 +32,7 @@ data class TrackedShowEntity(
     val userId: Int = 0,
 
     @OneToMany(fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE], mappedBy = "trackedTvShow")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     var watchedEpisodes: List<TrackedShowEpisodeEntity> = emptyList(),
 
     @ManyToOne(fetch = FetchType.LAZY)

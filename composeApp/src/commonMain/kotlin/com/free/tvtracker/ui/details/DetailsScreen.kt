@@ -129,8 +129,8 @@ fun DetailsScreenContent(
         }
         Row {
             fun text(action: DetailsUiModel.TrackingStatus.Action?): String = when (action) {
-                RemoveFromWatchlist -> "De-watchlist"
-                RemoveFromWatching -> "De-list"
+                RemoveFromWatchlist -> "Remove"
+                RemoveFromWatching -> "Remove"
                 TrackWatchlist -> "Add to watchlist"
                 TrackWatching -> "Add to watching"
                 MoveToWatchlist -> "Move to watchlist"
@@ -191,10 +191,18 @@ fun DetailsScreenContent(
             )
         }
         Spacer(Modifier.height(8.dp))
-        NonLazyGrid(5, show.watchProviders.size) { index ->
-            val show = show.watchProviders[index]
-            Box(Modifier.aspectRatio(1f)) {
-                TvImage(show.logo, modifier = Modifier.fillMaxSize())
+        if (show.watchProviders.isEmpty()) {
+            Text(
+                text = "No channel available",
+                style = MaterialTheme.typography.labelMedium,
+                textAlign = TextAlign.Center
+            )
+        } else {
+            NonLazyGrid(5, show.watchProviders.size) { index ->
+                val show = show.watchProviders[index]
+                Box(Modifier.aspectRatio(1f)) {
+                    TvImage(show.logo, modifier = Modifier.fillMaxSize())
+                }
             }
         }
         Spacer(Modifier.height(24.dp))
@@ -206,6 +214,7 @@ fun DetailsScreenContent(
 
         if (!show.genres.isNullOrEmpty()) {
             Text("Genres", style = MaterialTheme.typography.titleLarge)
+            Spacer(Modifier.height(8.dp))
             Text(text = show.genres)
             Spacer(Modifier.height(24.dp))
         }
@@ -312,7 +321,7 @@ fun DetailsScreenContent(
                 }
             }
             Text(
-                "I will add IMDB and rotten tomatoes at some point.",
+                "I will add IMDB and rotten tomatoes at some point",
                 style = MaterialTheme.typography.labelMedium,
                 modifier = Modifier.padding(horizontal = 24.dp).align(Alignment.CenterVertically)
             )

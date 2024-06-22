@@ -12,6 +12,7 @@ import com.free.tvtracker.search.request.SearchApiRequestBody
 import com.free.tvtracker.search.response.SearchApiResponse
 import com.free.tvtracker.tracked.request.AddEpisodesApiRequestBody
 import com.free.tvtracker.tracked.request.AddShowApiRequestBody
+import com.free.tvtracker.tracked.request.RemoveShowApiRequestBody
 import com.free.tvtracker.tracked.request.SetShowWatchlistedApiRequestBody
 import com.free.tvtracker.tracked.response.AddTrackedEpisodesApiResponse
 import com.free.tvtracker.tracked.response.AddTrackedShowApiResponse
@@ -37,6 +38,7 @@ object Endpoints {
         const val GET_FINISHED = "track/shows/finished"
         const val GET_WATCHLISTED = "track/shows/watchlisted"
         const val ADD_TRACKED = "track/shows"
+        const val REMOVE_TRACKED = "track/shows/remove"
         const val ADD_EPISODES = "track/episodes"
         const val SET_SHOW_WATCHLISTED = "track/shows/toggle-watchlist"
         const val SEARCH = "search"
@@ -69,6 +71,12 @@ object Endpoints {
     val getWatchlisted = EndpointNoBody(Path.GET_WATCHLISTED, TrackedShowsApiResponse::class, Endpoint.Verb.GET)
     val addTracked =
         Endpoint(Path.ADD_TRACKED, AddTrackedShowApiResponse::class, AddShowApiRequestBody::class, Endpoint.Verb.POST)
+    val removeTracked = Endpoint(
+        Path.REMOVE_TRACKED,
+        ApiResponse.EmptyApiResponse::class,
+        RemoveShowApiRequestBody::class,
+        Endpoint.Verb.POST
+    )
     val setShowWatchlisted = Endpoint(
         Path.SET_SHOW_WATCHLISTED,
         TrackedShowApiResponse::class,

@@ -39,7 +39,6 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import besttvtracker.composeapp.generated.resources.Res
 import besttvtracker.composeapp.generated.resources.bmc_full_logo
-import besttvtracker.composeapp.generated.resources.open_collective_logo
 import com.free.tvtracker.ui.common.composables.ResImage
 import com.free.tvtracker.ui.common.theme.TvTrackerTheme
 

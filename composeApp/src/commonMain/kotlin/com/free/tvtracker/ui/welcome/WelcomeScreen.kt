@@ -20,7 +20,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.free.tvtracker.expect.OsPlatform
 import com.free.tvtracker.ui.common.composables.LoadingIndicator
 import com.free.tvtracker.ui.common.theme.TvTrackerTheme
 

@@ -83,5 +83,9 @@ class TrackedShowsService(
         val show = trackedShowJpaRepository.findById(trackedShowId).get().copy(watchlisted = watchlisted)
         return trackedShowJpaRepository.saveAndFlush(show).toApiModel()
     }
+
+    fun delete(trackedShowId: Int) {
+        trackedShowJpaRepository.deleteById(trackedShowId)
+    }
 }
 

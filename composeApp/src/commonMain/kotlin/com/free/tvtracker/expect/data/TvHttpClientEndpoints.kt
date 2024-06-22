@@ -1,7 +1,9 @@
 package com.free.tvtracker.expect.data
 
 import com.free.tvtracker.Endpoints
+import com.free.tvtracker.base.ApiResponse
 import com.free.tvtracker.data.session.SessionStore
+import com.free.tvtracker.tracked.request.RemoveShowApiRequestBody
 import com.free.tvtracker.tracked.request.SetShowWatchlistedApiRequestBody
 import com.free.tvtracker.tracked.response.TrackedShowApiResponse
 import com.free.tvtracker.tracked.response.TrackedShowsApiResponse
@@ -32,5 +34,9 @@ class TvHttpClientEndpoints(sessionStore: SessionStore) : TvHttpClient(sessionSt
 
     suspend fun setWatchlisted(trackedShowId: Int, watchlisted: Boolean): TrackedShowApiResponse {
         return call(Endpoints.setShowWatchlisted, SetShowWatchlistedApiRequestBody(trackedShowId, watchlisted))
+    }
+
+    suspend fun removeTracked(trackedShowId: Int): ApiResponse.EmptyApiResponse {
+        return call(Endpoints.removeTracked, RemoveShowApiRequestBody(trackedShowId))
     }
 }

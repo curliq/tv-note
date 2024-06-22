@@ -1,10 +1,12 @@
 package com.free.tvtracker.features.tracked.api
 
 import com.free.tvtracker.Endpoints
+import com.free.tvtracker.base.ApiResponse
 import com.free.tvtracker.logging.TvtrackerLogger
 import com.free.tvtracker.features.tracked.domain.TrackedShowsService
 import com.free.tvtracker.tracked.request.AddEpisodesApiRequestBody
 import com.free.tvtracker.tracked.request.AddShowApiRequestBody
+import com.free.tvtracker.tracked.request.RemoveShowApiRequestBody
 import com.free.tvtracker.tracked.request.SetShowWatchlistedApiRequestBody
 import com.free.tvtracker.tracked.response.AddTrackedEpisodesApiResponse
 import com.free.tvtracker.tracked.response.AddTrackedShowApiResponse
@@ -47,6 +49,12 @@ class TrackedShowsController(
             )
         }
         return ResponseEntity.ok(AddTrackedShowApiResponse.ok(res.toApiModel()))
+    }
+
+    @PostMapping(Endpoints.Path.REMOVE_TRACKED)
+    fun removeShow(@RequestBody body: RemoveShowApiRequestBody): ResponseEntity<ApiResponse.EmptyApiResponse> {
+        trackedShowsService.delete(body.trackedShowId)
+        return ResponseEntity.ok(ApiResponse.EmptyApiResponse.ok())
     }
 
     @PostMapping(Endpoints.Path.ADD_EPISODES)
