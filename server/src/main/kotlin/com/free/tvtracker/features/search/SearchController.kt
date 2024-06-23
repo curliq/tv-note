@@ -13,6 +13,7 @@ import com.free.tvtracker.search.request.SearchApiRequestBody
 import com.free.tvtracker.search.response.SearchApiModel
 import com.free.tvtracker.search.response.SearchApiResponse
 import com.free.tvtracker.search.response.SearchMovieApiModel
+import com.free.tvtracker.search.response.SearchMultiApiModel
 import com.free.tvtracker.search.response.SearchPersonApiModel
 import com.free.tvtracker.search.response.SearchShowApiModel
 import org.springframework.http.ResponseEntity
@@ -33,28 +34,9 @@ class SearchController(
     @PostMapping(Endpoints.Path.SEARCH)
     fun search(@RequestBody body: SearchApiRequestBody): ResponseEntity<SearchApiResponse> {
         val apiModel = searchService.searchTerm(body.term, body.mediaType).results.map { content ->
-            when (body.mediaType) {
-                MediaType.ALL -> {
-                    when (TmdbContentType.entries.find { it.field == content.mediaType!! }) {
-                        TmdbContentType.SHOW -> content.toShowApiModel()
-                        TmdbContentType.MOVIE -> content.toMovieApiModel()
-                        TmdbContentType.PERSON -> content.toPersonApiModel()
-                        null -> null
-                    }
-                }
-
-                MediaType.TV_SHOWS -> content.toShowApiModel()
-                MediaType.MOVIES -> content.toMovieApiModel()
-                MediaType.PEOPLE -> content.toPersonApiModel()
-            }
+            content.toMultiApiModel()
         }
-        val response = SearchApiResponse.ok(
-            SearchApiModel(
-                shows = apiModel.filterIsInstance<SearchShowApiModel>(),
-                movies = apiModel.filterIsInstance<SearchMovieApiModel>(),
-                persons = apiModel.filterIsInstance<SearchPersonApiModel>()
-            )
-        )
+        val response = SearchApiResponse.ok(SearchApiModel(apiModel))
         return ResponseEntity.ok(response)
     }
 
@@ -80,7 +62,7 @@ class SearchController(
 fun TmdbSearchMultiResponse.Data.toMovieApiModel(): SearchMovieApiModel {
     return SearchMovieApiModel(
         backdropPath = backdropPath,
-        id = id!!,
+        tmdbId = id!!,
         title = title!!,
         originalLanguage = originalLanguage,
         originalTitle = originalTitle,
@@ -114,9 +96,36 @@ fun TmdbSearchMultiResponse.Data.toShowApiModel(): SearchShowApiModel {
 
 fun TmdbSearchMultiResponse.Data.toPersonApiModel(): SearchPersonApiModel {
     return SearchPersonApiModel(
-        id = id!!,
+        tmdbId = id!!,
         name = name!!,
         popularity = popularity,
+        originCountry = originCountry,
+        gender = gender,
+        knownForDepartment = knownForDepartment,
+    )
+}
+
+fun TmdbSearchMultiResponse.Data.toMultiApiModel(): SearchMultiApiModel {
+    return SearchMultiApiModel(
+        tmdbId = id!!,
+        adult = adult,
+        backdropPath = backdropPath,
+        title = title,
+        originalLanguage = originalLanguage,
+        originalTitle = originalTitle,
+        overview = overview,
+        posterPath = posterPath,
+        mediaType = mediaType,
+        genreIds = genreIds,
+        popularity = popularity,
+        releaseDate = releaseDate,
+        video = video,
+        voteAverage = voteAverage,
+        voteCount = voteCount,
+        name = name,
+        originalName = originalName,
+        firstAirDate = firstAirDate,
+        profilePath = profilePath,
         originCountry = originCountry,
         gender = gender,
         knownForDepartment = knownForDepartment,

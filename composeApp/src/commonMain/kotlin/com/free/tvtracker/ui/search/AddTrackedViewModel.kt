@@ -1,6 +1,7 @@
 package com.free.tvtracker.ui.search
 
 import com.free.tvtracker.base.ApiError
+import com.free.tvtracker.constants.TmdbContentType
 import com.free.tvtracker.expect.ui.ViewModel
 import com.free.tvtracker.data.search.SearchRepository
 import com.free.tvtracker.data.tracked.TrackedShowsRepository
@@ -17,12 +18,14 @@ import kotlinx.coroutines.launch
 class AddTrackedViewModel(
     private val searchRepository: SearchRepository,
     private val trackedShowsRepository: TrackedShowsRepository,
-    private val mapper: ShowSearchUiModelMapper,
+    private val showsMapper: ShowSearchUiModelMapper,
+    private val moviesMapper: MovieSearchUiModelMapper,
+    private val peopleMapper: PersonSearchUiModelMapper,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : ViewModel() {
 
     sealed class Action {
-        data class AddToTracked(val id: Int, val originScreen: AddTrackedScreenOriginScreen) : Action()
+        data class AddToTracked(val id: Int, val type: AddTrackedItemUiModel.TrackAction) : Action()
         data class SeeDetails(val id: Int) : Action()
     }
 
@@ -32,6 +35,12 @@ class AddTrackedViewModel(
 
     fun clearFocus() {
         focusSearch.value = false
+    }
+
+    private lateinit var originScreen: AddTrackedScreenOriginScreen
+
+    fun setOriginScreen(originScreen: AddTrackedScreenOriginScreen) {
+        this.originScreen = originScreen
     }
 
     init {
@@ -54,7 +63,7 @@ class AddTrackedViewModel(
                         )
                     } else {
                         it
-                        // todo: track event
+                        // todo: track event (see comment above)
                     }
                 }
             }
@@ -96,16 +105,16 @@ class AddTrackedViewModel(
                     } else it
                 }
                 viewModelScope.launch(ioDispatcher) {
-                    when (action.originScreen) {
-                        AddTrackedScreenOriginScreen.Watching, AddTrackedScreenOriginScreen.Finished -> {
+                    when (action.type) {
+                        AddTrackedItemUiModel.TrackAction.Watching -> {
                             trackedShowsRepository.addTrackedShow(action.id, watchlisted = false)
                         }
 
-                        AddTrackedScreenOriginScreen.Watchlist -> {
+                        AddTrackedItemUiModel.TrackAction.Watchlist -> {
                             trackedShowsRepository.addTrackedShow(action.id, watchlisted = true)
                         }
 
-                        AddTrackedScreenOriginScreen.Discover -> { }
+                        AddTrackedItemUiModel.TrackAction.None -> {}
                     }
                 }
                 setSearchQuery("")
@@ -128,17 +137,23 @@ class AddTrackedViewModel(
             }
         }
         val trackedShows = trackedShowsRepository.allShows.value
-        searchRepository.searchTvShows(term)
+        searchRepository.searchAll(term)
             .asSuccess { data ->
-                if (data.shows.isEmpty()) {
+                if (data.results.isEmpty()) {
                     results.value = AddTrackedUiState.Empty(isSearching = false)
                 } else {
                     results.value = AddTrackedUiState.Ok(
                         isSearching = false,
-                        data.shows.map { show ->
-                            val tracked = trackedShows.firstOrNull { it.storedShow.tmdbId == show.tmdbId } != null
-                            mapper.map(show, tracked)
-                        })
+                        data.results.map { content ->
+                            val tracked = trackedShows.firstOrNull { it.storedShow.tmdbId == content.tmdbId } != null
+                            val o =  SearchUiModelMapperOptions(tracked, originScreen)
+                            when (TmdbContentType.entries.find { it.field == content.mediaType!! }) {
+                                TmdbContentType.SHOW -> showsMapper.map(content,o)
+                                TmdbContentType.MOVIE -> moviesMapper.map(content, o)
+                                TmdbContentType.PERSON -> peopleMapper.map(content, o)
+                                null -> null
+                            }
+                        }.filterNotNull())
                 }
             }
             .asError { error ->
@@ -155,4 +170,12 @@ sealed class AddTrackedUiState {
     data class Empty(val isSearching: Boolean) : AddTrackedUiState()
 }
 
-data class AddTrackedItemUiModel(val tmdbId: Int, val title: String, val image: String, val tracked: Boolean)
+data class AddTrackedItemUiModel(
+    val tmdbId: Int,
+    val title: String,
+    val image: String,
+    val tracked: Boolean,
+    val action: TrackAction
+) {
+    enum class TrackAction { Watching, Watchlist, None }
+}

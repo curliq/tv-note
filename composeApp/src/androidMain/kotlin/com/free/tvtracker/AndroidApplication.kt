@@ -33,7 +33,7 @@ class AndroidApplication : Application() {
                 module {
                     viewModel { SplashViewModel(get(), get()) }
                     viewModel { WelcomeViewModel(get(), get()) }
-                    viewModel { AddTrackedViewModel(get(), get(), get()) }
+                    viewModel { AddTrackedViewModel(get(), get(), get(), get(), get()) }
                     viewModel { WatchingViewModel(get(), get(), get(), get()) }
                     viewModel { FinishedShowsViewModel(get(), get(), get(), get()) }
                     viewModel { WatchlistedShowsViewModel(get(), get(), get(), get()) }

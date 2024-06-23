@@ -19,8 +19,16 @@ class SearchRepository(
     private val httpClient: TvHttpClient
 ) {
     suspend fun searchAll(term: String): SearchApiResponse {
-        val body = SearchApiRequestBody(term, MediaType.ALL)
-        return httpClient.call(Endpoints.search, body)
+        return try {
+            val body = SearchApiRequestBody(term, MediaType.ALL)
+            httpClient.call(Endpoints.search, body)
+        } catch (e: Throwable) {
+            if (e is CancellationException) {
+                SearchApiResponse.error(ApiError.Cancelled)
+            } else {
+                SearchApiResponse.error(ApiError.Network)
+            }
+        }
     }
 
     suspend fun searchTvShows(term: String): SearchApiResponse {

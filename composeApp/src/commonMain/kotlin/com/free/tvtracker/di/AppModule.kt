@@ -33,6 +33,8 @@ import com.free.tvtracker.ui.person.PersonCastUiModelMapper
 import com.free.tvtracker.ui.person.PersonCrewUiModelMapper
 import com.free.tvtracker.ui.person.PersonPhotoUiModelMapper
 import com.free.tvtracker.ui.person.PersonUiModelMapper
+import com.free.tvtracker.ui.search.MovieSearchUiModelMapper
+import com.free.tvtracker.ui.search.PersonSearchUiModelMapper
 import com.free.tvtracker.ui.search.ShowSearchUiModelMapper
 import com.free.tvtracker.ui.settings.SettingsUiModelMapper
 import com.free.tvtracker.ui.watching.GetWatchingShowsUseCase
@@ -54,6 +56,8 @@ fun appModules() = module {
     single<WatchedEpisodesTaskQueue> { WatchedEpisodesTaskQueue(get(), get()) }
     single<SearchRepository> { SearchRepository(get()) }
     factory<ShowSearchUiModelMapper> { ShowSearchUiModelMapper() }
+    factory<MovieSearchUiModelMapper> { MovieSearchUiModelMapper() }
+    factory<PersonSearchUiModelMapper> { PersonSearchUiModelMapper() }
     factory<GetWatchlistedShowsUseCase> { GetWatchlistedShowsUseCase() }
     factory<TrackedShowReducer> { TrackedShowReducer() }
     factory<CachingLocationService> { CachingLocationService() }

@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class SearchPersonApiModel(
-    @SerialName("id") val id: Int,
+    @SerialName("id") val tmdbId: Int,
     @SerialName("name") val name: String,
     @SerialName("gender") val gender: Int? = null,
     @SerialName("known_for_department") val knownForDepartment: String? = null,

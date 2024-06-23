@@ -12,7 +12,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SmallTopAppBar
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.ui.Modifier
@@ -72,15 +74,15 @@ class AddTrackedActivity : BaseActivity() {
                 Scaffold(
                     modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
                     topBar = {
-                        MediumTopAppBar(
+                        TopAppBar(
                             title = { Text(text = title) },
                             scrollBehavior = scrollBehavior,
-                            colors = TopAppBarDefaults.mediumTopAppBarColors(),
+                            colors = TopAppBarDefaults.topAppBarColors(),
                             navigationIcon = {
                                 IconButton(onClick = { this.finish() }) {
                                     Icon(Icons.AutoMirrored.Rounded.ArrowBack, "")
                                 }
-                            }
+                            },
                         )
                     }
                 ) { padding ->

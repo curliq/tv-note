@@ -6,9 +6,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class SearchApiModel(
-    val shows: List<SearchShowApiModel>,
-    val movies: List<SearchMovieApiModel>,
-    val persons: List<SearchPersonApiModel>
+    val results: List<SearchMultiApiModel>,
 )
 
 @Serializable
