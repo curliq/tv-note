@@ -40,6 +40,11 @@ class WatchingViewModel(
             }
         }
         refresh()
+        viewModelScope.launch(ioDispatcher) {
+            // fetch everything so we can check if something is tracked in the search screen
+            trackedShowsRepository.updateFinished()
+            trackedShowsRepository.updateWatchlisted()
+        }
     }
 
     fun refresh() {

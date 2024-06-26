@@ -1,6 +1,6 @@
 package com.free.tvtracker.features.user.domain
 
-import com.free.tvtracker.features.tracked.domain.TrackedShowsService
+import com.free.tvtracker.features.tracked.domain.TrackedContentService
 import com.free.tvtracker.features.user.data.UserEntity
 import com.free.tvtracker.features.user.data.UserJpaRepository
 import com.free.tvtracker.logging.TvtrackerLogger
@@ -40,7 +40,7 @@ class UserService(
     private val authManager: AuthenticationManager,
     private val tokenService: TokenService,
     private val sessionService: SessionService,
-    private val trackedShowsService: TrackedShowsService,
+    private val trackedContentService: TrackedContentService,
 ) {
 
     data class AuthenticatedUser(val user: UserEntity, val token: String)
@@ -120,7 +120,7 @@ class UserService(
     }
 
     private fun migrateUser(fromAnonUser: Int, toUser: UserEntity) {
-        trackedShowsService.migrateShows(fromAnonUser, toUser.id)
+        trackedContentService.migrateShows(fromAnonUser, toUser.id)
         val fcmToken = userJpaRepository.findByIdOrNull(fromAnonUser)?.fcmToken
         fcmToken?.let {
             toUser.fcmToken = fcmToken

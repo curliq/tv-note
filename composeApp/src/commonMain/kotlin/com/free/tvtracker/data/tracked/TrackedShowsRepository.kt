@@ -6,9 +6,10 @@ import com.free.tvtracker.base.ApiError
 import com.free.tvtracker.data.common.sql.LocalSqlDataProvider
 import com.free.tvtracker.data.tracked.entities.MarkEpisodeWatchedOrderClientEntity
 import com.free.tvtracker.expect.data.TvHttpClientEndpoints
+import com.free.tvtracker.tracked.request.AddMovieApiRequestBody
 import com.free.tvtracker.tracked.request.AddShowApiRequestBody
 import com.free.tvtracker.tracked.response.AddTrackedShowApiResponse
-import com.free.tvtracker.tracked.response.TrackedShowApiModel
+import com.free.tvtracker.tracked.response.TrackedContentApiModel
 import com.free.tvtracker.tracked.response.TrackedShowsApiResponse
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
@@ -22,7 +23,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 data class ShowsData(
-    val data: List<TrackedShowApiModel>,
+    val data: List<TrackedContentApiModel>,
     val status: ShowsDataStatus
 )
 
@@ -48,7 +49,7 @@ class TrackedShowsRepository(
     private val localDataSource: LocalSqlDataProvider,
     private val watchedEpisodesTaskQueue: WatchedEpisodesTaskQueue
 ) {
-    val allShows = MutableStateFlow<List<TrackedShowApiModel>>(emptyList())
+    val allShows = MutableStateFlow<List<TrackedContentApiModel>>(emptyList())
 
     // these also contain all other shows, so they still must be filtered using the usecases before consumption
     private val _watchingShows = MutableStateFlow(ShowsDataStatus(false, false))
@@ -74,7 +75,9 @@ class TrackedShowsRepository(
             _watchingShows.emit(ShowsDataStatus(false, true))
             allShows.update { it.plus(localWatching) }
         }
-        fetch(_watchingShows, ::getTrackedShows)
+        fetch(_watchingShows, ::getTrackedShows).asSuccess {
+            localDataSource.saveTrackedShows(it.map { it.toClientEntity() })
+        }
     }
 
     suspend fun updateFinished(forceUpdate: Boolean = true) {
@@ -96,16 +99,13 @@ class TrackedShowsRepository(
         call: suspend () -> TrackedShowsApiResponse
     ): TrackedShowsApiResponse {
         val res = try {
-            val res = call()
-            res.asSuccess { data ->
-                localDataSource.saveTrackedShows(data.map { it.toClientEntity() })
-            }
-            res
+            call()
         } catch (e: Exception) {
+            e.printStackTrace()
             TrackedShowsApiResponse.error(ApiError.Network)
         }
         if (res.isSuccess()) {
-            allShows.update { it.plus(res.data!!).distinctBy { it.id } }
+            allShows.update { it.plus(res.data!!).distinctBy { it.typedId } }
             flow.emit(ShowsDataStatus(true, true))
         } else {
             flow.emit(ShowsDataStatus(true, false))
@@ -125,7 +125,7 @@ class TrackedShowsRepository(
         val res = httpClient.setWatchlisted(trackedShowId, watchlisted)
         res.asSuccess { show ->
             allShows.update {
-                val oldShow = it.first { it.id == show.id }
+                val oldShow = it.first { it.tvShow!!.id == show.tvShow!!.id }
                 it.minus(oldShow).plus(show)
             }
         }
@@ -135,18 +135,22 @@ class TrackedShowsRepository(
         val res = httpClient.removeTracked(trackedShowId)
         res.asSuccess {
             allShows.update {
-                val oldShow = it.first { it.id == trackedShowId }
+                val oldShow = it.first { it.tvShow!!.id == trackedShowId }
                 it.minus(oldShow)
             }
         }
     }
 
     @OptIn(DelicateCoroutinesApi::class)
-    suspend fun addTrackedShow(showId: Int, watchlisted: Boolean = false) {
+    suspend fun addTrackedShow(tmdbId: Int, isTvShow: Boolean, watchlisted: Boolean = false) {
         // Use GlobalScope because this should finish even if the user closes the search activity
         GlobalScope.launch(Dispatchers.IO) {
             try {
-                val res = addTracked(AddShowApiRequestBody(showId, watchlisted = watchlisted))
+                val res = if (isTvShow) {
+                    addTrackedShow(AddShowApiRequestBody(tmdbId, watchlisted = watchlisted))
+                } else {
+                    addTrackedMovie(AddMovieApiRequestBody(tmdbId, watchlisted = watchlisted))
+                }
                 res.coAsSuccess { newShow ->
                     allShows.update { it.plus(newShow) }
                 }
@@ -156,12 +160,12 @@ class TrackedShowsRepository(
         }
     }
 
-    fun getShowByTmdbId(tmdbShowId: Int): TrackedShowApiModel? {
-        return allShows.value.firstOrNull { it.storedShow.tmdbId == tmdbShowId }
+    fun getShowByTmdbId(tmdbShowId: Int): TrackedContentApiModel? {
+        return allShows.value.firstOrNull { it.tvShow!!.storedShow.tmdbId == tmdbShowId }
     }
 
-    fun getShowByTmdbIdFlow(tmdbShowId: Int): Flow<TrackedShowApiModel?> {
-        return allShows.map { it.firstOrNull { it.storedShow.tmdbId == tmdbShowId } }
+    fun getShowByTmdbIdFlow(tmdbShowId: Int): Flow<TrackedContentApiModel?> {
+        return allShows.map { it.firstOrNull { it.tvShow!!.storedShow.tmdbId == tmdbShowId } }
     }
 
     private suspend fun getTrackedShows(): TrackedShowsApiResponse {
@@ -176,8 +180,12 @@ class TrackedShowsRepository(
         return httpClient.getWatchlisted()
     }
 
-    private suspend fun addTracked(body: AddShowApiRequestBody): AddTrackedShowApiResponse {
-        return httpClient.call(Endpoints.addTracked, body)
+    private suspend fun addTrackedShow(body: AddShowApiRequestBody): AddTrackedShowApiResponse {
+        return httpClient.call(Endpoints.addTrackedShow, body)
+    }
+
+    private suspend fun addTrackedMovie(body: AddMovieApiRequestBody): AddTrackedShowApiResponse {
+        return httpClient.call(Endpoints.addTrackedMovie, body)
     }
 }
 

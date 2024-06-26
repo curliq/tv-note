@@ -17,14 +17,14 @@ import coil3.compose.AsyncImage
 import com.free.tvtracker.ui.common.theme.TvTrackerTheme
 
 @Composable
-fun TvImage(imageUrl: String, roundCorner: Boolean = true, modifier: Modifier = Modifier, containerModifier: Modifier = Modifier) {
+fun TvImage(imageUrl: String,  modifier: Modifier = Modifier, containerModifier: Modifier = Modifier) {
     Box(
         containerModifier.then(
-            if (roundCorner) Modifier.border(
+            Modifier.border(
                 1.dp,
                 MaterialTheme.colorScheme.outlineVariant,
                 RoundedCornerShape(TvTrackerTheme.ShapeCornerMedium)
-            ).clip(RoundedCornerShape(TvTrackerTheme.ShapeCornerMedium)) else Modifier
+            ).clip(RoundedCornerShape(TvTrackerTheme.ShapeCornerMedium))
         )
     ) {
         if (!LocalInspectionMode.current) { //not in @Preview, previews break with this

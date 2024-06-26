@@ -1,6 +1,6 @@
 package com.free.tvtracker.features.user.domain
 
-import com.free.tvtracker.features.tracked.domain.TrackedShowsService
+import com.free.tvtracker.features.tracked.domain.TrackedContentService
 import com.free.tvtracker.features.user.data.UserEntity
 import io.mockk.mockk
 import kotlin.test.Test
@@ -26,9 +26,9 @@ class UserServiceTest {
     private val authManager: AuthenticationManager = mockk(relaxed = true)
     private val tokenService: TokenService = mockk(relaxed = true)
     private val sessionService: SessionService = mockk(relaxed = true)
-    private val trackedShowsService: TrackedShowsService = mockk(relaxed = true)
+    private val trackedContentService: TrackedContentService = mockk(relaxed = true)
     private val sut =
-        UserService(logger, userJpaRepository, encoder, authManager, tokenService, sessionService, trackedShowsService)
+        UserService(logger, userJpaRepository, encoder, authManager, tokenService, sessionService, trackedContentService)
 
     @Test
     fun `GIVEN anon user WHEN create new user THEN same user is updated with credentials`() {
@@ -67,7 +67,7 @@ class UserServiceTest {
         every { sessionService.getSessionUserId() } returns 1
         sut.login(LoginApiRequestBody(username = "miguel", password = "secret"))
         verify {
-            trackedShowsService.migrateShows(1, 10)
+            trackedContentService.migrateShows(1, 10)
         }
     }
 

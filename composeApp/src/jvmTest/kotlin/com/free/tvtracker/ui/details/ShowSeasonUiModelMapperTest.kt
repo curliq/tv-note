@@ -3,7 +3,7 @@ package com.free.tvtracker.ui.details
 import com.free.tvtracker.discover.response.TmdbShowDetailsApiModel
 import com.free.tvtracker.ui.details.mappers.ShowEpisodeUiModelMapper
 import com.free.tvtracker.ui.details.mappers.ShowSeasonUiModelMapper
-import com.free.tvtracker.tracked.response.TrackedShowApiModel
+import com.free.tvtracker.tracked.response.TrackedContentApiModel
 import org.junit.Assert.assertEquals
 import kotlin.test.Test
 
@@ -11,12 +11,12 @@ class ShowSeasonUiModelMapperTest {
 
     @Test
     fun `GIVEN all watched episodes THEN season is not watchable`() {
-        val trackedShow = TrackedShowApiModel(
+        val trackedShow = TrackedContentApiModel(
             1, "2014-02-03",
             watchedEpisodes = listOf(
-                TrackedShowApiModel.WatchedEpisodeApiModel("t_1", storedEpisodeId = 1),
+                TrackedContentApiModel.WatchedEpisodeApiModel("t_1", storedEpisodeId = 1),
             ),
-            TrackedShowApiModel.StoredShowApiModel(1, "game of thrones", emptyList(), "", "", ""), false
+            TrackedContentApiModel.StoredShowApiModel(1, "game of thrones", emptyList(), "", "", ""), false
         )
         val sut = ShowSeasonUiModelMapper(ShowEpisodeUiModelMapper())
         val data = TmdbShowDetailsApiModel.Season(
@@ -34,12 +34,12 @@ class ShowSeasonUiModelMapperTest {
 
     @Test
     fun `GIVEN 1 unwatched ep and 1 watched ep THEN season is watchable`() {
-        val trackedShow = TrackedShowApiModel(
+        val trackedShow = TrackedContentApiModel(
             1, "2014-02-03",
             watchedEpisodes = listOf(
-                TrackedShowApiModel.WatchedEpisodeApiModel("s_1", storedEpisodeId = 1),
+                TrackedContentApiModel.WatchedEpisodeApiModel("s_1", storedEpisodeId = 1),
             ),
-            TrackedShowApiModel.StoredShowApiModel(1, "game of thrones", emptyList(), "", "", ""), false
+            TrackedContentApiModel.StoredShowApiModel(1, "game of thrones", emptyList(), "", "", ""), false
         )
         val sut = ShowSeasonUiModelMapper(ShowEpisodeUiModelMapper())
         val data = TmdbShowDetailsApiModel.Season(

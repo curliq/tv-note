@@ -1,4 +1,4 @@
-package com.free.tvtracker.features.tracked.data
+package com.free.tvtracker.features.tracked.data.shows
 
 import com.free.tvtracker.storage.shows.data.StoredEpisodeEntity
 import jakarta.persistence.Column

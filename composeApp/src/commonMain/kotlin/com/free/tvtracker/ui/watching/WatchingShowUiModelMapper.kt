@@ -2,7 +2,7 @@ package com.free.tvtracker.ui.watching
 
 import com.free.tvtracker.base.Mapper
 import com.free.tvtracker.domain.GetNextUnwatchedEpisodeUseCase
-import com.free.tvtracker.tracked.response.TrackedShowApiModel
+import com.free.tvtracker.tracked.response.TrackedContentApiModel
 import com.free.tvtracker.ui.common.TmdbConfigData
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.format
@@ -12,8 +12,8 @@ import kotlinx.datetime.format.char
 
 class WatchingShowUiModelMapper(
     private val getNextUnwatchedEpisodeUseCase: GetNextUnwatchedEpisodeUseCase,
-) : Mapper<TrackedShowApiModel, WatchingItemUiModel> {
-    override fun map(from: TrackedShowApiModel): WatchingItemUiModel {
+) : Mapper<TrackedContentApiModel, WatchingItemUiModel> {
+    override fun map(from: TrackedContentApiModel): WatchingItemUiModel {
         val nextEpisode = getNextUnwatchedEpisodeUseCase(from)
         val airText = try {
             LocalDate.parse(input = nextEpisode?.airDate ?: "").format(LocalDate.Format {
@@ -25,10 +25,10 @@ class WatchingShowUiModelMapper(
             "date unavailable"
         }
         return WatchingItemUiModel(
-            trackedShowId = from.id,
-            tmdbId = from.storedShow.tmdbId,
-            title = from.storedShow.title,
-            image = TmdbConfigData.get().getPosterUrl(from.storedShow.posterImage),
+            trackedShowId = from.tvShow!!.id,
+            tmdbId = from.tvShow!!.storedShow.tmdbId,
+            title = from.tvShow!!.storedShow.title,
+            image = TmdbConfigData.get().getPosterUrl(from.tvShow!!.storedShow.posterImage),
             nextEpisode = nextEpisode?.run {
                 WatchingItemUiModel.NextEpisode(
                     id = this.id,

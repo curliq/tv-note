@@ -55,8 +55,8 @@ class DiscoverViewModel(
                     val show = trackedShowsRepository.getShowByTmdbId(it.tmdbId)
                     DiscoverUiModel.Content(
                         it.tmdbId,
-                        show?.storedShow?.title ?: "",
-                        TmdbConfigData.get().getPosterUrl(show?.storedShow?.posterImage)
+                        show?.tvShow!!.storedShow?.title ?: "",
+                        TmdbConfigData.get().getPosterUrl(show?.tvShow!!.storedShow?.posterImage)
                     )
                 } ?: emptyList()
 
@@ -73,11 +73,11 @@ class DiscoverViewModel(
                                 selectionActiveText = stringUtils.listToString(selectionActive.map { it.title }),
                                 selectionAvailable = allShows.map { show ->
                                     DiscoverUiModel.RecommendedContent.Selection(
-                                        show.storedShow.tmdbId,
-                                        show.storedShow.title,
-                                        TmdbConfigData.get().getPosterUrl(show.storedShow.posterImage),
+                                        show.tvShow!!.storedShow.tmdbId,
+                                        show.tvShow!!.storedShow.title,
+                                        TmdbConfigData.get().getPosterUrl(show.tvShow!!.storedShow.posterImage),
                                         isSelected = selectionActive
-                                            .find { it.tmdbId == show.storedShow.tmdbId } != null
+                                            .find { it.tmdbId == show.tvShow!!.storedShow.tmdbId } != null
                                     )
                                 },
                                 selectionActive = selectionActive,
@@ -107,8 +107,8 @@ class DiscoverViewModel(
 
     private fun getDefaultRecommendedSelection(): List<Int> {
         val shows = trackedShowsRepository.allShows.value
-        val related = shows.sortedByDescending { it.createdAtDatetime }.take(2)
-        return related.map { it.storedShow.tmdbId }
+        val related = shows.sortedByDescending { it.tvShow!!.createdAtDatetime }.take(2)
+        return related.map { it.tvShow!!.storedShow.tmdbId }
     }
 
     fun action(action: DiscoverViewModelAction) {

@@ -1,5 +1,7 @@
 package com.free.tvtracker.search.response
 
+import com.free.tvtracker.constants.TmdbContentType
+import com.free.tvtracker.tracked.response.TrackedContentApiModel
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -27,4 +29,20 @@ data class SearchMultiApiModel(
     @SerialName("origin_country") val originCountry: List<String>? = null,
     @SerialName("gender") val gender: Int? = null,
     @SerialName("known_for_department") val knownForDepartment: String? = null,
-)
+) {
+    val contentTypeKey: String
+        get() {
+            return when (TmdbContentType.entries.find { it.field == mediaType!! }) {
+                TmdbContentType.SHOW -> TrackedContentApiModel.ContentType.TvShow.key
+                TmdbContentType.MOVIE -> TrackedContentApiModel.ContentType.Movie.key
+                TmdbContentType.PERSON -> "person"
+                null -> "other"
+            }
+        }
+
+    val pseudoId: String
+        get() {
+            return "${contentTypeKey}_${tmdbId}"
+        }
+
+}

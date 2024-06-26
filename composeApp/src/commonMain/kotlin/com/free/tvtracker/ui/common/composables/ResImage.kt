@@ -9,10 +9,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalInspectionMode
 import org.jetbrains.compose.resources.DrawableResource
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun ResImage(res: DrawableResource, contentDescription: String, modifier: Modifier = Modifier, tint: Color? = null) {
     if (!LocalInspectionMode.current) { //not in @Preview, previews break with this

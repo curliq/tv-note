@@ -57,7 +57,7 @@ kotlin {
         commonMain.dependencies {
             implementation(projects.api)
             implementation(compose.runtime)
-            implementation(compose.foundation)
+            implementation(libs.compose.foundation)
             implementation(compose.material)
             implementation(compose.ui)
             implementation(compose.components.resources)

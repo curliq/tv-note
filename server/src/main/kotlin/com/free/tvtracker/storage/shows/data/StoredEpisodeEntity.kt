@@ -1,6 +1,6 @@
 package com.free.tvtracker.storage.shows.data
 
-import com.free.tvtracker.features.tracked.data.TrackedShowEpisodeEntity
+import com.free.tvtracker.features.tracked.data.shows.TrackedShowEpisodeEntity
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity

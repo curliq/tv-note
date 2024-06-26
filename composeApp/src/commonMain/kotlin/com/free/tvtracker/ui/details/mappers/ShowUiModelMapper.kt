@@ -6,7 +6,7 @@ import com.free.tvtracker.discover.response.TmdbShowDetailsApiModel
 import com.free.tvtracker.domain.GetShowStatusUseCase
 import com.free.tvtracker.domain.IsTrackedShowWatchableUseCase
 import com.free.tvtracker.ui.details.DetailsUiModel
-import com.free.tvtracker.tracked.response.TrackedShowApiModel
+import com.free.tvtracker.tracked.response.TrackedContentApiModel
 import com.free.tvtracker.expect.CommonStringUtils
 import com.free.tvtracker.expect.data.CachingLocationService
 import com.free.tvtracker.ui.common.TmdbConfigData
@@ -23,9 +23,9 @@ class ShowUiModelMapper(
     private val getShowStatusUseCase: GetShowStatusUseCase,
     private val locationService: CachingLocationService,
     private val stringUtils: CommonStringUtils = CommonStringUtils(),
-) : MapperWithOptions<TmdbShowDetailsApiModel, DetailsUiModel, TrackedShowApiModel?> {
+) : MapperWithOptions<TmdbShowDetailsApiModel, DetailsUiModel, TrackedContentApiModel?> {
 
-    override fun map(from: TmdbShowDetailsApiModel, options: TrackedShowApiModel?): DetailsUiModel {
+    override fun map(from: TmdbShowDetailsApiModel, options: TrackedContentApiModel?): DetailsUiModel {
         return DetailsUiModel(
             tmdbId = from.id,
             homepageUrl = from.homepage,
@@ -33,7 +33,7 @@ class ShowUiModelMapper(
             posterUrl = TmdbConfigData.get().getPosterUrl(from.posterPath),
             releaseStatus = getShowStatusUseCase(from.status, from.firstAirDate, from.lastAirDate),
             trackingStatus = getTrackingStatus(options),
-            trackedShowId = options?.id,
+            trackedShowId = options?.tvShow?.id,
             description = from.overview,
             genres = from.genres.joinToString(", "),
             seasonsInfo =
@@ -64,7 +64,7 @@ class ShowUiModelMapper(
         )
     }
 
-    private fun getTrackingStatus(trackedShow: TrackedShowApiModel?): DetailsUiModel.TrackingStatus {
+    private fun getTrackingStatus(trackedShow: TrackedContentApiModel?): DetailsUiModel.TrackingStatus {
         if (trackedShow == null) {
             return DetailsUiModel.TrackingStatus(
                 action1 = DetailsUiModel.TrackingStatus.Action.TrackWatching,

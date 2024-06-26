@@ -6,11 +6,11 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class AddTrackedEpisodesApiResponse(
-    override val data: List<TrackedShowApiModel.WatchedEpisodeApiModel>? = null,
+    override val data: List<TrackedContentApiModel.TvShow.WatchedEpisodeApiModel>? = null,
     override val application_error: ApiError? = null
-) : ApiResponse<List<TrackedShowApiModel.WatchedEpisodeApiModel>>() {
+) : ApiResponse<List<TrackedContentApiModel.TvShow.WatchedEpisodeApiModel>>() {
     companion object {
-        fun ok(data: List<TrackedShowApiModel.WatchedEpisodeApiModel>): AddTrackedEpisodesApiResponse {
+        fun ok(data: List<TrackedContentApiModel.TvShow.WatchedEpisodeApiModel>): AddTrackedEpisodesApiResponse {
             return AddTrackedEpisodesApiResponse(data = data)
         }
 

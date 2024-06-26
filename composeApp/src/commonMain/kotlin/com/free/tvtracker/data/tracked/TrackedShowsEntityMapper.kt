@@ -4,29 +4,33 @@ import com.free.tvtracker.data.tracked.entities.StoredEpisodeClientEntity
 import com.free.tvtracker.data.tracked.entities.StoredShowClientEntity
 import com.free.tvtracker.data.tracked.entities.TrackedShowClientEntity
 import com.free.tvtracker.data.tracked.entities.WatchedEpisodeClientEntity
-import com.free.tvtracker.tracked.response.TrackedShowApiModel
+import com.free.tvtracker.tracked.response.TrackedContentApiModel
 
-fun TrackedShowApiModel.toClientEntity(): TrackedShowClientEntity {
+fun TrackedContentApiModel.toClientEntity(): TrackedShowClientEntity {
     return TrackedShowClientEntity(
-        this.id.toLong(),
-        this.createdAtDatetime,
-        this.watchedEpisodes.map { it.toClientEntity(this.id.toLong()) },
-        this.storedShow.toClientEntity(),
+        this.tvShow!!.id.toLong(),
+        this.tvShow!!.createdAtDatetime,
+        this.tvShow!!.watchedEpisodes.map { it.toClientEntity(this.tvShow!!.id.toLong()) },
+        this.tvShow!!.storedShow.toClientEntity(),
         this.watchlisted
     )
 }
 
-fun TrackedShowClientEntity.toApiModel(): TrackedShowApiModel {
-    return TrackedShowApiModel(
-        this.id.toInt(),
-        this.createdAtDatetime,
-        this.watchedEpisodes.map { it.toApiModel() },
-        this.storedShow.toApiModel(),
-        this.watchlisted
+fun TrackedShowClientEntity.toApiModel(): TrackedContentApiModel {
+    return TrackedContentApiModel(
+        this.watchlisted,
+        TrackedContentApiModel.ContentType.TvShow,
+        tvShow = TrackedContentApiModel.TvShow(
+            this.id.toInt(),
+            this.createdAtDatetime,
+            this.watchedEpisodes.map { it.toApiModel() },
+            this.storedShow.toApiModel(),
+        ),
+        movie = null
     )
 }
 
-fun TrackedShowApiModel.StoredShowApiModel.toClientEntity(): StoredShowClientEntity {
+fun TrackedContentApiModel.TvShow.StoredShowApiModel.toClientEntity(): StoredShowClientEntity {
     return StoredShowClientEntity(
         this.tmdbId.toLong(),
         this.title,
@@ -37,8 +41,8 @@ fun TrackedShowApiModel.StoredShowApiModel.toClientEntity(): StoredShowClientEnt
     )
 }
 
-fun StoredShowClientEntity.toApiModel(): TrackedShowApiModel.StoredShowApiModel {
-    return TrackedShowApiModel.StoredShowApiModel(
+fun StoredShowClientEntity.toApiModel(): TrackedContentApiModel.TvShow.StoredShowApiModel {
+    return TrackedContentApiModel.TvShow.StoredShowApiModel(
         this.tmdbId.toInt(),
         this.title,
         this.storedEpisodes.map { it.toApiModel() },
@@ -48,7 +52,7 @@ fun StoredShowClientEntity.toApiModel(): TrackedShowApiModel.StoredShowApiModel 
     )
 }
 
-fun TrackedShowApiModel.StoredEpisodeApiModel.toClientEntity(): StoredEpisodeClientEntity {
+fun TrackedContentApiModel.TvShow.StoredEpisodeApiModel.toClientEntity(): StoredEpisodeClientEntity {
     return StoredEpisodeClientEntity(
         this.id.toLong(),
         this.season.toLong(),
@@ -57,8 +61,8 @@ fun TrackedShowApiModel.StoredEpisodeApiModel.toClientEntity(): StoredEpisodeCli
     )
 }
 
-fun StoredEpisodeClientEntity.toApiModel(): TrackedShowApiModel.StoredEpisodeApiModel {
-    return TrackedShowApiModel.StoredEpisodeApiModel(
+fun StoredEpisodeClientEntity.toApiModel(): TrackedContentApiModel.TvShow.StoredEpisodeApiModel {
+    return TrackedContentApiModel.TvShow.StoredEpisodeApiModel(
         this.id.toInt(),
         this.season.toInt(),
         this.episode.toInt(),
@@ -66,7 +70,7 @@ fun StoredEpisodeClientEntity.toApiModel(): TrackedShowApiModel.StoredEpisodeApi
     )
 }
 
-fun TrackedShowApiModel.WatchedEpisodeApiModel.toClientEntity(trackedShowId: Long): WatchedEpisodeClientEntity {
+fun TrackedContentApiModel.TvShow.WatchedEpisodeApiModel.toClientEntity(trackedShowId: Long): WatchedEpisodeClientEntity {
     return WatchedEpisodeClientEntity(
         this.id,
         this.storedEpisodeId.toLong(),
@@ -74,8 +78,8 @@ fun TrackedShowApiModel.WatchedEpisodeApiModel.toClientEntity(trackedShowId: Lon
     )
 }
 
-fun WatchedEpisodeClientEntity.toApiModel(): TrackedShowApiModel.WatchedEpisodeApiModel {
-    return TrackedShowApiModel.WatchedEpisodeApiModel(
+fun WatchedEpisodeClientEntity.toApiModel(): TrackedContentApiModel.TvShow.WatchedEpisodeApiModel {
+    return TrackedContentApiModel.TvShow.WatchedEpisodeApiModel(
         this.id,
         this.storedEpisodeId.toInt()
     )

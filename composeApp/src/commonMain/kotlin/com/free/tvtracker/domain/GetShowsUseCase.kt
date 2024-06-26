@@ -12,7 +12,11 @@ open class GetShowsUseCase(
     operator fun invoke(flow: Flow<ShowsData>): Flow<ShowsData> =
         flow.combine(watchedEpisodesTaskQueue.watchedEpisodeOrders) { shows, orders ->
             shows.copy(data = shows.data.map { show ->
-                trackedShowReducer.reduce(show, orders)
+                if (show.isTvShow) {
+                    trackedShowReducer.reduce(show, orders)
+                } else {
+                    show
+                }
             })
         }
 }

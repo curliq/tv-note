@@ -26,7 +26,7 @@ class AddTrackedViewModel(
 
     sealed class Action {
         data class AddToTracked(val id: Int, val type: AddTrackedItemUiModel.TrackAction) : Action()
-        data class SeeDetails(val id: Int) : Action()
+        data class SeeDetails(val id: Int, val isTvShow: Boolean) : Action()
     }
 
     val results: MutableStateFlow<AddTrackedUiState> = MutableStateFlow(AddTrackedUiState.Ok(false, emptyList()))
@@ -45,16 +45,16 @@ class AddTrackedViewModel(
 
     init {
         viewModelScope.launch(ioDispatcher) {
-            trackedShowsRepository.allShows.collect { shows ->
+            trackedShowsRepository.allShows.collect { trackedShows ->
                 results.update {
                     if (it is AddTrackedUiState.Ok) {
-                        // This can only be false if user tracks from the pdp, goes back to search, starts searching,
+                        // This ^ can only be false if user tracks from the pdp, goes back to search, starts searching,
                         // and the api result comes back while search is going.
                         // To fix: check latest tracked shows on search result too
                         AddTrackedUiState.Ok(
                             isSearching = false,
                             data = it.data.map { show ->
-                                if (shows.map { it.storedShow.tmdbId }.contains(show.tmdbId)) {
+                                if (trackedShows.map { it.typedId }.contains(show.typedId)) {
                                     show.copy(tracked = true)
                                 } else {
                                     show
@@ -107,11 +107,23 @@ class AddTrackedViewModel(
                 viewModelScope.launch(ioDispatcher) {
                     when (action.type) {
                         AddTrackedItemUiModel.TrackAction.Watching -> {
-                            trackedShowsRepository.addTrackedShow(action.id, watchlisted = false)
+                            trackedShowsRepository.addTrackedShow(action.id, isTvShow = true, watchlisted = false)
                         }
 
-                        AddTrackedItemUiModel.TrackAction.Watchlist -> {
-                            trackedShowsRepository.addTrackedShow(action.id, watchlisted = true)
+                        is AddTrackedItemUiModel.TrackAction.Watchlist -> {
+                            trackedShowsRepository.addTrackedShow(
+                                action.id,
+                                isTvShow = action.type.isTvShow,
+                                watchlisted = true
+                            )
+                        }
+
+                        is AddTrackedItemUiModel.TrackAction.Finished -> {
+                            if (action.type.isTvShow) {
+
+                            } else {
+
+                            }
                         }
 
                         AddTrackedItemUiModel.TrackAction.None -> {}
@@ -145,15 +157,17 @@ class AddTrackedViewModel(
                     results.value = AddTrackedUiState.Ok(
                         isSearching = false,
                         data.results.map { content ->
-                            val tracked = trackedShows.firstOrNull { it.storedShow.tmdbId == content.tmdbId } != null
-                            val o =  SearchUiModelMapperOptions(tracked, originScreen)
+                            val tracked =
+                                trackedShows.firstOrNull { it.typedId == content.pseudoId } != null
+                            val o = SearchUiModelMapperOptions(tracked, originScreen)
                             when (TmdbContentType.entries.find { it.field == content.mediaType!! }) {
-                                TmdbContentType.SHOW -> showsMapper.map(content,o)
+                                TmdbContentType.SHOW -> showsMapper.map(content, o)
                                 TmdbContentType.MOVIE -> moviesMapper.map(content, o)
                                 TmdbContentType.PERSON -> peopleMapper.map(content, o)
                                 null -> null
                             }
-                        }.filterNotNull())
+                        }.filterNotNull()
+                    )
                 }
             }
             .asError { error ->
@@ -172,10 +186,16 @@ sealed class AddTrackedUiState {
 
 data class AddTrackedItemUiModel(
     val tmdbId: Int,
+    val typedId: String,
     val title: String,
     val image: String,
     val tracked: Boolean,
-    val action: TrackAction
+    val action: TrackAction,
 ) {
-    enum class TrackAction { Watching, Watchlist, None }
+    sealed class TrackAction {
+        data object Watching : TrackAction()
+        data class Watchlist(val isTvShow: Boolean) : TrackAction()
+        data class Finished(val isTvShow: Boolean) : TrackAction()
+        data object None : TrackAction()
+    }
 }

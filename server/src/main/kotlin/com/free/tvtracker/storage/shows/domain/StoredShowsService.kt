@@ -1,9 +1,8 @@
 package com.free.tvtracker.storage.shows.domain
 
-import com.free.tvtracker.tmdb.data.TmdbShowBigResponse
-import com.free.tvtracker.features.search.SearchService
 import com.free.tvtracker.storage.shows.data.StoredShowEntity
 import com.free.tvtracker.storage.shows.data.StoredShowJpaRepository
+import com.free.tvtracker.tmdb.data.TmdbShowBigResponse
 import org.springframework.stereotype.Service
 import java.sql.Timestamp
 import java.time.Duration

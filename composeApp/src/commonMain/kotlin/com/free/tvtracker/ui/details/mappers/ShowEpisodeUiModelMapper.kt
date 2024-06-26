@@ -40,7 +40,7 @@ class ShowEpisodeUiModelMapper(
             number = from.number.toString(),
             name = from.name ?: "",
             releaseDate = airDate ?: "",
-            watched = options.trackedShowApiModel?.watchedEpisodes?.firstOrNull {
+            watched = options.trackedContentApiModel?.tvShow?.watchedEpisodes?.firstOrNull {
                 it.storedEpisodeId == from.id
             } != null,
             isWatchable = isWatchable,

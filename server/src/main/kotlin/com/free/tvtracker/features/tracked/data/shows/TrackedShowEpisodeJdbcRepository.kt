@@ -1,4 +1,4 @@
-package com.free.tvtracker.features.tracked.data
+package com.free.tvtracker.features.tracked.data.shows
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate

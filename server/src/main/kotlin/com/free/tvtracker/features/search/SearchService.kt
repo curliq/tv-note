@@ -13,6 +13,7 @@ import com.free.tvtracker.search.request.MediaType
 import com.free.tvtracker.storage.shows.data.StoredEpisodeEntity
 import com.free.tvtracker.storage.shows.domain.StoredEpisodesService
 import com.free.tvtracker.storage.shows.domain.StoredShowsService
+import com.free.tvtracker.tmdb.data.TmdbMovieBigResponse
 import org.springframework.stereotype.Service
 
 @Service
@@ -45,6 +46,17 @@ class SearchService(
             TmdbShowBigResponse::class.java,
             params = mapOf(
                 "append_to_response" to "aggregate_credits,watch/providers,videos,images"
+            )
+        )
+        return respEntity.body!!
+    }
+
+    fun getMovie(tmdbMovieId: Int): TmdbMovieBigResponse {
+        val respEntity = tmdbClient.get(
+            "/3/movie/$tmdbMovieId",
+            TmdbMovieBigResponse::class.java,
+            params = mapOf(
+                "append_to_response" to ""
             )
         )
         return respEntity.body!!

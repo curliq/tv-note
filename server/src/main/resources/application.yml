@@ -28,7 +28,7 @@ spring:
   datasource:
     driver-class-name: org.postgresql.Driver
     password: admin
-    url: jdbc:postgresql://localhost:5432/track6
+    url: jdbc:postgresql://localhost:5432/track8
     username: admin2
   flyway:
     create-schemas: true
@@ -36,7 +36,7 @@ spring:
     enabled: false
     group: true
     password: admin
-    url: jdbc:postgresql://localhost:5432/track6
+    url: jdbc:postgresql://localhost:5432/track8
     user: admin
   jpa:
     generate-ddl: false

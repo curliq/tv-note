@@ -15,6 +15,7 @@ coil = "3.0.0-alpha06"
 compose = "1.6.8"
 compose-plugin = "1.6.10"
 coreSplashscreen = "1.0.1"
+foundation = "1.7.0-dev1690"
 sqldelightCoroutinesExtensions = "1.5.5"
 firebaseAdmin = "9.3.0"
 firebaseMessaging = "24.0.0"
@@ -39,6 +40,7 @@ uuid = "0.8.4"
 [libraries]
 accompanist-navigation-material = { module = "com.google.accompanist:accompanist-navigation-material", version.ref = "accompanistNavigationMaterial" }
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
+compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "foundation" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 sqldelight-coroutines-extensions = { module = "com.squareup.sqldelight:coroutines-extensions", version.ref = "sqldelightCoroutinesExtensions" }
 firebase-admin = { module = "com.google.firebase:firebase-admin", version.ref = "firebaseAdmin" }

@@ -4,11 +4,13 @@ import com.free.tvtracker.expect.ui.ViewModel
 import com.free.tvtracker.data.tracked.TrackedShowsRepository
 import com.free.tvtracker.domain.GetShowsUseCase
 import com.free.tvtracker.domain.GetWatchlistedShowsUseCase
+import com.free.tvtracker.ui.finished.FinishedUiState
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class WatchlistedShowsViewModel(
@@ -30,9 +32,13 @@ class WatchlistedShowsViewModel(
                         if (res.isEmpty()) {
                             shows.value = WatchlistUiState.Empty
                         } else {
-                            shows.value = WatchlistUiState.Ok(
-                                shows = res.map(mapper.map())
-                            )
+                            shows.update {
+                                WatchlistUiState.Ok(
+                                    _shows = res.map(mapper.map()),
+                                    (it as? WatchlistUiState.Ok)?.filterTvShows ?:true,
+                                    (it as? WatchlistUiState.Ok)?.filterMovies ?:true
+                                )
+                            }
                         }
                     } else {
                         shows.value = WatchlistUiState.Error
@@ -48,13 +54,65 @@ class WatchlistedShowsViewModel(
             trackedShowsRepository.updateWatchlisted()
         }
     }
+
+    fun action(action: WatchlistedAction) {
+        when (action) {
+            WatchlistedAction.ToggleMovies -> {
+                shows.update {
+                    if (it is WatchlistUiState.Ok) {
+                        val filterMovies = !it.filterMovies
+                        it.copy(
+                            filterMovies = filterMovies,
+                            filterTvShows = if (!filterMovies) true else it.filterTvShows
+                        )
+                    } else it
+                }
+            }
+
+            WatchlistedAction.ToggleTvShows -> {
+                shows.update {
+                    if (it is WatchlistUiState.Ok) {
+                        val filterTvShows = !it.filterTvShows
+                        it.copy(
+                            filterTvShows = !it.filterTvShows,
+                            filterMovies = if (!filterTvShows) true else it.filterMovies
+                        )
+                    } else it
+                }
+            }
+        }
+    }
+
+    sealed class WatchlistedAction {
+        data object ToggleTvShows : WatchlistedAction()
+        data object ToggleMovies : WatchlistedAction()
+    }
 }
 
 sealed class WatchlistUiState {
     data object Loading : WatchlistUiState()
     data object Error : WatchlistUiState()
     data object Empty : WatchlistUiState()
-    data class Ok(val shows: List<WatchlistShowUiModel>) : WatchlistUiState()
+    data class Ok(
+        val _shows: List<WatchlistShowUiModel>,
+        val filterTvShows: Boolean,
+        val filterMovies: Boolean
+    ) : WatchlistUiState() {
+        val shows: List<WatchlistShowUiModel>
+            get() {
+                return _shows.filter {
+                    if (filterTvShows && filterMovies) {
+                        true
+                    } else if (!filterTvShows && filterMovies) {
+                        !it.isTvShow
+                    } else if (filterTvShows && !filterMovies) {
+                        it.isTvShow
+                    } else {
+                        true
+                    }
+                }
+            }
+    }
 }
 
 data class WatchlistShowUiModel(
@@ -62,4 +120,5 @@ data class WatchlistShowUiModel(
     val title: String,
     val image: String,
     val status: String,
+    val isTvShow: Boolean
 )

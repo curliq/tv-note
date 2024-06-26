@@ -51,7 +51,7 @@ class DetailsViewModel(
                     val episodes = season.episodes
                         .filter { !it.watched }
                         .filter { it.isWatchable }
-                        .map { MarkEpisodeWatched(trackedShow.id, it.id) }
+                        .map { MarkEpisodeWatched(trackedShow.tvShow!!.id, it.id) }
                     trackedShowsRepository.markEpisodeAsWatched(episodes)
                 }
             }
@@ -78,11 +78,11 @@ class DetailsViewModel(
                         }
 
                         DetailsUiModel.TrackingStatus.Action.TrackWatchlist -> {
-                            trackedShowsRepository.addTrackedShow(action.uiModel.tmdbId, watchlisted = true)
+                            trackedShowsRepository.addTrackedShow(action.uiModel.tmdbId, true, watchlisted = true)
                         }
 
                         DetailsUiModel.TrackingStatus.Action.TrackWatching -> {
-                            trackedShowsRepository.addTrackedShow(action.uiModel.tmdbId)
+                            trackedShowsRepository.addTrackedShow(action.uiModel.tmdbId, true)
                         }
 
                         DetailsUiModel.TrackingStatus.Action.MoveToWatchlist -> {

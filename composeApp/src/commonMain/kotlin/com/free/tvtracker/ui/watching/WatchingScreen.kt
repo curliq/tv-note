@@ -185,7 +185,6 @@ fun FabContainer(
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun LazyItemScope.WatchingItem(
     uiModel: WatchingItemUiModel,
@@ -196,11 +195,11 @@ fun LazyItemScope.WatchingItem(
 ) {
     Card(
         modifier
-            .height(IntrinsicSize.Max)
+            .height(IntrinsicSize.Min)
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
             .clickable(onClick = onClick)
-            .animateItemPlacement(),
+            .animateItem(),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
     ) {
         Row {

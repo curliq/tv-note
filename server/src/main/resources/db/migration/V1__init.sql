@@ -54,6 +54,27 @@ create table users
     is_anonymous             boolean      not null,
     primary key (id)
 );
+create table stored_movies
+(
+    id                  serial                              not null,
+    backdrop_image      varchar(255),
+    created_at_datetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP not null,
+    poster_image        varchar(255),
+    release_date        varchar(255),
+    title               varchar(255)                        not null,
+    tmdb_id             integer                             not null,
+    updated_at_datetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP not null,
+    primary key (id)
+);
+create table tracked_movies
+(
+    id                  serial                              not null,
+    created_at_datetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP not null,
+    user_id             integer                             not null,
+    watchlisted         boolean                             not null,
+    storedmovie_id      integer                             not null,
+    primary key (id)
+);
 alter table if exists stored_shows
     drop constraint if exists UK_9ji5tguwdy5akdr4jg9861wvc;
 alter table if exists stored_shows
@@ -80,3 +101,9 @@ alter table if exists tracked_shows
     add constraint FK3kdaak4msxympk9ll7gcd6dij foreign key (storedshow_id) references stored_shows;
 alter table if exists tracked_shows
     add constraint FKs7tcsw8wjlt08n67s46c8hd4j foreign key (user_id) references users on delete cascade;
+alter table if exists stored_movies
+    add constraint UK_k8210eq0gokjffbb62808yceg unique (tmdb_id);
+alter table if exists tracked_movies
+    add constraint UKrrnsqxnav7l5stqk74y3ermhy unique (storedmovie_id, user_id);
+alter table if exists tracked_movies
+    add constraint FKrkbmhkrr4ofw6vyqhtfn6pku1 foreign key (storedmovie_id) references stored_movies;

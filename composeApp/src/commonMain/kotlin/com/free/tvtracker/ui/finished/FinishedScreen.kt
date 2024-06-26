@@ -13,10 +13,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.InputChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,14 +28,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import besttvtracker.composeapp.generated.resources.Res
+import besttvtracker.composeapp.generated.resources.ic_movie
+import besttvtracker.composeapp.generated.resources.ic_tv
 import com.free.tvtracker.ui.common.composables.ErrorScreen
 import com.free.tvtracker.ui.common.composables.LoadingScreen
+import com.free.tvtracker.ui.common.composables.ResImage
 import com.free.tvtracker.ui.common.composables.TvImage
 import com.free.tvtracker.ui.common.composables.backdropRatio
-import com.free.tvtracker.ui.common.composables.posterRatio
 import com.free.tvtracker.ui.common.theme.ScreenContentAnimation
 import com.free.tvtracker.ui.common.theme.TvTrackerTheme
+import com.free.tvtracker.ui.common.theme.TvTrackerTheme.sidePadding
 import com.free.tvtracker.ui.watching.FabContainer
+import com.free.tvtracker.ui.watchlist.FilterCloseIcon
 
 sealed class FinishedScreenNavAction {
     data class GoShowDetails(val tmdbShowId: Int) : FinishedScreenNavAction()
@@ -54,7 +61,7 @@ fun FinishedScreen(navigate: (FinishedScreenNavAction) -> Unit, viewModel: Finis
                     FinishedUiState.Empty -> FinishedEmpty()
                     FinishedUiState.Error -> ErrorScreen { viewModel.refresh() }
                     FinishedUiState.Loading -> LoadingScreen()
-                    is FinishedUiState.Ok -> FinishedOk(targetState, navigate)
+                    is FinishedUiState.Ok -> FinishedOk(targetState, viewModel::action, navigate)
                 }
             }
         })
@@ -65,7 +72,7 @@ fun FinishedScreen(navigate: (FinishedScreenNavAction) -> Unit, viewModel: Finis
 private fun FinishedEmpty() {
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Text(
-            text = "Haven't finished any show yet.",
+            text = "No finished content.",
             style = MaterialTheme.typography.labelMedium,
             textAlign = TextAlign.Center
         )
@@ -73,12 +80,42 @@ private fun FinishedEmpty() {
 }
 
 @Composable
-private fun FinishedOk(shows: FinishedUiState.Ok, navigate: (FinishedScreenNavAction) -> Unit) {
+private fun FinishedOk(
+    data: FinishedUiState.Ok,
+    action: (FinishedShowsViewModel.FinishedAction) -> Unit,
+    navigate: (FinishedScreenNavAction) -> Unit
+) {
     LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(vertical = TvTrackerTheme.sidePadding)
+        modifier = Modifier.fillMaxSize().padding(horizontal = sidePadding),
+        contentPadding = PaddingValues(bottom = sidePadding)
     ) {
-        items(shows.shows) { model ->
+        item {
+            Row(Modifier.padding(top = 8.dp)) {
+                InputChip(
+                    selected = data.filterTvShows,
+                    onClick = { action(FinishedShowsViewModel.FinishedAction.ToggleTvShows) },
+                    label = { Text("Tv Shows") },
+                    leadingIcon = { ResImage(Res.drawable.ic_tv, "tv") },
+                    trailingIcon = { FilterCloseIcon(data.filterTvShows) }
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                InputChip(
+                    selected = data.filterMovies,
+                    onClick = { action(FinishedShowsViewModel.FinishedAction.ToggleMovies) },
+                    label = { Text("Movies") },
+                    leadingIcon = { ResImage(Res.drawable.ic_movie, "movies") },
+                    trailingIcon = { FilterCloseIcon(data.filterMovies) }
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+            }
+        }
+        item {
+            if (data.shows.isEmpty()) {
+                Spacer(modifier = Modifier.height(24.dp))
+                FinishedEmpty()
+            }
+        }
+        items(data.shows) { model ->
             WatchingItem(model) { navigate(FinishedScreenNavAction.GoShowDetails(model.tmdbId)) }
         }
     }
@@ -88,9 +125,9 @@ private fun FinishedOk(shows: FinishedUiState.Ok, navigate: (FinishedScreenNavAc
 fun WatchingItem(uiModel: FinishedShowUiModel, onClick: () -> Unit) {
     Card(
         Modifier
-            .height(IntrinsicSize.Max)
+            .height(IntrinsicSize.Min)
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .padding(vertical = 8.dp)
             .clickable(onClick = onClick),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
     ) {
@@ -101,7 +138,15 @@ fun WatchingItem(uiModel: FinishedShowUiModel, onClick: () -> Unit) {
             Column(Modifier.padding(16.dp)) {
                 Text(uiModel.title, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(uiModel.status, style = MaterialTheme.typography.bodyMedium)
+                Row {
+                    Text(
+                        uiModel.status,
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.align(Alignment.CenterVertically)
+                    )
+                    Spacer(Modifier.weight(1f))
+                    ResImage(if (uiModel.isTvShow) Res.drawable.ic_tv else Res.drawable.ic_movie, "type")
+                }
             }
         }
     }

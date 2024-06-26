@@ -5,7 +5,7 @@ import com.free.tvtracker.data.tracked.TrackedShowsRepository
 import com.free.tvtracker.data.tracked.WatchedEpisodesTaskQueue
 import com.free.tvtracker.discover.response.TmdbShowDetailsApiResponse
 import com.free.tvtracker.expect.data.CachingLocationService
-import com.free.tvtracker.tracked.response.TrackedShowApiModel
+import com.free.tvtracker.tracked.response.TrackedContentApiModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
@@ -18,7 +18,7 @@ class GetTrackedShowByTmdbIdUseCase(
     private val trackedShowReducer: TrackedShowReducer,
     private val locationService: CachingLocationService,
 ) {
-    data class GetTrackedShowByTmdbIdResult(val showData: TmdbShowDetailsApiResponse, val tracked: TrackedShowApiModel?)
+    data class GetTrackedShowByTmdbIdResult(val showData: TmdbShowDetailsApiResponse, val tracked: TrackedContentApiModel?)
 
     operator fun invoke(tmdbShowId: Int): Flow<GetTrackedShowByTmdbIdResult> {
         val showDataResponse = flow {

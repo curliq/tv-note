@@ -1,8 +1,7 @@
-package com.free.tvtracker.features.tracked.data
+package com.free.tvtracker.features.tracked.data.shows
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
-import org.springframework.jdbc.core.queryForList
 import org.springframework.stereotype.Repository
 
 @Repository
@@ -11,7 +10,7 @@ class TrackedShowJdbcRepository {
     @Autowired
     lateinit var jdbcTemplate: JdbcTemplate
 
-    fun getEpisodesReleasedToday(): List<TodayReleasesQueryResult> {
+    fun getEpisodesReleasedToday(): List<EpisodesReelaseTodayQueryResult> {
         val query = jdbcTemplate.queryForList(
             """
             select stored_shows.title,
@@ -29,7 +28,7 @@ class TrackedShowJdbcRepository {
         """.trimIndent()
         )
         return query.map {
-            TodayReleasesQueryResult(
+            EpisodesReelaseTodayQueryResult(
                 showTitle = it["title"] as String,
                 showId = it["show_id"] as Int,
                 userFcmToken = it["fcm_token"] as String,

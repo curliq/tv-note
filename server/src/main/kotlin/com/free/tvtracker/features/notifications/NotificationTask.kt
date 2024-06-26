@@ -1,6 +1,6 @@
 package com.free.tvtracker.features.notifications;
 
-import com.free.tvtracker.features.tracked.data.TrackedShowJdbcRepository
+import com.free.tvtracker.features.tracked.data.shows.TrackedShowJdbcRepository
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 

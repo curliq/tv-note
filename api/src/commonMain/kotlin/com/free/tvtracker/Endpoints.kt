@@ -11,6 +11,7 @@ import com.free.tvtracker.discover.response.TmdbShowTrendingApiResponse
 import com.free.tvtracker.search.request.SearchApiRequestBody
 import com.free.tvtracker.search.response.SearchApiResponse
 import com.free.tvtracker.tracked.request.AddEpisodesApiRequestBody
+import com.free.tvtracker.tracked.request.AddMovieApiRequestBody
 import com.free.tvtracker.tracked.request.AddShowApiRequestBody
 import com.free.tvtracker.tracked.request.RemoveShowApiRequestBody
 import com.free.tvtracker.tracked.request.SetShowWatchlistedApiRequestBody
@@ -37,7 +38,8 @@ object Endpoints {
         const val GET_WATCHING = "track/shows/watching"
         const val GET_FINISHED = "track/shows/finished"
         const val GET_WATCHLISTED = "track/shows/watchlisted"
-        const val ADD_TRACKED = "track/shows"
+        const val ADD_TRACKED_SHOW = "track/shows"
+        const val ADD_TRACKED_MOVIE = "track/movies"
         const val REMOVE_TRACKED = "track/shows/remove"
         const val ADD_EPISODES = "track/episodes"
         const val SET_SHOW_WATCHLISTED = "track/shows/toggle-watchlist"
@@ -69,8 +71,18 @@ object Endpoints {
     val getWatching = EndpointNoBody(Path.GET_WATCHING, TrackedShowsApiResponse::class, Endpoint.Verb.GET)
     val getFinished = EndpointNoBody(Path.GET_FINISHED, TrackedShowsApiResponse::class, Endpoint.Verb.GET)
     val getWatchlisted = EndpointNoBody(Path.GET_WATCHLISTED, TrackedShowsApiResponse::class, Endpoint.Verb.GET)
-    val addTracked =
-        Endpoint(Path.ADD_TRACKED, AddTrackedShowApiResponse::class, AddShowApiRequestBody::class, Endpoint.Verb.POST)
+    val addTrackedShow = Endpoint(
+        Path.ADD_TRACKED_SHOW,
+        AddTrackedShowApiResponse::class,
+        AddShowApiRequestBody::class,
+        Endpoint.Verb.POST
+    )
+    val addTrackedMovie = Endpoint(
+        Path.ADD_TRACKED_MOVIE,
+        AddTrackedShowApiResponse::class,
+        AddMovieApiRequestBody::class,
+        Endpoint.Verb.POST
+    )
     val removeTracked = Endpoint(
         Path.REMOVE_TRACKED,
         ApiResponse.EmptyApiResponse::class,

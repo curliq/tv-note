@@ -98,7 +98,7 @@ fun AddTrackedScreen(
                 onSearch = { viewModel.searchRefresh() },
                 active = false,
                 onActiveChange = { },
-                placeholder = { Text("Search Tv Shows, movies, or people") },
+                placeholder = { Text("Search Tv shows, movies, or people") },
                 leadingIcon = { Icon(Icons.Rounded.Search, contentDescription = null) },
                 trailingIcon = {
                     AnimatedContent(transitionSpec = {
@@ -217,7 +217,8 @@ private fun TrackAction(
 ) {
     val trackText = when (item.action) {
         AddTrackedItemUiModel.TrackAction.Watching -> "Track"
-        AddTrackedItemUiModel.TrackAction.Watchlist -> "Watchlist"
+        is AddTrackedItemUiModel.TrackAction.Watchlist -> "Watchlist"
+        is AddTrackedItemUiModel.TrackAction.Finished -> "Track"
         AddTrackedItemUiModel.TrackAction.None -> ""
     }
     Spacer(Modifier.height(16.dp))

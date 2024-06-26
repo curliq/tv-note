@@ -1,7 +1,7 @@
 package com.free.tvtracker.features.notifications
 
-import com.free.tvtracker.features.tracked.data.TodayReleasesQueryResult
-import com.free.tvtracker.features.tracked.data.TrackedShowJdbcRepository
+import com.free.tvtracker.features.tracked.data.shows.EpisodesReelaseTodayQueryResult
+import com.free.tvtracker.features.tracked.data.shows.TrackedShowJdbcRepository
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -13,7 +13,7 @@ class NotificationTaskTest {
     fun `GIVEN 1 show, 1 episode today, 1 user THEN 1 push sent to 1 device`() {
         val trackedShowJdbcRepository: TrackedShowJdbcRepository = mockk {
             every { getEpisodesReleasedToday() } returns listOf(
-                TodayReleasesQueryResult("suits", 1, "token1")
+                EpisodesReelaseTodayQueryResult("suits", 1, "token1")
             )
         }
         val fcmService: FcmService = mockk(relaxed = true)
@@ -26,9 +26,9 @@ class NotificationTaskTest {
     fun `GIVEN 1 show, 1 episode today, 3 users THEN 1 push sent to 3 devices`() {
         val trackedShowJdbcRepository: TrackedShowJdbcRepository = mockk {
             every { getEpisodesReleasedToday() } returns listOf(
-                TodayReleasesQueryResult("suits", 1, "token1"),
-                TodayReleasesQueryResult("suits", 1, "token2"),
-                TodayReleasesQueryResult("suits", 1, "token3")
+                EpisodesReelaseTodayQueryResult("suits", 1, "token1"),
+                EpisodesReelaseTodayQueryResult("suits", 1, "token2"),
+                EpisodesReelaseTodayQueryResult("suits", 1, "token3")
             )
         }
         val fcmService: FcmService = mockk(relaxed = true)
@@ -41,9 +41,9 @@ class NotificationTaskTest {
     fun `GIVEN 1 show, 3 episode today, 1 user THEN 1 push sent to 1 device`() {
         val trackedShowJdbcRepository: TrackedShowJdbcRepository = mockk {
             every { getEpisodesReleasedToday() } returns listOf(
-                TodayReleasesQueryResult("suits", 1, "token1"),
-                TodayReleasesQueryResult("suits", 1, "token1"),
-                TodayReleasesQueryResult("suits", 1, "token1"),
+                EpisodesReelaseTodayQueryResult("suits", 1, "token1"),
+                EpisodesReelaseTodayQueryResult("suits", 1, "token1"),
+                EpisodesReelaseTodayQueryResult("suits", 1, "token1"),
             )
         }
         val fcmService: FcmService = mockk(relaxed = true)
@@ -56,15 +56,15 @@ class NotificationTaskTest {
     fun `GIVEN 1 show, 3 episode today, 3 users THEN 1 push sent to 3 devices`() {
         val trackedShowJdbcRepository: TrackedShowJdbcRepository = mockk {
             every { getEpisodesReleasedToday() } returns listOf(
-                TodayReleasesQueryResult("suits", 1, "token1"),
-                TodayReleasesQueryResult("suits", 1, "token1"),
-                TodayReleasesQueryResult("suits", 1, "token1"),
-                TodayReleasesQueryResult("suits", 1, "token2"),
-                TodayReleasesQueryResult("suits", 1, "token2"),
-                TodayReleasesQueryResult("suits", 1, "token2"),
-                TodayReleasesQueryResult("suits", 1, "token3"),
-                TodayReleasesQueryResult("suits", 1, "token3"),
-                TodayReleasesQueryResult("suits", 1, "token3"),
+                EpisodesReelaseTodayQueryResult("suits", 1, "token1"),
+                EpisodesReelaseTodayQueryResult("suits", 1, "token1"),
+                EpisodesReelaseTodayQueryResult("suits", 1, "token1"),
+                EpisodesReelaseTodayQueryResult("suits", 1, "token2"),
+                EpisodesReelaseTodayQueryResult("suits", 1, "token2"),
+                EpisodesReelaseTodayQueryResult("suits", 1, "token2"),
+                EpisodesReelaseTodayQueryResult("suits", 1, "token3"),
+                EpisodesReelaseTodayQueryResult("suits", 1, "token3"),
+                EpisodesReelaseTodayQueryResult("suits", 1, "token3"),
             )
         }
         val fcmService: FcmService = mockk(relaxed = true)
@@ -77,8 +77,8 @@ class NotificationTaskTest {
     fun `GIVEN 2 shows, 1 episode today each, 1 users THEN 2 push sent to 1 devices`() {
         val trackedShowJdbcRepository: TrackedShowJdbcRepository = mockk {
             every { getEpisodesReleasedToday() } returns listOf(
-                TodayReleasesQueryResult("suits", 1, "token1"),
-                TodayReleasesQueryResult("game of throne", 2, "token1"),
+                EpisodesReelaseTodayQueryResult("suits", 1, "token1"),
+                EpisodesReelaseTodayQueryResult("game of throne", 2, "token1"),
             )
         }
         val fcmService: FcmService = mockk(relaxed = true)
@@ -91,12 +91,12 @@ class NotificationTaskTest {
     fun `GIVEN 2 shows, 1 episode today each, 3 users THEN 2 push sent to 3 devices`() {
         val trackedShowJdbcRepository: TrackedShowJdbcRepository = mockk {
             every { getEpisodesReleasedToday() } returns listOf(
-                TodayReleasesQueryResult("suits", 1, "token1"),
-                TodayReleasesQueryResult("game of throne", 2, "token1"),
-                TodayReleasesQueryResult("suits", 1, "token2"),
-                TodayReleasesQueryResult("game of throne", 2, "token2"),
-                TodayReleasesQueryResult("suits", 1, "token3"),
-                TodayReleasesQueryResult("game of throne", 2, "token3"),
+                EpisodesReelaseTodayQueryResult("suits", 1, "token1"),
+                EpisodesReelaseTodayQueryResult("game of throne", 2, "token1"),
+                EpisodesReelaseTodayQueryResult("suits", 1, "token2"),
+                EpisodesReelaseTodayQueryResult("game of throne", 2, "token2"),
+                EpisodesReelaseTodayQueryResult("suits", 1, "token3"),
+                EpisodesReelaseTodayQueryResult("game of throne", 2, "token3"),
             )
         }
         val fcmService: FcmService = mockk(relaxed = true)
@@ -109,18 +109,18 @@ class NotificationTaskTest {
     fun `GIVEN 2 shows, 2 episode today each, 3 users THEN 2 push sent to 3 devices`() {
         val trackedShowJdbcRepository: TrackedShowJdbcRepository = mockk {
             every { getEpisodesReleasedToday() } returns listOf(
-                TodayReleasesQueryResult("suits", 1, "token1"),
-                TodayReleasesQueryResult("suits", 1, "token1"),
-                TodayReleasesQueryResult("game of throne", 2, "token1"),
-                TodayReleasesQueryResult("game of throne", 2, "token1"),
-                TodayReleasesQueryResult("suits", 1, "token2"),
-                TodayReleasesQueryResult("suits", 1, "token2"),
-                TodayReleasesQueryResult("game of throne", 2, "token2"),
-                TodayReleasesQueryResult("game of throne", 2, "token2"),
-                TodayReleasesQueryResult("suits", 1, "token3"),
-                TodayReleasesQueryResult("suits", 1, "token3"),
-                TodayReleasesQueryResult("game of throne", 2, "token3"),
-                TodayReleasesQueryResult("game of throne", 2, "token3"),
+                EpisodesReelaseTodayQueryResult("suits", 1, "token1"),
+                EpisodesReelaseTodayQueryResult("suits", 1, "token1"),
+                EpisodesReelaseTodayQueryResult("game of throne", 2, "token1"),
+                EpisodesReelaseTodayQueryResult("game of throne", 2, "token1"),
+                EpisodesReelaseTodayQueryResult("suits", 1, "token2"),
+                EpisodesReelaseTodayQueryResult("suits", 1, "token2"),
+                EpisodesReelaseTodayQueryResult("game of throne", 2, "token2"),
+                EpisodesReelaseTodayQueryResult("game of throne", 2, "token2"),
+                EpisodesReelaseTodayQueryResult("suits", 1, "token3"),
+                EpisodesReelaseTodayQueryResult("suits", 1, "token3"),
+                EpisodesReelaseTodayQueryResult("game of throne", 2, "token3"),
+                EpisodesReelaseTodayQueryResult("game of throne", 2, "token3"),
             )
         }
         val fcmService: FcmService = mockk(relaxed = true)
