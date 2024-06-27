@@ -21,6 +21,7 @@ build/
 !**/src/test/**/build/
 http-client.private.env.json
 logs/
+.kotlin/
 
 ### STS ###
 .apt_generated

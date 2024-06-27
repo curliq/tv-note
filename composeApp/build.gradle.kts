@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.sqldelight)
     alias(libs.plugins.googleServicesAndroid)
+    alias(libs.plugins.compose.compiler)
 }
 
 kotlin {
