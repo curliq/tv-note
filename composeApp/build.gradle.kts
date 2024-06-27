@@ -81,16 +81,12 @@ kotlin {
         jvmMain.dependencies {
             implementation(libs.ktor.client.cio)
         }
-        commonTest.dependencies {
-            implementation(libs.kotlin.test)
-            implementation(libs.kotlinx.coroutines.test)
-        }
         jvmTest.dependencies {
             implementation(libs.kotlin.test)
             implementation(libs.mockk)
             implementation(libs.kotlinx.coroutines.test)
             implementation(libs.koin.test)
-            implementation("app.cash.turbine:turbine:1.1.0")
+            implementation(libs.turbine)
         }
     }
 }

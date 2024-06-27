@@ -1,21 +1,16 @@
 package com.free.tvtracker.ui.search
 
-import app.cash.turbine.test
 import com.free.tvtracker.data.search.SearchRepository
 import com.free.tvtracker.data.tracked.TrackedShowsRepository
 import com.free.tvtracker.search.response.SearchApiModel
 import com.free.tvtracker.search.response.SearchApiResponse
 import com.free.tvtracker.search.response.SearchMultiApiModel
-import com.free.tvtracker.search.response.SearchShowApiModel
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.count
-import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import kotlin.test.BeforeTest
