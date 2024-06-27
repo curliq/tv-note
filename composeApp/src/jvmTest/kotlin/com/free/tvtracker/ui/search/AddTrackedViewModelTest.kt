@@ -1,9 +1,11 @@
 package com.free.tvtracker.ui.search
 
+import app.cash.turbine.test
 import com.free.tvtracker.data.search.SearchRepository
 import com.free.tvtracker.data.tracked.TrackedShowsRepository
 import com.free.tvtracker.search.response.SearchApiModel
 import com.free.tvtracker.search.response.SearchApiResponse
+import com.free.tvtracker.search.response.SearchMultiApiModel
 import com.free.tvtracker.search.response.SearchShowApiModel
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -11,8 +13,12 @@ import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.count
+import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -20,31 +26,41 @@ import kotlin.test.assertEquals
 class AddTrackedViewModelTest {
     private val dispatcher = UnconfinedTestDispatcher()
     private val repo: SearchRepository = mockk {
-        coEvery { searchTvShows(any()) } returns SearchApiResponse.ok(
+        coEvery { searchAll(any()) } returns SearchApiResponse.ok(
             SearchApiModel(
-                listOf(SearchShowApiModel(1, "name", "overview", "poster")),
-                emptyList(),
-                emptyList()
+                listOf(SearchMultiApiModel(1, name = "name", mediaType = "tv", overview = "overview", posterPath = "poster")),
             )
         )
     }
     private val trackedRepo: TrackedShowsRepository = mockk(relaxed = true) {
         every { allShows } returns MutableStateFlow(emptyList())
     }
+    private lateinit var vm: AddTrackedViewModel
+
+    @BeforeTest
+    fun setup() {
+        vm = AddTrackedViewModel(
+            repo,
+            trackedRepo,
+            ShowSearchUiModelMapper(),
+            MovieSearchUiModelMapper(),
+            PersonSearchUiModelMapper(),
+            ioDispatcher = dispatcher
+        )
+        vm.setOriginScreen(AddTrackedScreenOriginScreen.Watching)
+    }
 
     @Test
     fun testPreviewsSearchIsSubbed() = runTest {
-        val vm = AddTrackedViewModel(repo, trackedRepo, ShowSearchUiModelMapper(), ioDispatcher = dispatcher)
         vm.setSearchQuery("helo")
 
         dispatcher.scheduler.advanceUntilIdle()
         assertEquals(1, (vm.results.value as AddTrackedUiState.Ok).data.size)
-        coVerify { repo.searchTvShows(eq("helo")) }
+        coVerify { repo.searchAll(eq("helo")) }
     }
 
     @Test
     fun testPreviewsSearchIsCancelled() = runTest {
-        val vm = AddTrackedViewModel(repo, trackedRepo, ShowSearchUiModelMapper(), ioDispatcher = dispatcher)
         vm.setSearchQuery("helo")
         vm.setSearchQuery("helo1")
         vm.setSearchQuery("helo2")
@@ -52,12 +68,11 @@ class AddTrackedViewModelTest {
 
         dispatcher.scheduler.advanceUntilIdle()
         assertEquals(1, (vm.results.value as AddTrackedUiState.Ok).data.size)
-        coVerify(exactly = 1) { repo.searchTvShows(eq("helo3")) }
+        coVerify(exactly = 1) { repo.searchAll(eq("helo3")) }
     }
 
     @Test
     fun testSetQuery() {
-        val vm = AddTrackedViewModel(repo, trackedRepo, ShowSearchUiModelMapper(), ioDispatcher = dispatcher)
         vm.searchQuery.value = "helo"
         assertEquals(vm.searchQuery.value, "helo")
     }

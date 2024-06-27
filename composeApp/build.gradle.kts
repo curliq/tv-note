@@ -90,6 +90,7 @@ kotlin {
             implementation(libs.mockk)
             implementation(libs.kotlinx.coroutines.test)
             implementation(libs.koin.test)
+            implementation("app.cash.turbine:turbine:1.1.0")
         }
     }
 }

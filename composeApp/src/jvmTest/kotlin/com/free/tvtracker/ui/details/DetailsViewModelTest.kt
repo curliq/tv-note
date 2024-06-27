@@ -9,6 +9,7 @@ import com.free.tvtracker.discover.response.TmdbShowDetailsApiResponse
 import com.free.tvtracker.domain.GetTrackedShowByTmdbIdUseCase
 import com.free.tvtracker.ui.details.mappers.ShowUiModelMapper
 import com.free.tvtracker.tracked.response.TrackedContentApiModel
+import com.free.tvtracker.ui.watching.GetNextUnwatchedEpisodeUseCaseTest.Companion.buildTrackedContent
 import com.free.tvtracker.utils.buildDetailsUiModel
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -81,7 +82,7 @@ class DetailsViewModelTest {
     fun `GIVEN season with 2 unwatched eps WHEN marking season watched THEN 2 eps are sent`() {
         every {
             trackedShowsRepository.getShowByTmdbId(1)
-        } returns TrackedContentApiModel(1, "", emptyList(), mockk(), false)
+        } returns buildTrackedContent(emptyList(), emptyList())
         every { mapper.map(any(), any()) } returns buildDetailsUiModel(
             seasons = listOf(
                 DetailsUiModel.Season(

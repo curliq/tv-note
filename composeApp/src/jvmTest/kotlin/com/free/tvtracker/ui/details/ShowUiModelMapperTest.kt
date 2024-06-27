@@ -19,6 +19,7 @@ class ShowUiModelMapperTest {
             mockk(relaxed = true),
             mockk(relaxed = true),
             GetShowStatusUseCase(),
+            mockk(relaxed = true),
         )
 
     @Test
