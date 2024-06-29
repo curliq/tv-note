@@ -68,6 +68,8 @@ import com.free.tvtracker.ui.details.DetailsUiModel.TrackingStatus.Action.Remove
 import com.free.tvtracker.ui.details.DetailsUiModel.TrackingStatus.Action.RemoveFromWatchlist
 import com.free.tvtracker.ui.details.DetailsUiModel.TrackingStatus.Action.TrackWatching
 import com.free.tvtracker.ui.details.DetailsUiModel.TrackingStatus.Action.TrackWatchlist
+import com.free.tvtracker.ui.details.DetailsUiModel.TrackingStatus.Action.MoveMovieToFinished
+import com.free.tvtracker.ui.details.DetailsUiModel.TrackingStatus.Action.RemoveMovieFromWatched
 
 sealed class DetailsScreenNavAction {
     data class GoYoutube(val webUrl: String) : DetailsScreenNavAction()
@@ -80,14 +82,14 @@ sealed class DetailsScreenNavAction {
 @Composable
 fun DetailsScreen(
     viewModel: DetailsViewModel,
-    showId: Int,
+    content: DetailsViewModel.LoadContent,
     navAction: (DetailsScreenNavAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
     TvTrackerTheme {
         Scaffold(modifier.fillMaxSize()) {
-            LaunchedEffect(showId) {
-                viewModel.setId(showId)
+            LaunchedEffect(content) {
+                viewModel.loadContent(content)
             }
             val show = viewModel.result.collectAsState().value
             AnimatedContent(
@@ -96,7 +98,7 @@ fun DetailsScreen(
                 contentKey = { targetState -> targetState::class }
             ) { targetState ->
                 when (targetState) {
-                    DetailsUiState.Error -> ErrorScreen { viewModel.setId(showId) }
+                    DetailsUiState.Error -> ErrorScreen { viewModel.loadContent(content) }
                     DetailsUiState.Loading -> LoadingScreen()
                     is DetailsUiState.Ok -> DetailsScreenContent(targetState.data, navAction, viewModel::action)
                 }
@@ -125,16 +127,22 @@ fun DetailsScreenContent(
                 Text(text = show.name, style = MaterialTheme.typography.headlineSmall)
                 Spacer(Modifier.height(8.dp))
                 Text(text = show.releaseStatus, style = MaterialTheme.typography.bodySmall)
+                if (show.duration != null) {
+                    Spacer(Modifier.height(8.dp))
+                    Text(text = "Duration: ${show.duration}", style = MaterialTheme.typography.bodySmall)
+                }
             }
         }
         Row {
             fun text(action: DetailsUiModel.TrackingStatus.Action?): String = when (action) {
                 RemoveFromWatchlist -> "Remove"
                 RemoveFromWatching -> "Remove"
+                RemoveMovieFromWatched -> "Remove"
                 TrackWatchlist -> "Add to watchlist"
                 TrackWatching -> "Add to watching"
                 MoveToWatchlist -> "Move to watchlist"
                 MoveToWatching -> "Move to watching"
+                MoveMovieToFinished -> "Mark watched"
                 null -> ""
             }
             show.trackingStatus.action1?.let { action ->
@@ -212,25 +220,24 @@ fun DetailsScreenContent(
         Spacer(Modifier.height(8.dp))
         Text(text = show.description ?: "No description available")
         Spacer(Modifier.height(24.dp))
-
         if (!show.genres.isNullOrEmpty()) {
             Text("Genres", style = MaterialTheme.typography.titleLarge)
             Spacer(Modifier.height(8.dp))
             Text(text = show.genres)
             Spacer(Modifier.height(24.dp))
         }
-
-        Text(text = "Episodes", style = MaterialTheme.typography.titleLarge)
-        Spacer(Modifier.height(8.dp))
-        Text(text = show.seasonsInfo ?: "No seasons available")
-        Spacer(Modifier.height(8.dp))
-        FilledTonalButton(
-            onClick = { navAction(DetailsScreenNavAction.GoAllEpisodes) },
-            content = { Text("See all episodes") },
-            shape = TvTrackerTheme.ShapeButton
-        )
-        Spacer(Modifier.height(24.dp))
-
+        if (show.isTvShow) {
+            Text(text = "Episodes", style = MaterialTheme.typography.titleLarge)
+            Spacer(Modifier.height(8.dp))
+            Text(text = show.seasonsInfo ?: "No seasons available")
+            Spacer(Modifier.height(8.dp))
+            FilledTonalButton(
+                onClick = { navAction(DetailsScreenNavAction.GoAllEpisodes) },
+                content = { Text("See all episodes") },
+                shape = TvTrackerTheme.ShapeButton
+            )
+            Spacer(Modifier.height(24.dp))
+        }
         Text("Trailers & photos", style = MaterialTheme.typography.titleLarge)
         Spacer(Modifier.height(8.dp))
         Row(

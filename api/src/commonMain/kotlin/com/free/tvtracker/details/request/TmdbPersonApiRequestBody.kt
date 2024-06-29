@@ -1,4 +1,4 @@
-package com.free.tvtracker.discover.request
+package com.free.tvtracker.details.request
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

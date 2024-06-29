@@ -7,10 +7,7 @@ import org.springframework.stereotype.Service
 import java.sql.Timestamp
 import java.time.Duration
 import java.time.Instant
-import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.contract
 
-@OptIn(ExperimentalContracts::class)
 @Service
 class StoredMoviesService(
     private val storedMovieJpaRepository: StoredMovieJpaRepository
@@ -36,7 +33,6 @@ class StoredMoviesService(
     }
 
     private fun isStoredMovieCacheValid(storedMovie: StoredMovieEntity?): Boolean {
-        contract { returns(true) implies (storedMovie != null) }
         if (storedMovie == null) {
             return false
         }

@@ -64,7 +64,8 @@ import com.free.tvtracker.ui.common.theme.TvTrackerTheme
 import com.free.tvtracker.ui.common.theme.TvTrackerTheme.sidePadding
 
 sealed class AddTrackedScreenNavAction {
-    data class GoContentDetails(val showTmdbId: Int) : AddTrackedScreenNavAction()
+    data class GoContentDetails(val showTmdbId: Int, val isTvShow: Boolean) : AddTrackedScreenNavAction()
+    data class GoPersonDetails(val personTmdbId: Int) : AddTrackedScreenNavAction()
 }
 
 enum class AddTrackedScreenOriginScreen { Watching, Finished, Watchlist, Discover }
@@ -161,8 +162,14 @@ fun AddTrackedScreenGrid(
     ) {
         itemsIndexed(results, key = { i, item -> item.tmdbId }) { index, item ->
             OutlinedCard(
-                modifier = Modifier.fillMaxHeight().animateItemPlacement(),
-                onClick = { navActions(AddTrackedScreenNavAction.GoContentDetails(item.tmdbId)) },
+                modifier = Modifier.fillMaxHeight().animateItem(),
+                onClick = {
+                    if (item.isPerson) {
+                        navActions(AddTrackedScreenNavAction.GoPersonDetails(item.tmdbId))
+                    } else {
+                        navActions(AddTrackedScreenNavAction.GoContentDetails(item.tmdbId, item.isTvShow))
+                    }
+                },
             ) {
                 Box(Modifier.aspectRatio(posterRatio())) {
                     TvImage(item.image, modifier = Modifier.fillMaxHeight().fillMaxWidth())

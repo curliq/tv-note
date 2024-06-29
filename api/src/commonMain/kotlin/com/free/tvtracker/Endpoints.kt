@@ -1,19 +1,21 @@
 package com.free.tvtracker
 
 import com.free.tvtracker.base.ApiResponse
+import com.free.tvtracker.details.request.TmdbMovieDetailsApiRequestBody
 import com.free.tvtracker.discover.request.RecommendedContentApiRequestBody
-import com.free.tvtracker.discover.request.TmdbPersonApiRequestBody
-import com.free.tvtracker.discover.request.TmdbShowDetailsApiRequestBody
+import com.free.tvtracker.details.request.TmdbPersonApiRequestBody
+import com.free.tvtracker.details.request.TmdbShowDetailsApiRequestBody
+import com.free.tvtracker.details.response.TmdbMovieDetailsApiResponse
 import com.free.tvtracker.discover.response.RecommendedContentApiResponse
-import com.free.tvtracker.discover.response.TmdbPersonDetailsApiResponse
-import com.free.tvtracker.discover.response.TmdbShowDetailsApiResponse
+import com.free.tvtracker.details.response.TmdbPersonDetailsApiResponse
+import com.free.tvtracker.details.response.TmdbShowDetailsApiResponse
 import com.free.tvtracker.discover.response.TmdbShowTrendingApiResponse
 import com.free.tvtracker.search.request.SearchApiRequestBody
 import com.free.tvtracker.search.response.SearchApiResponse
 import com.free.tvtracker.tracked.request.AddEpisodesApiRequestBody
 import com.free.tvtracker.tracked.request.AddMovieApiRequestBody
 import com.free.tvtracker.tracked.request.AddShowApiRequestBody
-import com.free.tvtracker.tracked.request.RemoveShowApiRequestBody
+import com.free.tvtracker.tracked.request.RemoveContentApiRequestBody
 import com.free.tvtracker.tracked.request.SetShowWatchlistedApiRequestBody
 import com.free.tvtracker.tracked.response.AddTrackedEpisodesApiResponse
 import com.free.tvtracker.tracked.response.AddTrackedShowApiResponse
@@ -36,15 +38,16 @@ object Endpoints {
         const val LOGIN = "user/login"
         const val POST_FCM_TOKEN = "user/fcm-token"
         const val GET_WATCHING = "track/shows/watching"
-        const val GET_FINISHED = "track/shows/finished"
-        const val GET_WATCHLISTED = "track/shows/watchlisted"
+        const val GET_FINISHED = "track/content/finished"
+        const val GET_WATCHLISTED = "track/content/watchlisted"
         const val ADD_TRACKED_SHOW = "track/shows"
         const val ADD_TRACKED_MOVIE = "track/movies"
-        const val REMOVE_TRACKED = "track/shows/remove"
+        const val REMOVE_TRACKED = "track/content/remove"
         const val ADD_EPISODES = "track/episodes"
         const val SET_SHOW_WATCHLISTED = "track/shows/toggle-watchlist"
         const val SEARCH = "search"
         const val GET_TMDB_SHOW = "search/show"
+        const val GET_TMDB_MOVIE = "search/movie"
         const val GET_TMDB_PERSON = "search/person"
         const val GET_TRENDING_WEEKLY = "discover/trending"
         const val GET_RELEASED_SOON = "discover/released-soon"
@@ -86,7 +89,7 @@ object Endpoints {
     val removeTracked = Endpoint(
         Path.REMOVE_TRACKED,
         ApiResponse.EmptyApiResponse::class,
-        RemoveShowApiRequestBody::class,
+        RemoveContentApiRequestBody::class,
         Endpoint.Verb.POST
     )
     val setShowWatchlisted = Endpoint(
@@ -95,20 +98,23 @@ object Endpoints {
         SetShowWatchlistedApiRequestBody::class,
         Endpoint.Verb.POST
     )
-    val addEpisodes =
-        Endpoint(
-            Path.ADD_EPISODES,
-            AddTrackedEpisodesApiResponse::class,
-            AddEpisodesApiRequestBody::class,
-            Endpoint.Verb.POST
-        )
-
-    //    val toggleWatchlist = Endpoint(Path.TOGGLE_WATCHLIST, )
+    val addEpisodes = Endpoint(
+        Path.ADD_EPISODES,
+        AddTrackedEpisodesApiResponse::class,
+        AddEpisodesApiRequestBody::class,
+        Endpoint.Verb.POST
+    )
     val search = Endpoint(Path.SEARCH, SearchApiResponse::class, SearchApiRequestBody::class, Endpoint.Verb.POST)
     val getTmdbShow = Endpoint(
         Path.GET_TMDB_SHOW,
         TmdbShowDetailsApiResponse::class,
         TmdbShowDetailsApiRequestBody::class,
+        Endpoint.Verb.POST
+    )
+    val getTmdbMovie = Endpoint(
+        Path.GET_TMDB_MOVIE,
+        TmdbMovieDetailsApiResponse::class,
+        TmdbMovieDetailsApiRequestBody::class,
         Endpoint.Verb.POST
     )
     val getTmdbPerson = Endpoint(

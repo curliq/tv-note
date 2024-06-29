@@ -49,7 +49,7 @@ import com.free.tvtracker.ui.watching.FabContainer
 
 sealed class DiscoverScreenNavActions {
     data object GoAddShow : DiscoverScreenNavActions()
-    data class GoShowDetails(val tmdbShowId: Int) : DiscoverScreenNavActions()
+    data class GoShowDetails(val tmdbShowId: Int, val isTvShow:Boolean) : DiscoverScreenNavActions()
     data object GoRecommendations : DiscoverScreenNavActions()
     data object GoTrending : DiscoverScreenNavActions()
     data object GoNewRelease : DiscoverScreenNavActions()
@@ -199,7 +199,7 @@ private fun DiscoverRow(
                 Box(Modifier.fillMaxWidth().weight(0.8f / 3f)) { // 3 cards + see all with 20% width
                     Card(
                         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
-                        onClick = { navAction(DiscoverScreenNavActions.GoShowDetails(movieOrShow.tmdbId)) },
+                        onClick = { navAction(DiscoverScreenNavActions.GoShowDetails(movieOrShow.tmdbId, true)) },
                         modifier = Modifier.fillMaxSize()
                     ) {
                         Box(Modifier.aspectRatio(posterRatio())) {

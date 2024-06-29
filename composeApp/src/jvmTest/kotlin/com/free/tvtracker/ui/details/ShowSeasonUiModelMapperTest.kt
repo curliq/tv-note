@@ -1,6 +1,6 @@
 package com.free.tvtracker.ui.details
 
-import com.free.tvtracker.discover.response.TmdbShowDetailsApiModel
+import com.free.tvtracker.details.response.TmdbShowDetailsApiModel
 import com.free.tvtracker.tracked.response.TrackedContentApiModel
 import com.free.tvtracker.ui.details.mappers.ShowEpisodeUiModelMapper
 import com.free.tvtracker.ui.details.mappers.ShowSeasonUiModelMapper

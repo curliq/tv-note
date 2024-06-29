@@ -2,12 +2,14 @@ package com.free.tvtracker.data.search
 
 import com.free.tvtracker.Endpoints
 import com.free.tvtracker.base.ApiError
+import com.free.tvtracker.details.request.TmdbMovieDetailsApiRequestBody
 import com.free.tvtracker.discover.request.RecommendedContentApiRequestBody
-import com.free.tvtracker.discover.request.TmdbPersonApiRequestBody
-import com.free.tvtracker.discover.request.TmdbShowDetailsApiRequestBody
+import com.free.tvtracker.details.request.TmdbPersonApiRequestBody
+import com.free.tvtracker.details.request.TmdbShowDetailsApiRequestBody
+import com.free.tvtracker.details.response.TmdbMovieDetailsApiResponse
 import com.free.tvtracker.discover.response.RecommendedContentApiResponse
-import com.free.tvtracker.discover.response.TmdbPersonDetailsApiResponse
-import com.free.tvtracker.discover.response.TmdbShowDetailsApiResponse
+import com.free.tvtracker.details.response.TmdbPersonDetailsApiResponse
+import com.free.tvtracker.details.response.TmdbShowDetailsApiResponse
 import com.free.tvtracker.discover.response.TmdbShowTrendingApiResponse
 import com.free.tvtracker.expect.data.TvHttpClient
 import com.free.tvtracker.search.request.MediaType
@@ -50,6 +52,15 @@ class SearchRepository(
             httpClient.call(Endpoints.getTmdbShow, body)
         } catch (e: Throwable) {
             TmdbShowDetailsApiResponse.error(ApiError.Network)
+        }
+    }
+
+    suspend fun getMovie(movieTmdbId: Int, countryCode: String): TmdbMovieDetailsApiResponse {
+        val body = TmdbMovieDetailsApiRequestBody(movieTmdbId, countryCode)
+        return try {
+            httpClient.call(Endpoints.getTmdbMovie, body)
+        } catch (e: Throwable) {
+            TmdbMovieDetailsApiResponse.error(ApiError.Network)
         }
     }
 

@@ -20,7 +20,9 @@ class ShowSearchUiModelMapper :
                 AddTrackedScreenOriginScreen.Finished ->  AddTrackedItemUiModel.TrackAction.Finished(true)
                 AddTrackedScreenOriginScreen.Watchlist ->  AddTrackedItemUiModel.TrackAction.Watchlist(true)
                 AddTrackedScreenOriginScreen.Discover ->  AddTrackedItemUiModel.TrackAction.None
-            }
+            },
+            isTvShow = true,
+            isPerson = false
         )
     }
 }

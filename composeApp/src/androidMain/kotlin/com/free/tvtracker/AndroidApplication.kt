@@ -37,7 +37,7 @@ class AndroidApplication : Application() {
                     viewModel { WatchingViewModel(get(), get(), get(), get()) }
                     viewModel { FinishedShowsViewModel(get(), get(), get(), get()) }
                     viewModel { WatchlistedShowsViewModel(get(), get(), get(), get()) }
-                    viewModel { DetailsViewModel(get(), get(), get()) }
+                    viewModel { DetailsViewModel(get(), get(), get(), get(), get()) }
                     viewModel { PersonViewModel(get(), get()) }
                     viewModel { LoginViewModel(get(), get()) }
                     viewModel { SignupViewModel(get()) }

@@ -17,7 +17,8 @@ object DetailsScreenPreviews {
         homepageUrl = "",
         releaseStatus = "2014 - Ongoing",
         trackingStatus = DetailsUiModel.TrackingStatus(null, null),
-        trackedShowId = null,
+        duration = null,
+        trackedContentId = null,
         description = "game of thrones is a show about society",
         seasonsInfo = "2 seasons - 16 episodes - 0h40m each",
         castFirst = DetailsUiModel.Cast(1, "William Dicksdoor 2 lines", "King Joffrey", ""),
@@ -101,7 +102,8 @@ object DetailsScreenPreviews {
         mediaImagesBackdrops = listOf("url", "url", "url", "url", "url", "url", "url"),
         genres = "action, anime",
         ratingTmdbVoteAverage = "9/10",
-        ratingTmdbVoteCount = "40k"
+        ratingTmdbVoteCount = "40k",
+        isTvShow = true
     )
 }
 

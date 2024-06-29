@@ -1,5 +1,6 @@
 package com.free.tvtracker.activities.showdetails
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -42,8 +43,16 @@ import org.koin.androidx.compose.koinViewModel
 
 
 class ShowDetailsActivity : BaseActivity() {
-    companion object Extras {
+
+    companion object {
         const val EXTRA_SHOW_ID = "EXTRA_SHOW_ID"
+        const val EXTRA_IS_SHOW = "EXTRA_IS_SHOW"
+        fun create(context:Context, tmdbId:Int, isShow:Boolean): Intent {
+            return Intent(context, ShowDetailsActivity::class.java).apply {
+                putExtra(EXTRA_SHOW_ID, tmdbId)
+                putExtra(EXTRA_IS_SHOW, isShow)
+            }
+        }
     }
 
     enum class ShowDetailsNavDestinations {
@@ -56,6 +65,7 @@ class ShowDetailsActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val showId = intent.getIntExtra(EXTRA_SHOW_ID, -1)
+        val isContentTvShow = intent.getBooleanExtra(EXTRA_IS_SHOW, true)
         setContent {
             val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
             val sheetState = rememberModalBottomSheetState()
@@ -130,8 +140,8 @@ class ShowDetailsActivity : BaseActivity() {
                 ) { padding ->
                     DetailsScreen(
                         viewModel = viewModel,
-                        showId = showId,
-                        navActions,
+                        content = DetailsViewModel.LoadContent(showId, isContentTvShow),
+                        navAction = navActions,
                         modifier = Modifier
                             .padding(padding)
                             .nestedScroll(scrollBehavior.nestedScrollConnection)

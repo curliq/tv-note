@@ -1,11 +1,10 @@
 package com.free.tvtracker.features.search.mappers
 
 import com.free.tvtracker.base.Mapper
+import com.free.tvtracker.details.response.Credits
+import com.free.tvtracker.details.response.Profile
+import com.free.tvtracker.details.response.TmdbPersonDetailsApiModel
 import com.free.tvtracker.tmdb.data.TmdbPersonResponse
-import com.free.tvtracker.discover.response.MovieCredits
-import com.free.tvtracker.discover.response.Profile
-import com.free.tvtracker.discover.response.TmdbPersonDetailsApiModel
-import com.free.tvtracker.discover.response.TvCredits
 import org.springframework.stereotype.Component
 
 @Component
@@ -21,9 +20,9 @@ class PersonApiModelMapper : Mapper<TmdbPersonResponse, TmdbPersonDetailsApiMode
             name = from.name,
             placeOfBirth = from.placeOfBirth,
             profilePath = from.profilePath,
-            tvCredits = TvCredits(
+            credits = Credits(
                 from.tvCredits.cast?.sortedWith(compareBy({ it.episodeCount!! < 3 }, { -it.voteCount!! }))?.map {
-                    TvCredits.Cast(
+                    Credits.Cast(
                         id = it.id,
                         posterPath = it.posterPath,
                         name = it.name,
@@ -31,28 +30,31 @@ class PersonApiModelMapper : Mapper<TmdbPersonResponse, TmdbPersonDetailsApiMode
                     )
                 } ?: emptyList(),
                 from.tvCredits.crew?.sortedWith(compareBy({ it.episodeCount!! < 3 }, { -it.voteCount!! }))?.map {
-                    TvCredits.Crew(
+                    Credits.Crew(
                         id = it.id,
                         posterPath = it.posterPath,
                         name = it.name,
                         voteCount = it.voteCount,
                     )
                 } ?: emptyList()),
-            movieCredits = MovieCredits(from.movieCredits.cast?.sortedByDescending { it.voteCount }?.map {
-                MovieCredits.Cast(
-                    id = it.id,
-                    posterPath = it.posterPath,
-                    title = it.title,
-                    voteCount = it.voteCount,
-                )
-            }, from.movieCredits.crew?.sortedByDescending { it.voteCount }?.map {
-                MovieCredits.Crew(
-                    id = it.id,
-                    posterPath = it.posterPath,
-                    title = it.title,
-                    voteCount = it.voteCount,
-                )
-            }),
+            movieCredits = Credits(
+                cast = from.movieCredits.cast?.sortedByDescending { it.voteCount }?.map {
+                    Credits.Cast(
+                        id = it.id,
+                        posterPath = it.posterPath,
+                        name = it.title,
+                        voteCount = it.voteCount,
+                    )
+                } ?: emptyList(),
+                crew = from.movieCredits.crew?.sortedByDescending { it.voteCount }?.map {
+                    Credits.Crew(
+                        id = it.id,
+                        posterPath = it.posterPath,
+                        name = it.title,
+                        voteCount = it.voteCount,
+                    )
+                } ?: emptyList(),
+            ),
             images = from.images.profiles.map { Profile(it.filePath, it.voteCount) },
             instagramId = from.externalIds.instagramId,
             tiktokId = from.externalIds.tiktokId,

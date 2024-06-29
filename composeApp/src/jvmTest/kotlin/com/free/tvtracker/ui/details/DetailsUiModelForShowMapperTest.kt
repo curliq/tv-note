@@ -1,17 +1,17 @@
 package com.free.tvtracker.ui.details
 
-import com.free.tvtracker.discover.response.TmdbShowDetailsApiModel
-import com.free.tvtracker.ui.details.mappers.ShowUiModelMapper
+import com.free.tvtracker.details.response.TmdbShowDetailsApiModel
+import com.free.tvtracker.ui.details.mappers.DetailsUiModelForShowMapper
 import com.free.tvtracker.constants.TmdbShowStatus
 import com.free.tvtracker.domain.GetShowStatusUseCase
 import io.mockk.mockk
 import org.junit.Assert.assertEquals
 import kotlin.test.Test
 
-class ShowUiModelMapperTest {
+class DetailsUiModelForShowMapperTest {
 
     private val sut =
-        ShowUiModelMapper(
+        DetailsUiModelForShowMapper(
             mockk(relaxed = true),
             mockk(relaxed = true),
             mockk(relaxed = true),

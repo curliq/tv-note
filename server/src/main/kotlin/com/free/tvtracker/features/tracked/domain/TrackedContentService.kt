@@ -17,6 +17,7 @@ import com.free.tvtracker.storage.shows.domain.StoredShowsService
 import com.free.tvtracker.tracked.request.AddEpisodesApiRequestBody
 import com.free.tvtracker.tracked.request.AddMovieApiRequestBody
 import com.free.tvtracker.tracked.request.AddShowApiRequestBody
+import com.free.tvtracker.tracked.request.SetShowWatchlistedApiRequestBody
 import com.free.tvtracker.tracked.response.TrackedContentApiModel
 import org.springframework.stereotype.Service
 
@@ -105,12 +106,23 @@ class TrackedContentService(
         trackedMovieJdbcRepository.batchChangeUser(fromUserId, toUserId)
     }
 
-    fun setShowWatchlistFlag(trackedShowId: Int, watchlisted: Boolean): TrackedContentApiModel {
-        val show = trackedShowJpaRepository.findById(trackedShowId).get().copy(watchlisted = watchlisted)
-        return trackedShowJpaRepository.saveAndFlush(show).toApiModel()
+    fun setShowWatchlistFlag(body: SetShowWatchlistedApiRequestBody): TrackedContentApiModel {
+        if (body.isTvShow) {
+            val show =
+                trackedShowJpaRepository.findById(body.trackedContentId).get().copy(watchlisted = body.watchlisted)
+            return trackedShowJpaRepository.saveAndFlush(show).toApiModel()
+        } else {
+            val movie =
+                trackedMovieJpaRepository.findById(body.trackedContentId).get().copy(watchlisted = body.watchlisted)
+            return trackedMovieJpaRepository.saveAndFlush(movie).toApiModel()
+        }
     }
 
-    fun delete(trackedShowId: Int) {
-        trackedShowJpaRepository.deleteById(trackedShowId)
+    fun delete(trackedContentId: Int, isTvShow: Boolean) {
+        if (isTvShow) {
+            trackedShowJpaRepository.deleteById(trackedContentId)
+        } else {
+            trackedMovieJpaRepository.deleteById(trackedContentId)
+        }
     }
 }

@@ -21,7 +21,9 @@ class MovieSearchUiModelMapper :
                 AddTrackedScreenOriginScreen.Finished -> AddTrackedItemUiModel.TrackAction.Finished(false)
                 AddTrackedScreenOriginScreen.Watchlist -> AddTrackedItemUiModel.TrackAction.Watchlist(false)
                 AddTrackedScreenOriginScreen.Discover -> AddTrackedItemUiModel.TrackAction.None
-            }
+            },
+            isTvShow = false,
+            isPerson = false
         )
     }
 }

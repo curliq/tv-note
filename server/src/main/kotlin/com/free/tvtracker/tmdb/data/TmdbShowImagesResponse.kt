@@ -1,7 +1,7 @@
 package com.free.tvtracker.tmdb.data
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.free.tvtracker.discover.response.TmdbShowDetailsApiModel.Images
+import com.free.tvtracker.details.response.TmdbShowDetailsApiModel.Images
 
 data class TmdbShowImagesResponse(
     @JsonProperty("backdrops") var backdrops: List<Backdrops> = emptyList(),

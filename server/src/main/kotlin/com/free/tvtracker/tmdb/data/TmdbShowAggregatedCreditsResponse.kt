@@ -1,7 +1,7 @@
 package com.free.tvtracker.tmdb.data
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.free.tvtracker.discover.response.TmdbShowDetailsApiModel
+import com.free.tvtracker.details.response.TmdbShowDetailsApiModel
 
 
 data class TmdbShowAggregatedCreditsResponse(

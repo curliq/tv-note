@@ -1,4 +1,4 @@
-package com.free.tvtracker.discover.response
+package com.free.tvtracker.details.response
 
 import com.free.tvtracker.base.ApiError
 import com.free.tvtracker.base.ApiResponse

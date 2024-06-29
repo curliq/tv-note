@@ -34,10 +34,10 @@ import com.free.tvtracker.core.ui.BaseActivity
 import com.free.tvtracker.ui.person.PersonScreen
 import com.free.tvtracker.ui.person.PersonScreenNavAction
 import com.free.tvtracker.ui.person.PersonViewModel
+import com.free.tvtracker.ui.person.dialogs.PersonMoviesSheet
 import com.free.tvtracker.ui.person.dialogs.PersonPhotosSheet
 import com.free.tvtracker.ui.person.dialogs.PersonShowsSheet
 import org.koin.androidx.compose.koinViewModel
-
 
 class PersonDetailsActivity : BaseActivity() {
     companion object Extras {
@@ -46,6 +46,7 @@ class PersonDetailsActivity : BaseActivity() {
 
     enum class PersonDetailsNavDestinations {
         SHOWS,
+        MOVIES,
         PHOTOS
     }
 
@@ -63,10 +64,7 @@ class PersonDetailsActivity : BaseActivity() {
                 when (action) {
                     is PersonScreenNavAction.GoShowDetails -> {
                         context.startActivity(
-                            Intent(
-                                context,
-                                ShowDetailsActivity::class.java
-                            ).putExtra(ShowDetailsActivity.EXTRA_SHOW_ID, action.tmdbShowId)
+                            ShowDetailsActivity.create(context, action.tmdbShowId, action.isTvShow)
                         )
                     }
 
@@ -76,6 +74,10 @@ class PersonDetailsActivity : BaseActivity() {
 
                     PersonScreenNavAction.GoAllShows -> {
                         showBottomSheet = PersonDetailsNavDestinations.SHOWS
+                    }
+
+                    PersonScreenNavAction.GoAllMovies -> {
+                        showBottomSheet = PersonDetailsNavDestinations.MOVIES
                     }
 
                     is PersonScreenNavAction.GoInstagram -> {
@@ -128,12 +130,21 @@ class PersonDetailsActivity : BaseActivity() {
                                         )
                                     }
 
+                                    PersonDetailsNavDestinations.MOVIES -> {
+                                        PersonMoviesSheet(
+                                            viewModel = koinViewModel(owner = context),
+                                            navActions = navActions,
+                                            padding.calculateBottomPadding().value
+                                        )
+                                    }
+
                                     PersonDetailsNavDestinations.PHOTOS -> {
                                         PersonPhotosSheet(
                                             viewModel = koinViewModel(owner = context),
                                             padding.calculateBottomPadding().value
                                         )
                                     }
+
 
                                     null -> {}
                                 }

@@ -15,7 +15,9 @@ class PersonSearchUiModelMapper :
             from.name!!,
             TmdbConfigData.get().getPosterUrl(from.profilePath),
             options.tracked,
-            AddTrackedItemUiModel.TrackAction.None
+            AddTrackedItemUiModel.TrackAction.None,
+            isTvShow = false,
+            isPerson = true
         )
     }
 }

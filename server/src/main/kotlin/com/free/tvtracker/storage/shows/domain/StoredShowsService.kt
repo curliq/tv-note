@@ -8,9 +8,7 @@ import java.sql.Timestamp
 import java.time.Duration
 import java.time.Instant
 import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.contract
 
-@OptIn(ExperimentalContracts::class)
 @Service
 class StoredShowsService(
     private val storedShowJpaRepository: StoredShowJpaRepository,
@@ -40,7 +38,6 @@ class StoredShowsService(
     }
 
     private fun isStoredShowCacheValid(storedShow: StoredShowEntity?): Boolean {
-        contract { returns(true) implies (storedShow != null) }
         if (storedShow == null) {
             return false
         }

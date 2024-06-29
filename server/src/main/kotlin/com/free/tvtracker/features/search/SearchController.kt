@@ -1,13 +1,15 @@
 package com.free.tvtracker.features.search
 
 import com.free.tvtracker.Endpoints
+import com.free.tvtracker.constants.TmdbContentType
+import com.free.tvtracker.details.request.TmdbMovieDetailsApiRequestBody
 import com.free.tvtracker.logging.TvtrackerLogger
 import com.free.tvtracker.tmdb.data.TmdbSearchMultiResponse
-import com.free.tvtracker.tmdb.data.enums.TmdbContentType
-import com.free.tvtracker.discover.request.TmdbPersonApiRequestBody
-import com.free.tvtracker.discover.request.TmdbShowDetailsApiRequestBody
-import com.free.tvtracker.discover.response.TmdbPersonDetailsApiResponse
-import com.free.tvtracker.discover.response.TmdbShowDetailsApiResponse
+import com.free.tvtracker.details.request.TmdbPersonApiRequestBody
+import com.free.tvtracker.details.request.TmdbShowDetailsApiRequestBody
+import com.free.tvtracker.details.response.TmdbMovieDetailsApiResponse
+import com.free.tvtracker.details.response.TmdbPersonDetailsApiResponse
+import com.free.tvtracker.details.response.TmdbShowDetailsApiResponse
 import com.free.tvtracker.search.request.MediaType
 import com.free.tvtracker.search.request.SearchApiRequestBody
 import com.free.tvtracker.search.response.SearchApiModel
@@ -34,7 +36,7 @@ class SearchController(
     @PostMapping(Endpoints.Path.SEARCH)
     fun search(@RequestBody body: SearchApiRequestBody): ResponseEntity<SearchApiResponse> {
         val apiModel = searchService.searchTerm(body.term, body.mediaType).results.map { content ->
-            content.toMultiApiModel()
+            content.toMultiApiModel(body.mediaType)
         }
         val response = SearchApiResponse.ok(SearchApiModel(apiModel))
         return ResponseEntity.ok(response)
@@ -45,6 +47,15 @@ class SearchController(
         return ResponseEntity.ok(
             TmdbShowDetailsApiResponse.ok(
                 searchService.getShowApiModel(body.tmdbId, body.includeEpisodes, body.countryCode)
+            )
+        )
+    }
+
+    @PostMapping(Endpoints.Path.GET_TMDB_MOVIE)
+    fun getTmdbMovie(@RequestBody body: TmdbMovieDetailsApiRequestBody): ResponseEntity<TmdbMovieDetailsApiResponse> {
+        return ResponseEntity.ok(
+            TmdbMovieDetailsApiResponse.ok(
+                searchService.getMovieApiModel(body.tmdbId, body.countryCode)
             )
         )
     }
@@ -105,7 +116,17 @@ fun TmdbSearchMultiResponse.Data.toPersonApiModel(): SearchPersonApiModel {
     )
 }
 
-fun TmdbSearchMultiResponse.Data.toMultiApiModel(): SearchMultiApiModel {
+/**
+ * @param forcedMediaType this is used for when doing search/multi because the tmdb api excludes the media_type field
+ * in this case
+ */
+fun TmdbSearchMultiResponse.Data.toMultiApiModel(forcedMediaType: MediaType): SearchMultiApiModel {
+    val media = when (forcedMediaType) {
+        MediaType.ALL -> "multi"
+        MediaType.TV_SHOWS -> TmdbContentType.SHOW.key
+        MediaType.MOVIES -> TmdbContentType.MOVIE.key
+        MediaType.PEOPLE -> TmdbContentType.PERSON.key
+    }
     return SearchMultiApiModel(
         tmdbId = id!!,
         adult = adult,
@@ -115,7 +136,7 @@ fun TmdbSearchMultiResponse.Data.toMultiApiModel(): SearchMultiApiModel {
         originalTitle = originalTitle,
         overview = overview,
         posterPath = posterPath,
-        mediaType = mediaType,
+        mediaType = mediaType ?: media,
         genreIds = genreIds,
         popularity = popularity,
         releaseDate = releaseDate,

@@ -3,7 +3,7 @@ package com.free.tvtracker.features.search.mappers
 import com.free.tvtracker.base.MapperWithOptions
 import com.free.tvtracker.constants.SEASON_SPECIAL_NUMBER
 import com.free.tvtracker.tmdb.data.TmdbShowBigResponse
-import com.free.tvtracker.discover.response.TmdbShowDetailsApiModel
+import com.free.tvtracker.details.response.TmdbShowDetailsApiModel
 import org.springframework.stereotype.Component
 
 @Component

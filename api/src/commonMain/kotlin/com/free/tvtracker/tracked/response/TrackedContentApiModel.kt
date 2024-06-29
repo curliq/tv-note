@@ -28,6 +28,9 @@ data class TrackedContentApiModel(
     val isTvShow: Boolean
         get() = mediaType == ContentType.TvShow
 
+    val anyTmdbId: Int
+        get() = if (isTvShow) tvShow!!.storedShow.tmdbId else movie!!.storedMovie.tmdbId
+
     @Serializable
     data class Movie(
         @SerialName("id") val id: Int,

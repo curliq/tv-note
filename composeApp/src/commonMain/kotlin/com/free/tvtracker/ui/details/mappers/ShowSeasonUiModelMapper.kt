@@ -1,7 +1,7 @@
 package com.free.tvtracker.ui.details.mappers
 
 import com.free.tvtracker.base.MapperWithOptions
-import com.free.tvtracker.discover.response.TmdbShowDetailsApiModel
+import com.free.tvtracker.details.response.TmdbShowDetailsApiModel
 import com.free.tvtracker.ui.details.DetailsUiModel
 import com.free.tvtracker.tracked.response.TrackedContentApiModel
 

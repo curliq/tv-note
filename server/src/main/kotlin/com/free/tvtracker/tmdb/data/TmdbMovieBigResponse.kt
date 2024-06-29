@@ -24,9 +24,9 @@ data class TmdbMovieBigResponse(
     @JsonProperty("poster_path")
     val posterPath: String?,
     @JsonProperty("production_companies")
-    val productionCompanies: List<ProductionCompany>?,
+    val productionCompanies: List<TmdbShowBigResponse.ProductionCompanies> = emptyList(),
     @JsonProperty("production_countries")
-    val productionCountries: List<ProductionCountry>?,
+    val productionCountries: List<TmdbShowBigResponse.ProductionCountries> = emptyList(),
     @JsonProperty("release_date")
     val releaseDate: String?,
     val revenue: Int?,
@@ -41,6 +41,14 @@ data class TmdbMovieBigResponse(
     val voteAverage: Double?,
     @JsonProperty("vote_count")
     val voteCount: Int?,
+    @JsonProperty("watch/providers")
+    val watchProviders: TmdbShowWatchProvidersResponse?,
+    @JsonProperty("credits")
+    val credits: TmdbShowAggregatedCreditsResponse?,
+    @JsonProperty("videos")
+    val videos: TmdbShowVideosResponse?,
+    @JsonProperty("images")
+    val images: TmdbShowImagesResponse?
 )
 
 data class BelongsToCollection(
@@ -50,25 +58,19 @@ data class BelongsToCollection(
     val posterPath: String?,
     @JsonProperty("backdrop_path")
     val backdropPath: String?,
-)
+) {
+    fun toApiModel(): com.free.tvtracker.details.response.BelongsToCollection {
+        return com.free.tvtracker.details.response.BelongsToCollection(
+            id = this.id,
+            name = this.name,
+            posterPath = this.posterPath,
+            backdropPath = this.backdropPath,
+        )
+    }
+}
 
 data class Genre(
     val id: Int,
-    val name: String?,
-)
-
-data class ProductionCompany(
-    val id: Int,
-    @JsonProperty("logo_path")
-    val logoPath: String?,
-    val name: String?,
-    @JsonProperty("origin_country")
-    val originCountry: String?,
-)
-
-data class ProductionCountry(
-    @JsonProperty("iso_3166_1")
-    val iso31661: String?,
     val name: String?,
 )
 

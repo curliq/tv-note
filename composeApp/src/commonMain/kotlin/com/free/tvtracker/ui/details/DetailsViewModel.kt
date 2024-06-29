@@ -3,8 +3,10 @@ package com.free.tvtracker.ui.details
 import com.free.tvtracker.expect.ui.ViewModel
 import com.free.tvtracker.data.tracked.MarkEpisodeWatched
 import com.free.tvtracker.data.tracked.TrackedShowsRepository
-import com.free.tvtracker.domain.GetTrackedShowByTmdbIdUseCase
-import com.free.tvtracker.ui.details.mappers.ShowUiModelMapper
+import com.free.tvtracker.domain.GetMovieByTmdbIdUseCase
+import com.free.tvtracker.domain.GetShowByTmdbIdUseCase
+import com.free.tvtracker.ui.details.mappers.DetailsUiModelForMovieMapper
+import com.free.tvtracker.ui.details.mappers.DetailsUiModelForShowMapper
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -14,28 +16,57 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class DetailsViewModel(
-    private val showUiModelMapper: ShowUiModelMapper,
+    private val detailsUiModelForShowMapper: DetailsUiModelForShowMapper,
+    private val detailsUiModelForMovieMapper: DetailsUiModelForMovieMapper,
     private val trackedShowsRepository: TrackedShowsRepository,
-    private val getTrackedShowByTmdbIdUseCase: GetTrackedShowByTmdbIdUseCase,
+    private val getShowByTmdbIdUseCase: GetShowByTmdbIdUseCase,
+    private val getMovieByTmdbIdUseCase: GetMovieByTmdbIdUseCase,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : ViewModel() {
+
+    data class LoadContent(val tmdbId: Int, val isTvShow: Boolean)
 
     val result: MutableStateFlow<DetailsUiState> = MutableStateFlow(DetailsUiState.Loading)
 
     fun getShareLink(): String = (result.value as? DetailsUiState.Ok)?.data?.homepageUrl ?: "Missing url"
 
-    fun setId(tmdbShowId: Int) {
+    fun loadContent(content: LoadContent) {
         result.value = DetailsUiState.Loading
+        if (content.isTvShow) {
+            loadTvShow(content.tmdbId)
+        } else {
+            loadMovie(content.tmdbId)
+        }
+    }
+
+    private fun loadTvShow(tmdbId: Int) {
         viewModelScope.launch(ioDispatcher) {
-            getTrackedShowByTmdbIdUseCase.invoke(tmdbShowId).catch {
+            getShowByTmdbIdUseCase.invoke(tmdbId).catch {
                 result.value = DetailsUiState.Error
             }.collect { trackedShowResult ->
-                trackedShowResult.showData.coAsSuccess { data ->
-                    result.value = DetailsUiState.Ok(showUiModelMapper.map(data, trackedShowResult.tracked))
-                }
-                trackedShowResult.showData.asError {
-                    result.value = DetailsUiState.Error
-                }
+                trackedShowResult.showData
+                    .asSuccess { data ->
+                        result.value =
+                            DetailsUiState.Ok(detailsUiModelForShowMapper.map(data, trackedShowResult.tracked))
+                    }.asError {
+                        result.value = DetailsUiState.Error
+                    }
+            }
+        }
+    }
+
+    private fun loadMovie(tmdbId: Int) {
+        viewModelScope.launch(ioDispatcher) {
+            getMovieByTmdbIdUseCase.invoke(tmdbId).catch {
+                result.value = DetailsUiState.Error
+            }.collect { trackedShowResult ->
+                trackedShowResult.showData
+                    .asSuccess { data ->
+                        result.value =
+                            DetailsUiState.Ok(detailsUiModelForMovieMapper.map(data, trackedShowResult.tracked))
+                    }.coAsError {
+                        result.value = DetailsUiState.Error
+                    }
             }
         }
     }
@@ -43,7 +74,7 @@ class DetailsViewModel(
     fun action(action: DetailsAction) {
         when (action) {
             is DetailsAction.MarkSeasonWatched -> {
-                val trackedShow = trackedShowsRepository.getShowByTmdbId(action.tmdbShowId) ?: return
+                val trackedShow = trackedShowsRepository.getByTmdbId(action.tmdbShowId) ?: return
                 val season =
                     (result.value as? DetailsUiState.Ok)?.data?.seasons?.firstOrNull { it.seasonId == action.seasonId }
                 if (season == null) return
@@ -70,27 +101,61 @@ class DetailsViewModel(
                     // todo: this loads infinitely if http call fails
                     when (action.trackingAction) {
                         DetailsUiModel.TrackingStatus.Action.RemoveFromWatchlist -> {
-                            trackedShowsRepository.removeTracking(action.uiModel.trackedShowId!!)
+                            trackedShowsRepository.removeContent(
+                                action.uiModel.trackedContentId!!,
+                                action.uiModel.isTvShow
+                            )
                         }
 
                         DetailsUiModel.TrackingStatus.Action.RemoveFromWatching -> {
-                            trackedShowsRepository.removeTracking(action.uiModel.trackedShowId!!)
+                            trackedShowsRepository.removeContent(
+                                action.uiModel.trackedContentId!!,
+                                action.uiModel.isTvShow
+                            )
                         }
 
                         DetailsUiModel.TrackingStatus.Action.TrackWatchlist -> {
-                            trackedShowsRepository.addTrackedShow(action.uiModel.tmdbId, true, watchlisted = true)
+                            trackedShowsRepository.addTrackedShow(
+                                action.uiModel.tmdbId,
+                                isTvShow = action.uiModel.isTvShow,
+                                watchlisted = true
+                            )
                         }
 
                         DetailsUiModel.TrackingStatus.Action.TrackWatching -> {
-                            trackedShowsRepository.addTrackedShow(action.uiModel.tmdbId, true)
+                            trackedShowsRepository.addTrackedShow(
+                                action.uiModel.tmdbId,
+                                isTvShow = action.uiModel.isTvShow,
+                                watchlisted = false
+                            )
                         }
 
                         DetailsUiModel.TrackingStatus.Action.MoveToWatchlist -> {
-                            trackedShowsRepository.setWatchlisted(action.uiModel.trackedShowId!!, watchlisted = true)
+                            trackedShowsRepository.setWatchlisted(
+                                action.uiModel.trackedContentId!!,
+                                isTvShow = action.uiModel.isTvShow,
+                                watchlisted = true
+                            )
                         }
 
                         DetailsUiModel.TrackingStatus.Action.MoveToWatching -> {
-                            trackedShowsRepository.setWatchlisted(action.uiModel.trackedShowId!!, watchlisted = false)
+                            trackedShowsRepository.setWatchlisted(
+                                action.uiModel.trackedContentId!!,
+                                isTvShow = action.uiModel.isTvShow,
+                                watchlisted = false
+                            )
+                        }
+
+                        DetailsUiModel.TrackingStatus.Action.RemoveMovieFromWatched -> {
+                            trackedShowsRepository.removeContent(action.uiModel.trackedContentId!!, isTvShow = false)
+                        }
+
+                        DetailsUiModel.TrackingStatus.Action.MoveMovieToFinished -> {
+                            trackedShowsRepository.setWatchlisted(
+                                action.uiModel.trackedContentId!!,
+                                isTvShow = action.uiModel.isTvShow,
+                                watchlisted = false
+                            )
                         }
                     }
                 }
@@ -114,12 +179,14 @@ sealed class DetailsUiState {
 }
 
 data class DetailsUiModel(
+    val isTvShow: Boolean,
     val tmdbId: Int,
     val name: String,
     val posterUrl: String,
     val releaseStatus: String,
+    val duration: String?,
     val trackingStatus: TrackingStatus,
-    val trackedShowId: Int?,
+    val trackedContentId: Int?,
     val homepageUrl: String?,
     val description: String?,
     val genres: String?,
@@ -165,10 +232,12 @@ data class DetailsUiModel(
         enum class Action {
             RemoveFromWatchlist,
             RemoveFromWatching,
+            RemoveMovieFromWatched,
             TrackWatchlist,
             TrackWatching,
             MoveToWatchlist,
             MoveToWatching,
+            MoveMovieToFinished
         }
     }
 

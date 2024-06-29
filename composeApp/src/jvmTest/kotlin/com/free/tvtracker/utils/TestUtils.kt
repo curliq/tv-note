@@ -16,6 +16,7 @@ fun buildDetailsUiModel(
     trackingId: Int? = null,
     homepageUrl: String? = null,
     description: String? = null,
+    duration: String? = null,
     genres: String = "",
     seasonsInfo: String? = null,
     seasons: List<Season>? = null,
@@ -34,13 +35,15 @@ fun buildDetailsUiModel(
     mediaImagesBackdrops: List<String> = emptyList(),
     ratingTmdbVoteAverage: String = "",
     ratingTmdbVoteCount: String = "",
+    isTvShow: Boolean = true,
 ) = DetailsUiModel(
     tmdbId = tmdbId,
     name = name,
     posterUrl = posterUrl,
     releaseStatus = releaseStatus,
     trackingStatus = trackingStatus,
-    trackedShowId = trackingId,
+    trackedContentId = trackingId,
+    duration = duration,
     homepageUrl = homepageUrl,
     description = description,
     genres = genres,
@@ -61,4 +64,5 @@ fun buildDetailsUiModel(
     mediaImagesBackdrops = mediaImagesBackdrops,
     ratingTmdbVoteAverage = ratingTmdbVoteAverage,
     ratingTmdbVoteCount = ratingTmdbVoteCount,
+    isTvShow = isTvShow
 )

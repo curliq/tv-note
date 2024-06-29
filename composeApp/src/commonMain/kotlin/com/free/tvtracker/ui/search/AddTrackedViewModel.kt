@@ -160,7 +160,7 @@ class AddTrackedViewModel(
                             val tracked =
                                 trackedShows.firstOrNull { it.typedId == content.pseudoId } != null
                             val o = SearchUiModelMapperOptions(tracked, originScreen)
-                            val obj = when (TmdbContentType.entries.find { it.field == content.mediaType!! }) {
+                            val obj = when (TmdbContentType.entries.find { it.key == content.mediaType!! }) {
                                 TmdbContentType.SHOW -> showsMapper.map(content, o)
                                 TmdbContentType.MOVIE -> moviesMapper.map(content, o)
                                 TmdbContentType.PERSON -> peopleMapper.map(content, o)
@@ -192,6 +192,8 @@ data class AddTrackedItemUiModel(
     val image: String,
     val tracked: Boolean,
     val action: TrackAction,
+    val isTvShow: Boolean,
+    val isPerson: Boolean
 ) {
     sealed class TrackAction {
         data object Watching : TrackAction()

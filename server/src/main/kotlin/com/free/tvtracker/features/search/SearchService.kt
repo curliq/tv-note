@@ -1,12 +1,15 @@
 package com.free.tvtracker.features.search
 
+import com.free.tvtracker.constants.TmdbContentType
+import com.free.tvtracker.details.response.TmdbMovieDetailsApiModel
 import com.free.tvtracker.logging.TvtrackerLogger
 import com.free.tvtracker.tmdb.TmdbClient
 import com.free.tvtracker.tmdb.data.TmdbPersonResponse
 import com.free.tvtracker.tmdb.data.TmdbSearchMultiResponse
 import com.free.tvtracker.tmdb.data.TmdbShowBigResponse
-import com.free.tvtracker.discover.response.TmdbPersonDetailsApiModel
-import com.free.tvtracker.discover.response.TmdbShowDetailsApiModel
+import com.free.tvtracker.details.response.TmdbPersonDetailsApiModel
+import com.free.tvtracker.details.response.TmdbShowDetailsApiModel
+import com.free.tvtracker.features.search.mappers.MovieApiModelMapper
 import com.free.tvtracker.features.search.mappers.PersonApiModelMapper
 import com.free.tvtracker.features.search.mappers.ShowApiModelMapper
 import com.free.tvtracker.search.request.MediaType
@@ -23,14 +26,15 @@ class SearchService(
     private val storedEpisodesService: StoredEpisodesService,
     private val storedShowsService: StoredShowsService,
     private val showMapper: ShowApiModelMapper,
+    private val movieApiModelMapper: MovieApiModelMapper,
     private val personApiModelMapper: PersonApiModelMapper
 ) {
     fun searchTerm(term: String, mediaType: MediaType): TmdbSearchMultiResponse {
         val media = when (mediaType) {
             MediaType.ALL -> "multi"
-            MediaType.TV_SHOWS -> "tv"
-            MediaType.MOVIES -> "movie"
-            MediaType.PEOPLE -> "person"
+            MediaType.TV_SHOWS -> TmdbContentType.SHOW.key
+            MediaType.MOVIES -> TmdbContentType.MOVIE.key
+            MediaType.PEOPLE -> TmdbContentType.PERSON.key
         }
         val respEntity = tmdbClient.get(
             "/3/search/$media",
@@ -56,7 +60,7 @@ class SearchService(
             "/3/movie/$tmdbMovieId",
             TmdbMovieBigResponse::class.java,
             params = mapOf(
-                "append_to_response" to ""
+                "append_to_response" to "credits,watch/providers,videos,images"
             )
         )
         return respEntity.body!!
@@ -76,6 +80,13 @@ class SearchService(
         return showMapper.map(
             showResponse,
             ShowApiModelMapper.ShowApiModelMapperOptions(episodes.map { it.toApiModel() }, countryCode)
+        )
+    }
+
+    fun getMovieApiModel(tmdbMovieId: Int, countryCode: String): TmdbMovieDetailsApiModel {
+        return movieApiModelMapper.map(
+            getMovie(tmdbMovieId),
+            countryCode
         )
     }
 

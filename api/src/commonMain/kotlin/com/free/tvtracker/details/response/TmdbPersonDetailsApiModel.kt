@@ -1,4 +1,4 @@
-package com.free.tvtracker.discover.response
+package com.free.tvtracker.details.response
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -19,9 +19,9 @@ data class TmdbPersonDetailsApiModel(
     @SerialName("profile_path")
     val profilePath: String?,
     @SerialName("tv_credits")
-    val tvCredits: TvCredits,
+    val credits: Credits,
     @SerialName("movie_credits")
-    val movieCredits: MovieCredits,
+    val movieCredits: Credits,
     @SerialName("images")
     val images: List<Profile>,
     @SerialName("instagram_id")
@@ -33,7 +33,7 @@ data class TmdbPersonDetailsApiModel(
 )
 
 @Serializable
-data class TvCredits(
+data class Credits(
     val cast: List<Cast>,
     val crew: List<Crew>,
 ) {
@@ -55,35 +55,6 @@ data class TvCredits(
         val posterPath: String?,
         @SerialName("name")
         val name: String?,
-        @SerialName("vote_count")
-        val voteCount: Long?,
-    )
-}
-
-@Serializable
-data class MovieCredits(
-    val cast: List<Cast>?,
-    val crew: List<Crew>?,
-) {
-
-    @Serializable
-    data class Cast(
-        val id: Long,
-        @SerialName("poster_path")
-        val posterPath: String?,
-        @SerialName("title")
-        val title: String?,
-        @SerialName("vote_count")
-        val voteCount: Long?,
-    )
-
-    @Serializable
-    data class Crew(
-        val id: Long,
-        @SerialName("poster_path")
-        val posterPath: String?,
-        @SerialName("title")
-        val title: String?,
         @SerialName("vote_count")
         val voteCount: Long?,
     )

@@ -6,6 +6,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class SetShowWatchlistedApiRequestBody(
     @SerialName("trackedshow_id")
-    val trackedShowId: Int,
-    val watchlisted: Boolean
+    val trackedContentId: Int,
+    val watchlisted: Boolean,
+    @SerialName("is_tvshow")
+    val isTvShow: Boolean
 )

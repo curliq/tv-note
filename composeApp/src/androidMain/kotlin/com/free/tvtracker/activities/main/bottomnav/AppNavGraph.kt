@@ -23,7 +23,6 @@ import com.free.tvtracker.activities.add.AddTrackedActivity
 import com.free.tvtracker.activities.discover.RecommendationsActivity
 import com.free.tvtracker.activities.main.AppNavController
 import com.free.tvtracker.activities.showdetails.ShowDetailsActivity
-import com.free.tvtracker.activities.showdetails.ShowDetailsActivity.Extras.EXTRA_SHOW_ID
 import com.free.tvtracker.ui.discover.DiscoverScreen
 import com.free.tvtracker.ui.discover.DiscoverScreenNavActions
 import com.free.tvtracker.ui.discover.DiscoverViewModel
@@ -54,12 +53,9 @@ fun NavGraphBuilder.mainNavGraph(navController: AppNavController, context: Activ
                         )
                     )
 
-                    is WatchingScreenNavAction.GoShowDetails -> context.startActivity(
-                        Intent(
-                            context,
-                            ShowDetailsActivity::class.java
-                        ).putExtra(EXTRA_SHOW_ID, action.tmdbShowId)
-                    )
+                    is WatchingScreenNavAction.GoShowDetails -> {
+                        context.startActivity(ShowDetailsActivity.create(context, action.tmdbShowId, action.isTvShow))
+                    }
                 }
             },
             viewModel = koinViewModel()
@@ -70,20 +66,17 @@ fun NavGraphBuilder.mainNavGraph(navController: AppNavController, context: Activ
             viewModel = koinViewModel(),
             navigate = { action ->
                 when (action) {
-                    FinishedScreenNavAction.GoAddShow -> context.startActivity(
-                        AddTrackedActivity.createIntent(
-                            context,
-                            AddTrackedScreenOriginScreen.Finished
+                    FinishedScreenNavAction.GoAddShow -> {
+                        context.startActivity(
+                            AddTrackedActivity.createIntent(
+                                context,
+                                AddTrackedScreenOriginScreen.Finished
+                            )
                         )
-                    )
+                    }
 
                     is FinishedScreenNavAction.GoShowDetails -> {
-                        context.startActivity(
-                            Intent(
-                                context,
-                                ShowDetailsActivity::class.java
-                            ).putExtra(EXTRA_SHOW_ID, action.tmdbShowId)
-                        )
+                        context.startActivity(ShowDetailsActivity.create(context, action.tmdbShowId, action.isTvShow))
                     }
                 }
             },
@@ -103,10 +96,7 @@ fun NavGraphBuilder.mainNavGraph(navController: AppNavController, context: Activ
 
                     is WatchlistScreenNavAction.GoShowDetails -> {
                         context.startActivity(
-                            Intent(
-                                context,
-                                ShowDetailsActivity::class.java
-                            ).putExtra(EXTRA_SHOW_ID, action.tmdbShowId)
+                            ShowDetailsActivity.create(context, action.tmdbShowId, action.isTvShow)
                         )
                     }
                 }
@@ -128,10 +118,7 @@ fun NavGraphBuilder.mainNavGraph(navController: AppNavController, context: Activ
 
                 is DiscoverScreenNavActions.GoShowDetails -> {
                     context.startActivity(
-                        Intent(
-                            context,
-                            ShowDetailsActivity::class.java
-                        ).putExtra(EXTRA_SHOW_ID, action.tmdbShowId)
+                        ShowDetailsActivity.create(context, action.tmdbShowId, action.isTvShow)
                     )
                 }
 
@@ -182,6 +169,7 @@ fun NavGraphBuilder.mainNavGraph(navController: AppNavController, context: Activ
                                 bottomPadding = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding().value
                             )
                         }
+
                         null -> {}
                     }
                 }

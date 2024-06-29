@@ -43,7 +43,7 @@ import com.free.tvtracker.ui.watching.FabContainer
 import com.free.tvtracker.ui.watchlist.FilterCloseIcon
 
 sealed class FinishedScreenNavAction {
-    data class GoShowDetails(val tmdbShowId: Int) : FinishedScreenNavAction()
+    data class GoShowDetails(val tmdbShowId: Int, val isTvShow: Boolean) : FinishedScreenNavAction()
     data object GoAddShow : FinishedScreenNavAction()
 }
 
@@ -116,7 +116,7 @@ private fun FinishedOk(
             }
         }
         items(data.shows) { model ->
-            WatchingItem(model) { navigate(FinishedScreenNavAction.GoShowDetails(model.tmdbId)) }
+            WatchingItem(model) { navigate(FinishedScreenNavAction.GoShowDetails(model.tmdbId, model.isTvShow)) }
         }
     }
 }

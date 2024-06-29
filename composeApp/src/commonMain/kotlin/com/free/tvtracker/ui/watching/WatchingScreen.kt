@@ -56,7 +56,7 @@ import com.free.tvtracker.ui.common.theme.ScreenContentAnimation
 import com.free.tvtracker.ui.common.theme.TvTrackerTheme
 
 sealed class WatchingScreenNavAction {
-    data class GoShowDetails(val tmdbShowId: Int) : WatchingScreenNavAction()
+    data class GoShowDetails(val tmdbShowId: Int, val isTvShow:Boolean) : WatchingScreenNavAction()
     data object GoAddShow : WatchingScreenNavAction()
 }
 
@@ -111,7 +111,7 @@ fun WatchingOk(
         ) { index, show ->
             WatchingItem(
                 show,
-                onClick = { navigate(WatchingScreenNavAction.GoShowDetails(show.tmdbId)) },
+                onClick = { navigate(WatchingScreenNavAction.GoShowDetails(show.tmdbId, true)) },
                 onMarkWatched = markWatched,
                 isWatchable = true
             )
@@ -134,7 +134,7 @@ fun WatchingOk(
             ) { index, show ->
                 WatchingItem(
                     show,
-                    onClick = { navigate(WatchingScreenNavAction.GoShowDetails(show.tmdbId)) },
+                    onClick = { navigate(WatchingScreenNavAction.GoShowDetails(show.tmdbId, true)) },
                     onMarkWatched = markWatched,
                     isWatchable = false,
                 )

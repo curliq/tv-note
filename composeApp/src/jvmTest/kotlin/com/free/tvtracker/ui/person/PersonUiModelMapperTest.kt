@@ -1,8 +1,7 @@
 package com.free.tvtracker.ui.person
 
-import com.free.tvtracker.discover.response.MovieCredits
-import com.free.tvtracker.discover.response.TmdbPersonDetailsApiModel
-import com.free.tvtracker.discover.response.TvCredits
+import com.free.tvtracker.details.response.Credits
+import com.free.tvtracker.details.response.TmdbPersonDetailsApiModel
 import io.mockk.mockk
 import kotlinx.datetime.Instant
 import org.junit.Assert.assertEquals
@@ -22,8 +21,8 @@ class PersonUiModelMapperTest {
             name = "",
             placeOfBirth = "",
             profilePath = "",
-            tvCredits = TvCredits(emptyList(), emptyList()),
-            movieCredits = MovieCredits(emptyList(), emptyList()),
+            credits = Credits(emptyList(), emptyList()),
+            movieCredits = Credits(emptyList(), emptyList()),
             images = emptyList(),
             instagramId = "",
             tiktokId = "",

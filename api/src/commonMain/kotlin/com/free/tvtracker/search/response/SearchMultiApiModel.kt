@@ -32,7 +32,7 @@ data class SearchMultiApiModel(
 ) {
     val contentTypeKey: String
         get() {
-            return when (TmdbContentType.entries.find { it.field == mediaType!! }) {
+            return when (TmdbContentType.entries.find { it.key == mediaType!! }) {
                 TmdbContentType.SHOW -> TrackedContentApiModel.ContentType.TvShow.key
                 TmdbContentType.MOVIE -> TrackedContentApiModel.ContentType.Movie.key
                 TmdbContentType.PERSON -> "person"

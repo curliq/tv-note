@@ -59,7 +59,7 @@ fun DiscoverTrendingSheetContent(
             val content = content[index]
             Card(
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
-                onClick = { action(DiscoverScreenNavActions.GoShowDetails(content.tmdbId)) },
+                onClick = { action(DiscoverScreenNavActions.GoShowDetails(content.tmdbId, true)) }, //todo
                 modifier = Modifier.fillMaxSize(),
             ) {
                 Box(Modifier.aspectRatio(posterRatio())) {

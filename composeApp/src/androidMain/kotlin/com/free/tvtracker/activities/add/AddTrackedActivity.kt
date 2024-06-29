@@ -20,6 +20,7 @@ import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import com.free.tvtracker.activities.person.PersonDetailsActivity
 import com.free.tvtracker.activities.showdetails.ShowDetailsActivity
 import com.free.tvtracker.ui.common.theme.TvTrackerTheme
 import com.free.tvtracker.core.ui.BaseActivity
@@ -56,12 +57,19 @@ class AddTrackedActivity : BaseActivity() {
                 when (action) {
                     is AddTrackedScreenNavAction.GoContentDetails -> {
                         context.startActivity(
-                            Intent(
-                                context,
-                                ShowDetailsActivity::class.java
-                            ).putExtra(ShowDetailsActivity.EXTRA_SHOW_ID, action.showTmdbId)
+                            ShowDetailsActivity.create(context, action.showTmdbId, action.isTvShow)
                         )
                     }
+
+                    is AddTrackedScreenNavAction.GoPersonDetails -> {
+                        context.startActivity(
+                            Intent(
+                                context,
+                                PersonDetailsActivity::class.java
+                            ).putExtra(PersonDetailsActivity.EXTRA_PERSON_ID, action.personTmdbId)
+                        )
+                    }
+
                 }
             }
             val title = when (origin) {

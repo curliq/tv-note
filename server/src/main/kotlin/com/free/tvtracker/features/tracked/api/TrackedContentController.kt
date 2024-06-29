@@ -7,7 +7,7 @@ import com.free.tvtracker.features.tracked.domain.TrackedContentService
 import com.free.tvtracker.tracked.request.AddEpisodesApiRequestBody
 import com.free.tvtracker.tracked.request.AddMovieApiRequestBody
 import com.free.tvtracker.tracked.request.AddShowApiRequestBody
-import com.free.tvtracker.tracked.request.RemoveShowApiRequestBody
+import com.free.tvtracker.tracked.request.RemoveContentApiRequestBody
 import com.free.tvtracker.tracked.request.SetShowWatchlistedApiRequestBody
 import com.free.tvtracker.tracked.response.AddTrackedEpisodesApiResponse
 import com.free.tvtracker.tracked.response.AddTrackedShowApiResponse
@@ -74,8 +74,8 @@ class TrackedContentController(
     }
 
     @PostMapping(Endpoints.Path.REMOVE_TRACKED)
-    fun removeShow(@RequestBody body: RemoveShowApiRequestBody): ResponseEntity<ApiResponse.EmptyApiResponse> {
-        trackedContentService.delete(body.trackedShowId)
+    fun removeShow(@RequestBody body: RemoveContentApiRequestBody): ResponseEntity<ApiResponse.EmptyApiResponse> {
+        trackedContentService.delete(body.trackedContentId, body.isTvShow)
         return ResponseEntity.ok(ApiResponse.EmptyApiResponse.ok())
     }
 
@@ -107,7 +107,7 @@ class TrackedContentController(
     fun setShowWatchlisted(
         @RequestBody body: SetShowWatchlistedApiRequestBody
     ): ResponseEntity<TrackedShowApiResponse> {
-        val shows = trackedContentService.setShowWatchlistFlag(body.trackedShowId, body.watchlisted)
+        val shows = trackedContentService.setShowWatchlistFlag(body)
         return ResponseEntity.ok(TrackedShowApiResponse.ok(shows))
     }
 }

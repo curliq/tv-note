@@ -2,7 +2,7 @@ package com.free.tvtracker.ui.details.mappers
 
 import com.free.tvtracker.base.MapperWithOptions
 import com.free.tvtracker.constants.TmdbVideoType
-import com.free.tvtracker.discover.response.TmdbShowDetailsApiModel
+import com.free.tvtracker.details.response.TmdbShowDetailsApiModel
 import com.free.tvtracker.domain.GetShowStatusUseCase
 import com.free.tvtracker.domain.IsTrackedShowWatchableUseCase
 import com.free.tvtracker.ui.details.DetailsUiModel
@@ -13,7 +13,7 @@ import com.free.tvtracker.ui.common.TmdbConfigData
 import kotlin.math.ln
 import kotlin.math.pow
 
-class ShowUiModelMapper(
+class DetailsUiModelForShowMapper(
     private val seasonUiModelMapper: ShowSeasonUiModelMapper,
     private val castMapper: ShowCastUiModelMapper,
     private val crewMapper: ShowCrewUiModelMapper,
@@ -27,13 +27,15 @@ class ShowUiModelMapper(
 
     override fun map(from: TmdbShowDetailsApiModel, options: TrackedContentApiModel?): DetailsUiModel {
         return DetailsUiModel(
+            isTvShow = true,
             tmdbId = from.id,
             homepageUrl = from.homepage,
             name = from.name,
             posterUrl = TmdbConfigData.get().getPosterUrl(from.posterPath),
             releaseStatus = getShowStatusUseCase(from.status, from.firstAirDate, from.lastAirDate),
             trackingStatus = getTrackingStatus(options),
-            trackedShowId = options?.tvShow?.id,
+            duration = null,
+            trackedContentId = options?.tvShow?.id,
             description = from.overview,
             genres = from.genres.joinToString(", "),
             seasonsInfo =

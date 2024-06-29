@@ -53,7 +53,7 @@ import com.free.tvtracker.ui.watching.FabContainer
 import com.free.tvtracker.ui.watchlist.WatchlistedShowsViewModel.WatchlistedAction
 
 sealed class WatchlistScreenNavAction {
-    data class GoShowDetails(val tmdbShowId: Int) : WatchlistScreenNavAction()
+    data class GoShowDetails(val tmdbShowId: Int, val isTvShow: Boolean) : WatchlistScreenNavAction()
     data object GoAddShow : WatchlistScreenNavAction()
 }
 
@@ -128,7 +128,7 @@ fun WatchlistOk(
         items(data.shows, key = { it.tmdbId }) { model ->
             WatchlistItem(
                 model,
-                { navigate(WatchlistScreenNavAction.GoShowDetails(model.tmdbId)) },
+                { navigate(WatchlistScreenNavAction.GoShowDetails(model.tmdbId, model.isTvShow)) },
                 Modifier.animateItem()
             )
         }

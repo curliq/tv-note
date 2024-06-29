@@ -41,32 +41,24 @@ data class PersonUiModel(
     val dob: String,
     val bornIn: String,
     val bio: String,
-    val movies: List<Movie>,
-    val firstTwoMovies: List<Movie>,
+    val moviesCast: List<Credit>,
+    val moviesCrew: List<Credit>,
+    val firstTwoMovies: List<Credit>,
     val moviesCount: Int,
-    val tvShowsCast: List<TvShow>,
-    val tvShowsCrew: List<TvShow>,
+    val tvShowsCast: List<Credit>,
+    val tvShowsCrew: List<Credit>,
     val tvShowsCount: Int,
-    val firstTwoTvShows: List<TvShow>,
+    val firstTwoTvShows: List<Credit>,
     val photos: List<String>,
     val firstTwoPhotos: List<String>,
     val instagramUrl: String?,
     val instagramTag: String?
 ) {
-    sealed interface Credit {
-        val tmdbId: Int
-        val posterUrl: String
-        val name: String
-        val voteCount: Int
-    }
-
-    data class TvShow(
-        override val posterUrl: String, override val name: String, override val tmdbId: Int,
-        override val voteCount: Int
-    ) : Credit
-
-    data class Movie(
-        override val posterUrl: String, override val name: String, override val tmdbId: Int,
-        override val voteCount: Int
-    ) : Credit
+    data class Credit(
+        val tmdbId: Int,
+        val posterUrl: String,
+        val name: String,
+        val voteCount: Int,
+        val isTvShow: Boolean
+    )
 }

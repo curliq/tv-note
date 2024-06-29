@@ -52,11 +52,11 @@ class DiscoverViewModel(
                 uiModel.value = DiscoverUiState.Error
             } else {
                 val selectionActive = recRes.data?.relatedContent?.map {
-                    val show = trackedShowsRepository.getShowByTmdbId(it.tmdbId)
+                    val show = trackedShowsRepository.getByTmdbId(it.tmdbId)
                     DiscoverUiModel.Content(
                         it.tmdbId,
-                        show?.tvShow!!.storedShow?.title ?: "",
-                        TmdbConfigData.get().getPosterUrl(show?.tvShow!!.storedShow?.posterImage)
+                        show?.tvShow!!.storedShow.title,
+                        TmdbConfigData.get().getPosterUrl(show.tvShow!!.storedShow.posterImage)
                     )
                 } ?: emptyList()
 

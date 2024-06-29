@@ -40,11 +40,11 @@ import com.free.tvtracker.ui.common.composables.posterRatio
 import com.free.tvtracker.ui.common.theme.TvTrackerTheme
 import com.free.tvtracker.ui.common.theme.TvTrackerTheme.sidePadding
 import com.free.tvtracker.ui.details.SeeAllCard
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 
 sealed class PersonScreenNavAction {
-    data class GoShowDetails(val tmdbShowId: Int) : PersonScreenNavAction()
+    data class GoShowDetails(val tmdbShowId: Int, val isTvShow: Boolean) : PersonScreenNavAction()
     data object GoAllShows : PersonScreenNavAction()
+    data object GoAllMovies : PersonScreenNavAction()
     data object GoAllPhotos : PersonScreenNavAction()
     data class GoInstagram(val url: String) : PersonScreenNavAction()
 }
@@ -71,7 +71,6 @@ fun PersonScreen(
     }
 }
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun PersonContent(person: PersonUiModel, navAction: (PersonScreenNavAction) -> Unit) {
     Column(Modifier.padding(horizontal = sidePadding).fillMaxWidth().verticalScroll(rememberScrollState())) {
@@ -116,10 +115,10 @@ fun PersonContent(person: PersonUiModel, navAction: (PersonScreenNavAction) -> U
         Text(person.bio)
         Spacer(Modifier.height(24.dp))
 
-//        Text("Movies (${person.movies.size})", style = MaterialTheme.typography.titleLarge)
-//        Spacer(Modifier.height(8.dp))
-//        MoviesOrShowsRow(person.firstTwoMovies)
-//        Spacer(Modifier.height(24.dp))
+        Text("Movies (${person.moviesCount})", style = MaterialTheme.typography.titleLarge)
+        Spacer(Modifier.height(8.dp))
+        MoviesOrShowsRow(person.firstTwoMovies, navAction)
+        Spacer(Modifier.height(24.dp))
 
         Text("Tv shows (${person.tvShowsCount})", style = MaterialTheme.typography.titleLarge)
         Spacer(Modifier.height(8.dp))
@@ -143,8 +142,10 @@ fun PersonContent(person: PersonUiModel, navAction: (PersonScreenNavAction) -> U
                     }
                 }
             }
-            Box(Modifier.fillMaxWidth().weight(0.2f).fillMaxHeight()) {
-                SeeAllCard { navAction(PersonScreenNavAction.GoAllPhotos) }
+            if (person.photos.size > 2) {
+                Box(Modifier.fillMaxWidth().weight(0.2f).fillMaxHeight()) {
+                    SeeAllCard { navAction(PersonScreenNavAction.GoAllPhotos) }
+                }
             }
         }
         Spacer(Modifier.height(24.dp))
@@ -162,9 +163,12 @@ private fun MoviesOrShowsRow(moviesOrShows: List<PersonUiModel.Credit>, navActio
                 Card(
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
                     onClick = {
-                        if (movieOrShow is PersonUiModel.TvShow) {
-                            navAction(PersonScreenNavAction.GoShowDetails(movieOrShow.tmdbId))
-                        }
+                        navAction(
+                            PersonScreenNavAction.GoShowDetails(
+                                movieOrShow.tmdbId,
+                                movieOrShow.isTvShow
+                            )
+                        )
                     },
                     modifier = Modifier.fillMaxSize()
                 ) {
@@ -183,13 +187,15 @@ private fun MoviesOrShowsRow(moviesOrShows: List<PersonUiModel.Credit>, navActio
                     }
                 }
             }
-
         }
-
-        Box(Modifier.fillMaxWidth().weight(0.2f).fillMaxHeight()) {
-            SeeAllCard {
-                if (moviesOrShows.firstOrNull() is PersonUiModel.TvShow) {
-                    navAction(PersonScreenNavAction.GoAllShows)
+        if (moviesOrShows.size == 2) {
+            Box(Modifier.fillMaxWidth().weight(0.2f).fillMaxHeight()) {
+                SeeAllCard {
+                    if (moviesOrShows.firstOrNull()?.isTvShow == true) {
+                        navAction(PersonScreenNavAction.GoAllShows)
+                    } else {
+                        navAction(PersonScreenNavAction.GoAllMovies)
+                    }
                 }
             }
         }

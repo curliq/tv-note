@@ -1,4 +1,4 @@
-package com.free.tvtracker.discover.response
+package com.free.tvtracker.details.response
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -39,7 +39,7 @@ data class TmdbShowDetailsApiModel(
     @SerialName("images") var images: Images? = null,
     @SerialName("cast") var cast: List<Cast>? = null,
     @SerialName("crew") var crew: List<Crew>? = null,
-    @SerialName("watchProvider") var watchProvider: List<WatchProvider>? = null,
+    @SerialName("watch_provider") var watchProvider: List<WatchProvider>? = null,
 ) {
     @Serializable
     data class Season(

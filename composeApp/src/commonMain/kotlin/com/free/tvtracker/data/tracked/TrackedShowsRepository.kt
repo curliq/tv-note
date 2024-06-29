@@ -51,7 +51,6 @@ class TrackedShowsRepository(
 ) {
     val allShows = MutableStateFlow<List<TrackedContentApiModel>>(emptyList())
 
-    // these also contain all other shows, so they still must be filtered using the usecases before consumption
     private val _watchingShows = MutableStateFlow(ShowsDataStatus(false, false))
     private val _finishedShows = MutableStateFlow(ShowsDataStatus(false, false))
     private val _watchlistedShows = MutableStateFlow(ShowsDataStatus(false, false))
@@ -73,7 +72,7 @@ class TrackedShowsRepository(
         val localWatching = localDataSource.getTrackedShows().map { it.toApiModel() }
         if (localWatching.isNotEmpty()) {
             _watchingShows.emit(ShowsDataStatus(false, true))
-            allShows.update { it.plus(localWatching) }
+            allShows.emit(allShows.value.plus(localWatching))
         }
         fetch(_watchingShows, ::getTrackedShows).asSuccess {
             localDataSource.saveTrackedShows(it.map { it.toClientEntity() })
@@ -121,21 +120,29 @@ class TrackedShowsRepository(
         watchedEpisodesTaskQueue.add(orders)
     }
 
-    suspend fun setWatchlisted(trackedShowId: Int, watchlisted: Boolean) {
-        val res = httpClient.setWatchlisted(trackedShowId, watchlisted)
+    suspend fun setWatchlisted(trackedContentId: Int, isTvShow: Boolean, watchlisted: Boolean) {
+        val res = httpClient.setWatchlisted(trackedContentId, isTvShow, watchlisted)
         res.asSuccess { show ->
             allShows.update {
-                val oldShow = it.first { it.tvShow!!.id == show.tvShow!!.id }
+                val oldShow = if (isTvShow) {
+                    it.first { it.tvShow?.id == trackedContentId }
+                } else {
+                    it.first { it.movie?.id == trackedContentId }
+                }
                 it.minus(oldShow).plus(show)
             }
         }
     }
 
-    suspend fun removeTracking(trackedShowId: Int) {
-        val res = httpClient.removeTracked(trackedShowId)
-        res.asSuccess {
+    suspend fun removeContent(trackedContentId: Int, isTvShow: Boolean) {
+        val res = httpClient.removeTrackedShow(trackedContentId, isTvShow)
+        res.asSuccess { response ->
             allShows.update {
-                val oldShow = it.first { it.tvShow!!.id == trackedShowId }
+                val oldShow = if (isTvShow) {
+                    it.first { it.tvShow?.id == trackedContentId }
+                } else {
+                    it.first { it.movie?.id == trackedContentId }
+                }
                 it.minus(oldShow)
             }
         }
@@ -160,12 +167,12 @@ class TrackedShowsRepository(
         }
     }
 
-    fun getShowByTmdbId(tmdbShowId: Int): TrackedContentApiModel? {
-        return allShows.value.firstOrNull { it.tvShow!!.storedShow.tmdbId == tmdbShowId }
+    fun getByTmdbId(tmdbShowId: Int): TrackedContentApiModel? {
+        return allShows.value.firstOrNull { it.anyTmdbId == tmdbShowId }
     }
 
-    fun getShowByTmdbIdFlow(tmdbShowId: Int): Flow<TrackedContentApiModel?> {
-        return allShows.map { it.firstOrNull { it.tvShow!!.storedShow.tmdbId == tmdbShowId } }
+    fun getByTmdbIdFlow(tmdbShowId: Int): Flow<TrackedContentApiModel?> {
+        return allShows.map { it.firstOrNull { it.anyTmdbId == tmdbShowId } }
     }
 
     private suspend fun getTrackedShows(): TrackedShowsApiResponse {

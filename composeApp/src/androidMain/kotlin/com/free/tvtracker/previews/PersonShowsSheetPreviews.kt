@@ -15,7 +15,7 @@ fun PersonShowsSheetPreview() {
     TvTrackerTheme {
         Scaffold { padding ->
             PersonShowsContent(
-                personUiModel, { }
+                personUiModel, { }, true
             )
         }
     }

@@ -40,15 +40,29 @@ fun PersonShowsSheet(
 ) {
     val show = viewModel.result.collectAsState().value as PersonUiState.Ok
     TvTrackerTheme {
-        PersonShowsContent(show.data, navActions, bottomPadding)
+        PersonShowsContent(show.data, navActions, true, bottomPadding)
     }
 }
+
+@Composable
+fun PersonMoviesSheet(
+    viewModel: PersonViewModel,
+    navActions: (PersonScreenNavAction) -> Unit,
+    bottomPadding: Float = 0f
+) {
+    val show = viewModel.result.collectAsState().value as PersonUiState.Ok
+    TvTrackerTheme {
+        PersonShowsContent(show.data, navActions, false, bottomPadding)
+    }
+}
+
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PersonShowsContent(
     person: PersonUiModel,
     action: (PersonScreenNavAction) -> Unit,
+    isTvShows: Boolean,
     bottomPadding: Float = 0f
 ) {
     LazyColumn {
@@ -56,13 +70,17 @@ fun PersonShowsContent(
             DetailsSheetHeader("Acting")
         }
         item {
-            ActingOrCrewShow(person.tvShowsCast) { id -> action(PersonScreenNavAction.GoShowDetails(id)) }
+            Content(if (isTvShows) person.tvShowsCast else person.moviesCast) { content ->
+                action(PersonScreenNavAction.GoShowDetails(content.tmdbId, isTvShows))
+            }
         }
         stickyHeader {
             DetailsSheetHeader("Part of the crew")
         }
         item {
-            ActingOrCrewShow(person.tvShowsCrew) { id -> action(PersonScreenNavAction.GoShowDetails(id)) }
+            Content(if (isTvShows) person.tvShowsCrew else person.moviesCrew) { content ->
+                action(PersonScreenNavAction.GoShowDetails(content.tmdbId, isTvShows))
+            }
         }
         item {
             Spacer(modifier = Modifier.height(bottomPadding.dp))
@@ -71,7 +89,7 @@ fun PersonShowsContent(
 }
 
 @Composable
-private fun ActingOrCrewShow(shows: List<PersonUiModel.Credit>, onClick: (Int) -> Unit) {
+private fun Content(shows: List<PersonUiModel.Credit>, onClick: (PersonUiModel.Credit) -> Unit) {
     if (shows.isEmpty()) {
         Box(
             Modifier.fillMaxWidth().height(72.dp).padding(horizontal = TvTrackerTheme.sidePadding),
@@ -92,7 +110,7 @@ private fun ActingOrCrewShow(shows: List<PersonUiModel.Credit>, onClick: (Int) -
         val show = shows[index]
         Card(
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
-            onClick = { onClick(show.tmdbId) },
+            onClick = { onClick(show) },
             modifier = Modifier.fillMaxSize(),
         ) {
             Box(Modifier.aspectRatio(posterRatio())) {
