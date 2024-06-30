@@ -241,7 +241,7 @@ fun DetailsScreenContent(
             Spacer(Modifier.height(24.dp))
         } else if (show.movieSeries?.movies?.isNotEmpty() == true) {
             Text(
-                text = "Film series (${show.movieSeries.movies.size} movies)",
+                text = "Film series",
                 style = MaterialTheme.typography.titleLarge
             )
             Spacer(Modifier.height(8.dp))
@@ -263,7 +263,7 @@ fun DetailsScreenContent(
                         FilmSeriesCard(it, navAction)
                     }
                     Box(Modifier.fillMaxWidth().weight(0.2f).fillMaxHeight()) {
-                        SeeAllCard { navAction(DetailsScreenNavAction.GoFilmCollection) }
+                        SeeAllCard("\n(${show.movieSeries.movies.size})") { navAction(DetailsScreenNavAction.GoFilmCollection) }
                     }
                 }
             }
@@ -419,7 +419,7 @@ fun MediaVideoCard(trailer: DetailsUiModel.Video) {
 }
 
 @Composable
-fun BoxScope.SeeAllCard(onClick: () -> Unit) {
+fun BoxScope.SeeAllCard(textAppend: String = "", onClick: () -> Unit) {
     Card(
         modifier = Modifier.fillMaxSize().align(Alignment.Center),
         colors = CardDefaults.cardColors(
@@ -432,7 +432,7 @@ fun BoxScope.SeeAllCard(onClick: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                "See\nAll",
+                "See\nAll$textAppend",
                 color = MaterialTheme.colorScheme.primary,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
