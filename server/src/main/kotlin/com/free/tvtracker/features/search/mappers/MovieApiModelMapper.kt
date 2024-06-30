@@ -1,17 +1,34 @@
 package com.free.tvtracker.features.search.mappers
 
 import com.free.tvtracker.base.MapperWithOptions
+import com.free.tvtracker.details.response.BelongsToCollection
 import com.free.tvtracker.details.response.TmdbMovieDetailsApiModel
 import com.free.tvtracker.tmdb.data.TmdbMovieBigResponse
+import com.free.tvtracker.tmdb.data.TmdbMovieCollectionResponse
 import org.springframework.stereotype.Component
 
 @Component
 class MovieApiModelMapper :
-    MapperWithOptions<TmdbMovieBigResponse, TmdbMovieDetailsApiModel, String> {
-    override fun map(from: TmdbMovieBigResponse, options: String): TmdbMovieDetailsApiModel {
+    MapperWithOptions<TmdbMovieBigResponse, TmdbMovieDetailsApiModel, MovieApiModelMapper.Options> {
+
+    data class Options(
+        val countryCode: String,
+        val collection: TmdbMovieCollectionResponse?
+    )
+
+    override fun map(from: TmdbMovieBigResponse, options: Options): TmdbMovieDetailsApiModel {
         return TmdbMovieDetailsApiModel(
             backdropPath = from.backdropPath,
-            belongsToCollection = from.belongsToCollection?.toApiModel(),
+            belongsToCollection = options.collection?.run {
+                BelongsToCollection(
+                    id = this.id,
+                    name = this.name,
+                    overview = this.overview,
+                    posterPath = this.posterPath,
+                    backdropPath = this.backdropPath,
+                    movies = this.parts.sortedBy { it.releaseDate }.map { it.toApiModel() }
+                )
+            },
             budget = from.budget,
             genres = from.genres?.mapNotNull { it.name } ?: emptyList(),
             homepage = from.homepage,
@@ -38,7 +55,9 @@ class MovieApiModelMapper :
             images = from.images?.toApiModel(),
             cast = from.credits?.cast?.map { it.toApiModel() },
             crew = from.credits?.crew?.map { it.toApiModel() },
-            watchProvider = from.watchProviders?.results?.get(options.uppercase())?.flatrate?.map { it.toApiModel() }
+            watchProvider = from.watchProviders?.results?.get(options.countryCode.uppercase())?.flatrate?.map {
+                it.toApiModel()
+            }
         )
     }
 }

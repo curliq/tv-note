@@ -4,7 +4,7 @@ logging:
   file:
     path: ./logs
   level:
-    com.free.tvtracker.logging.OutRequestLoggingInterceptor: off
+    com.free.tvtracker.logging.OutRequestLoggingInterceptor: INFO
     com.free.tvtracker.logging.RequestLoggingInterceptor: INFO
     com.free.tvtracker.logging.TvtrackerLogger: DEBUG
     httpclient:

@@ -17,6 +17,7 @@ import com.free.tvtracker.storage.shows.data.StoredEpisodeEntity
 import com.free.tvtracker.storage.shows.domain.StoredEpisodesService
 import com.free.tvtracker.storage.shows.domain.StoredShowsService
 import com.free.tvtracker.tmdb.data.TmdbMovieBigResponse
+import com.free.tvtracker.tmdb.data.TmdbMovieCollectionResponse
 import org.springframework.stereotype.Service
 
 @Service
@@ -66,6 +67,14 @@ class SearchService(
         return respEntity.body!!
     }
 
+    private fun getMovieCollection(collectionTmdbId: Int): TmdbMovieCollectionResponse {
+        val respEntity = tmdbClient.get(
+            "/3/collection/$collectionTmdbId",
+            TmdbMovieCollectionResponse::class.java,
+        )
+        return respEntity.body!!
+    }
+
     /**
      * @param alwaysIncludeEpisodes if true then we fetch the episodes from tmdb, if false then we just get them from
      * our db, which may or may not exist depending if someone has tracked this show
@@ -84,9 +93,13 @@ class SearchService(
     }
 
     fun getMovieApiModel(tmdbMovieId: Int, countryCode: String): TmdbMovieDetailsApiModel {
+        val movie = getMovie(tmdbMovieId)
+        val collection = if (movie.belongsToCollection?.id != null) {
+            getMovieCollection(movie.belongsToCollection.id)
+        } else null
         return movieApiModelMapper.map(
             getMovie(tmdbMovieId),
-            countryCode
+            MovieApiModelMapper.Options(countryCode, collection)
         )
     }
 

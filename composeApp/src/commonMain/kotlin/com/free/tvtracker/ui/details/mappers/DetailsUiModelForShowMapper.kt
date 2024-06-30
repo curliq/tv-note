@@ -41,6 +41,7 @@ class DetailsUiModelForShowMapper(
             seasonsInfo =
             "${from.seasons.size} seasons - ${from.seasons.sumOf { it.episodeCount ?: 0 }} episodes total",
             seasons = from.seasons.map { seasonUiModelMapper.map(it, ShowSeasonUiModelMapper.O(from.id, options)) },
+            movieSeries = null,
             castFirst = castMapper.map(from.cast?.getOrNull(0)),
             castSecond = castMapper.map(from.cast?.getOrNull(1)),
             cast = from.cast?.map { castMapper.map(it) } ?: emptyList(),

@@ -76,7 +76,9 @@ sealed class DetailsScreenNavAction {
     data object GoAllEpisodes : DetailsScreenNavAction()
     data object GoMedia : DetailsScreenNavAction()
     data object GoCastAndCrew : DetailsScreenNavAction()
+    data object GoFilmCollection : DetailsScreenNavAction()
     data class GoCastAndCrewDetails(val personTmdbId: Int) : DetailsScreenNavAction()
+    data class GoContentDetails(val tmdbId: Int, val isTvShow: Boolean) : DetailsScreenNavAction()
 }
 
 @Composable
@@ -237,6 +239,35 @@ fun DetailsScreenContent(
                 shape = TvTrackerTheme.ShapeButton
             )
             Spacer(Modifier.height(24.dp))
+        } else if (show.movieSeries?.movies?.isNotEmpty() == true) {
+            Text(
+                text = "Film series (${show.movieSeries.movies.size} movies)",
+                style = MaterialTheme.typography.titleLarge
+            )
+            Spacer(Modifier.height(8.dp))
+            show.movieSeries.overview?.let {
+                Text(text = it)
+            }
+            Spacer(Modifier.height(8.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                show.movieSeries.movies.getOrNull(0)?.let {
+                    Box(Modifier.fillMaxWidth().weight(0.4f)) {
+                        FilmSeriesCard(it, navAction)
+                    }
+                }
+                show.movieSeries.movies.getOrNull(1)?.let {
+                    Box(Modifier.fillMaxWidth().weight(0.4f)) {
+                        FilmSeriesCard(it, navAction)
+                    }
+                    Box(Modifier.fillMaxWidth().weight(0.2f).fillMaxHeight()) {
+                        SeeAllCard { navAction(DetailsScreenNavAction.GoFilmCollection) }
+                    }
+                }
+            }
+            Spacer(Modifier.height(24.dp))
         }
         Text("Trailers & photos", style = MaterialTheme.typography.titleLarge)
         Spacer(Modifier.height(8.dp))
@@ -335,6 +366,36 @@ fun DetailsScreenContent(
             )
         }
         Spacer(Modifier.height(24.dp))
+    }
+}
+
+@Composable
+private fun FilmSeriesCard(movie: DetailsUiModel.MovieSeries.Movie, navAction: (DetailsScreenNavAction) -> Unit) {
+    Card(
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
+        onClick = { navAction(DetailsScreenNavAction.GoContentDetails(movie.tmdbId, false)) },
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Box(Modifier.aspectRatio(posterRatio())) {
+            TvImage(movie.posterUrl, modifier = Modifier.fillMaxSize())
+        }
+        Spacer(Modifier.height(8.dp))
+        Text(
+            movie.name,
+            minLines = 1,
+            maxLines = 2,
+            overflow = Ellipsis,
+            style = MaterialTheme.typography.labelMedium,
+            modifier = Modifier.padding(horizontal = 8.dp)
+        )
+        Spacer(Modifier.height(8.dp))
+        Text(
+            movie.year,
+            overflow = Ellipsis,
+            style = MaterialTheme.typography.labelSmall,
+            modifier = Modifier.padding(horizontal = 8.dp)
+        )
+        Spacer(Modifier.height(8.dp))
     }
 }
 

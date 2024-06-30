@@ -47,6 +47,7 @@ data class TmdbShowAggregatedCreditsResponse(
         @JsonProperty("popularity") var popularity: Double? = null,
         @JsonProperty("profile_path") var profilePath: String? = null,
         @JsonProperty("roles") var roles: List<Role>? = null,
+        @JsonProperty("character") var character: String? = null,
         @JsonProperty("credit_id") var creditId: String? = null,
         @JsonProperty("order") var order: Int? = null
     ) {
@@ -54,6 +55,7 @@ data class TmdbShowAggregatedCreditsResponse(
             @JsonProperty("character") var character: String? = null,
             @JsonProperty("episode_count") var episodeCount: Int? = null,
         )
+
         fun toApiModel(): TmdbShowDetailsApiModel.Cast {
             return TmdbShowDetailsApiModel.Cast(
                 gender = this.gender,
@@ -63,7 +65,7 @@ data class TmdbShowAggregatedCreditsResponse(
                 originalName = this.originalName,
                 popularity = this.popularity,
                 profilePath = this.profilePath,
-                character = this.roles?.firstOrNull()?.character,
+                character = this.character ?: this.roles?.firstOrNull()?.character,
                 creditId = this.creditId,
                 order = this.order,
             )

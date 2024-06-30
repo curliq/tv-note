@@ -5,6 +5,7 @@ import com.free.tvtracker.details.response.TmdbShowDetailsApiModel.Crew
 import com.free.tvtracker.details.response.TmdbShowDetailsApiModel.Images
 import com.free.tvtracker.details.response.TmdbShowDetailsApiModel.Video
 import com.free.tvtracker.details.response.TmdbShowDetailsApiModel.WatchProvider
+import com.free.tvtracker.search.response.SmallMovieApiModel
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -62,8 +63,10 @@ data class TmdbMovieDetailsApiModel(
 data class BelongsToCollection(
     val id: Int,
     val name: String?,
+    val overview: String?,
     @SerialName("poster_path")
     val posterPath: String?,
     @SerialName("backdrop_path")
     val backdropPath: String?,
+    val movies: List<SmallMovieApiModel>
 )

@@ -35,6 +35,7 @@ class DetailsUiModelForMovieMapper(
             "date unavailable"
         }
         val duration = "${(from.runtime ?: 0) / 60}h ${(from.runtime ?: 0) % 60}m"
+
         return DetailsUiModel(
             isTvShow = false,
             tmdbId = from.id,
@@ -49,6 +50,25 @@ class DetailsUiModelForMovieMapper(
             genres = from.genres.joinToString(", "),
             seasonsInfo = null,
             seasons = null,
+            movieSeries = from.belongsToCollection?.let {
+                DetailsUiModel.MovieSeries(
+                    overview = it.overview,
+                    movies = it.movies.map {
+                        DetailsUiModel.MovieSeries.Movie(
+                            tmdbId = it.tmdbId,
+                            posterUrl = TmdbConfigData.get().getPosterUrl(it.posterPath),
+                            name = it.title,
+                            year = try {
+                                LocalDate.parse(input = it.releaseDate ?: "").format(LocalDate.Format {
+                                    year()
+                                })
+                            } catch (e: IllegalArgumentException) {
+                                "no date"
+                            }
+                        )
+                    }
+                )
+            },
             castFirst = castMapper.map(from.cast?.getOrNull(0)),
             castSecond = castMapper.map(from.cast?.getOrNull(1)),
             cast = from.cast?.map { castMapper.map(it) } ?: emptyList(),

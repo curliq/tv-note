@@ -80,6 +80,13 @@ object DetailsScreenPreviews {
                 ),
             )
         ),
+        movieSeries = DetailsUiModel.MovieSeries(
+            "movie about stuff", listOf(
+                DetailsUiModel.MovieSeries.Movie(1, "", "movie 1", "2020"),
+                DetailsUiModel.MovieSeries.Movie(1, "", "movie 2", "2020"),
+                DetailsUiModel.MovieSeries.Movie(1, "", "movie 3", "2020"),
+            )
+        ),
         mediaTrailer = DetailsUiModel.Video("thumbnail url", "video url", "video title"),
         mediaVideosTrailers = listOf(
             DetailsUiModel.Video("thumbnail url", "video url", "video title"),
@@ -114,6 +121,17 @@ fun DetailsScreenPreview() {
     TvTrackerTheme {
         Scaffold { padding ->
             DetailsScreenContent(showDetailsUiModel, {}, {})
+        }
+    }
+}
+
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@Preview(heightDp = 1600)
+@Composable
+fun DetailsScreenPreviewMovie() {
+    TvTrackerTheme {
+        Scaffold { padding ->
+            DetailsScreenContent(showDetailsUiModel.copy(isTvShow = false), {}, {})
         }
     }
 }

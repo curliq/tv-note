@@ -192,6 +192,7 @@ data class DetailsUiModel(
     val genres: String?,
     val seasonsInfo: String?,
     val seasons: List<Season>?,
+    val movieSeries: MovieSeries?,
     val castFirst: Cast?,
     val castSecond: Cast?,
     val cast: List<Cast>,
@@ -263,4 +264,11 @@ data class DetailsUiModel(
     data class WatchProvider(val logo: String, val deeplink: String)
 
     data class Video(val thumbnail: String, val videoUrl: String, val title: String?)
+
+    data class MovieSeries(
+        val overview: String?,
+        val movies: List<Movie>
+    ) {
+        data class Movie(val tmdbId: Int, val posterUrl: String, val name: String, val year: String)
+    }
 }

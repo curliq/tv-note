@@ -58,16 +58,7 @@ data class BelongsToCollection(
     val posterPath: String?,
     @JsonProperty("backdrop_path")
     val backdropPath: String?,
-) {
-    fun toApiModel(): com.free.tvtracker.details.response.BelongsToCollection {
-        return com.free.tvtracker.details.response.BelongsToCollection(
-            id = this.id,
-            name = this.name,
-            posterPath = this.posterPath,
-            backdropPath = this.backdropPath,
-        )
-    }
-}
+)
 
 data class Genre(
     val id: Int,

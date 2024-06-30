@@ -39,6 +39,7 @@ import com.free.tvtracker.ui.details.DetailsViewModel
 import com.free.tvtracker.ui.details.dialogs.DetailsCastCrewSheet
 import com.free.tvtracker.ui.details.dialogs.DetailsEpisodesSheet
 import com.free.tvtracker.ui.details.dialogs.DetailsMediaSheet
+import com.free.tvtracker.ui.details.dialogs.DetailsFilmCollectionSheet
 import org.koin.androidx.compose.koinViewModel
 
 
@@ -47,7 +48,7 @@ class ShowDetailsActivity : BaseActivity() {
     companion object {
         const val EXTRA_SHOW_ID = "EXTRA_SHOW_ID"
         const val EXTRA_IS_SHOW = "EXTRA_IS_SHOW"
-        fun create(context:Context, tmdbId:Int, isShow:Boolean): Intent {
+        fun create(context: Context, tmdbId: Int, isShow: Boolean): Intent {
             return Intent(context, ShowDetailsActivity::class.java).apply {
                 putExtra(EXTRA_SHOW_ID, tmdbId)
                 putExtra(EXTRA_IS_SHOW, isShow)
@@ -59,6 +60,7 @@ class ShowDetailsActivity : BaseActivity() {
         EPISODES,
         MEDIA,
         CASTCREW,
+        FILM_COLLECTION
     }
 
     @OptIn(ExperimentalMaterial3Api::class)
@@ -102,6 +104,14 @@ class ShowDetailsActivity : BaseActivity() {
                                 PersonDetailsActivity::class.java
                             ).putExtra(PersonDetailsActivity.EXTRA_PERSON_ID, action.personTmdbId)
                         )
+                    }
+
+                    is DetailsScreenNavAction.GoContentDetails -> {
+                        startActivity(create(context, action.tmdbId, action.isTvShow))
+                    }
+
+                    is DetailsScreenNavAction.GoFilmCollection -> {
+                        showBottomSheet = ShowDetailsNavDestinations.FILM_COLLECTION
                     }
                 }
             }
@@ -173,6 +183,14 @@ class ShowDetailsActivity : BaseActivity() {
 
                                     ShowDetailsNavDestinations.CASTCREW -> {
                                         DetailsCastCrewSheet(
+                                            viewModel = koinViewModel(owner = context),
+                                            navActions,
+                                            padding.calculateBottomPadding().value
+                                        )
+                                    }
+
+                                    ShowDetailsNavDestinations.FILM_COLLECTION -> {
+                                        DetailsFilmCollectionSheet(
                                             viewModel = koinViewModel(owner = context),
                                             navActions,
                                             padding.calculateBottomPadding().value

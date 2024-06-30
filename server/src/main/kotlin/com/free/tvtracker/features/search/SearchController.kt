@@ -14,7 +14,7 @@ import com.free.tvtracker.search.request.MediaType
 import com.free.tvtracker.search.request.SearchApiRequestBody
 import com.free.tvtracker.search.response.SearchApiModel
 import com.free.tvtracker.search.response.SearchApiResponse
-import com.free.tvtracker.search.response.SearchMovieApiModel
+import com.free.tvtracker.search.response.SmallMovieApiModel
 import com.free.tvtracker.search.response.SearchMultiApiModel
 import com.free.tvtracker.search.response.SearchPersonApiModel
 import com.free.tvtracker.search.response.SearchShowApiModel
@@ -70,8 +70,8 @@ class SearchController(
     }
 }
 
-fun TmdbSearchMultiResponse.Data.toMovieApiModel(): SearchMovieApiModel {
-    return SearchMovieApiModel(
+fun TmdbSearchMultiResponse.Data.toMovieApiModel(): SmallMovieApiModel {
+    return SmallMovieApiModel(
         backdropPath = backdropPath,
         tmdbId = id!!,
         title = title!!,
@@ -79,7 +79,6 @@ fun TmdbSearchMultiResponse.Data.toMovieApiModel(): SearchMovieApiModel {
         originalTitle = originalTitle,
         overview = overview,
         posterPath = posterPath,
-        genreIds = genreIds,
         popularity = popularity,
         releaseDate = releaseDate,
         video = video,
