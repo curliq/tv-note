@@ -8,4 +8,8 @@ actual open class LocationService {
     actual fun countryName(countryCode: String): String {
         return "america"
     }
+
+    actual fun languageCode(): String {
+        return "en"
+    }
 }

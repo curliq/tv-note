@@ -12,4 +12,8 @@ actual open class StringUtils actual constructor() {
     ): String {
         return "%.${decimalPoints}f%c".format(d, shortenCharacter)
     }
+
+    actual fun formatMoney(d: Double, language: String, countryCode: String): String {
+        return "$${d}"
+    }
 }

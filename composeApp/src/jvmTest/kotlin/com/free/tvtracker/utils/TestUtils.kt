@@ -31,12 +31,16 @@ fun buildDetailsUiModel(
     mediaVideosTrailers: List<Video> = emptyList(),
     mediaVideosTeasers: List<Video> = emptyList(),
     mediaVideosBehindTheScenes: List<Video> = emptyList(),
+    mediaVideosClipsAndOther: List<Video> = emptyList(),
     mediaMostPopularImage: String? = null,
     mediaImagesPosters: List<String> = emptyList(),
     mediaImagesBackdrops: List<String> = emptyList(),
     ratingTmdbVoteAverage: String = "",
     ratingTmdbVoteCount: String = "",
     isTvShow: Boolean = true,
+    budget: String = "",
+    revenue: String = "",
+    website: String = "",
 ) = DetailsUiModel(
     isTvShow = isTvShow,
     tmdbId = tmdbId,
@@ -67,4 +71,8 @@ fun buildDetailsUiModel(
     mediaImagesBackdrops = mediaImagesBackdrops,
     ratingTmdbVoteAverage = ratingTmdbVoteAverage,
     ratingTmdbVoteCount = ratingTmdbVoteCount,
+    mediaVideosClipsAndOther = mediaVideosClipsAndOther,
+    budget = budget,
+    revenue = revenue,
+    website = website
 )
