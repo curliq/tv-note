@@ -45,6 +45,7 @@ class UserServiceTest {
     @Test
     fun `GIVEN anon user WHEN login THEN anon user is deleted`() {
         every { sessionService.getSessionUserId() } returns 1
+        every { userJpaRepository.findByIdOrNull(1) } returns UserEntity(id = 1)
         sut.login(LoginApiRequestBody(username = "miguel", password = "secret"))
         verify {
             userJpaRepository.deleteById(withArg {
@@ -56,6 +57,7 @@ class UserServiceTest {
     @Test
     fun `GIVEN anon user WHEN login THEN existing user ID returned`() {
         every { sessionService.getSessionUserId() } returns 1
+        every { userJpaRepository.findByIdOrNull(1) } returns UserEntity(id = 1)
         every { userJpaRepository.findByUsernameIs("miguel") } returns UserEntity(id = 10, isAnon = false)
         val res = sut.login(LoginApiRequestBody(username = "miguel", password = "secret"))
         assertNotNull(res)
@@ -65,6 +67,8 @@ class UserServiceTest {
     @Test
     fun `GIVEN anon user WHEN login THEN tracked shows migrated from anon ID to existing user ID`() {
         every { sessionService.getSessionUserId() } returns 1
+        every { userJpaRepository.findByIdOrNull(1) } returns UserEntity(id = 1)
+        every { userJpaRepository.findByUsernameIs("miguel") } returns UserEntity(id = 10, isAnon = false)
         sut.login(LoginApiRequestBody(username = "miguel", password = "secret"))
         verify {
             trackedContentService.migrateShows(1, 10)

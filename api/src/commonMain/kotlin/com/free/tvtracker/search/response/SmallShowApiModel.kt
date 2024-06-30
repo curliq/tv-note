@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class SearchShowApiModel(
+data class SmallShowApiModel(
     @SerialName("id") val tmdbId: Int,
     @SerialName("name") val name: String,
     @SerialName("poster_path") val posterPath: String? = null,

@@ -7,8 +7,9 @@ import com.free.tvtracker.discover.response.RecommendedContentApiResponse
 import com.free.tvtracker.discover.response.TmdbShowTrendingApiResponse
 import com.free.tvtracker.discover.response.TrendingShowApiModel
 import com.free.tvtracker.logging.TvtrackerLogger
+import com.free.tvtracker.search.response.SmallShowApiModel
 import com.free.tvtracker.tmdb.data.TmdbShowSmallResponse
-import com.free.tvtracker.tmdb.data.TmdbTrendingResponse
+import com.free.tvtracker.tmdb.data.TmdbTrendingShowsResponse
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -25,7 +26,7 @@ class DiscoverShowsController(
     val discoverShowsService: DiscoverShowsService,
 ) {
 
-    @GetMapping(Endpoints.Path.GET_TRENDING_WEEKLY)
+    @GetMapping(Endpoints.Path.GET_TRENDING_WEEKLY_SHOWS)
     fun trending(): ResponseEntity<TmdbShowTrendingApiResponse> {
         val res = discoverShowsService.getTrendingWeeklyShows()
         return ResponseEntity.ok(
@@ -35,15 +36,15 @@ class DiscoverShowsController(
         )
     }
 
-    @PostMapping(Endpoints.Path.GET_RECOMMENDED_CONTENT)
+    @PostMapping(Endpoints.Path.GET_RECOMMENDED_CONTENT_SHOWS)
     fun recommended(@RequestBody body: RecommendedContentApiRequestBody): ResponseEntity<RecommendedContentApiResponse>? {
         val res = discoverShowsService.getRecommended(body)
         return res
     }
 
-    @GetMapping(Endpoints.Path.GET_RELEASED_SOON)
+    @GetMapping(Endpoints.Path.GET_RELEASED_SOON_SHOWS)
     fun releasedSoon(): ResponseEntity<TmdbShowTrendingApiResponse> {
-        val res = discoverShowsService.getReleasedSoon()
+        val res = discoverShowsService.getReleasedSoonShows()
         return ResponseEntity.ok(
             TmdbShowTrendingApiResponse.ok(
                 res.toApiModel()
@@ -52,12 +53,12 @@ class DiscoverShowsController(
     }
 }
 
-fun TmdbTrendingResponse.toApiModel(): TrendingShowApiModel {
+fun TmdbTrendingShowsResponse.toApiModel(): TrendingShowApiModel {
     return TrendingShowApiModel(
         page = this.page ?: 0,
         totalPages = this.totalPages ?: 1,
         results = this.results.map {
-            TrendingShowApiModel.Data(
+            SmallShowApiModel(
                 tmdbId = it.id!!,
                 name = it.name!!,
                 originalLanguage = it.originalLanguage,

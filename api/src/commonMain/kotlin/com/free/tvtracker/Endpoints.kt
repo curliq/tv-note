@@ -9,6 +9,7 @@ import com.free.tvtracker.details.response.TmdbMovieDetailsApiResponse
 import com.free.tvtracker.discover.response.RecommendedContentApiResponse
 import com.free.tvtracker.details.response.TmdbPersonDetailsApiResponse
 import com.free.tvtracker.details.response.TmdbShowDetailsApiResponse
+import com.free.tvtracker.discover.response.TmdbMovieTrendingApiResponse
 import com.free.tvtracker.discover.response.TmdbShowTrendingApiResponse
 import com.free.tvtracker.search.request.SearchApiRequestBody
 import com.free.tvtracker.search.response.SearchApiResponse
@@ -49,9 +50,12 @@ object Endpoints {
         const val GET_TMDB_SHOW = "search/show"
         const val GET_TMDB_MOVIE = "search/movie"
         const val GET_TMDB_PERSON = "search/person"
-        const val GET_TRENDING_WEEKLY = "discover/trending"
-        const val GET_RELEASED_SOON = "discover/released-soon"
-        const val GET_RECOMMENDED_CONTENT = "discover/recommended"
+        const val GET_TRENDING_WEEKLY_SHOWS = "discover/trending/shows"
+        const val GET_TRENDING_WEEKLY_MOVIES = "discover/trending/movies"
+        const val GET_RELEASED_SOON_SHOWS = "discover/released-soon/shows"
+        const val GET_RELEASED_SOON_MOVIES = "discover/released-soon/movies"
+        const val GET_RECOMMENDED_CONTENT_SHOWS = "discover/recommended/shows"
+        const val GET_RECOMMENDED_CONTENT_MOVIES = "discover/recommended/movies"
     }
 
     val getUser = EndpointNoBody(Path.GET_USER, UserApiResponse::class, Endpoint.Verb.GET)
@@ -124,12 +128,23 @@ object Endpoints {
         Endpoint.Verb.POST
     )
     val getTrendingWeekly =
-        EndpointNoBody(Path.GET_TRENDING_WEEKLY, TmdbShowTrendingApiResponse::class, Endpoint.Verb.GET)
+        EndpointNoBody(Path.GET_TRENDING_WEEKLY_SHOWS, TmdbShowTrendingApiResponse::class, Endpoint.Verb.GET)
     val getNewEpisodeReleasedSoon =
-        EndpointNoBody(Path.GET_RELEASED_SOON, TmdbShowTrendingApiResponse::class, Endpoint.Verb.GET)
-    val getRecommendedContent =
+        EndpointNoBody(Path.GET_RELEASED_SOON_SHOWS, TmdbShowTrendingApiResponse::class, Endpoint.Verb.GET)
+    val getRecommendedShows =
         Endpoint(
-            Path.GET_RECOMMENDED_CONTENT,
+            Path.GET_RECOMMENDED_CONTENT_SHOWS,
+            RecommendedContentApiResponse::class,
+            RecommendedContentApiRequestBody::class,
+            Endpoint.Verb.POST
+        )
+    val getTrendingWeeklyMovies =
+        EndpointNoBody(Path.GET_TRENDING_WEEKLY_MOVIES, TmdbMovieTrendingApiResponse::class, Endpoint.Verb.GET)
+    val getReleasedSoonMovies =
+        EndpointNoBody(Path.GET_RELEASED_SOON_MOVIES, TmdbMovieTrendingApiResponse::class, Endpoint.Verb.GET)
+    val getRecommendedMovies =
+        Endpoint(
+            Path.GET_RECOMMENDED_CONTENT_MOVIES,
             RecommendedContentApiResponse::class,
             RecommendedContentApiRequestBody::class,
             Endpoint.Verb.POST

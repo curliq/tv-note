@@ -17,7 +17,7 @@ import com.free.tvtracker.search.response.SearchApiResponse
 import com.free.tvtracker.search.response.SmallMovieApiModel
 import com.free.tvtracker.search.response.SearchMultiApiModel
 import com.free.tvtracker.search.response.SearchPersonApiModel
-import com.free.tvtracker.search.response.SearchShowApiModel
+import com.free.tvtracker.search.response.SmallShowApiModel
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -87,8 +87,8 @@ fun TmdbSearchMultiResponse.Data.toMovieApiModel(): SmallMovieApiModel {
     )
 }
 
-fun TmdbSearchMultiResponse.Data.toShowApiModel(): SearchShowApiModel {
-    return SearchShowApiModel(
+fun TmdbSearchMultiResponse.Data.toApiModel(): SmallShowApiModel {
+    return SmallShowApiModel(
         tmdbId = this.id!!,
         name = this.name!!,
         originalLanguage = this.originalLanguage,

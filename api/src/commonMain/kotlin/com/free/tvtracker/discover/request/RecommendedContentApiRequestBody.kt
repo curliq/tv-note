@@ -5,6 +5,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class RecommendedContentApiRequestBody(
-    @SerialName("related_shows_tmdb_ids")
-    val relatedShowsTmdbIds: List<Int>
+    @SerialName("related_content_tmdb_ids")
+    val relatedContentTmdbIds: List<Int>
 )

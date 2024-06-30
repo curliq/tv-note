@@ -127,7 +127,6 @@ class UserService(
             userJpaRepository.save(toUser)
         }
         userJpaRepository.deleteById(fromAnonUser)
-
     }
 
     fun updatePreferences(body: UpdatePreferencesApiRequestBody): UserEntity? {

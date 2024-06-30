@@ -5,8 +5,8 @@ import com.free.tvtracker.discover.response.RecommendedContentApiModel
 import com.free.tvtracker.discover.response.RecommendedContentApiModel.RelatedContent
 import com.free.tvtracker.features.discover.domain.DiscoverShowsService
 import com.free.tvtracker.tmdb.TmdbClient
-import com.free.tvtracker.tmdb.data.TmdbRecommendedShowsResponse
 import com.free.tvtracker.tmdb.data.TmdbShowSmallResponse
+import com.free.tvtracker.tmdb.data.TmdbTrendingShowsResponse
 import io.mockk.every
 import io.mockk.mockk
 import org.springframework.http.ResponseEntity
@@ -16,11 +16,11 @@ import kotlin.test.assertContentEquals
 class DiscoverShowsServiceRecommendationTest {
     @Test
     fun `GIVEN 2 shows that share 1 recommended show THEN 1 recommended show returned`() {
-        val tmdbClient = mockk<TmdbClient>() {
+        val tmdbClient = mockk<TmdbClient> {
             every {
-                get("/3/tv/1/recommendations", TmdbRecommendedShowsResponse::class.java, any())
+                get("/3/tv/1/recommendations", TmdbTrendingShowsResponse::class.java, any())
             } returns ResponseEntity.ok(
-                TmdbRecommendedShowsResponse().apply {
+                TmdbTrendingShowsResponse().apply {
                     results = arrayListOf(
                         TmdbShowSmallResponse(id = 40, name = ""),
                         TmdbShowSmallResponse(id = 101, name = ""),
@@ -28,9 +28,9 @@ class DiscoverShowsServiceRecommendationTest {
                 }
             )
             every {
-                get("/3/tv/2/recommendations", TmdbRecommendedShowsResponse::class.java, any())
+                get("/3/tv/2/recommendations", TmdbTrendingShowsResponse::class.java, any())
             } returns ResponseEntity.ok(
-                TmdbRecommendedShowsResponse().apply {
+                TmdbTrendingShowsResponse().apply {
                     results = arrayListOf(
                         TmdbShowSmallResponse(id = 101, name = ""),
                         TmdbShowSmallResponse(id = 200, name = ""),
@@ -47,11 +47,11 @@ class DiscoverShowsServiceRecommendationTest {
 
     @Test
     fun `GIVEN 3 shows that share 1 recommended show THEN 1 recommended show returned`() {
-        val tmdbClient = mockk<TmdbClient>() {
+        val tmdbClient = mockk<TmdbClient> {
             every {
-                get("/3/tv/1/recommendations", TmdbRecommendedShowsResponse::class.java, any())
+                get("/3/tv/1/recommendations", TmdbTrendingShowsResponse::class.java, any())
             } returns ResponseEntity.ok(
-                TmdbRecommendedShowsResponse().apply {
+                TmdbTrendingShowsResponse().apply {
                     results = arrayListOf(
                         TmdbShowSmallResponse(id = 50, name = ""),
                         TmdbShowSmallResponse(id = 101, name = ""),
@@ -59,9 +59,9 @@ class DiscoverShowsServiceRecommendationTest {
                 }
             )
             every {
-                get("/3/tv/2/recommendations", TmdbRecommendedShowsResponse::class.java, any())
+                get("/3/tv/2/recommendations", TmdbTrendingShowsResponse::class.java, any())
             } returns ResponseEntity.ok(
-                TmdbRecommendedShowsResponse().apply {
+                TmdbTrendingShowsResponse().apply {
                     results = arrayListOf(
                         TmdbShowSmallResponse(id = 101, name = ""),
                         TmdbShowSmallResponse(id = 200, name = ""),
@@ -69,9 +69,9 @@ class DiscoverShowsServiceRecommendationTest {
                 }
             )
             every {
-                get("/3/tv/3/recommendations", TmdbRecommendedShowsResponse::class.java, any())
+                get("/3/tv/3/recommendations", TmdbTrendingShowsResponse::class.java, any())
             } returns ResponseEntity.ok(
-                TmdbRecommendedShowsResponse().apply {
+                TmdbTrendingShowsResponse().apply {
                     results = arrayListOf(
                         TmdbShowSmallResponse(id = 101, name = ""),
                         TmdbShowSmallResponse(id = 500, name = ""),

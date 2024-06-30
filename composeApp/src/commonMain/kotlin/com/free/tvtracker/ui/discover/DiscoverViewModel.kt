@@ -107,8 +107,8 @@ class DiscoverViewModel(
 
     private fun getDefaultRecommendedSelection(): List<Int> {
         val shows = trackedShowsRepository.allShows.value
-        val related = shows.sortedByDescending { it.tvShow!!.createdAtDatetime }.take(2)
-        return related.map { it.tvShow!!.storedShow.tmdbId }
+        val related = shows.sortedByDescending { it.tvShow?.createdAtDatetime?:it.movie!!.createdAtDatetime }.take(2)
+        return related.map { it.tvShow?.storedShow?.tmdbId?:it.movie!!.storedMovie.tmdbId }
     }
 
     fun action(action: DiscoverViewModelAction) {

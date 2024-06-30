@@ -92,7 +92,7 @@ class SearchRepository(
     suspend fun getRecommended(relatedShows: List<Int>): RecommendedContentApiResponse {
         return try {
             val body = RecommendedContentApiRequestBody(relatedShows)
-            httpClient.call(Endpoints.getRecommendedContent, body)
+            httpClient.call(Endpoints.getRecommendedShows, body)
         } catch (e: Throwable) {
             RecommendedContentApiResponse.error(ApiError.Network)
         }
