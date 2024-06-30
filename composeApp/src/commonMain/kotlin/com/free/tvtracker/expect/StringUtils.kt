@@ -18,4 +18,6 @@ expect open class StringUtils() {
     fun roundDouble(d: Double, decimalPoints: Int): String
 
     fun shortenDouble(d: Double, decimalPoints: Int, shortenCharacter: Char): String
+
+    fun formatMoney(d: Double, language: String, countryCode: String): String
 }

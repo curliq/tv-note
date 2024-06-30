@@ -76,6 +76,12 @@ fun DetailsMediaSheetContent(
             VideosGrid(show.mediaVideosBehindTheScenes, ::onClick)
         }
         stickyHeader {
+            DetailsSheetHeader("Clips & credits")
+        }
+        item {
+            VideosGrid(show.mediaVideosClipsAndOther, ::onClick)
+        }
+        stickyHeader {
             DetailsSheetHeader("Photos: thumbnails")
         }
         item {

@@ -61,6 +61,16 @@ class SessionRepository(
         }
     }
 
+    /**
+     * @return success
+     */
+    fun loadSessionIfMissing(): Boolean {
+        if (sessionStore.token == null) {
+            return loadSession()
+        }
+        return true
+    }
+
     fun geSession(): SessionClientEntity? {
         return localDataSource.getSession()
     }

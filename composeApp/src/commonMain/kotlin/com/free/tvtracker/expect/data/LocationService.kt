@@ -21,4 +21,5 @@ class CachingLocationService : LocationService() {
 expect open class LocationService() {
     fun platformCountryCode(): String
     fun countryName(countryCode: String): String
+    fun languageCode(): String
 }

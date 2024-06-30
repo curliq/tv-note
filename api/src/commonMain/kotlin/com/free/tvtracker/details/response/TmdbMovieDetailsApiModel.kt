@@ -15,7 +15,7 @@ data class TmdbMovieDetailsApiModel(
     val backdropPath: String?,
     @SerialName("belongs_to_collection")
     val belongsToCollection: BelongsToCollection?,
-    val budget: Int?,
+    val budget: Double?,
     val genres: List<String> = emptyList(),
     val homepage: String?,
     val id: Int,
@@ -37,7 +37,7 @@ data class TmdbMovieDetailsApiModel(
     val productionCountries: List<TmdbShowDetailsApiModel.ProductionCountries>?,
     @SerialName("release_date")
     val releaseDate: String?,
-    val revenue: Int?,
+    val revenue: Double?,
     val runtime: Int?,
     val status: String?,
     val tagline: String?,

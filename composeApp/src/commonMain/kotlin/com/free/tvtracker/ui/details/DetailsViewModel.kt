@@ -203,11 +203,15 @@ data class DetailsUiModel(
     val mediaVideosTrailers: List<Video>,
     val mediaVideosTeasers: List<Video>,
     val mediaVideosBehindTheScenes: List<Video>,
+    val mediaVideosClipsAndOther: List<Video>,
     val mediaMostPopularImage: String?,
     val mediaImagesPosters: List<String>,
     val mediaImagesBackdrops: List<String>,
     val ratingTmdbVoteAverage: String,
     val ratingTmdbVoteCount: String,
+    val budget: String,
+    val revenue: String,
+    val website: String?,
 ) {
     sealed interface Person {
         val tmdbId: Int

@@ -7,7 +7,7 @@ data class TmdbMovieBigResponse(
     val backdropPath: String?,
     @JsonProperty("belongs_to_collection")
     val belongsToCollection: BelongsToCollection?,
-    val budget: Int?,
+    val budget: Double?,
     val genres: List<Genre>?,
     val homepage: String?,
     val id: Int,
@@ -29,7 +29,7 @@ data class TmdbMovieBigResponse(
     val productionCountries: List<TmdbShowBigResponse.ProductionCountries> = emptyList(),
     @JsonProperty("release_date")
     val releaseDate: String?,
-    val revenue: Int?,
+    val revenue: Double?,
     val runtime: Int?,
     @JsonProperty("spoken_languages")
     val spokenLanguages: List<SpokenLanguage>?,

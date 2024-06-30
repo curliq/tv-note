@@ -14,4 +14,8 @@ actual open class LocationService {
     actual fun countryName(countryCode: String): String {
         return Locale("", countryCode).displayCountry
     }
+
+    actual fun languageCode(): String {
+        return Locale.getDefault().displayLanguage
+    }
 }

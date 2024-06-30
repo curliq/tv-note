@@ -3,11 +3,11 @@ package com.free.tvtracker.ui.details.mappers
 import com.free.tvtracker.base.MapperWithOptions
 import com.free.tvtracker.constants.TmdbVideoType
 import com.free.tvtracker.details.response.TmdbMovieDetailsApiModel
-import com.free.tvtracker.ui.details.DetailsUiModel
-import com.free.tvtracker.tracked.response.TrackedContentApiModel
 import com.free.tvtracker.expect.CommonStringUtils
 import com.free.tvtracker.expect.data.CachingLocationService
+import com.free.tvtracker.tracked.response.TrackedContentApiModel
 import com.free.tvtracker.ui.common.TmdbConfigData
+import com.free.tvtracker.ui.details.DetailsUiModel
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.format
 import kotlinx.datetime.format.MonthNames
@@ -15,6 +15,7 @@ import kotlinx.datetime.format.Padding
 import kotlinx.datetime.format.char
 import kotlin.math.ln
 import kotlin.math.pow
+
 
 class DetailsUiModelForMovieMapper(
     private val castMapper: ShowCastUiModelMapper,
@@ -35,17 +36,24 @@ class DetailsUiModelForMovieMapper(
             "date unavailable"
         }
         val duration = "${(from.runtime ?: 0) / 60}h ${(from.runtime ?: 0) % 60}m"
-
+        val clipsAndOtherVideos = from.videos?.filter {
+            it.type in listOf(
+                TmdbVideoType.CLIP.type,
+                TmdbVideoType.FEATURETTE.type,
+                TmdbVideoType.OPENING_CREDITS.type
+            )
+        }
+        val mediaVideosTeasers = from.videos?.filter { it.type == TmdbVideoType.TEASER.type }
         return DetailsUiModel(
             isTvShow = false,
             tmdbId = from.id,
-            homepageUrl = from.homepage,
             name = from.title!!,
             posterUrl = TmdbConfigData.get().getPosterUrl(from.posterPath),
             releaseStatus = airText,
             duration = duration,
             trackingStatus = getTrackingStatus(options),
             trackedContentId = options?.movie?.id,
+            homepageUrl = from.homepage,
             description = from.overview,
             genres = from.genres.joinToString(", "),
             seasonsInfo = null,
@@ -72,26 +80,39 @@ class DetailsUiModelForMovieMapper(
             castFirst = castMapper.map(from.cast?.getOrNull(0)),
             castSecond = castMapper.map(from.cast?.getOrNull(1)),
             cast = from.cast?.map { castMapper.map(it) } ?: emptyList(),
-            crew = from.crew?.map { crewMapper.map(it) } ?: emptyList(),
             watchProviders = from.watchProvider?.map { showWatchProviderUiModelMapper.map(it) } ?: emptyList(),
+            crew = from.crew?.map { crewMapper.map(it) } ?: emptyList(),
             watchProviderCountry = locationService.countryName(),
-            mediaTrailer = from.videos?.firstOrNull { it.type == TmdbVideoType.TRAILER.type }
+            mediaTrailer = (from.videos?.firstOrNull { it.type == TmdbVideoType.TRAILER.type }
+                ?: mediaVideosTeasers?.firstOrNull()
+                ?: clipsAndOtherVideos?.firstOrNull())
                 ?.run { showVideoUiModelMapper.map(this) },
             mediaVideosTrailers = from.videos?.filter { it.type == TmdbVideoType.TRAILER.type }
                 ?.mapNotNull { showVideoUiModelMapper.map(it) } ?: emptyList(),
-            mediaVideosTeasers = from.videos?.filter { it.type == TmdbVideoType.TEASER.type }
-                ?.mapNotNull { showVideoUiModelMapper.map(it) } ?: emptyList(),
+            mediaVideosTeasers = (mediaVideosTeasers ?: emptyList()).mapNotNull { showVideoUiModelMapper.map(it) },
             mediaVideosBehindTheScenes = from.videos?.filter { it.type == TmdbVideoType.BEHIND_THE_SCENES.type }
                 ?.mapNotNull { showVideoUiModelMapper.map(it) } ?: emptyList(),
+            mediaVideosClipsAndOther = clipsAndOtherVideos?.mapNotNull { showVideoUiModelMapper.map(it) }
+                ?: emptyList(),
             mediaMostPopularImage = TmdbConfigData.get()
                 .getBackdropUrl(from.images?.backdrops?.firstOrNull()?.filePath),
             mediaImagesPosters = from.images?.posters?.map { TmdbConfigData.get().getPosterUrl(it.filePath) }
                 ?: emptyList(),
             mediaImagesBackdrops = from.images?.backdrops?.map { TmdbConfigData.get().getBackdropUrl(it.filePath) }
                 ?: emptyList(),
-            ratingTmdbVoteCount = formatVoteCount(from.voteCount ?: 0),
             ratingTmdbVoteAverage = stringUtils.roundDouble((from.voteAverage ?: 0.toDouble()), 1) + "/10",
+            ratingTmdbVoteCount = formatVoteCount(from.voteCount ?: 0),
+            budget = formatMoney(from.budget) ?: "(not available)",
+            revenue = formatMoney(from.revenue) ?: "(not available)",
+            website = from.homepage
         )
+    }
+
+    private fun formatMoney(amount: Double?): String? {
+        if (amount == null) return null
+        val language = locationService.languageCode()
+        val countryCode = locationService.getCountryCode()
+        return stringUtils.formatMoney(d = amount, language = language, countryCode = countryCode)
     }
 
     private fun getTrackingStatus(trackedShow: TrackedContentApiModel?): DetailsUiModel.TrackingStatus {

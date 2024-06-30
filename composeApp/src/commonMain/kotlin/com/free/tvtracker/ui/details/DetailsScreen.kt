@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -39,6 +40,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -50,6 +52,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow.Companion.Ellipsis
 import androidx.compose.ui.unit.dp
 import besttvtracker.composeapp.generated.resources.Res
+import besttvtracker.composeapp.generated.resources.ic_open_window
+import besttvtracker.composeapp.generated.resources.instagram
 import besttvtracker.composeapp.generated.resources.justwatch_logo_lightmode
 import besttvtracker.composeapp.generated.resources.tmdb_logo
 import com.free.tvtracker.ui.common.composables.ErrorScreen
@@ -79,6 +83,7 @@ sealed class DetailsScreenNavAction {
     data object GoFilmCollection : DetailsScreenNavAction()
     data class GoCastAndCrewDetails(val personTmdbId: Int) : DetailsScreenNavAction()
     data class GoContentDetails(val tmdbId: Int, val isTvShow: Boolean) : DetailsScreenNavAction()
+    data class GoWebsite(val url: String) : DetailsScreenNavAction()
 }
 
 @Composable
@@ -364,6 +369,37 @@ fun DetailsScreenContent(
                 style = MaterialTheme.typography.labelMedium,
                 modifier = Modifier.padding(horizontal = 24.dp).align(Alignment.CenterVertically)
             )
+        }
+        Spacer(Modifier.height(24.dp))
+
+        Text(text = "About", style = MaterialTheme.typography.titleLarge)
+        Spacer(Modifier.height(8.dp))
+        if (!show.isTvShow) {
+            Text("Budget", style = MaterialTheme.typography.titleSmall)
+            Text(show.budget)
+            Spacer(Modifier.height(8.dp))
+            Text("Revenue", style = MaterialTheme.typography.titleSmall)
+            Text(show.revenue)
+            Spacer(Modifier.height(8.dp))
+        }
+        Text("Website", style = MaterialTheme.typography.titleSmall)
+        if (!show.website.isNullOrEmpty()) {
+            FilledTonalButton(
+                onClick = {  navAction(DetailsScreenNavAction.GoWebsite(show.website))  },
+                contentPadding = PaddingValues(vertical = 0.dp, horizontal = 12.dp),
+                shape = TvTrackerTheme.ShapeButton,
+            ) {
+                ResImage(
+                    res = Res.drawable.ic_open_window,
+                    contentDescription = "open",
+                    modifier = Modifier.size(24.dp),
+                    tint = MaterialTheme.colorScheme.primary
+                )
+                Spacer(Modifier.width(12.dp))
+                Text(text = show.website)
+            }
+        } else {
+            Text("(no website)", style = MaterialTheme.typography.labelMedium)
         }
         Spacer(Modifier.height(24.dp))
     }

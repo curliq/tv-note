@@ -38,13 +38,14 @@ fun buildDetailsUiModel(
     ratingTmdbVoteCount: String = "",
     isTvShow: Boolean = true,
 ) = DetailsUiModel(
+    isTvShow = isTvShow,
     tmdbId = tmdbId,
     name = name,
     posterUrl = posterUrl,
     releaseStatus = releaseStatus,
+    duration = duration,
     trackingStatus = trackingStatus,
     trackedContentId = trackingId,
-    duration = duration,
     homepageUrl = homepageUrl,
     description = description,
     genres = genres,
@@ -54,8 +55,8 @@ fun buildDetailsUiModel(
     castFirst = castFirst,
     castSecond = castSecond,
     cast = casts,
-    crew = crew,
     watchProviders = watchProviders,
+    crew = crew,
     watchProviderCountry = watchProvidersCountry,
     mediaTrailer = mediaTrailer,
     mediaVideosTrailers = mediaVideosTrailers,
@@ -66,5 +67,4 @@ fun buildDetailsUiModel(
     mediaImagesBackdrops = mediaImagesBackdrops,
     ratingTmdbVoteAverage = ratingTmdbVoteAverage,
     ratingTmdbVoteCount = ratingTmdbVoteCount,
-    isTvShow = isTvShow
 )

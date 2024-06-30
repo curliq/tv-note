@@ -113,6 +113,12 @@ class ShowDetailsActivity : BaseActivity() {
                     is DetailsScreenNavAction.GoFilmCollection -> {
                         showBottomSheet = ShowDetailsNavDestinations.FILM_COLLECTION
                     }
+
+                    is DetailsScreenNavAction.GoWebsite -> {
+                        context.startActivity(
+                            Intent(Intent.ACTION_VIEW).setData(Uri.parse(action.url))
+                        )
+                    }
                 }
             }
             TvTrackerTheme {

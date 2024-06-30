@@ -26,16 +26,24 @@ class DetailsUiModelForShowMapper(
 ) : MapperWithOptions<TmdbShowDetailsApiModel, DetailsUiModel, TrackedContentApiModel?> {
 
     override fun map(from: TmdbShowDetailsApiModel, options: TrackedContentApiModel?): DetailsUiModel {
+        val clipsAndOtherVideos = from.videos?.filter {
+            it.type in listOf(
+                TmdbVideoType.CLIP.type,
+                TmdbVideoType.FEATURETTE.type,
+                TmdbVideoType.OPENING_CREDITS.type
+            )
+        }
+        val mediaVideosTeasers = from.videos?.filter { it.type == TmdbVideoType.TEASER.type }
         return DetailsUiModel(
             isTvShow = true,
             tmdbId = from.id,
-            homepageUrl = from.homepage,
             name = from.name,
             posterUrl = TmdbConfigData.get().getPosterUrl(from.posterPath),
             releaseStatus = getShowStatusUseCase(from.status, from.firstAirDate, from.lastAirDate),
-            trackingStatus = getTrackingStatus(options),
             duration = null,
+            trackingStatus = getTrackingStatus(options),
             trackedContentId = options?.tvShow?.id,
+            homepageUrl = from.homepage,
             description = from.overview,
             genres = from.genres.joinToString(", "),
             seasonsInfo =
@@ -45,25 +53,31 @@ class DetailsUiModelForShowMapper(
             castFirst = castMapper.map(from.cast?.getOrNull(0)),
             castSecond = castMapper.map(from.cast?.getOrNull(1)),
             cast = from.cast?.map { castMapper.map(it) } ?: emptyList(),
-            crew = from.crew?.map { crewMapper.map(it) } ?: emptyList(),
             watchProviders = from.watchProvider?.map { showWatchProviderUiModelMapper.map(it) } ?: emptyList(),
+            crew = from.crew?.map { crewMapper.map(it) } ?: emptyList(),
             watchProviderCountry = locationService.countryName(),
-            mediaTrailer = from.videos?.firstOrNull { it.type == TmdbVideoType.TRAILER.type }
+            mediaTrailer = (from.videos?.firstOrNull { it.type == TmdbVideoType.TRAILER.type }
+                ?: mediaVideosTeasers?.firstOrNull()
+                ?: clipsAndOtherVideos?.firstOrNull())
                 ?.run { showVideoUiModelMapper.map(this) },
             mediaVideosTrailers = from.videos?.filter { it.type == TmdbVideoType.TRAILER.type }
                 ?.mapNotNull { showVideoUiModelMapper.map(it) } ?: emptyList(),
-            mediaVideosTeasers = from.videos?.filter { it.type == TmdbVideoType.TEASER.type }
-                ?.mapNotNull { showVideoUiModelMapper.map(it) } ?: emptyList(),
+            mediaVideosTeasers = (mediaVideosTeasers ?: emptyList()).mapNotNull { showVideoUiModelMapper.map(it) },
             mediaVideosBehindTheScenes = from.videos?.filter { it.type == TmdbVideoType.BEHIND_THE_SCENES.type }
                 ?.mapNotNull { showVideoUiModelMapper.map(it) } ?: emptyList(),
+            mediaVideosClipsAndOther = clipsAndOtherVideos?.mapNotNull { showVideoUiModelMapper.map(it) }
+                ?: emptyList(),
             mediaMostPopularImage = TmdbConfigData.get()
                 .getBackdropUrl(from.images?.backdrops?.firstOrNull()?.filePath),
             mediaImagesPosters = from.images?.posters?.map { TmdbConfigData.get().getPosterUrl(it.filePath) }
                 ?: emptyList(),
             mediaImagesBackdrops = from.images?.backdrops?.map { TmdbConfigData.get().getBackdropUrl(it.filePath) }
                 ?: emptyList(),
-            ratingTmdbVoteCount = formatVoteCount(from.voteCount ?: 0),
             ratingTmdbVoteAverage = stringUtils.roundDouble((from.voteAverage ?: 0.toDouble()), 1) + "/10",
+            ratingTmdbVoteCount = formatVoteCount(from.voteCount ?: 0),
+            budget = "",
+            revenue = "",
+            website = from.homepage ?: "(no website)"
         )
     }
 

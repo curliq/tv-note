@@ -26,18 +26,23 @@ class PersonUiModelMapper(
         val crewShows = from.credits.crew.map { crewMapper.map(it, true) }
         val castMovies = from.movieCredits.cast.map { castMapper.map(it, false) }
         val crewMovies = from.movieCredits.crew.map { crewMapper.map(it, false) }
-        val birthDate = LocalDate.parse(input = from.birthday ?: "")
-        val birthday = birthDate.format(LocalDate.Format {
-            dayOfMonth(padding = Padding.NONE); char(' ')
-            monthName(MonthNames.ENGLISH_FULL); char(' ')
-            year()
-        })
-        val age = birthDate.periodUntil(LocalDate.fromEpochDays(clock.epochSeconds.toInt() / 24 / 60 / 60)).years
+        val dob = try {
+            val birthDate = LocalDate.parse(input = from.birthday ?: "")
+            val birthday = birthDate.format(LocalDate.Format {
+                dayOfMonth(padding = Padding.NONE); char(' ')
+                monthName(MonthNames.ENGLISH_FULL); char(' ')
+                year()
+            })
+            val age = birthDate.periodUntil(LocalDate.fromEpochDays(clock.epochSeconds.toInt() / 24 / 60 / 60)).years
+            "$birthday (age $age)"
+        } catch (e: Exception) {
+            "(not available)"
+        }
         return PersonUiModel(
             photoUrl = TmdbConfigData.get().getPosterUrl(from.profilePath),
             name = from.name,
             job = from.knownForDepartment,
-            dob = "${birthday} (age $age)",
+            dob = dob,
             bornIn = from.placeOfBirth ?: "",
             bio = from.biography ?: "",
             moviesCast = castMovies,

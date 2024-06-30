@@ -8,10 +8,12 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.lifecycleScope
+import com.free.tvtracker.data.session.SessionRepository
 import com.free.tvtracker.ui.settings.SettingsUiModel
 import com.free.tvtracker.ui.settings.SettingsViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.get
 import org.koin.android.ext.android.inject
 
 open class BaseActivity : AppCompatActivity() {
@@ -21,6 +23,11 @@ open class BaseActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setEdgeToEdge()
+
+        // load the session for every activity, so that any activity can be restored in case of a crash
+        val sessionRepository = get<SessionRepository>()
+        sessionRepository.loadSessionIfMissing()
+
         this.lifecycleScope.launch {
             settingsViewModel.theme.collectLatest {
                 val mode = when (it) {

@@ -11,39 +11,18 @@ import com.free.tvtracker.ui.details.DetailsUiModel
 
 object DetailsScreenPreviews {
     val showDetailsUiModel = DetailsUiModel(
+        isTvShow = true,
         tmdbId = 1,
         name = "game of thrones thrones thornes",
         posterUrl = "",
-        homepageUrl = "",
         releaseStatus = "2014 - Ongoing",
-        trackingStatus = DetailsUiModel.TrackingStatus(null, null),
         duration = null,
+        trackingStatus = DetailsUiModel.TrackingStatus(null, null),
         trackedContentId = null,
+        homepageUrl = "",
         description = "game of thrones is a show about society",
+        genres = "action, anime",
         seasonsInfo = "2 seasons - 16 episodes - 0h40m each",
-        castFirst = DetailsUiModel.Cast(1, "William Dicksdoor 2 lines", "King Joffrey", ""),
-        castSecond = DetailsUiModel.Cast(1, "Peter O'mo", "Joffrey's brother", ""),
-        cast = listOf(
-            DetailsUiModel.Cast(1, "William Dicksdoor 2 lines", "King Joffrey", ""),
-            DetailsUiModel.Cast(1, "William Dicksdoor 2 lines", "King Joffrey", ""),
-            DetailsUiModel.Cast(1, "William Dicksdoor 2 lines", "King Joffrey", ""),
-            DetailsUiModel.Cast(1, "William Dicksdoor 2 lines", "King Joffrey", ""),
-        ),
-        crew = listOf(
-            DetailsUiModel.Crew(1, "William Dicksdoor 2 lines", "Director", ""),
-            DetailsUiModel.Crew(1, "William Dicksdoor 2 lines", "Director", ""),
-            DetailsUiModel.Crew(1, "William Dicksdoor 2 lines", "Director", ""),
-            DetailsUiModel.Crew(1, "William Dicksdoor 2 lines", "Director", ""),
-        ),
-        watchProviders = listOf(
-            DetailsUiModel.WatchProvider("", ""),
-            DetailsUiModel.WatchProvider("", ""),
-            DetailsUiModel.WatchProvider("", ""),
-            DetailsUiModel.WatchProvider("", ""),
-            DetailsUiModel.WatchProvider("", ""),
-            DetailsUiModel.WatchProvider("", ""),
-        ),
-        watchProviderCountry = "UK",
         seasons = listOf(
             DetailsUiModel.Season(
                 1, 1, "", false, true,
@@ -87,6 +66,29 @@ object DetailsScreenPreviews {
                 DetailsUiModel.MovieSeries.Movie(1, "", "movie 3", "2020"),
             )
         ),
+        castFirst = DetailsUiModel.Cast(1, "William Dicksdoor 2 lines", "King Joffrey", ""),
+        castSecond = DetailsUiModel.Cast(1, "Peter O'mo", "Joffrey's brother", ""),
+        cast = listOf(
+            DetailsUiModel.Cast(1, "William Dicksdoor 2 lines", "King Joffrey", ""),
+            DetailsUiModel.Cast(1, "William Dicksdoor 2 lines", "King Joffrey", ""),
+            DetailsUiModel.Cast(1, "William Dicksdoor 2 lines", "King Joffrey", ""),
+            DetailsUiModel.Cast(1, "William Dicksdoor 2 lines", "King Joffrey", ""),
+        ),
+        watchProviders = listOf(
+            DetailsUiModel.WatchProvider("", ""),
+            DetailsUiModel.WatchProvider("", ""),
+            DetailsUiModel.WatchProvider("", ""),
+            DetailsUiModel.WatchProvider("", ""),
+            DetailsUiModel.WatchProvider("", ""),
+            DetailsUiModel.WatchProvider("", ""),
+        ),
+        crew = listOf(
+            DetailsUiModel.Crew(1, "William Dicksdoor 2 lines", "Director", ""),
+            DetailsUiModel.Crew(1, "William Dicksdoor 2 lines", "Director", ""),
+            DetailsUiModel.Crew(1, "William Dicksdoor 2 lines", "Director", ""),
+            DetailsUiModel.Crew(1, "William Dicksdoor 2 lines", "Director", ""),
+        ),
+        watchProviderCountry = "UK",
         mediaTrailer = DetailsUiModel.Video("thumbnail url", "video url", "video title"),
         mediaVideosTrailers = listOf(
             DetailsUiModel.Video("thumbnail url", "video url", "video title"),
@@ -104,13 +106,15 @@ object DetailsScreenPreviews {
             DetailsUiModel.Video("thumbnail url", "video url", "video title"),
             DetailsUiModel.Video("thumbnail url", "video url", "video title"),
         ),
+        mediaVideosClipsAndOther = listOf(),
         mediaMostPopularImage = "url",
         mediaImagesPosters = listOf("url", "url", "url", "url", "url", "url", "url"),
         mediaImagesBackdrops = listOf("url", "url", "url", "url", "url", "url", "url"),
-        genres = "action, anime",
         ratingTmdbVoteAverage = "9/10",
         ratingTmdbVoteCount = "40k",
-        isTvShow = true
+        budget = "10k",
+        revenue = "20k",
+        website = "www.google.com"
     )
 }
 
