@@ -1,6 +1,7 @@
 package com.free.tvtracker.ui.discover
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -43,7 +44,7 @@ import com.free.tvtracker.ui.common.theme.ScreenContentAnimation
 import com.free.tvtracker.ui.common.theme.TvTrackerTheme
 
 sealed class RecommendedScreenNavActions {
-    data class GoShowDetails(val tmdbShowId: Int) : RecommendedScreenNavActions()
+    data class GoShowDetails(val tmdbShowId: Int, val isTvShow: Boolean) : RecommendedScreenNavActions()
 }
 
 @Composable
@@ -52,7 +53,7 @@ fun RecommendedScreen(
     navigate: (RecommendedScreenNavActions) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val data = viewModel.uiModel.collectAsState().value
+    val data = viewModel.data.collectAsState().value
     TvTrackerTheme {
         Scaffold(modifier.fillMaxSize()) {
             AnimatedContent(
@@ -162,7 +163,7 @@ private fun HasResults(
                 val item = recommended.results[index]
                 Card(
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
-                    onClick = { navigate(RecommendedScreenNavActions.GoShowDetails(item.tmdbId)) },
+                    onClick = { navigate(RecommendedScreenNavActions.GoShowDetails(item.tmdbId, item.isTvShow)) },
                     modifier = Modifier.fillMaxSize(),
                 ) {
                     Box(Modifier.aspectRatio(posterRatio())) {
@@ -191,9 +192,12 @@ private fun SelectionCard(
 ) {
     OutlinedCard(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
+        border = if (content.isSelected) {
+            BorderStroke(2.dp, MaterialTheme.colorScheme.primary)
+        } else CardDefaults.outlinedCardBorder(true),
         onClick = { action(DiscoverViewModel.DiscoverViewModelAction.RecommendedSelectionAdded(content.tmdbId)) },
         // aspect ratio doesn't work if we set it on the TvImage container so we just set it here
-        modifier = Modifier.aspectRatio(1f / 1.8f).then(if (content.isSelected) Modifier.alpha(0.5f) else Modifier)
+        modifier = Modifier.aspectRatio(1f / 1.8f)
     ) {
         Column(Modifier.width(140.dp)) {
             Box(Modifier.weight(1f)) {

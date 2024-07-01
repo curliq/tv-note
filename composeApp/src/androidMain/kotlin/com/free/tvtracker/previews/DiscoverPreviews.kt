@@ -14,28 +14,28 @@ object DiscoverPreviews {
     val shows = DiscoverUiState.Ok(
         DiscoverUiModel(
             showsTrendingWeekly = listOf(
-                DiscoverUiModel.Content(1, "game of throne", ""),
-                DiscoverUiModel.Content(1, "game of throne", ""),
-                DiscoverUiModel.Content(1, "game of throne", ""),
-                DiscoverUiModel.Content(1, "game of throne", ""),
-                DiscoverUiModel.Content(1, "game of throne throne theonr the", ""),
+                DiscoverUiModel.Content(1, "game of throne", "", true),
+                DiscoverUiModel.Content(1, "game of throne", "", true),
+                DiscoverUiModel.Content(1, "game of throne", "", true),
+                DiscoverUiModel.Content(1, "game of throne", "", true),
+                DiscoverUiModel.Content(1, "game of throne throne theonr the", "", true),
             ),
             showsReleasedSoon = listOf(
-                DiscoverUiModel.Content(1, "game of throne", ""),
-                DiscoverUiModel.Content(1, "game of throne", ""),
-                DiscoverUiModel.Content(1, "game of throne", ""),
+                DiscoverUiModel.Content(1, "game of throne", "", true),
+                DiscoverUiModel.Content(1, "game of throne", "", true),
+                DiscoverUiModel.Content(1, "game of throne", "", true),
             ),
             showsRecommended = DiscoverUiModel.RecommendedContent(
                 results = listOf(
-                    DiscoverUiModel.Content(1, "game of throne", ""),
-                    DiscoverUiModel.Content(1, "game of then theoh er throne", ""),
-                    DiscoverUiModel.Content(1, "game of throne", ""),
-                    DiscoverUiModel.Content(1, "game of throne", ""),
+                    DiscoverUiModel.Content(1, "game of throne", "", true),
+                    DiscoverUiModel.Content(1, "game of then theoh er throne", "", true),
+                    DiscoverUiModel.Content(1, "game of throne", "", true),
+                    DiscoverUiModel.Content(1, "game of throne", "", true),
                 ),
                 selectionActive = listOf(
-                    DiscoverUiModel.Content(1, "suits", ""),
-                    DiscoverUiModel.Content(1, "avatar", ""),
-                    DiscoverUiModel.Content(1, "haiju", ""),
+                    DiscoverUiModel.Content(1, "suits", "", true),
+                    DiscoverUiModel.Content(1, "avatar", "", true),
+                    DiscoverUiModel.Content(1, "haiju", "", true),
                 ),
                 selectionActiveText = "suits, haiju, and avatar and game of throne",
                 selectionAvailable = listOf(
@@ -61,7 +61,7 @@ object DiscoverPreviews {
 fun DiscoverPreview() {
     MaterialTheme {
         Surface {
-            DiscoverOk(shows, {})
+            DiscoverOk(shows, true, {}, {})
         }
     }
 }

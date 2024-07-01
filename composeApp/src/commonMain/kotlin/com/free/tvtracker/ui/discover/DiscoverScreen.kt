@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -23,6 +24,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.InputChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -37,6 +39,8 @@ import androidx.compose.ui.text.style.TextOverflow.Companion.Ellipsis
 import androidx.compose.ui.unit.dp
 import besttvtracker.composeapp.generated.resources.Res
 import besttvtracker.composeapp.generated.resources.ic_filter
+import besttvtracker.composeapp.generated.resources.ic_movie
+import besttvtracker.composeapp.generated.resources.ic_tv
 import com.free.tvtracker.ui.common.composables.ErrorScreen
 import com.free.tvtracker.ui.common.composables.LoadingScreen
 import com.free.tvtracker.ui.common.composables.ResImage
@@ -46,10 +50,11 @@ import com.free.tvtracker.ui.common.theme.ScreenContentAnimation
 import com.free.tvtracker.ui.common.theme.TvTrackerTheme
 import com.free.tvtracker.ui.details.SeeAllCard
 import com.free.tvtracker.ui.watching.FabContainer
+import com.free.tvtracker.ui.watchlist.FilterCloseIcon
 
 sealed class DiscoverScreenNavActions {
     data object GoAddShow : DiscoverScreenNavActions()
-    data class GoShowDetails(val tmdbShowId: Int, val isTvShow:Boolean) : DiscoverScreenNavActions()
+    data class GoShowDetails(val tmdbShowId: Int, val isTvShow: Boolean) : DiscoverScreenNavActions()
     data object GoRecommendations : DiscoverScreenNavActions()
     data object GoTrending : DiscoverScreenNavActions()
     data object GoNewRelease : DiscoverScreenNavActions()
@@ -61,7 +66,7 @@ fun DiscoverScreen(
     navigate: (DiscoverScreenNavActions) -> Unit,
     paddingValues: PaddingValues = PaddingValues()
 ) {
-    val data = viewModel.uiModel.collectAsState().value
+    val data = viewModel.data.collectAsState().value
     TvTrackerTheme {
         FabContainer(
             navigate = { navigate(DiscoverScreenNavActions.GoAddShow) },
@@ -75,7 +80,12 @@ fun DiscoverScreen(
                     when (targetState) {
                         DiscoverUiState.Error -> ErrorScreen { viewModel.refresh(true) }
                         DiscoverUiState.Loading -> LoadingScreen()
-                        is DiscoverUiState.Ok -> DiscoverOk(targetState, navigate)
+                        is DiscoverUiState.Ok -> DiscoverOk(
+                            targetState,
+                            viewModel.filterTvShows.collectAsState().value,
+                            viewModel::toggleContentFilter,
+                            navigate
+                        )
                     }
                 }
             },
@@ -85,9 +95,33 @@ fun DiscoverScreen(
 }
 
 @Composable
-fun DiscoverOk(data: DiscoverUiState.Ok, navigate: (DiscoverScreenNavActions) -> Unit) {
+fun DiscoverOk(
+    data: DiscoverUiState.Ok,
+    filterTvShows: Boolean,
+    toggleFilterTvShows: (Boolean) -> Unit,
+    navigate: (DiscoverScreenNavActions) -> Unit
+) {
     // Column is not scrollable for some reason but LazyColumn is
     LazyColumn(Modifier.padding(horizontal = TvTrackerTheme.sidePadding)) {
+        item {
+            Row(Modifier.padding(top = 8.dp)) {
+                InputChip(
+                    selected = filterTvShows,
+                    onClick = { toggleFilterTvShows(!filterTvShows) },
+                    label = { Text("Tv Shows") },
+                    leadingIcon = { ResImage(Res.drawable.ic_tv, "tv") },
+                    trailingIcon = { FilterCloseIcon(filterTvShows) }
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                InputChip(
+                    selected = !filterTvShows,
+                    onClick = { toggleFilterTvShows(!filterTvShows) },
+                    label = { Text("Movies") },
+                    leadingIcon = { ResImage(Res.drawable.ic_movie, "movies") },
+                    trailingIcon = { FilterCloseIcon(!filterTvShows) }
+                )
+            }
+        }
         item {
             Spacer(Modifier.height(16.dp))
             Text("Recommended", style = MaterialTheme.typography.titleLarge)
@@ -195,33 +229,48 @@ private fun DiscoverRow(
             modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            content.forEach { movieOrShow ->
-                Box(Modifier.fillMaxWidth().weight(0.8f / 3f)) { // 3 cards + see all with 20% width
-                    Card(
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
-                        onClick = { navAction(DiscoverScreenNavActions.GoShowDetails(movieOrShow.tmdbId, true)) },
-                        modifier = Modifier.fillMaxSize()
-                    ) {
-                        Box(Modifier.aspectRatio(posterRatio())) {
-                            TvImage(movieOrShow.image, modifier = Modifier.fillMaxSize())
-                        }
-                        Spacer(Modifier.width(8.dp))
-                        Column(Modifier.padding(8.dp)) {
-                            Text(
-                                movieOrShow.title,
-                                minLines = 1,
-                                maxLines = 3,
-                                overflow = Ellipsis,
-                                style = MaterialTheme.typography.labelMedium
-                            )
-                        }
-                    }
-                }
-
-            }
-
+            DiscoverRowItem(content.getOrNull(0) ?: DiscoverUiModel.Content(-1, "", "", true), navAction)
+            DiscoverRowItem(content.getOrNull(1) ?: DiscoverUiModel.Content(-1, "", "", true), navAction)
+            DiscoverRowItem(content.getOrNull(2) ?: DiscoverUiModel.Content(-1, "", "", true), navAction)
             Box(Modifier.fillMaxWidth().weight(0.2f).fillMaxHeight()) {
                 SeeAllCard { seeAllAction() }
+            }
+        }
+    }
+}
+
+@Composable
+private fun RowScope.DiscoverRowItem(
+    movieOrShow: DiscoverUiModel.Content,
+    navAction: (DiscoverScreenNavActions) -> Unit
+) {
+    Box(Modifier.fillMaxWidth().weight(0.8f / 3f)) { // 3 cards + see all with 20% width
+        Card(
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
+            onClick = {
+                if (movieOrShow.tmdbId != -1) {
+                    navAction(
+                        DiscoverScreenNavActions.GoShowDetails(
+                            movieOrShow.tmdbId,
+                            movieOrShow.isTvShow
+                        )
+                    )
+                }
+            },
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Box(Modifier.aspectRatio(posterRatio())) {
+                TvImage(movieOrShow.image, modifier = Modifier.fillMaxSize())
+            }
+            Spacer(Modifier.width(8.dp))
+            Column(Modifier.padding(8.dp)) {
+                Text(
+                    movieOrShow.title,
+                    minLines = 1,
+                    maxLines = 3,
+                    overflow = Ellipsis,
+                    style = MaterialTheme.typography.labelMedium
+                )
             }
         }
     }

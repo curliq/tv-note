@@ -13,7 +13,7 @@ fun DiscoverNewReleasesSheet(
     navActions: (DiscoverScreenNavActions) -> Unit,
     bottomPadding: Float = 0f
 ) {
-    val show = viewModel.uiModel.collectAsState().value as DiscoverUiState.Ok
+    val show = viewModel.data.collectAsState().value as DiscoverUiState.Ok
     TvTrackerTheme {
         DiscoverTrendingSheetContent(show.uiModel.showsReleasedSoon, navActions, bottomPadding)
     }

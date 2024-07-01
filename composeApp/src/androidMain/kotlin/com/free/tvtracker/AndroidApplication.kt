@@ -48,7 +48,7 @@ class AndroidApplication : Application() {
                     single {
                         // why `single` and not `viewmodel`? to share it
                         // between the discover and recommendations activities
-                        DiscoverViewModel(get(), get(), get(), get())
+                        DiscoverViewModel(get(), get(), get(),get(), get())
                     }
                 }
             )

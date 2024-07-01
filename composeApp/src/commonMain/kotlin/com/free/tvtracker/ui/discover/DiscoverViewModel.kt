@@ -1,24 +1,24 @@
 package com.free.tvtracker.ui.discover
 
-import com.free.tvtracker.expect.ui.ViewModel
 import com.free.tvtracker.data.search.SearchRepository
 import com.free.tvtracker.data.tracked.TrackedShowsRepository
 import com.free.tvtracker.discover.response.RecommendedContentApiResponse
 import com.free.tvtracker.expect.CommonStringUtils
+import com.free.tvtracker.expect.ui.ViewModel
 import com.free.tvtracker.ui.common.TmdbConfigData
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.onEmpty
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class DiscoverViewModel(
     private val searchRepository: SearchRepository,
     private val trackedShowsRepository: TrackedShowsRepository,
-    private val trendingMapper: DiscoverShowUiModelMapper,
+    private val trendingShowsMapper: DiscoverShowUiModelMapper,
+    private val trendingMoviesMapper: DiscoverMovieUiModelMapper,
     private val recommendedMapper: RecommendedShowUiModelMapper,
     private val stringUtils: CommonStringUtils = CommonStringUtils(),
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
@@ -30,7 +30,12 @@ class DiscoverViewModel(
         data object RecommendedUpdate : DiscoverViewModelAction()
     }
 
-    val uiModel: MutableStateFlow<DiscoverUiState> = MutableStateFlow(DiscoverUiState.Loading)
+    val data: MutableStateFlow<DiscoverUiState> = MutableStateFlow(DiscoverUiState.Loading)
+
+    /**
+     * this is seperate from the uistate because the uistate gets reset when setting to Loading
+     */
+    val filterTvShows = MutableStateFlow(true)
 
     init {
         refresh(showLoading = true)
@@ -38,58 +43,79 @@ class DiscoverViewModel(
 
     fun refresh(showLoading: Boolean = false) {
         if (showLoading) {
-            uiModel.value = DiscoverUiState.Loading
+            data.value = DiscoverUiState.Loading
         }
         viewModelScope.launch(ioDispatcher) {
-            val trending = async { searchRepository.getTrendingWeekly() }
-            val releases = async { searchRepository.getNewEpisodeReleasedSoon() }
+            val trending = async {
+                if (filterTvShows.value) {
+                    searchRepository.getTrendingWeekly().data?.results?.map { trendingShowsMapper.map(it) }
+                } else {
+                    searchRepository.getTrendingWeeklyMovies().data?.results?.map { trendingMoviesMapper.map(it) }
+                }
+            }
+            val releases = async {
+                if (filterTvShows.value) {
+                    searchRepository.getNewEpisodeReleasedSoon().data?.results?.map { trendingShowsMapper.map(it) }
+                } else {
+                    searchRepository.getNewMoviesReleasedSoon().data?.results?.map { trendingMoviesMapper.map(it) }
+                }
+            }
             val rec = async { getRecommended() }
             val trendingRes = trending.await()
             val releasesRes = releases.await()
             val recRes = rec.await()
 
-            if (trendingRes.isError() && releasesRes.isError() && recRes.isError()) {
-                uiModel.value = DiscoverUiState.Error
+            if (trendingRes == null && releasesRes == null && recRes.isError()) {
+                data.value = DiscoverUiState.Error
             } else {
                 val selectionActive = recRes.data?.relatedContent?.map {
-                    val show = trackedShowsRepository.getByTmdbId(it.tmdbId)
+                    val show = trackedShowsRepository.getByTmdbId(it.tmdbId)!!
                     DiscoverUiModel.Content(
                         it.tmdbId,
-                        show?.tvShow!!.storedShow.title,
-                        TmdbConfigData.get().getPosterUrl(show.tvShow!!.storedShow.posterImage)
+                        show.tvShow?.storedShow?.title ?: show.movie!!.storedMovie.title,
+                        TmdbConfigData.get().getPosterUrl(
+                            show.tvShow?.storedShow?.posterImage ?: show.movie!!.storedMovie.posterImage
+                        ),
+                        show.isTvShow
                     )
                 } ?: emptyList()
 
                 // Why not `stateIn()`? because this viewmodel doesn't have a lifecycleScope because it's a singleton,
                 // why is it a singleton? because it needs to be shared between the discover and recommended activities
-                trackedShowsRepository.allShows.onEmpty {
-                    uiModel.value = DiscoverUiState.Error
-                }.collect { allShows ->
-                    val uiModel = DiscoverUiState.Ok(
+                trackedShowsRepository.allShows.collect { allShows ->
+                    data.value = DiscoverUiState.Ok(
                         DiscoverUiModel(
-                            showsTrendingWeekly = trendingRes.data?.results?.map(trendingMapper.map()) ?: emptyList(),
-                            showsReleasedSoon = releasesRes.data?.results?.map(trendingMapper.map()) ?: emptyList(),
+                            showsTrendingWeekly = trendingRes ?: emptyList(),
+                            showsReleasedSoon = releasesRes ?: emptyList(),
                             showsRecommended = DiscoverUiModel.RecommendedContent(
                                 selectionActiveText = stringUtils.listToString(selectionActive.map { it.title }),
-                                selectionAvailable = allShows.map { show ->
-                                    DiscoverUiModel.RecommendedContent.Selection(
-                                        show.tvShow!!.storedShow.tmdbId,
-                                        show.tvShow!!.storedShow.title,
-                                        TmdbConfigData.get().getPosterUrl(show.tvShow!!.storedShow.posterImage),
-                                        isSelected = selectionActive
-                                            .find { it.tmdbId == show.tvShow!!.storedShow.tmdbId } != null
-                                    )
-                                },
+                                selectionAvailable = allShows
+                                    .filter { it.isTvShow == filterTvShows.value }
+                                    .map { show ->
+                                        DiscoverUiModel.RecommendedContent.Selection(
+                                            show.anyTmdbId,
+                                            show.tvShow?.storedShow?.title ?: show.movie!!.storedMovie.title,
+                                            TmdbConfigData.get().getPosterUrl(
+                                                show.tvShow?.storedShow?.posterImage
+                                                    ?: show.movie!!.storedMovie.posterImage
+                                            ),
+                                            isSelected = selectionActive.find { it.tmdbId == show.anyTmdbId } != null
+                                        )
+                                    },
                                 selectionActive = selectionActive,
                                 results = recRes.data?.results?.map(recommendedMapper.map()) ?: emptyList(),
                                 isLoading = false
                             )
-                        ),
+                        )
                     )
-                    this@DiscoverViewModel.uiModel.value = uiModel
                 }
             }
         }
+    }
+
+    fun toggleContentFilter(tvShows: Boolean) {
+        filterTvShows.update { tvShows }
+        refresh(showLoading = true)
     }
 
     private suspend fun getRecommended(): RecommendedContentApiResponse {
@@ -97,24 +123,25 @@ class DiscoverViewModel(
         trackedShowsRepository.updateFinished(forceUpdate = false)
         trackedShowsRepository.updateWatchlisted(forceUpdate = false)
         val shows =
-            (uiModel.value as? DiscoverUiState.Ok)
+            (data.value as? DiscoverUiState.Ok)
                 ?.uiModel?.showsRecommended?.selectionAvailable
                 ?.filter { it.isSelected }
                 ?.map { it.tmdbId }
                 ?: getDefaultRecommendedSelection()
-        return searchRepository.getRecommended(shows)
+        return searchRepository.getRecommended(shows, filterTvShows.value)
     }
 
     private fun getDefaultRecommendedSelection(): List<Int> {
         val shows = trackedShowsRepository.allShows.value
-        val related = shows.sortedByDescending { it.tvShow?.createdAtDatetime?:it.movie!!.createdAtDatetime }.take(2)
-        return related.map { it.tvShow?.storedShow?.tmdbId?:it.movie!!.storedMovie.tmdbId }
+        val related = shows.filter { it.isTvShow == filterTvShows.value }
+            .sortedByDescending { it.tvShow?.createdAtDatetime ?: it.movie!!.createdAtDatetime }.take(2)
+        return related.map { it.tvShow?.storedShow?.tmdbId ?: it.movie!!.storedMovie.tmdbId }
     }
 
     fun action(action: DiscoverViewModelAction) {
         when (action) {
             is DiscoverViewModelAction.RecommendedSelectionAdded -> {
-                uiModel.update {
+                data.update {
                     // yes all this code just to make one flag true, such are the banes of a single UI model object
                     if (it is DiscoverUiState.Ok) {
                         it.copy(
@@ -137,8 +164,8 @@ class DiscoverViewModel(
             }
 
             DiscoverViewModelAction.RecommendedSelectionClear -> {
-                uiModel.update {
-                    // physically flinched from copy pasting this
+                data.update {
+                    // physically flinched from copying and pasting this
                     if (it is DiscoverUiState.Ok) {
                         it.copy(
                             uiModel = it.uiModel.copy(
@@ -156,7 +183,7 @@ class DiscoverViewModel(
             }
 
             DiscoverViewModelAction.RecommendedUpdate -> {
-                uiModel.update {
+                data.update {
                     if (it is DiscoverUiState.Ok) {
                         it.copy(
                             uiModel = it.uiModel.copy(
@@ -167,7 +194,7 @@ class DiscoverViewModel(
                         it
                     }
                 }
-                refresh()
+                refresh(showLoading = false)
             }
         }
     }
@@ -190,7 +217,8 @@ data class DiscoverUiModel(
     data class Content(
         val tmdbId: Int,
         val title: String,
-        val image: String
+        val image: String,
+        val isTvShow: Boolean
     )
 
     data class RecommendedContent(

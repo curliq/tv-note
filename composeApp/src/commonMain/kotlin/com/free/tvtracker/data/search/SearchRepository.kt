@@ -10,6 +10,7 @@ import com.free.tvtracker.details.response.TmdbMovieDetailsApiResponse
 import com.free.tvtracker.discover.response.RecommendedContentApiResponse
 import com.free.tvtracker.details.response.TmdbPersonDetailsApiResponse
 import com.free.tvtracker.details.response.TmdbShowDetailsApiResponse
+import com.free.tvtracker.discover.response.TmdbMovieTrendingApiResponse
 import com.free.tvtracker.discover.response.TmdbShowTrendingApiResponse
 import com.free.tvtracker.expect.data.TvHttpClient
 import com.free.tvtracker.search.request.MediaType
@@ -81,6 +82,14 @@ class SearchRepository(
         }
     }
 
+    suspend fun getTrendingWeeklyMovies(): TmdbMovieTrendingApiResponse {
+        return try {
+            httpClient.call(Endpoints.getTrendingWeeklyMovies)
+        } catch (e: Throwable) {
+            TmdbMovieTrendingApiResponse.error(ApiError.Network)
+        }
+    }
+
     suspend fun getNewEpisodeReleasedSoon(): TmdbShowTrendingApiResponse {
         return try {
             httpClient.call(Endpoints.getNewEpisodeReleasedSoon)
@@ -89,10 +98,22 @@ class SearchRepository(
         }
     }
 
-    suspend fun getRecommended(relatedShows: List<Int>): RecommendedContentApiResponse {
+    suspend fun getNewMoviesReleasedSoon(): TmdbMovieTrendingApiResponse {
+        return try {
+            httpClient.call(Endpoints.getReleasedSoonMovies)
+        } catch (e: Throwable) {
+            TmdbMovieTrendingApiResponse.error(ApiError.Network)
+        }
+    }
+
+    suspend fun getRecommended(relatedShows: List<Int>, tvShows: Boolean): RecommendedContentApiResponse {
         return try {
             val body = RecommendedContentApiRequestBody(relatedShows)
-            httpClient.call(Endpoints.getRecommendedShows, body)
+            if (tvShows) {
+                httpClient.call(Endpoints.getRecommendedShows, body)
+            } else {
+                httpClient.call(Endpoints.getRecommendedMovies, body)
+            }
         } catch (e: Throwable) {
             RecommendedContentApiResponse.error(ApiError.Network)
         }

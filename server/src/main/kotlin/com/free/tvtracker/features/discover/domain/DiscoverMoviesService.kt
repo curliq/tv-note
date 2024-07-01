@@ -28,11 +28,11 @@ class DiscoverMoviesService(
     fun getReleasedSoonMovies(): TmdbTrendingMoviesResponse {
         val today = LocalDate.now().toString()
         val respEntity = tmdbClient.get(
-            "/3/discover/movies",
+            "/3/discover/movie",
             TmdbTrendingMoviesResponse::class.java,
             params = mapOf(
                 "with_original_language" to "en",
-                "air_date.gte" to today
+                "release_date.gte" to today
             )
         )
         return respEntity.body!!

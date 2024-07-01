@@ -27,6 +27,7 @@ import com.free.tvtracker.ui.details.mappers.ShowSeasonUiModelMapper
 import com.free.tvtracker.ui.details.mappers.DetailsUiModelForShowMapper
 import com.free.tvtracker.ui.details.mappers.ShowVideoUiModelMapper
 import com.free.tvtracker.ui.details.mappers.ShowWatchProviderUiModelMapper
+import com.free.tvtracker.ui.discover.DiscoverMovieUiModelMapper
 import com.free.tvtracker.ui.discover.DiscoverShowUiModelMapper
 import com.free.tvtracker.ui.discover.RecommendedShowUiModelMapper
 import com.free.tvtracker.ui.finished.FinishedShowUiModelMapper
@@ -73,13 +74,16 @@ fun appModules() = module {
     factory<ShowCrewUiModelMapper> { ShowCrewUiModelMapper() }
     factory<ShowWatchProviderUiModelMapper> { ShowWatchProviderUiModelMapper() }
     factory<ShowVideoUiModelMapper> { ShowVideoUiModelMapper() }
-    factory<DetailsUiModelForShowMapper> { DetailsUiModelForShowMapper(get(), get(), get(), get(), get(), get(), get(), get()) }
+    factory<DetailsUiModelForShowMapper> {
+        DetailsUiModelForShowMapper(get(), get(), get(), get(), get(), get(), get(), get())
+    }
     factory<DetailsUiModelForMovieMapper> { DetailsUiModelForMovieMapper(get(), get(), get(), get(), get()) }
     factory<PersonCastUiModelMapper> { PersonCastUiModelMapper() }
     factory<PersonCrewUiModelMapper> { PersonCrewUiModelMapper() }
     factory<PersonPhotoUiModelMapper> { PersonPhotoUiModelMapper() }
     factory<PersonUiModelMapper> { PersonUiModelMapper(get(), get(), get()) }
     factory<DiscoverShowUiModelMapper> { DiscoverShowUiModelMapper() }
+    factory<DiscoverMovieUiModelMapper> { DiscoverMovieUiModelMapper() }
     factory<WatchingShowUiModelMapper> { WatchingShowUiModelMapper(get()) }
     factory<WatchlistShowUiModelMapper> { WatchlistShowUiModelMapper(get()) }
     factory<FinishedShowUiModelMapper> { FinishedShowUiModelMapper(get()) }

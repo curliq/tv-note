@@ -106,7 +106,6 @@ private fun FinishedOk(
                     leadingIcon = { ResImage(Res.drawable.ic_movie, "movies") },
                     trailingIcon = { FilterCloseIcon(data.filterMovies) }
                 )
-                Spacer(modifier = Modifier.width(8.dp))
             }
         }
         item {

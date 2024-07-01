@@ -35,7 +35,7 @@ fun DiscoverTrendingSheet(
     navActions: (DiscoverScreenNavActions) -> Unit,
     bottomPadding: Float = 0f
 ) {
-    val show = viewModel.uiModel.collectAsState().value as DiscoverUiState.Ok
+    val show = viewModel.data.collectAsState().value as DiscoverUiState.Ok
     TvTrackerTheme {
         DiscoverTrendingSheetContent(show.uiModel.showsTrendingWeekly, navActions, bottomPadding)
     }
@@ -43,7 +43,7 @@ fun DiscoverTrendingSheet(
 
 @Composable
 fun DiscoverTrendingSheetContent(
-    content: List<Content>,
+    data: List<Content>,
     action: (DiscoverScreenNavActions) -> Unit,
     bottomPadding: Float = 0f
 ) {
@@ -54,12 +54,12 @@ fun DiscoverTrendingSheetContent(
         gridInLazyColumn(
             rowModifier = Modifier.fillMaxWidth().padding(horizontal = sidePadding),
             columns = 3,
-            itemCount = content.size
+            itemCount = data.size
         ) { index ->
-            val content = content[index]
+            val content = data[index]
             Card(
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
-                onClick = { action(DiscoverScreenNavActions.GoShowDetails(content.tmdbId, true)) }, //todo
+                onClick = { action(DiscoverScreenNavActions.GoShowDetails(content.tmdbId, content.isTvShow)) },
                 modifier = Modifier.fillMaxSize(),
             ) {
                 Box(Modifier.aspectRatio(posterRatio())) {
