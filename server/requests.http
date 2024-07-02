@@ -118,3 +118,6 @@ GET {{host}}/discover/released-soon
 Authorization: Bearer {{tokenUser1}}
 Content-Type: application/json
 
+### export data
+GET {{host}}/export-text
+Authorization: Bearer {{tokenUser1}}

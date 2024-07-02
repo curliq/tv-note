@@ -39,6 +39,7 @@ dependencies {
     implementation(libs.ktor.client.contentNegotiation)
     implementation(libs.kotlinx.datetime)
     implementation(libs.firebase.admin)
+    implementation(libs.opencsv)
 
     testImplementation(libs.testSpringBoot)
     testImplementation(libs.testSpringBootSecurity)

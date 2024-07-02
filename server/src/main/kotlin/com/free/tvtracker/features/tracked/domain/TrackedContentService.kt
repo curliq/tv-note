@@ -66,10 +66,11 @@ class TrackedContentService(
 
     fun addEpisode(body: AddEpisodesApiRequestBody): List<TrackedShowEpisodeEntity> {
         val episodes = body.episodes.map {
+            val trackedTvShow = trackedShowJpaRepository.getReferenceById(it.trackedShowId)
             TrackedShowEpisodeEntity(
-                id = "t_${it.episodeId}",
+                id = "t_${trackedTvShow.id}_${it.episodeId}",
                 storedEpisodeId = it.episodeId,
-                trackedTvShow = trackedShowJpaRepository.getReferenceById(it.trackedShowId)
+                trackedTvShow = trackedTvShow
             )
         }
         trackedShowEpisodeJdbcRepository.saveBatch(episodes)

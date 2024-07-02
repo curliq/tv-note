@@ -18,7 +18,7 @@ class TrackedShowEpisodeJdbcRepository {
             episodes,
             episodes.size
         ) { ps: PreparedStatement, episode: TrackedShowEpisodeEntity ->
-            ps.setString(1, "${episode.trackedTvShowId}_${episode.id}")
+            ps.setString(1, episode.id)
             ps.setInt(2, episode.storedEpisodeId)
             ps.setInt(3, episode.trackedTvShow.id)
         }
