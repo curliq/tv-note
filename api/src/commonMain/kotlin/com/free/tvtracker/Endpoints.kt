@@ -56,6 +56,7 @@ object Endpoints {
         const val GET_RELEASED_SOON_MOVIES = "discover/released-soon/movies"
         const val GET_RECOMMENDED_CONTENT_SHOWS = "discover/recommended/shows"
         const val GET_RECOMMENDED_CONTENT_MOVIES = "discover/recommended/movies"
+        const val GET_EXPORT_SHOWS = "export/shows"
     }
 
     val getUser = EndpointNoBody(Path.GET_USER, UserApiResponse::class, Endpoint.Verb.GET)

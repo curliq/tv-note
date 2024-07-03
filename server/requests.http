@@ -119,5 +119,5 @@ Authorization: Bearer {{tokenUser1}}
 Content-Type: application/json
 
 ### export data
-GET {{host}}/export-text
+GET {{host}}/export/shows
 Authorization: Bearer {{tokenUser1}}
