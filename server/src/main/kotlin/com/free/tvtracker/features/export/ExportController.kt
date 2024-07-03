@@ -3,6 +3,7 @@ package com.free.tvtracker.features.export
 import com.free.tvtracker.Endpoints
 import com.free.tvtracker.features.export.data.ExportJdbcRepository
 import com.free.tvtracker.security.SessionService
+import com.free.tvtracker.user.response.DataExportApiResponse
 import com.opencsv.CSVWriter
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
@@ -24,7 +25,7 @@ class ExportController(
      * this combines shows and movies into one table
      */
     @GetMapping(Endpoints.Path.GET_EXPORT_SHOWS)
-    fun exportCsvText(): ResponseEntity<String> {
+    fun exportCsvText(): ResponseEntity<DataExportApiResponse> {
         val shows = repo.getShows(sessionRepository.getSessionUserId())
         val movies = repo.getMovies(sessionRepository.getSessionUserId())
         val writer = StringWriter()
@@ -32,7 +33,7 @@ class ExportController(
         val data: List<Array<String>> = toStringArray(shows, movies)
         csvWriter.writeAll(data)
         csvWriter.close()
-        return ResponseEntity.ok(writer.toString())
+        return ResponseEntity.ok(DataExportApiResponse.ok(writer.toString()))
     }
 
     private fun toStringArray(shows: List<Map<String, Any?>>, movies: List<Map<String, Any?>>): List<Array<String>> {

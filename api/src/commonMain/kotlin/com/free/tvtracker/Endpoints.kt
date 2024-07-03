@@ -26,6 +26,7 @@ import com.free.tvtracker.user.request.LoginApiRequestBody
 import com.free.tvtracker.user.request.PostFcmTokenApiRequestBody
 import com.free.tvtracker.user.request.SignupApiRequestBody
 import com.free.tvtracker.user.request.UpdatePreferencesApiRequestBody
+import com.free.tvtracker.user.response.DataExportApiResponse
 import com.free.tvtracker.user.response.SessionApiResponse
 import com.free.tvtracker.user.response.UserApiResponse
 import kotlin.reflect.KClass
@@ -150,6 +151,7 @@ object Endpoints {
             RecommendedContentApiRequestBody::class,
             Endpoint.Verb.POST
         )
+    val getDataExport = EndpointNoBody(Path.GET_EXPORT_SHOWS, DataExportApiResponse::class, Endpoint.Verb.GET)
 }
 
 open class Endpoint<ReturnType : ApiResponse<out Any>, BodyType : Any>(

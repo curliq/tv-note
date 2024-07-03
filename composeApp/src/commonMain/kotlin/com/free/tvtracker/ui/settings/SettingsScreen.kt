@@ -156,7 +156,7 @@ fun SettingsContent(
                 }
                 Text("Export data", style = MaterialTheme.typography.titleSmall)
                 Spacer(Modifier.height(8.dp))
-                Button(onClick = {}, shape = TvTrackerTheme.ShapeButton) {
+                Button(onClick = { action(SettingsViewModel.Action.Export) }, shape = TvTrackerTheme.ShapeButton) {
                     Text("Export shows and movies as csv")
                 }
                 Spacer(Modifier.height(16.dp))

@@ -21,6 +21,7 @@ class SettingsViewModel(
 ) : ViewModel() {
 
     val data: MutableStateFlow<SettingsUiState> = MutableStateFlow(SettingsUiState.Idle)
+    val shareCsvFile: MutableStateFlow<String?> = MutableStateFlow(null)
     val theme: Flow<SettingsUiModel.Theme?> = data.map { (it as? SettingsUiState.Ok)?.data?.theme }
     val logout = MutableStateFlow(false)
 
@@ -71,6 +72,11 @@ class SettingsViewModel(
                 Action.Logout -> {
                     logout.emit(true)
                 }
+
+                Action.Export -> {
+                    sessionRepository.exportData()
+                        .coAsSuccess { shareCsvFile.emit(it) }
+                }
             }
         }
     }
@@ -79,6 +85,7 @@ class SettingsViewModel(
         data class TogglePushAllowed(val allowed: Boolean) : Action()
         data class SetTheme(val theme: SettingsUiModel.Theme) : Action()
         data object Logout : Action()
+        data object Export : Action()
     }
 }
 

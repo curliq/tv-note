@@ -4,6 +4,8 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
+import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
@@ -28,6 +30,9 @@ import com.free.tvtracker.ui.settings.SettingsScreen
 import com.free.tvtracker.ui.settings.SettingsScreenNavAction
 import com.free.tvtracker.ui.settings.SettingsViewModel
 import org.koin.androidx.compose.get
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
 
 @OptIn(ExperimentalMaterial3Api::class)
 class SettingsActivity : BaseActivity() {
@@ -35,15 +40,36 @@ class SettingsActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            val context = LocalContext.current
             val viewModel: SettingsViewModel = get()
             if (viewModel.logout.collectAsState().value) {
                 this.deleteDatabase(DatabaseNameAndroid)
-                val context = LocalContext.current
                 val intent = Intent(context, SplashActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 context.startActivity(intent)
                 (context as Activity).finish()
                 Runtime.getRuntime().exit(0)
+            }
+            viewModel.shareCsvFile.collectAsState().value?.let { csvContent ->
+                try {
+                    // Get the Downloads directory
+                    val downloadsFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+                    if (!downloadsFolder.exists()) {
+                        downloadsFolder.mkdirs()
+                    }
+
+                    // Create the CSV file
+                    val file = File(downloadsFolder, "data-export.csv")
+                    val fileOutputStream = FileOutputStream(file)
+                    fileOutputStream.write(csvContent.toByteArray())
+                    fileOutputStream.close()
+
+                    Toast.makeText(context, "CSV file saved to Downloads", Toast.LENGTH_LONG).show()
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                    Toast.makeText(context, "Failed to save CSV file", Toast.LENGTH_LONG).show()
+                }
+                viewModel.shareCsvFile.value = null
             }
 
             TvTrackerTheme {

@@ -1,5 +1,6 @@
 package com.free.tvtracker.data.session
 
+import com.free.tvtracker.Endpoint
 import com.free.tvtracker.Endpoints
 import com.free.tvtracker.base.ApiError
 import com.free.tvtracker.base.ApiResponse
@@ -9,6 +10,7 @@ import com.free.tvtracker.user.request.LoginApiRequestBody
 import com.free.tvtracker.user.request.PostFcmTokenApiRequestBody
 import com.free.tvtracker.user.request.SignupApiRequestBody
 import com.free.tvtracker.user.request.UpdatePreferencesApiRequestBody
+import com.free.tvtracker.user.response.DataExportApiResponse
 import com.free.tvtracker.user.response.SessionApiModel
 import com.free.tvtracker.user.response.SessionApiResponse
 import com.free.tvtracker.user.response.UserApiResponse
@@ -100,6 +102,14 @@ class SessionRepository(
             res
         } catch (e: Throwable) {
             UserApiResponse.error(ApiError.Unknown)
+        }
+    }
+
+    suspend fun exportData(): DataExportApiResponse {
+        return try {
+            httpClient.call(Endpoints.getDataExport)
+        } catch (e:Throwable) {
+            DataExportApiResponse.error(ApiError.Unknown)
         }
     }
 
