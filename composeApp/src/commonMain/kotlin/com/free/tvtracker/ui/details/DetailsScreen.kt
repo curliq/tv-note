@@ -155,6 +155,7 @@ fun DetailsScreenContent(
             show.trackingStatus.action1?.let { action ->
                 Button(
                     onClick = { showAction(DetailsViewModel.DetailsAction.TrackingAction(show, action)) },
+                    shape = TvTrackerTheme.ShapeButton,
                     modifier = Modifier.weight(0.5f, true)
                 ) {
                     if (!show.trackingStatus.isLoading) {
@@ -171,6 +172,7 @@ fun DetailsScreenContent(
             show.trackingStatus.action2?.let { action ->
                 OutlinedButton(
                     onClick = { showAction(DetailsViewModel.DetailsAction.TrackingAction(show, action)) },
+                    shape = TvTrackerTheme.ShapeButton,
                     modifier = Modifier.weight(0.5f, true)
                 ) {
                     val color = when (action) {

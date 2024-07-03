@@ -23,7 +23,7 @@ import com.free.tvtracker.ui.common.theme.TvTrackerTheme
 
 @Composable
 fun ErrorCard(refresh: (() -> Unit)? = null, refreshText: String? = null, modifier: Modifier = Modifier) {
-    Card(modifier = modifier.fillMaxWidth(),) {
+    Card(modifier = modifier.fillMaxWidth()) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(TvTrackerTheme.sidePadding),
         ) {
@@ -34,7 +34,7 @@ fun ErrorCard(refresh: (() -> Unit)? = null, refreshText: String? = null, modifi
             Text("There's probably an issue on the server's side, please try again later.")
             Spacer(modifier = Modifier.height(24.dp))
             refresh?.let {
-                Button(onClick = it) {
+                Button(onClick = it, shape = TvTrackerTheme.ShapeButton) {
                     Text(refreshText ?: "Refresh")
                 }
             }

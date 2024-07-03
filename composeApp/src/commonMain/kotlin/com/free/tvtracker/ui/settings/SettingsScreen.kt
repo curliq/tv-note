@@ -20,7 +20,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
@@ -100,6 +102,7 @@ fun SettingsContent(
                     ) {
                         Button(
                             onClick = { navAction(SettingsScreenNavAction.GoLogin) },
+                            shape = TvTrackerTheme.ShapeButton,
                             modifier = Modifier.weight(0.5f, true)
                         ) {
                             Text("Log in")
@@ -107,6 +110,7 @@ fun SettingsContent(
                         Spacer(Modifier.width(8.dp))
                         Button(
                             onClick = { navAction(SettingsScreenNavAction.GoSignup) },
+                            shape = TvTrackerTheme.ShapeButton,
                             modifier = Modifier.weight(0.5f, true)
                         ) {
                             Text("Create account")
@@ -150,6 +154,12 @@ fun SettingsContent(
                     }
                     Spacer(Modifier.height(8.dp))
                 }
+                Text("Export data", style = MaterialTheme.typography.titleSmall)
+                Spacer(Modifier.height(8.dp))
+                Button(onClick = {}, shape = TvTrackerTheme.ShapeButton) {
+                    Text("Export shows and movies as csv")
+                }
+                Spacer(Modifier.height(16.dp))
             }
         }
         Spacer(Modifier.height(24.dp))
@@ -220,7 +230,9 @@ fun SettingsContent(
         )
         Spacer(Modifier.height(8.dp))
         Row(Modifier.padding(horizontal = TvTrackerTheme.sidePadding), verticalAlignment = Alignment.CenterVertically) {
-            Button(onClick = { navAction(SettingsScreenNavAction.GoBrowser("https://buymeacoffee.com/freetvtracker")) }) {
+            Button(
+                shape = TvTrackerTheme.ShapeButton,
+                onClick = { navAction(SettingsScreenNavAction.GoBrowser("https://buymeacoffee.com/freetvtracker")) }) {
                 Text(text = "Donate")
             }
             Spacer(Modifier.width(16.dp))
@@ -242,6 +254,7 @@ fun SettingsContent(
         Spacer(Modifier.height(16.dp))
         TextButton(
             onClick = { navAction(SettingsScreenNavAction.GoBrowser("https://github.com/curliq/best-tv-tracker")) },
+            shape = TvTrackerTheme.ShapeButton,
             modifier = Modifier.align(Alignment.CenterHorizontally)
         ) {
             Text("github.com/curliq/best-tv-tracker")
