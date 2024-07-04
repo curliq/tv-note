@@ -2,6 +2,7 @@ package com.free.tvtracker.features.discover.domain
 
 import com.free.tvtracker.Endpoints
 import com.free.tvtracker.discover.request.RecommendedContentApiRequestBody
+import com.free.tvtracker.discover.request.PagedContentApiRequestBody
 import com.free.tvtracker.discover.response.RecommendedContentApiModel
 import com.free.tvtracker.discover.response.RecommendedContentApiResponse
 import com.free.tvtracker.discover.response.TmdbShowTrendingApiResponse
@@ -26,9 +27,9 @@ class DiscoverShowsController(
     val discoverShowsService: DiscoverShowsService,
 ) {
 
-    @GetMapping(Endpoints.Path.GET_TRENDING_WEEKLY_SHOWS)
-    fun trending(): ResponseEntity<TmdbShowTrendingApiResponse> {
-        val res = discoverShowsService.getTrendingWeeklyShows()
+    @PostMapping(Endpoints.Path.GET_TRENDING_WEEKLY_SHOWS)
+    fun trending(@RequestBody body: PagedContentApiRequestBody): ResponseEntity<TmdbShowTrendingApiResponse> {
+        val res = discoverShowsService.getTrendingWeeklyShows(body.page)
         return ResponseEntity.ok(
             TmdbShowTrendingApiResponse.ok(
                 res.toApiModel()
@@ -42,9 +43,9 @@ class DiscoverShowsController(
         return res
     }
 
-    @GetMapping(Endpoints.Path.GET_RELEASED_SOON_SHOWS)
-    fun releasedSoon(): ResponseEntity<TmdbShowTrendingApiResponse> {
-        val res = discoverShowsService.getReleasedSoonShows()
+    @PostMapping(Endpoints.Path.GET_RELEASED_SOON_SHOWS)
+    fun releasedSoon(@RequestBody body: PagedContentApiRequestBody): ResponseEntity<TmdbShowTrendingApiResponse> {
+        val res = discoverShowsService.getReleasedSoonShows(body.page)
         return ResponseEntity.ok(
             TmdbShowTrendingApiResponse.ok(
                 res.toApiModel()

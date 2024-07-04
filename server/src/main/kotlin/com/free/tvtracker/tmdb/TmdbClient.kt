@@ -40,7 +40,7 @@ class TmdbClient(private val logger: OutRequestLoggingInterceptor, private val p
         return HttpEntity("", headers)
     }
 
-    fun <T> get(endpoint: String, returnType: Class<T>, params: Map<String, String> = emptyMap()): ResponseEntity<T> {
+    fun <T> get(endpoint: String, returnType: Class<T>, params: Map<String, Any> = emptyMap()): ResponseEntity<T> {
         val builder = UriComponentsBuilder.fromUriString("https://api.themoviedb.org$endpoint")
             .apply {
                 params.forEach { (t, u) ->

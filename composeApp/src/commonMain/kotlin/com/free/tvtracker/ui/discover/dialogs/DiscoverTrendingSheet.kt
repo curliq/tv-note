@@ -10,12 +10,17 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow.Companion.Ellipsis
 import androidx.compose.ui.unit.dp
@@ -28,6 +33,7 @@ import com.free.tvtracker.ui.discover.DiscoverScreenNavActions
 import com.free.tvtracker.ui.discover.DiscoverUiModel.Content
 import com.free.tvtracker.ui.discover.DiscoverUiState
 import com.free.tvtracker.ui.discover.DiscoverViewModel
+import com.free.tvtracker.ui.discover.DiscoverViewModel.DiscoverViewModelAction
 
 @Composable
 fun DiscoverTrendingSheet(
@@ -37,17 +43,35 @@ fun DiscoverTrendingSheet(
 ) {
     val show = viewModel.data.collectAsState().value as DiscoverUiState.Ok
     TvTrackerTheme {
-        DiscoverTrendingSheetContent(show.uiModel.showsTrendingWeekly, navActions, bottomPadding)
+        DiscoverTrendingSheetContent(
+            show.uiModel.contentTrendingWeekly.data,
+            navActions,
+            { viewModel.action(DiscoverViewModelAction.LoadPageTrending) },
+            bottomPadding
+        )
     }
 }
 
 @Composable
 fun DiscoverTrendingSheetContent(
     data: List<Content>,
-    action: (DiscoverScreenNavActions) -> Unit,
+    navAction: (DiscoverScreenNavActions) -> Unit,
+    loadPageAction: () -> Unit,
     bottomPadding: Float = 0f
 ) {
-    LazyColumn {
+    val listState = rememberLazyListState()
+    val reachedBottom: Boolean by remember {
+        derivedStateOf {
+            val lastVisibleItem = listState.layoutInfo.visibleItemsInfo.lastOrNull()
+            lastVisibleItem?.index != 0 && lastVisibleItem?.index == listState.layoutInfo.totalItemsCount - 1
+        }
+    }
+    LaunchedEffect(reachedBottom) {
+        if (reachedBottom) {
+            loadPageAction()
+        }
+    }
+    LazyColumn(state = listState) {
         item {
             Spacer(modifier = Modifier.height(sidePadding))
         }
@@ -59,7 +83,7 @@ fun DiscoverTrendingSheetContent(
             val content = data[index]
             Card(
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
-                onClick = { action(DiscoverScreenNavActions.GoShowDetails(content.tmdbId, content.isTvShow)) },
+                onClick = { navAction(DiscoverScreenNavActions.GoShowDetails(content.tmdbId, content.isTvShow)) },
                 modifier = Modifier.fillMaxSize(),
             ) {
                 Box(Modifier.aspectRatio(posterRatio())) {

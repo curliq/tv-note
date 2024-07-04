@@ -17,22 +17,26 @@ class DiscoverShowsService(
     private val logger: TvtrackerLogger,
     private val tmdbClient: TmdbClient,
 ) {
-    fun getTrendingWeeklyShows(): TmdbTrendingShowsResponse {
+    fun getTrendingWeeklyShows(page: Int): TmdbTrendingShowsResponse {
         val respEntity = tmdbClient.get(
             "/3/trending/tv/week",
-            TmdbTrendingShowsResponse::class.java
+            TmdbTrendingShowsResponse::class.java,
+            params = mapOf(
+                "page" to page,
+            )
         )
         return respEntity.body!!
     }
 
-    fun getReleasedSoonShows(): TmdbTrendingShowsResponse {
+    fun getReleasedSoonShows(page: Int): TmdbTrendingShowsResponse {
         val today = LocalDate.now().toString()
         val respEntity = tmdbClient.get(
             "/3/discover/tv",
             TmdbTrendingShowsResponse::class.java,
             params = mapOf(
                 "with_original_language" to "en",
-                "air_date.gte" to today
+                "air_date.gte" to today,
+                "page" to page,
             )
         )
         return respEntity.body!!

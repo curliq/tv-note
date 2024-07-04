@@ -30,7 +30,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow.Companion.Ellipsis
 import androidx.compose.ui.unit.dp
@@ -78,7 +77,7 @@ fun RecommendedOk(
     action: (DiscoverViewModel.DiscoverViewModelAction) -> Unit,
 ) {
     Column(modifier = Modifier.padding(horizontal = TvTrackerTheme.sidePadding)) {
-        HasResults(data.uiModel.showsRecommended, navigate, action)
+        HasResults(data.uiModel.contentRecommended, navigate, action)
     }
 }
 

@@ -125,10 +125,10 @@ fun DiscoverOk(
         item {
             Spacer(Modifier.height(16.dp))
             Text("Recommended", style = MaterialTheme.typography.titleLarge)
-            if (data.uiModel.showsRecommended.selectionAvailable.isNotEmpty()) {
+            if (data.uiModel.contentRecommended.selectionAvailable.isNotEmpty()) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     ResultsBasedOnText(
-                        data.uiModel.showsRecommended.selectionActiveText,
+                        data.uiModel.contentRecommended.selectionActiveText,
                         modifier = Modifier.weight(1f)
                     )
                     Spacer(Modifier.width(8.dp))
@@ -149,7 +149,7 @@ fun DiscoverOk(
                 Spacer(Modifier.height(8.dp))
             }
             DiscoverRow(
-                data.uiModel.showsRecommended.resultsPreview,
+                data.uiModel.contentRecommended.resultsPreview,
                 navigate,
                 seeAllAction = { navigate(DiscoverScreenNavActions.GoRecommendations) }
             )

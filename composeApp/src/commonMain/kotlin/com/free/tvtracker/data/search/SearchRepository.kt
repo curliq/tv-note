@@ -10,6 +10,7 @@ import com.free.tvtracker.details.response.TmdbMovieDetailsApiResponse
 import com.free.tvtracker.discover.response.RecommendedContentApiResponse
 import com.free.tvtracker.details.response.TmdbPersonDetailsApiResponse
 import com.free.tvtracker.details.response.TmdbShowDetailsApiResponse
+import com.free.tvtracker.discover.request.PagedContentApiRequestBody
 import com.free.tvtracker.discover.response.TmdbMovieTrendingApiResponse
 import com.free.tvtracker.discover.response.TmdbShowTrendingApiResponse
 import com.free.tvtracker.expect.data.TvHttpClient
@@ -74,33 +75,33 @@ class SearchRepository(
         }
     }
 
-    suspend fun getTrendingWeekly(): TmdbShowTrendingApiResponse {
+    suspend fun getTrendingWeeklyShows(page: Int): TmdbShowTrendingApiResponse {
         return try {
-            httpClient.call(Endpoints.getTrendingWeekly)
+            httpClient.call(Endpoints.getTrendingWeeklyShows, PagedContentApiRequestBody(page))
         } catch (e: Throwable) {
             TmdbShowTrendingApiResponse.error(ApiError.Network)
         }
     }
 
-    suspend fun getTrendingWeeklyMovies(): TmdbMovieTrendingApiResponse {
+    suspend fun getTrendingWeeklyMovies(page: Int): TmdbMovieTrendingApiResponse {
         return try {
-            httpClient.call(Endpoints.getTrendingWeeklyMovies)
+            httpClient.call(Endpoints.getTrendingWeeklyMovies, PagedContentApiRequestBody(page))
         } catch (e: Throwable) {
             TmdbMovieTrendingApiResponse.error(ApiError.Network)
         }
     }
 
-    suspend fun getNewEpisodeReleasedSoon(): TmdbShowTrendingApiResponse {
+    suspend fun getNewEpisodeReleasedSoon(page: Int): TmdbShowTrendingApiResponse {
         return try {
-            httpClient.call(Endpoints.getNewEpisodeReleasedSoon)
+            httpClient.call(Endpoints.getNewEpisodeReleasedSoon, PagedContentApiRequestBody(page))
         } catch (e: Throwable) {
             TmdbShowTrendingApiResponse.error(ApiError.Network)
         }
     }
 
-    suspend fun getNewMoviesReleasedSoon(): TmdbMovieTrendingApiResponse {
+    suspend fun getNewMoviesReleasedSoon(page: Int): TmdbMovieTrendingApiResponse {
         return try {
-            httpClient.call(Endpoints.getReleasedSoonMovies)
+            httpClient.call(Endpoints.getReleasedSoonMovies, PagedContentApiRequestBody(page))
         } catch (e: Throwable) {
             TmdbMovieTrendingApiResponse.error(ApiError.Network)
         }

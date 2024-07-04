@@ -13,19 +13,23 @@ import com.free.tvtracker.ui.discover.dialogs.DiscoverTrendingSheetContent
 object DiscoverPreviews {
     val shows = DiscoverUiState.Ok(
         DiscoverUiModel(
-            showsTrendingWeekly = listOf(
-                DiscoverUiModel.Content(1, "game of throne", "", true),
-                DiscoverUiModel.Content(1, "game of throne", "", true),
-                DiscoverUiModel.Content(1, "game of throne", "", true),
-                DiscoverUiModel.Content(1, "game of throne", "", true),
-                DiscoverUiModel.Content(1, "game of throne throne theonr the", "", true),
+            contentTrendingWeekly = DiscoverUiModel.ContentPaged(
+                listOf(
+                    DiscoverUiModel.Content(1, "game of throne", "", true),
+                    DiscoverUiModel.Content(1, "game of throne", "", true),
+                    DiscoverUiModel.Content(1, "game of throne", "", true),
+                    DiscoverUiModel.Content(1, "game of throne", "", true),
+                    DiscoverUiModel.Content(1, "game of throne throne theonr the", "", true),
+                ), 1, true
             ),
-            showsReleasedSoon = listOf(
-                DiscoverUiModel.Content(1, "game of throne", "", true),
-                DiscoverUiModel.Content(1, "game of throne", "", true),
-                DiscoverUiModel.Content(1, "game of throne", "", true),
+            contentReleasedSoon = DiscoverUiModel.ContentPaged(
+                listOf(
+                    DiscoverUiModel.Content(1, "game of throne", "", true),
+                    DiscoverUiModel.Content(1, "game of throne", "", true),
+                    DiscoverUiModel.Content(1, "game of throne", "", true),
+                ), 1, true
             ),
-            showsRecommended = DiscoverUiModel.RecommendedContent(
+            contentRecommended = DiscoverUiModel.RecommendedContent(
                 results = listOf(
                     DiscoverUiModel.Content(1, "game of throne", "", true),
                     DiscoverUiModel.Content(1, "game of then theoh er throne", "", true),
@@ -71,7 +75,7 @@ fun DiscoverPreview() {
 fun DiscoverTrendingSheetPreview() {
     MaterialTheme {
         Surface {
-            DiscoverTrendingSheetContent(shows.uiModel.showsTrendingWeekly, {})
+            DiscoverTrendingSheetContent(shows.uiModel.contentTrendingWeekly.data, {}, {})
         }
     }
 }
