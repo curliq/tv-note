@@ -35,7 +35,7 @@ class DiscoverMoviesService(
             TmdbTrendingMoviesResponse::class.java,
             params = mapOf(
                 "with_original_language" to "en",
-                "release_date.gte" to today,
+                "primary_release_date.gte" to today,
                 "page" to page,
             )
         )
