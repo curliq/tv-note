@@ -3,6 +3,7 @@ package com.free.tvtracker.features.user.domain
 import com.free.tvtracker.Endpoints
 import com.free.tvtracker.base.ApiError
 import com.free.tvtracker.logging.TvtrackerLogger
+import com.free.tvtracker.logging.error
 import com.free.tvtracker.user.request.LoginApiRequestBody
 import com.free.tvtracker.user.request.PostFcmTokenApiRequestBody
 import com.free.tvtracker.user.request.SignupApiRequestBody

@@ -1,0 +1,51 @@
+environment:
+  mode: "production"
+jwt:
+  key: ${JWT_PRIVATE_KEY}
+logging:
+  file:
+    path: ./logs
+  level:
+    com.free.tvtracker.logging.OutRequestLoggingInterceptor: OFF # keep this off, don't leak tmdb token
+    com.free.tvtracker.logging.RequestLoggingInterceptor: DEBUG
+    com.free.tvtracker.logging.TvtrackerLogger: ERROR
+    httpclient:
+      wire: OFF
+    org:
+      apache:
+        http: DEBUG
+      hibernate: WARN
+      springframework:
+        security: DEBUG
+        web: WARN
+        web.client.RestTemplate: DEBUG
+    root: WARN
+  threshold:
+    console: trace
+    file: error
+  logback:
+    rollingpolicy:
+      max-history: 1
+      max-file-size: 10MB
+server:
+  ssl:
+    enabled: false
+spring:
+  datasource:
+    password: admin
+    url: jdbc:postgresql://localhost:5432/track8
+    username: admin2
+  flyway:
+    password: admin
+    url: jdbc:postgresql://localhost:5432/track8
+    user: admin
+  jpa:
+    properties:
+      jakarta:
+        persistence:
+          schema-generation:
+            scripts:
+              action: none
+    show-sql: false
+sentry:
+  environment: "production"

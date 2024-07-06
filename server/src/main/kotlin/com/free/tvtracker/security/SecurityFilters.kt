@@ -1,6 +1,8 @@
 package com.free.tvtracker.security
 
 import com.free.tvtracker.Endpoints
+import com.free.tvtracker.logging.RequestResponseLogIntercepter
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationProvider
@@ -16,6 +18,10 @@ private typealias Matcher = AuthorizeHttpRequestsConfigurer<HttpSecurity>.Author
 @Configuration
 @EnableWebSecurity
 class SecurityFilters(private val authenticationProvider: AuthenticationProvider) {
+
+    @Autowired
+    private var logInterceptor: RequestResponseLogIntercepter? = null
+
     @Bean
     @Throws(Exception::class)
     fun securityFilterChain(
@@ -30,15 +36,16 @@ class SecurityFilters(private val authenticationProvider: AuthenticationProvider
                         Endpoints.Path.CREATE_ANON_USER,
                         "/user/login",
                         "/user/create",
-                        "/error"
+                        "/error",
                     ).permitAll()
-                    .requestMatchers("/admin").hasRole("ADMIN")
+                    .requestMatchers("/actuator/*").hasRole("ADMIN")
                     .anyRequest().fullyAuthenticated()
             }
             .sessionManagement {
                 it.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             }
             .authenticationProvider(authenticationProvider)
+            .addFilterBefore(logInterceptor, UsernamePasswordAuthenticationFilter::class.java)
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
         return http.build()
     }

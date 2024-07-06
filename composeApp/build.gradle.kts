@@ -117,7 +117,7 @@ android {
         versionCode = 1
         versionName = "1.0"
         buildConfigField("String", "ANDROID_KEY_POSTHOG", "\"${System.getenv("ANDROID_KEY_POSTHOG")}\"")
-        buildConfigField("String", "ANDROID_KEY_DSN_SENTRY", "\"${System.getenv("ANDROID_KEY_DSN_SENTRY")}\"")
+        buildConfigField("String", "KEY_DSN_SENTRY", "\"${System.getenv("KEY_DSN_SENTRY")}\"")
     }
     packaging {
         resources {

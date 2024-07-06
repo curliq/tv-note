@@ -1,6 +1,6 @@
 package com.free.tvtracker.security
 
-import com.free.tvtracker.core.logging.RequestLoggingInterceptor
+import com.free.tvtracker.logging.RequestLoggingInterceptor
 import com.free.tvtracker.features.user.data.UserJpaRepository
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
@@ -42,31 +42,4 @@ class SecurityConfig(private val requestResponseLoggingInterceptor: RequestLoggi
         super.addInterceptors(registry)
         registry.addInterceptor(requestResponseLoggingInterceptor)
     }
-//
-//    SOMEHOW WE ARE USING KOTLINX SERIALIZATION AND ITS WORKING WITHOUT `ignoreUnknownKeys = true`
-//
-//    @Bean
-//    fun messageConverter(): KotlinSerializationJsonHttpMessageConverter {
-//        return KotlinSerializationJsonHttpMessageConverter(Json {
-//            ignoreUnknownKeys = true
-//        })
-//    }
-//
-//    override fun extendMessageConverters(converters: MutableList<HttpMessageConverter<*>>) {
-//        val json = Json {
-//            ignoreUnknownKeys = true
-//            isLenient = true
-//            allowSpecialFloatingPointValues = true
-//            useArrayPolymorphism = true
-//            encodeDefaults = true
-//        }
-//
-//        val converter = KotlinSerializationJsonHttpMessageConverter(json)
-//        converters.forEachIndexed { index, httpMessageConverter ->
-//            if (httpMessageConverter is KotlinSerializationJsonHttpMessageConverter) {
-//                converters[index] = converter
-//                return
-//            }
-//        }
-//    }
 }

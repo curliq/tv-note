@@ -46,20 +46,23 @@ class AndroidApplication : Application() {
                 apiKey = BuildConfig.ANDROID_KEY_POSTHOG,
                 host = "https://eu.i.posthog.com",
                 captureScreenViews = true,
-                captureApplicationLifecycleEvents = true
-            )
+                captureApplicationLifecycleEvents = true,
+            ).apply {
+                sessionReplay = false
+                debug = BuildConfig.DEBUG
+            }
             PostHogAndroid.setup(this, config)
         }
-        if (BuildConfig.ANDROID_KEY_DSN_SENTRY == "null") {
+        if (BuildConfig.KEY_DSN_SENTRY == "null") {
             Log.i(
                 "SETUP",
-                "Sentry key is missing. Use `export ANDROID_KEY_DSN_SENTRY=key` to set it, then make sure AS/IDEA has" +
+                "Sentry key is missing. Use `export KEY_DSN_SENTRY=key` to set it, then make sure AS/IDEA has" +
                     " access to the environment variables, one way is to run it from the same terminal session as " +
                     "you set the env var, ie `nohup idea &`"
             )
         } else {
             SentryAndroid.init(this) { options: SentryAndroidOptions ->
-                options.dsn = BuildConfig.ANDROID_KEY_DSN_SENTRY
+                options.dsn = BuildConfig.KEY_DSN_SENTRY
             }
         }
         startKoin {

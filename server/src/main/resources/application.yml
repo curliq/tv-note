@@ -1,5 +1,9 @@
+environment:
+  secrets:
+    tmdb-key: ${BOOT_TMDB_TOKEN}
+  mode: "development"
 jwt:
-  key: ${JWT_PRIVATE_KEY}
+  key: ${BOOT_JWT_PRIVATE_KEY}
 logging:
   file:
     path: ./logs
@@ -57,5 +61,24 @@ spring:
   output:
     ansi:
       enabled: always
-env-secrets:
-    tmdb-key: ${TMDB_TOKEN}
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration
+sentry:
+  dsn: ${BOOT_KEY_DSN_SENTRY}
+  environment: "development"
+  traces-sample-rate: 1.0
+management:
+  endpoints:
+    enabled-by-default: false
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    beans.enabled: true
+    caches.enabled: true
+    health.enabled: true
+    httpexchanges.enabled: true
+    loggers.enabled: true
+    metrics.enabled: true
+    scheduledtasks.enabled: true
+    threaddump.enabled: true

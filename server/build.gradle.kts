@@ -40,6 +40,11 @@ dependencies {
     implementation(libs.kotlinx.datetime)
     implementation(libs.firebase.admin)
     implementation(libs.opencsv)
+    implementation(libs.sentry.spring.boot.starter.jakarta)
+    implementation("io.sentry:sentry-logback:6.11.0")
+
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
+
 
     testImplementation(libs.testSpringBoot)
     testImplementation(libs.testSpringBootSecurity)

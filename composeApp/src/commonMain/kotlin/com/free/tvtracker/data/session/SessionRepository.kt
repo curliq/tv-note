@@ -38,10 +38,10 @@ class SessionRepository(
             val res = session.data!!
             try {
                 storeSession(res)
+                sessionStore.token = session.data!!.authToken
             } catch (e: Exception) {
                 return false
             }
-            sessionStore.token = session.data!!.authToken
             return true
         } else {
             return false

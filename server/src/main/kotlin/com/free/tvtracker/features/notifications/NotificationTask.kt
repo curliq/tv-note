@@ -4,7 +4,6 @@ import com.free.tvtracker.features.tracked.data.shows.TrackedShowJdbcRepository
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 
-
 @Component
 class NotificationTask(
     private val trackedShowJdbcRepository: TrackedShowJdbcRepository,
@@ -15,8 +14,8 @@ class NotificationTask(
         fcmService.init()
     }
 
-    //    @Scheduled(cron = "0 0 18 * * *")
-    @Scheduled(initialDelay = 2000)
+    @Scheduled(cron = "0 0 18 * * *")
+//    @Scheduled(initialDelay = 2000)
     fun notifications() {
         trackedShowJdbcRepository.getEpisodesReleasedToday()
             .groupBy { it.showId }

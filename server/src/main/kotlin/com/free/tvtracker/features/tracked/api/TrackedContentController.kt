@@ -4,6 +4,7 @@ import com.free.tvtracker.Endpoints
 import com.free.tvtracker.base.ApiResponse
 import com.free.tvtracker.logging.TvtrackerLogger
 import com.free.tvtracker.features.tracked.domain.TrackedContentService
+import com.free.tvtracker.logging.error
 import com.free.tvtracker.tracked.request.AddEpisodesApiRequestBody
 import com.free.tvtracker.tracked.request.AddMovieApiRequestBody
 import com.free.tvtracker.tracked.request.AddShowApiRequestBody
@@ -38,7 +39,7 @@ class TrackedContentController(
         val res = try {
             trackedContentService.addShow(body)
         } catch (e: DataIntegrityViolationException) {
-            e.printStackTrace()
+            logger.get.error(e)
             return ResponseEntity(
                 AddTrackedShowApiResponse.error(ErrorShowAlreadyAdded),
                 HttpStatus.BAD_REQUEST
@@ -58,7 +59,7 @@ class TrackedContentController(
         val res = try {
             trackedContentService.addMovie(body)
         } catch (e: DataIntegrityViolationException) {
-            e.printStackTrace()
+            logger.get.error(e)
             return ResponseEntity(
                 AddTrackedShowApiResponse.error(ErrorShowAlreadyAdded),
                 HttpStatus.BAD_REQUEST
