@@ -51,6 +51,7 @@ kotlin {
             implementation(libs.androidx.core.splashscreen)
             implementation(libs.androidx.appcompat)
             implementation(libs.posthog.android)
+            implementation(libs.sentry.android)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
@@ -115,6 +116,7 @@ android {
         versionCode = 1
         versionName = "1.0"
         buildConfigField("String", "ANDROID_KEY_POSTHOG", "\"${System.getenv("ANDROID_KEY_POSTHOG")}\"")
+        buildConfigField("String", "ANDROID_KEY_DSN_SENTRY", "\"${System.getenv("ANDROID_KEY_DSN_SENTRY")}\"")
     }
     packaging {
         resources {
