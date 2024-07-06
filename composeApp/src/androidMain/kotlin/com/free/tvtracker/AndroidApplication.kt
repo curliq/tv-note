@@ -2,6 +2,7 @@ package com.free.tvtracker
 
 import android.app.Application
 import android.content.Context
+import android.util.Log
 import com.free.tvtracker.di.appModules
 import com.free.tvtracker.ui.details.DetailsViewModel
 import com.free.tvtracker.ui.discover.DiscoverViewModel
@@ -15,6 +16,9 @@ import com.free.tvtracker.ui.splash.SplashViewModel
 import com.free.tvtracker.ui.watching.WatchingViewModel
 import com.free.tvtracker.ui.watchlist.WatchlistedShowsViewModel
 import com.free.tvtracker.ui.welcome.WelcomeViewModel
+import com.posthog.PostHog
+import com.posthog.android.PostHogAndroid
+import com.posthog.android.PostHogAndroidConfig
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
@@ -27,6 +31,22 @@ class AndroidApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         context = applicationContext
+        if (BuildConfig.ANDROID_KEY_POSTHOG == "null") {
+            Log.i(
+                "SETUP",
+                "Posthog key is missing. Use `export ANDROID_KEY_POSTHOG=key` to set it, then make sure AS/IDEA has" +
+                    " access to the environment variables, one way is to run it from the same terminal session as " +
+                    "you set the env var, ie `nohup idea &`"
+            )
+        } else {
+            val config = PostHogAndroidConfig(
+                apiKey = BuildConfig.ANDROID_KEY_POSTHOG,
+                host = "https://eu.i.posthog.com",
+                captureScreenViews = true,
+                captureApplicationLifecycleEvents = true
+            )
+            PostHogAndroid.setup(this, config)
+        }
         startKoin {
             modules(appModules())
             modules(
@@ -48,7 +68,7 @@ class AndroidApplication : Application() {
                     single {
                         // why `single` and not `viewmodel`? to share it
                         // between the discover and recommendations activities
-                        DiscoverViewModel(get(), get(), get(),get(), get())
+                        DiscoverViewModel(get(), get(), get(), get(), get())
                     }
                 }
             )

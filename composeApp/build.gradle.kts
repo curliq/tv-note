@@ -50,6 +50,7 @@ kotlin {
             implementation(libs.firebase.fcm.android.ktx)
             implementation(libs.androidx.core.splashscreen)
             implementation(libs.androidx.appcompat)
+            implementation(libs.posthog.android)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
@@ -93,6 +94,7 @@ kotlin {
 }
 
 android {
+    android.buildFeatures.buildConfig = true
     buildFeatures {
         compose = true
     }
@@ -112,6 +114,7 @@ android {
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
         versionName = "1.0"
+        buildConfigField("String", "ANDROID_KEY_POSTHOG", "\"${System.getenv("ANDROID_KEY_POSTHOG")}\"")
     }
     packaging {
         resources {

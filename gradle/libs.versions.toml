@@ -12,6 +12,7 @@ compose-plugin = "1.6.10"
 coreSplashscreen = "1.0.1"
 foundation = "1.7.0-dev1690"
 opencsv = "5.9"
+posthogAndroid = "3.4.2"
 sqldelightCoroutinesExtensions = "1.5.5"
 firebaseAdmin = "9.3.0"
 firebaseMessaging = "24.0.0"
@@ -38,6 +39,7 @@ androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", versi
 compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "foundation" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 opencsv = { module = "com.opencsv:opencsv", version.ref = "opencsv" }
+posthog-android = { module = "com.posthog:posthog-android", version.ref = "posthogAndroid" }
 sqldelight-coroutines-extensions = { module = "com.squareup.sqldelight:coroutines-extensions", version.ref = "sqldelightCoroutinesExtensions" }
 firebase-admin = { module = "com.google.firebase:firebase-admin", version.ref = "firebaseAdmin" }
 firebase-fcm-android = { module = "com.google.firebase:firebase-messaging", version.ref = "firebaseMessaging" }
