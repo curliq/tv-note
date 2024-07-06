@@ -47,3 +47,4 @@ server/http-client.private.env.json
 composeApp/google-services.json
 iosApp/iosApp/GoogleService-Info.plist
 server/db_update.sql
+db_update.sql
