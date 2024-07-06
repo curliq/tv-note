@@ -18,10 +18,6 @@ import com.free.tvtracker.ui.watchlist.WatchlistedShowsViewModel
 import com.free.tvtracker.ui.welcome.WelcomeViewModel
 import com.posthog.android.PostHogAndroid
 import com.posthog.android.PostHogAndroidConfig
-import io.sentry.Hint
-import io.sentry.SentryEvent
-import io.sentry.SentryLevel
-import io.sentry.SentryOptions.BeforeSendCallback
 import io.sentry.android.core.SentryAndroid
 import io.sentry.android.core.SentryAndroidOptions
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -34,6 +30,7 @@ class AndroidApplication : Application() {
         lateinit var context: Context
     }
 
+    @Suppress("KotlinConstantConditions")
     override fun onCreate() {
         super.onCreate()
         context = applicationContext
