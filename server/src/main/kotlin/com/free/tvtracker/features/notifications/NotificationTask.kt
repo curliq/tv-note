@@ -15,7 +15,6 @@ class NotificationTask(
     }
 
     @Scheduled(cron = "0 0 18 * * *")
-//    @Scheduled(initialDelay = 2000)
     fun notifications() {
         trackedShowJdbcRepository.getEpisodesReleasedToday()
             .groupBy { it.showId }
