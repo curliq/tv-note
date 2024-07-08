@@ -1,5 +1,6 @@
 package com.free.tvtracker.expect.data
 
+import com.free.tvtracker.BuildConfig
 import com.free.tvtracker.core.data.http.HttpLoggingInterceptor
 import io.ktor.client.HttpClient
 import io.ktor.client.HttpClientConfig
@@ -15,4 +16,12 @@ actual fun getHttpClient(block: HttpClientConfig<*>.() -> Unit): HttpClient {
         }
         block()
     }
+}
+
+actual fun getServerUrl(): String {
+    return BuildConfig.SERVER_URL
+}
+
+actual fun getServerPort(): String {
+    return BuildConfig.SERVER_PORT
 }

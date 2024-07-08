@@ -130,7 +130,6 @@ fun SettingsContent(
                     val showLogoutConfirmation = remember { mutableStateOf(false) }
                     if (showLogoutConfirmation.value) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Spacer(Modifier.weight(1f))
                             Text(text = "Log out?")
                             Spacer(Modifier.width(16.dp))
                             TextButton(onClick = { showLogoutConfirmation.value = false }) {
@@ -142,7 +141,6 @@ fun SettingsContent(
                         }
                     } else {
                         Row {
-                            Spacer(Modifier.weight(1f))
                             TextButton(onClick = {}) {
                                 Text(text = "Contact support")
                             }

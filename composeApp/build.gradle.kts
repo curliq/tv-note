@@ -118,6 +118,8 @@ android {
         versionName = "1.0"
         buildConfigField("String", "ANDROID_KEY_POSTHOG", "\"${System.getenv("ANDROID_KEY_POSTHOG")}\"")
         buildConfigField("String", "KEY_DSN_SENTRY", "\"${System.getenv("KEY_DSN_SENTRY")}\"")
+        buildConfigField("String", "SERVER_URL", "\"${System.getenv("SERVER_URL")}\"")
+        buildConfigField("String", "SERVER_PORT", "\"${System.getenv("SERVER_PORT")}\"")
     }
     packaging {
         resources {

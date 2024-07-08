@@ -1,7 +1,5 @@
 environment:
   mode: "production"
-jwt:
-  key: ${JWT_PRIVATE_KEY}
 logging:
   file:
     path: ./logs
@@ -32,13 +30,9 @@ server:
     enabled: false
 spring:
   datasource:
-    password: admin
-    url: jdbc:postgresql://localhost:5432/track8
-    username: admin2
-  flyway:
-    password: admin
-    url: jdbc:postgresql://localhost:5432/track8
-    user: admin
+    username: ${BOOT_DATABASE_USERNAME}
+    password: ${BOOT_DATABASE_PASSWORD}
+    url: ${BOOT_DATABASE_URL}
   jpa:
     properties:
       jakarta:

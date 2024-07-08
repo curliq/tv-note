@@ -13,9 +13,9 @@ group = "com.free.tvtracker"
 version = "1.0.0"
 
 flyway {
-    url = "jdbc:postgresql://localhost:5432/track8"
-    user = "postgres"
-    password = ""
+    url = System.getenv("BOOT_DATABASE_URL") //jdbc:postgresql://localhost:5432/track8
+    user = System.getenv("BOOT_DATABASE_USERNAME")
+    password = System.getenv("BOOT_DATABASE_PASSWORD")
     driver = "org.postgresql.Driver"
     baselineOnMigrate = true
     locations = arrayOf("filesystem:src/main/resources/db/migration/")

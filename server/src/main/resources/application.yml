@@ -34,14 +34,6 @@ spring:
     password: admin
     url: jdbc:postgresql://localhost:5432/track8
     username: admin2
-  flyway:
-    create-schemas: true
-    driver-class-name: org.postgresql.Driver
-    enabled: false
-    group: true
-    password: admin
-    url: jdbc:postgresql://localhost:5432/track8
-    user: admin
   jpa:
     generate-ddl: false
     hibernate:
@@ -63,6 +55,8 @@ spring:
       enabled: always
   autoconfigure:
     exclude: org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration
+  flyway:
+    enabled: false # we only need the gradle task
 sentry:
   dsn: ${BOOT_KEY_DSN_SENTRY}
   environment: "development"

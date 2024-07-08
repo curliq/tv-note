@@ -1,8 +1,7 @@
 package com.free.tvtracker.security
 
-import com.free.tvtracker.logging.TvtrackerLogger
-import com.free.tvtracker.features.user.data.UserEntity
 import com.free.tvtracker.features.user.data.UserRole
+import com.free.tvtracker.logging.TvtrackerLogger
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys

@@ -31,13 +31,17 @@ import kotlinx.serialization.json.Json
 
 expect fun getHttpClient(block: HttpClientConfig<*>.() -> Unit): HttpClient
 
+expect fun getServerUrl(): String
+
+expect fun getServerPort(): String
+
 @OptIn(ExperimentalSerializationApi::class)
 open class TvHttpClient(private val sessionStore: SessionStore) {
 
-    val localhostAndroid = "10.0.2.2"
-    val localhostiOS = "localhost"
-    val localhostiOSPhone = "192.168.1.137"
-    val tempWifi = "192.168.160.79"
+    val localhostAndroid = "10.0.2.2:8080"
+    val localhostiOS = "localhost:8080"
+    val tempWifi = "192.168.160.79:8080"
+    val server = "${getServerUrl()}:${getServerPort()}"
 
     fun cli() = getHttpClient {
         install(Logging) {
@@ -58,8 +62,7 @@ open class TvHttpClient(private val sessionStore: SessionStore) {
         install(DefaultRequest) {
             this.url {
                 protocol = URLProtocol.HTTP
-                host = localhostiOSPhone
-                port = 8080
+                host = server
             }
             contentType(ContentType.Application.Json)
             accept(ContentType.Application.Json)

@@ -1,6 +1,5 @@
 package com.free.tvtracker
 
-import io.sentry.Sentry
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.scheduling.annotation.EnableScheduling
