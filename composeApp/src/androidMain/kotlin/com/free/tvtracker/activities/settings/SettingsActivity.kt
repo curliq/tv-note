@@ -87,6 +87,14 @@ class SettingsActivity : BaseActivity() {
                             val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(action.url))
                             startActivity(browserIntent)
                         }
+
+                        is SettingsScreenNavAction.EmailSupport -> {
+                            val emailIntent = Intent(Intent.ACTION_SEND)
+                            emailIntent.setType("plain/text")
+                            emailIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(action.email))
+                            emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Support from Android app")
+                            context.startActivity(Intent.createChooser(emailIntent, "Send mail to ${action.email}"))
+                        }
                     }
                 }
                 val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())

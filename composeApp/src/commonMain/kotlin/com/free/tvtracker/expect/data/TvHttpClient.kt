@@ -38,10 +38,10 @@ expect fun getServerPort(): String
 @OptIn(ExperimentalSerializationApi::class)
 open class TvHttpClient(private val sessionStore: SessionStore) {
 
-    val localhostAndroid = "10.0.2.2:8080"
-    val localhostiOS = "localhost:8080"
-    val tempWifi = "192.168.160.79:8080"
-    val server = "${getServerUrl()}:${getServerPort()}"
+    private val localhostAndroid = "10.0.2.2:8080"
+    private val localhostiOS = "localhost:8080"
+    private val tempWifi = "192.168.160.79:8080"
+    private val server: String by lazy { "${getServerUrl()}:${getServerPort()}" }
 
     fun cli() = getHttpClient {
         install(Logging) {

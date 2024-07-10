@@ -48,6 +48,7 @@ sealed class SettingsScreenNavAction {
     data object GoLogin : SettingsScreenNavAction()
     data object GoSignup : SettingsScreenNavAction()
     data class GoBrowser(val url: String) : SettingsScreenNavAction()
+    data class EmailSupport(val email: String) : SettingsScreenNavAction()
 }
 
 @Composable
@@ -141,7 +142,9 @@ fun SettingsContent(
                         }
                     } else {
                         Row {
-                            TextButton(onClick = {}) {
+                            TextButton(onClick = {
+                                navAction(SettingsScreenNavAction.EmailSupport("freetvtracker@proton.me"))
+                            }) {
                                 Text(text = "Contact support")
                             }
                             Spacer(Modifier.width(8.dp))
