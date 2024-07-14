@@ -40,6 +40,7 @@ open class TvHttpClient(private val sessionStore: SessionStore) {
 
     private val localhostAndroid = "10.0.2.2:8080"
     private val localhostiOS = "localhost:8080"
+    private val localhostiOSPhone = "192.168.1.137:8080"
     private val tempWifi = "192.168.160.79:8080"
     private val server: String by lazy { "${getServerUrl()}:${getServerPort()}" }
 

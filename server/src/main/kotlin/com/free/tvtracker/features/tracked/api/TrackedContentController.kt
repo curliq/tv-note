@@ -82,7 +82,7 @@ class TrackedContentController(
 
     @PostMapping(Endpoints.Path.ADD_EPISODES)
     fun episodeWatched(@RequestBody body: AddEpisodesApiRequestBody): ResponseEntity<AddTrackedEpisodesApiResponse> {
-        val show = trackedContentService.addEpisode(body)
+        val show = trackedContentService.addEpisode(body.episodes)
         return ResponseEntity.ok(AddTrackedEpisodesApiResponse.ok(show.map { it.toApiModel() }))
     }
 

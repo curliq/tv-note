@@ -14,7 +14,9 @@ class TokenService(
     private val logger: TvtrackerLogger,
     private val jwtProperties: JwtProperties,
 ) {
-    private val secretKey = Keys.hmacShaKeyFor(jwtProperties.key.toByteArray())
+    private val secretKey by lazy {
+        Keys.hmacShaKeyFor(jwtProperties.key.toByteArray())
+    }
 
     companion object {
         private const val CLAIMS_EXTRAS_ROLE = "role"

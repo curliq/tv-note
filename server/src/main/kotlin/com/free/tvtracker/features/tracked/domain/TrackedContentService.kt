@@ -15,6 +15,7 @@ import com.free.tvtracker.security.SessionService
 import com.free.tvtracker.storage.movies.domain.StoredMoviesService
 import com.free.tvtracker.storage.shows.domain.StoredShowsService
 import com.free.tvtracker.tracked.request.AddEpisodesApiRequestBody
+import com.free.tvtracker.tracked.request.AddEpisodesApiRequestBody.Episode
 import com.free.tvtracker.tracked.request.AddMovieApiRequestBody
 import com.free.tvtracker.tracked.request.AddShowApiRequestBody
 import com.free.tvtracker.tracked.request.SetShowWatchlistedApiRequestBody
@@ -46,6 +47,12 @@ class TrackedContentService(
             storedShow = storedShow,
         )
         trackedShowJpaRepository.saveAndFlush(trackedShow)
+        if (body.addAllEpisodes) {
+            val trackedShowId = trackedShow.id
+            val eps = addEpisode(storedShow.storedEpisodes.map { Episode(trackedShowId, it.id) })
+            // assign episodes to tracked show just to return them in the api
+            trackedShow.watchedEpisodes = eps
+        }
         return trackedShow
     }
 
@@ -64,8 +71,8 @@ class TrackedContentService(
         return trackedMovie
     }
 
-    fun addEpisode(body: AddEpisodesApiRequestBody): List<TrackedShowEpisodeEntity> {
-        val episodes = body.episodes.map {
+    fun addEpisode(episodes: List<Episode>): List<TrackedShowEpisodeEntity> {
+        val episodes = episodes.map {
             val trackedTvShow = trackedShowJpaRepository.getReferenceById(it.trackedShowId)
             TrackedShowEpisodeEntity(
                 id = "t_${trackedTvShow.id}_${it.episodeId}",

@@ -38,7 +38,6 @@ class SecurityFilters(private val authenticationProvider: AuthenticationProvider
                         "/user/create",
                         "/error",
                     ).permitAll()
-                    .requestMatchers("/actuator/*").hasRole("ADMIN")
                     .anyRequest().fullyAuthenticated()
             }
             .sessionManagement {

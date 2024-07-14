@@ -74,7 +74,8 @@ class TrackedShowsRepository(
             _watchingShows.emit(ShowsDataStatus(false, true))
             allShows.emit(allShows.value.plus(localWatching))
         }
-        fetch(_watchingShows, ::getTrackedShows).asSuccess {
+        fetch(_watchingShows, ::getTrackedShows, ignoreResultIfError = true).coAsSuccess {
+            _watchingShows.emit(ShowsDataStatus(true, true))
             localDataSource.saveTrackedShows(it.map { it.toClientEntity() })
         }
     }
@@ -95,7 +96,8 @@ class TrackedShowsRepository(
 
     private suspend fun fetch(
         flow: MutableStateFlow<ShowsDataStatus>,
-        call: suspend () -> TrackedShowsApiResponse
+        call: suspend () -> TrackedShowsApiResponse,
+        ignoreResultIfError: Boolean = false
     ): TrackedShowsApiResponse {
         val res = try {
             call()
@@ -105,9 +107,9 @@ class TrackedShowsRepository(
         }
         if (res.isSuccess()) {
             allShows.update { it.plus(res.data!!).distinctBy { it.typedId } }
-            flow.emit(ShowsDataStatus(true, true))
-        } else {
-            flow.emit(ShowsDataStatus(true, false))
+        }
+        if (!ignoreResultIfError) {
+            flow.emit(ShowsDataStatus(true, res.isSuccess()))
         }
         return res
     }
@@ -149,12 +151,23 @@ class TrackedShowsRepository(
     }
 
     @OptIn(DelicateCoroutinesApi::class)
-    suspend fun addTrackedShow(tmdbId: Int, isTvShow: Boolean, watchlisted: Boolean = false) {
+    suspend fun addTrackedShow(
+        tmdbId: Int,
+        isTvShow: Boolean,
+        watchlisted: Boolean = false,
+        finished: Boolean = false
+    ) {
         // Use GlobalScope because this should finish even if the user closes the search activity
         GlobalScope.launch(Dispatchers.IO) {
             try {
                 val res = if (isTvShow) {
-                    addTrackedShow(AddShowApiRequestBody(tmdbId, watchlisted = watchlisted))
+                    addTrackedShow(
+                        AddShowApiRequestBody(
+                            tmdbShowId = tmdbId,
+                            watchlisted = watchlisted,
+                            addAllEpisodes = finished
+                        )
+                    )
                 } else {
                     addTrackedMovie(AddMovieApiRequestBody(tmdbId, watchlisted = watchlisted))
                 }

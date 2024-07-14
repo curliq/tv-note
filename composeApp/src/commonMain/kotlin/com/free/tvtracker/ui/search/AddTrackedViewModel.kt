@@ -120,9 +120,14 @@ class AddTrackedViewModel(
 
                         is AddTrackedItemUiModel.TrackAction.Finished -> {
                             if (action.type.isTvShow) {
-
+                                trackedShowsRepository.addTrackedShow(
+                                    action.id,
+                                    isTvShow = true,
+                                    watchlisted = false,
+                                    finished = true
+                                )
                             } else {
-
+                                trackedShowsRepository.addTrackedShow(action.id, isTvShow = false, watchlisted = false)
                             }
                         }
 
