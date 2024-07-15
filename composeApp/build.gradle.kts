@@ -114,10 +114,10 @@ android {
         applicationId = "com.free.tvtracker"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "1.1"
         buildConfigField("String", "ANDROID_KEY_POSTHOG", "\"${System.getenv("ANDROID_KEY_POSTHOG")}\"")
-        buildConfigField("String", "KEY_DSN_SENTRY", "\"${System.getenv("KEY_DSN_SENTRY")}\"")
+        buildConfigField("String", "KEY_DSN_SENTRY", "\"${System.getenv("ANDROID_KEY_DSN_SENTRY")}\"")
         buildConfigField("String", "SERVER_URL", "\"${System.getenv("SERVER_URL")}\"")
         buildConfigField("String", "SERVER_PORT", "\"${System.getenv("SERVER_PORT")}\"")
     }
