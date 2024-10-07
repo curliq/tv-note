@@ -20,11 +20,15 @@ class SessionService {
         SecurityContextHolder.getContext().authentication = authenticatedUser
     }
 
-    fun getSession(): Authentication {
+    fun getSession(): Authentication? {
         return SecurityContextHolder.getContext().authentication
     }
 
     fun getSessionUserId(): Int {
-        return getSession().principal as Int
+        return getSession()!!.principal as Int
+    }
+
+    fun getSessionUserIdOptional(): Int? {
+        return getSession()?.principal as? Int
     }
 }

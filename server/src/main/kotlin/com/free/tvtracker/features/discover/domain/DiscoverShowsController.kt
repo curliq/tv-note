@@ -1,8 +1,8 @@
 package com.free.tvtracker.features.discover.domain
 
 import com.free.tvtracker.Endpoints
-import com.free.tvtracker.discover.request.RecommendedContentApiRequestBody
 import com.free.tvtracker.discover.request.PagedContentApiRequestBody
+import com.free.tvtracker.discover.request.RecommendedContentApiRequestBody
 import com.free.tvtracker.discover.response.RecommendedContentApiModel
 import com.free.tvtracker.discover.response.RecommendedContentApiResponse
 import com.free.tvtracker.discover.response.TmdbShowTrendingApiResponse
@@ -12,7 +12,6 @@ import com.free.tvtracker.search.response.SmallShowApiModel
 import com.free.tvtracker.tmdb.data.TmdbShowSmallResponse
 import com.free.tvtracker.tmdb.data.TmdbTrendingShowsResponse
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping

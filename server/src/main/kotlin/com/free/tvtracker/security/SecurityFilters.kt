@@ -1,7 +1,7 @@
 package com.free.tvtracker.security
 
 import com.free.tvtracker.Endpoints
-import com.free.tvtracker.logging.RequestResponseLogIntercepter
+import com.free.tvtracker.logging.RequestResponseLogInterceptor
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -20,7 +20,7 @@ private typealias Matcher = AuthorizeHttpRequestsConfigurer<HttpSecurity>.Author
 class SecurityFilters(private val authenticationProvider: AuthenticationProvider) {
 
     @Autowired
-    private var logInterceptor: RequestResponseLogIntercepter? = null
+    private var logInterceptor: RequestResponseLogInterceptor? = null
 
     @Bean
     @Throws(Exception::class)

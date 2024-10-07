@@ -2,6 +2,7 @@ package com.free.tvtracker.security
 
 import com.free.tvtracker.logging.RequestLoggingInterceptor
 import com.free.tvtracker.features.user.data.UserJpaRepository
+import com.free.tvtracker.logging.SentryInterceptor
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -20,7 +21,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
  */
 @Configuration
 @EnableConfigurationProperties(JwtProperties::class)
-class SecurityConfig(private val requestResponseLoggingInterceptor: RequestLoggingInterceptor) : WebMvcConfigurer {
+class SecurityConfig(
+    private val requestResponseLoggingInterceptor: RequestLoggingInterceptor,
+    private val requestSentryInterceptor: SentryInterceptor
+) : WebMvcConfigurer {
 
     @Bean
     fun encoder(): PasswordEncoder = BCryptPasswordEncoder()
@@ -41,5 +45,6 @@ class SecurityConfig(private val requestResponseLoggingInterceptor: RequestLoggi
     override fun addInterceptors(registry: InterceptorRegistry) {
         super.addInterceptors(registry)
         registry.addInterceptor(requestResponseLoggingInterceptor)
+        registry.addInterceptor(requestSentryInterceptor)
     }
 }

@@ -1,22 +1,21 @@
 package com.free.tvtracker.logging
 
-import com.free.tvtracker.logging.RequestResponseLogIntercepter.Companion.getParameters
+import com.free.tvtracker.logging.RequestResponseLogInterceptor.Companion.getParameters
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
 import org.springframework.web.servlet.HandlerInterceptor
 import java.util.Enumeration
 
+/**
+ * This logs a request after it's processed
+ */
 @Component
-class RequestResponseLogIntercepter : OncePerRequestFilter() {
-
-    @Value("\${environment.mode}")
-    private val env: String? = null
+class RequestResponseLogInterceptor : OncePerRequestFilter() {
 
     private val requestLogger: Logger = LoggerFactory.getLogger(RequestLoggingInterceptor::class.java)
 
@@ -65,6 +64,9 @@ class RequestResponseLogIntercepter : OncePerRequestFilter() {
     }
 }
 
+/**
+ * This logs a request when it's received and before it's processed
+ */
 @Component
 class RequestLoggingInterceptor : HandlerInterceptor {
 
