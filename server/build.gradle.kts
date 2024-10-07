@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "com.free.tvtracker"
-version = "1.0"
+version = "2"
 
 flyway {
     url = System.getenv("BOOT_DATABASE_URL") //jdbc:postgresql://localhost:5432/track8
