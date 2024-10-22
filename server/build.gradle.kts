@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "com.free.tvtracker"
-version = "2"
+version = "3"
 
 flyway {
     url = System.getenv("BOOT_DATABASE_URL") //jdbc:postgresql://localhost:5432/track8
@@ -41,7 +41,7 @@ dependencies {
     implementation(libs.firebase.admin)
     implementation(libs.opencsv)
     implementation(libs.sentry.spring.boot.starter.jakarta)
-    implementation("io.sentry:sentry-logback:6.11.0")
+    implementation(libs.sentry.logback)
 
     testImplementation(libs.testSpringBoot)
     testImplementation(libs.testSpringBootSecurity)

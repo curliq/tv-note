@@ -1,6 +1,8 @@
 package com.free.tvtracker.tmdb
 
 import com.free.tvtracker.logging.OutRequestLoggingInterceptor
+import com.free.tvtracker.logging.TvtrackerLogger
+import com.free.tvtracker.logging.error
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.web.client.RestTemplateBuilder
@@ -13,6 +15,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.http.client.BufferingClientHttpRequestFactory
 import org.springframework.http.client.SimpleClientHttpRequestFactory
 import org.springframework.stereotype.Component
+import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.util.UriComponentsBuilder
 
@@ -35,7 +38,8 @@ class RestTemplateConfig {
 class TmdbClient(
     private val logger: OutRequestLoggingInterceptor,
     private val prop: SecretProperties,
-    private val restTemplate: RestTemplate
+    private val restTemplate: RestTemplate,
+    private val tvlogger: TvtrackerLogger
 ) {
 
     private fun buildClient(): RestTemplate {
@@ -62,11 +66,16 @@ class TmdbClient(
                     queryParam(t, u)
                 }
             }
-        return client.exchange(
-            builder.build().toUriString(),
-            HttpMethod.GET,
-            buildHeaders(),
-            returnType,
-        )
+        return try {
+            client.exchange(
+                builder.build().toUriString(),
+                HttpMethod.GET,
+                buildHeaders(),
+                returnType,
+            )
+        } catch (e: HttpClientErrorException) {
+            tvlogger.get.error(e)
+            throw e
+        }
     }
 }

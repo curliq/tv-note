@@ -19,8 +19,9 @@ import org.springframework.web.servlet.HandlerInterceptor
  */
 @Component
 class Sentry {
+
     @Value("\${sentry.dsn}")
-    private val dsn: String? = null
+    private val dsn: String = ""
 
     @Value("\${sentry.environment}")
     private val env: String? = null
@@ -35,6 +36,9 @@ class Sentry {
         sentryAppender.setOptions(sentryOptions)
         sentryAppender.name = "SENTRY"
         sentryAppender.setMinimumEventLevel(Level.ERROR)
+        if (dsn.isBlank()) {
+            sentryOptions.tags["dsn_missing"] = "true"
+        }
         sentryAppender.start()
         context.getLogger("ROOT").addAppender(sentryAppender)
     }

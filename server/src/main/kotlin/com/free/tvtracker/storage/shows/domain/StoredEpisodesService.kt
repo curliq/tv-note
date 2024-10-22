@@ -8,6 +8,7 @@ import com.free.tvtracker.storage.shows.data.StoredEpisodeEntity
 import com.free.tvtracker.storage.shows.data.StoredEpisodeJdbcRepository
 import com.free.tvtracker.storage.shows.data.StoredEpisodeJpaRepository
 import com.free.tvtracker.storage.shows.data.StoredShowEntity
+import kotlinx.coroutines.delay
 import org.springframework.stereotype.Service
 import java.sql.Timestamp
 import java.time.Clock
@@ -29,8 +30,14 @@ class StoredEpisodesService(
         val seasons = tmdbShowResponse.seasons
             .filterNot { it.seasonNumber == SEASON_SPECIAL_NUMBER }
             .map { it.seasonNumber!! to it.episodeCount!! }
+        var seasonsFetched = 0
         seasons.forEach { season ->
             if (shouldFetchSeason(season.first, storedShow)) {
+                if (reachedSeasonThrottle(seasonsFetched)) {
+                    Thread.sleep(500)
+                    seasonsFetched = 0
+                }
+                seasonsFetched++
                 val seasonTmdb = getSeason(storedShow.tmdbId, season.first)
                 (1..season.second).forEach { episodeNumber ->
                     val episodeTmdb =
@@ -54,6 +61,16 @@ class StoredEpisodesService(
         storedEpisodeJdbcRepository.saveBatch(episodes)
         return episodes.plus(storedShow.storedEpisodes).distinctBy { it.id }
             .sortedWith(compareBy({ it.seasonNumber }, { it.episodeNumber }))
+    }
+
+    /**
+     * Used to prevent reaching the tmdb rate limit of 50 per second
+     * Fixes https://free-tv-tracker-67.sentry.io/issues/9341116/
+     *
+     * @return true if thread should wait
+     */
+    private fun reachedSeasonThrottle(seasonsFetched: Int): Boolean {
+        return seasonsFetched > 20
     }
 
     fun getEpisodes(tmdbShowId: Int): List<StoredEpisodeEntity> {
