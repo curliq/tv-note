@@ -84,6 +84,10 @@ VALUES(?, ?, ?, ?)
 ON CONFLICT(id) DO UPDATE SET
 created_at_datetime=excluded.created_at_datetime, stored_show=excluded.stored_show, watchlisted=excluded.watchlisted;
 
+deleteTrackedShow:
+DELETE FROM tracked_shows
+WHERE id=?;
+
 saveWatchedEpisodes:
 INSERT INTO watched_episodes(id, stored_episode_id, tracked_show)
 VALUES(?,?,?)
@@ -107,6 +111,10 @@ VALUES(?,?,?);
 deleteWatchedEpisodeOrder:
 DELETE FROM episode_watched_order
 WHERE id=?;
+
+deleteWatchedEpisodeOrderForTvShow:
+DELETE FROM episode_watched_order
+WHERE show_id=?;
 
 getLocalPreferences:
 SELECT * FROM local_preferences;

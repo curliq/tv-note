@@ -31,7 +31,7 @@ class SessionRepositoryTest {
         val localStore: LocalSqlDataProvider = mockk {
             every { getSession() } returns null
         }
-        val sut = SessionRepository(httpClient, localStore, sessionStore)
+        val sut = SessionRepository(httpClient, localStore, sessionStore, mockk())
         sut.createAnonSession()
         coVerify(exactly = 1) { httpClient.createAnonUser() }
     }
@@ -49,7 +49,7 @@ class SessionRepositoryTest {
         val localStore: LocalSqlDataProvider = mockk(relaxed = true) {
             every { getSession() } returns null
         }
-        val sut = SessionRepository(httpClient, localStore, sessionStore)
+        val sut = SessionRepository(httpClient, localStore, sessionStore, mockk())
         sut.createAnonSession()
         verify { sessionStore.token = "token1" }
     }
@@ -60,7 +60,7 @@ class SessionRepositoryTest {
         val localStore: LocalSqlDataProvider = mockk {
             every { getSession() } returns SessionClientEntity("token1", "", 1, "", "", true, true)
         }
-        val sut = SessionRepository(httpClient, localStore, sessionStore)
+        val sut = SessionRepository(httpClient, localStore, sessionStore, mockk())
         sut.loadSession()
         coVerify { httpClient wasNot called }
         verify { sessionStore.token = "token1" }
@@ -72,7 +72,7 @@ class SessionRepositoryTest {
         val localStore: LocalSqlDataProvider = mockk {
             every { getSession() } returns SessionClientEntity("token1", "", 1, "", "", true, true)
         }
-        val sut = SessionRepository(httpClient, localStore, sessionStore)
+        val sut = SessionRepository(httpClient, localStore, sessionStore, mockk())
         sut.loadSession()
         verify { sessionStore.token = "token1" }
     }
@@ -88,7 +88,7 @@ class SessionRepositoryTest {
             )
         }
         val localStore: LocalSqlDataProvider = mockk(relaxed = true)
-        val sut = SessionRepository(httpClient, localStore, sessionStore)
+        val sut = SessionRepository(httpClient, localStore, sessionStore, mockk())
         sut.createAnonSession()
         coVerify(exactly = 1) { localStore.saveSession(withArg {
             assertEquals("token1", it.token)

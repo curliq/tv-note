@@ -39,7 +39,6 @@ class FinishedShowsViewModel(
                                 FinishedUiState.Ok(
                                     _shows = res.map(mapper.map()),
                                     (it as? FinishedUiState.Ok)?.filterTvShows ?: true,
-                                    (it as? FinishedUiState.Ok)?.filterMovies ?: true
                                 )
                             }
                         }
@@ -63,11 +62,7 @@ class FinishedShowsViewModel(
             FinishedAction.ToggleMovies -> {
                 shows.update {
                     if (it is FinishedUiState.Ok) {
-                        val filterMovies = !it.filterMovies
-                        it.copy(
-                            filterMovies = filterMovies,
-                            filterTvShows = if (!filterMovies) true else it.filterTvShows
-                        )
+                        it.copy(filterTvShows = !it.filterTvShows)
                     } else it
                 }
             }
@@ -75,11 +70,7 @@ class FinishedShowsViewModel(
             FinishedAction.ToggleTvShows -> {
                 shows.update {
                     if (it is FinishedUiState.Ok) {
-                        val filterTvShows = !it.filterTvShows
-                        it.copy(
-                            filterTvShows = !it.filterTvShows,
-                            filterMovies = if (!filterTvShows) true else it.filterMovies
-                        )
+                        it.copy(filterTvShows = !it.filterTvShows)
                     } else it
                 }
             }
@@ -99,21 +90,10 @@ sealed class FinishedUiState {
     data class Ok(
         val _shows: List<FinishedShowUiModel>,
         val filterTvShows: Boolean,
-        val filterMovies: Boolean
     ) : FinishedUiState() {
         val shows: List<FinishedShowUiModel>
             get() {
-                return _shows.filter {
-                    if (filterTvShows && filterMovies) {
-                        true
-                    } else if (!filterTvShows && filterMovies) {
-                        !it.isTvShow
-                    } else if (filterTvShows && !filterMovies) {
-                        it.isTvShow
-                    } else {
-                        true
-                    }
-                }
+                return _shows.filter { filterTvShows == it.isTvShow }
             }
     }
 }

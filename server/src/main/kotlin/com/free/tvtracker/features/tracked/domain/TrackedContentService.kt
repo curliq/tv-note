@@ -118,8 +118,8 @@ class TrackedContentService(
 
     fun setShowWatchlistFlag(body: SetShowWatchlistedApiRequestBody): TrackedContentApiModel {
         if (body.isTvShow) {
-            val show =
-                trackedShowJpaRepository.findById(body.trackedContentId).get().copy(watchlisted = body.watchlisted)
+            val show = trackedShowJpaRepository.findById(body.trackedContentId).get()
+                .copy(watchlisted = body.watchlisted)
             return trackedShowJpaRepository.saveAndFlush(show).toApiModel()
         } else {
             val movie =

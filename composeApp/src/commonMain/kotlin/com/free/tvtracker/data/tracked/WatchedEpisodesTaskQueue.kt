@@ -1,6 +1,7 @@
 package com.free.tvtracker.data.tracked
 
 import com.free.tvtracker.Endpoints
+import com.free.tvtracker.core.Logger
 import com.free.tvtracker.data.common.sql.LocalSqlDataProvider
 import com.free.tvtracker.data.tracked.entities.MarkEpisodeWatchedOrderClientEntity
 import com.free.tvtracker.expect.data.TvHttpClient
@@ -10,6 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 class WatchedEpisodesTaskQueue(
     private val remoteDataSource: TvHttpClient,
     private val localDataSource: LocalSqlDataProvider,
+    private val logger: Logger
 ) {
     val watchedEpisodeOrders: MutableStateFlow<List<MarkEpisodeWatchedOrderClientEntity>> =
         MutableStateFlow(emptyList())
@@ -40,7 +42,10 @@ class WatchedEpisodesTaskQueue(
                     localDataSource.deleteEpisodeWatchedOrder(orders.map { it.id })
                 }
         } catch (e: Throwable) {
-            e.printStackTrace()
+            // There's an issue where multiple attempts to save the same episode happen on the server. The server fails
+            // the request, so the client keeps trying to save it. Partial solution is to return success if ep already
+            // saved
+            logger.e(e)
         }
     }
 

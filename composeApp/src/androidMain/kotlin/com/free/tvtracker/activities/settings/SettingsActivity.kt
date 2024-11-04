@@ -3,6 +3,7 @@ package com.free.tvtracker.activities.settings
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.widget.Toast
@@ -22,6 +23,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.content.FileProvider
 import com.free.tvtracker.activities.splash.SplashActivity
 import com.free.tvtracker.core.ui.BaseActivity
 import com.free.tvtracker.expect.data.DatabaseNameAndroid
@@ -59,12 +62,33 @@ class SettingsActivity : BaseActivity() {
                     }
 
                     // Create the CSV file
-                    val file = File(downloadsFolder, "data-export.csv")
+                    val file = File(downloadsFolder, "tvshows-movies-data-export.csv")
                     val fileOutputStream = FileOutputStream(file)
                     fileOutputStream.write(csvContent.toByteArray())
                     fileOutputStream.close()
 
-                    Toast.makeText(context, "CSV file saved to Downloads", Toast.LENGTH_LONG).show()
+                    // Open share dialog to give the user the option to save it or upload somewhere
+                    // Create the Uri for the file
+                    val fileUri: Uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        FileProvider.getUriForFile(
+                            this,
+                            "$packageName.fileprovider",
+                            file
+                        )
+                    } else {
+                        Uri.fromFile(file)
+                    }
+
+                    // Create the share intent
+                    val shareIntent = Intent().apply {
+                        action = Intent.ACTION_SEND
+                        putExtra(Intent.EXTRA_STREAM, fileUri)
+                        type = "text/plain"
+                        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    }
+
+                    // Show the share dialog
+                    startActivity(Intent.createChooser(shareIntent, "File saved to Downloads."))
                 } catch (e: IOException) {
                     e.printStackTrace()
                     Toast.makeText(context, "Failed to save CSV file", Toast.LENGTH_LONG).show()

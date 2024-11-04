@@ -1,5 +1,6 @@
 package com.free.tvtracker.di
 
+import com.free.tvtracker.core.Logger
 import com.free.tvtracker.data.common.sql.LocalSqlDataProvider
 import com.free.tvtracker.data.search.SearchRepository
 import com.free.tvtracker.data.session.SessionRepository
@@ -50,12 +51,13 @@ fun appModules() = module {
     single<TvHttpClient> { TvHttpClient(get()) }
     single<DatabaseDriverFactory> { DatabaseDriverFactory() }
     single<SqlDriver> { get<DatabaseDriverFactory>().createDriver() }
+    single<Logger> { Logger() }
     single<AppDatabase> { AppDatabase(get()) }
     single<LocalSqlDataProvider> { LocalSqlDataProvider(get()) }
     single<TvHttpClientEndpoints> { TvHttpClientEndpoints(get()) }
-    single<SessionRepository> { SessionRepository(get(), get(), get()) }
-    single<TrackedShowsRepository> { TrackedShowsRepository(get(), get(), get()) }
-    single<WatchedEpisodesTaskQueue> { WatchedEpisodesTaskQueue(get(), get()) }
+    single<SessionRepository> { SessionRepository(get(), get(), get(), get()) }
+    single<TrackedShowsRepository> { TrackedShowsRepository(get(), get(), get(), get()) }
+    single<WatchedEpisodesTaskQueue> { WatchedEpisodesTaskQueue(get(), get(), get()) }
     single<SearchRepository> { SearchRepository(get()) }
     factory<ShowSearchUiModelMapper> { ShowSearchUiModelMapper() }
     factory<MovieSearchUiModelMapper> { MovieSearchUiModelMapper() }

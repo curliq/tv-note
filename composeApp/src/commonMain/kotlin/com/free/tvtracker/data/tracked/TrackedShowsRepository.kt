@@ -3,6 +3,7 @@ package com.free.tvtracker.data.tracked
 import com.benasher44.uuid.uuid4
 import com.free.tvtracker.Endpoints
 import com.free.tvtracker.base.ApiError
+import com.free.tvtracker.core.Logger
 import com.free.tvtracker.data.common.sql.LocalSqlDataProvider
 import com.free.tvtracker.data.tracked.entities.MarkEpisodeWatchedOrderClientEntity
 import com.free.tvtracker.expect.data.TvHttpClientEndpoints
@@ -47,7 +48,8 @@ data class ShowsDataStatus(
 class TrackedShowsRepository(
     private val httpClient: TvHttpClientEndpoints,
     private val localDataSource: LocalSqlDataProvider,
-    private val watchedEpisodesTaskQueue: WatchedEpisodesTaskQueue
+    private val watchedEpisodesTaskQueue: WatchedEpisodesTaskQueue,
+    private val logger: Logger,
 ) {
     val allShows = MutableStateFlow<List<TrackedContentApiModel>>(emptyList())
 
@@ -69,7 +71,7 @@ class TrackedShowsRepository(
             return
         }
         watchedEpisodesTaskQueue.emitOrders()
-        val localWatching = localDataSource.getTrackedShows().map { it.toApiModel() }
+        val localWatching = localDataSource.getTrackedShows().map { it.toApiModel() }.filter { !it.watchlisted }
         if (localWatching.isNotEmpty()) {
             _watchingShows.emit(ShowsDataStatus(false, true))
             allShows.emit(allShows.value.plus(localWatching))
@@ -102,7 +104,7 @@ class TrackedShowsRepository(
         val res = try {
             call()
         } catch (e: Exception) {
-            e.printStackTrace()
+            logger.e(e)
             TrackedShowsApiResponse.error(ApiError.Network)
         }
         if (res.isSuccess()) {
@@ -133,12 +135,17 @@ class TrackedShowsRepository(
                 }
                 it.minus(oldShow).plus(show)
             }
+            localDataSource.saveTrackedShows(listOf(show.toClientEntity()))
         }
     }
 
     suspend fun removeContent(trackedContentId: Int, isTvShow: Boolean) {
         val res = httpClient.removeTrackedShow(trackedContentId, isTvShow)
-        res.asSuccess { response ->
+        res.asSuccess {
+            if (isTvShow) {
+                localDataSource.deleteTrackedShow(trackedContentId)
+                localDataSource.deleteEpisodeWatchedOrderForTvShow(trackedContentId)
+            }
             allShows.update {
                 val oldShow = if (isTvShow) {
                     it.first { it.tvShow?.id == trackedContentId }
@@ -151,7 +158,7 @@ class TrackedShowsRepository(
     }
 
     @OptIn(DelicateCoroutinesApi::class)
-    suspend fun addTrackedShow(
+    fun addTrackedShow(
         tmdbId: Int,
         isTvShow: Boolean,
         watchlisted: Boolean = false,
@@ -173,9 +180,10 @@ class TrackedShowsRepository(
                 }
                 res.coAsSuccess { newShow ->
                     allShows.update { it.plus(newShow) }
+                    localDataSource.saveTrackedShows(listOf(newShow.toClientEntity()))
                 }
             } catch (e: Exception) {
-                e.printStackTrace()
+                logger.e(e)
             }
         }
     }

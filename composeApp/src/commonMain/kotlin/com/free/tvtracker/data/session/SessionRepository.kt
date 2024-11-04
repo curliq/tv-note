@@ -1,9 +1,9 @@
 package com.free.tvtracker.data.session
 
-import com.free.tvtracker.Endpoint
 import com.free.tvtracker.Endpoints
 import com.free.tvtracker.base.ApiError
 import com.free.tvtracker.base.ApiResponse
+import com.free.tvtracker.core.Logger
 import com.free.tvtracker.data.common.sql.LocalSqlDataProvider
 import com.free.tvtracker.expect.data.TvHttpClientEndpoints
 import com.free.tvtracker.user.request.LoginApiRequestBody
@@ -19,7 +19,8 @@ import kotlinx.coroutines.flow.Flow
 class SessionRepository(
     private val httpClient: TvHttpClientEndpoints,
     private val localDataSource: LocalSqlDataProvider,
-    private val sessionStore: SessionStore
+    private val sessionStore: SessionStore,
+    private val logger: Logger
 ) {
 
     /**
@@ -31,7 +32,7 @@ class SessionRepository(
         val session = try {
             httpClient.createAnonUser()
         } catch (e: Throwable) {
-            e.printStackTrace()
+            logger.e(e)
             null
         }
         if (session?.isSuccess() == true) {

@@ -1,10 +1,9 @@
 package com.free.tvtracker.ui.watchlist
 
-import com.free.tvtracker.expect.ui.ViewModel
 import com.free.tvtracker.data.tracked.TrackedShowsRepository
 import com.free.tvtracker.domain.GetShowsUseCase
 import com.free.tvtracker.domain.GetWatchlistedShowsUseCase
-import com.free.tvtracker.ui.finished.FinishedUiState
+import com.free.tvtracker.expect.ui.ViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -35,8 +34,7 @@ class WatchlistedShowsViewModel(
                             shows.update {
                                 WatchlistUiState.Ok(
                                     _shows = res.map(mapper.map()),
-                                    (it as? WatchlistUiState.Ok)?.filterTvShows ?:true,
-                                    (it as? WatchlistUiState.Ok)?.filterMovies ?:true
+                                    (it as? WatchlistUiState.Ok)?.filterTvShows ?: true,
                                 )
                             }
                         }
@@ -60,11 +58,7 @@ class WatchlistedShowsViewModel(
             WatchlistedAction.ToggleMovies -> {
                 shows.update {
                     if (it is WatchlistUiState.Ok) {
-                        val filterMovies = !it.filterMovies
-                        it.copy(
-                            filterMovies = filterMovies,
-                            filterTvShows = if (!filterMovies) true else it.filterTvShows
-                        )
+                        it.copy(filterTvShows = !it.filterTvShows)
                     } else it
                 }
             }
@@ -72,11 +66,7 @@ class WatchlistedShowsViewModel(
             WatchlistedAction.ToggleTvShows -> {
                 shows.update {
                     if (it is WatchlistUiState.Ok) {
-                        val filterTvShows = !it.filterTvShows
-                        it.copy(
-                            filterTvShows = !it.filterTvShows,
-                            filterMovies = if (!filterTvShows) true else it.filterMovies
-                        )
+                        it.copy(filterTvShows = !it.filterTvShows)
                     } else it
                 }
             }
@@ -96,21 +86,10 @@ sealed class WatchlistUiState {
     data class Ok(
         val _shows: List<WatchlistShowUiModel>,
         val filterTvShows: Boolean,
-        val filterMovies: Boolean
     ) : WatchlistUiState() {
         val shows: List<WatchlistShowUiModel>
             get() {
-                return _shows.filter {
-                    if (filterTvShows && filterMovies) {
-                        true
-                    } else if (!filterTvShows && filterMovies) {
-                        !it.isTvShow
-                    } else if (filterTvShows && !filterMovies) {
-                        it.isTvShow
-                    } else {
-                        true
-                    }
-                }
+                return _shows.filter { filterTvShows == it.isTvShow }
             }
     }
 }

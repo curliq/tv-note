@@ -6,7 +6,7 @@ import com.free.tvtracker.expect.ui.ViewModel
 
 class SplashViewModel(
     private val localDataSource: LocalSqlDataProvider,
-    private val sessionRepository: SessionRepository
+    private val sessionRepository: SessionRepository,
 ) : ViewModel() {
     fun initialDestination(): Destination {
         return if (localDataSource.getLocalPreferences().welcomeComplete) {

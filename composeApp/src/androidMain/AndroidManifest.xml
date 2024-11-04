@@ -17,7 +17,6 @@
             android:name=".activities.splash.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
-
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
@@ -48,19 +47,29 @@
             android:resource="@drawable/ic_notification_logo"/>
 
         <!-- Initialisation is done in the application to keep secrets away from manifest -->
-        <meta-data android:name="io.sentry.auto-init" android:value="false" />
+        <meta-data android:name="io.sentry.auto-init" android:value="false"/>
         <!-- enable automatic breadcrumbs for user interactions (clicks, swipes, scrolls) -->
-        <meta-data android:name="io.sentry.traces.user-interaction.enable" android:value="true" />
+        <meta-data android:name="io.sentry.traces.user-interaction.enable" android:value="true"/>
         <!-- enable screenshot for crashes -->
-        <meta-data android:name="io.sentry.attach-screenshot" android:value="true" />
+        <meta-data android:name="io.sentry.attach-screenshot" android:value="true"/>
         <!-- enable view hierarchy for crashes -->
-        <meta-data android:name="io.sentry.attach-view-hierarchy" android:value="true" />
+        <meta-data android:name="io.sentry.attach-view-hierarchy" android:value="true"/>
 
         <!-- enable the performance API by setting a sample-rate, adjust in production env -->
-        <meta-data android:name="io.sentry.traces.sample-rate" android:value="1.0" />
+        <meta-data android:name="io.sentry.traces.sample-rate" android:value="1.0"/>
         <!-- enable profiling when starting transactions, adjust in production env -->
-        <meta-data android:name="io.sentry.traces.profiling.sample-rate" android:value="1.0" />
+        <meta-data android:name="io.sentry.traces.profiling.sample-rate" android:value="1.0"/>
 
+        <!-- Needed to open the file sharing system dialog with the data export csv -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/priveder_files"/>
+        </provider>
     </application>
 
 </manifest>

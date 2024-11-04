@@ -1,8 +1,9 @@
 package com.free.tvtracker.ui.settings
 
+import androidx.compose.animation.Crossfade
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -20,10 +21,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
-import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
@@ -36,12 +37,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
-import besttvtracker.composeapp.generated.resources.Res
-import besttvtracker.composeapp.generated.resources.bmc_full_logo
-import com.free.tvtracker.ui.common.composables.ResImage
 import com.free.tvtracker.ui.common.theme.TvTrackerTheme
 
 sealed class SettingsScreenNavAction {
@@ -80,87 +77,83 @@ fun SettingsContent(
             modifier = Modifier.fillMaxWidth()
                 .padding(vertical = TvTrackerTheme.sidePadding, horizontal = TvTrackerTheme.sidePadding)
         ) {
-            Spacer(modifier = Modifier.height(TvTrackerTheme.sidePadding))
-            Column(modifier = Modifier.padding(horizontal = TvTrackerTheme.sidePadding)) {
-                Text(
-                    "Backup your content",
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                if (data.isAnon) {
+            Column(modifier = Modifier.padding(vertical = TvTrackerTheme.sidePadding)) {
+                Column(modifier = Modifier.padding(horizontal = TvTrackerTheme.sidePadding)) {
                     Text(
-                        text = "You have the option to use an account to backup all your tracked content, " +
-                            "none of your data is used for any purpose other than letting you restore it when needed, " +
-                            "and no email is required",
-                        style = MaterialTheme.typography.bodySmall
+                        "Your data",
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.onBackground
                     )
-                    Row(
-                        modifier = Modifier.padding(
-                            top = 24.dp,
-                            bottom = TvTrackerTheme.sidePadding
-                        )
-                    ) {
-                        Button(
-                            onClick = { navAction(SettingsScreenNavAction.GoLogin) },
-                            shape = TvTrackerTheme.ShapeButton,
-                            modifier = Modifier.weight(0.5f, true)
-                        ) {
-                            Text("Log in")
-                        }
-                        Spacer(Modifier.width(8.dp))
-                        Button(
-                            onClick = { navAction(SettingsScreenNavAction.GoSignup) },
-                            shape = TvTrackerTheme.ShapeButton,
-                            modifier = Modifier.weight(0.5f, true)
-                        ) {
-                            Text("Create account")
-                        }
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Button(onClick = { action(SettingsViewModel.Action.Export) }, shape = TvTrackerTheme.ShapeButton) {
+                        Text("Export shows and movies as csv")
                     }
-                } else {
-                    Text(
-                        text = "Logged in as ${data.personalInfo?.username}",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                    Spacer(Modifier.height(4.dp))
-                    Text(
-                        text = "Email: ${data.personalInfo?.email ?: "n/a"}",
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                    Spacer(Modifier.height(16.dp))
-                    val showLogoutConfirmation = remember { mutableStateOf(false) }
-                    if (showLogoutConfirmation.value) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(text = "Log out?")
-                            Spacer(Modifier.width(16.dp))
-                            TextButton(onClick = { showLogoutConfirmation.value = false }) {
-                                Text(text = "No")
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
+                HorizontalDivider()
+                Column(modifier = Modifier.padding(horizontal = TvTrackerTheme.sidePadding)) {
+                    Spacer(modifier = Modifier.height(24.dp))
+                    if (data.isAnon) {
+                        Text(
+                            text = "You have the option to create an account to backup your content on the cloud.",
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                        Row(modifier = Modifier.padding(top = TvTrackerTheme.sidePadding)) {
+                            OutlinedButton(
+                                onClick = { navAction(SettingsScreenNavAction.GoLogin) },
+                                shape = TvTrackerTheme.ShapeButton,
+                                modifier = Modifier.weight(0.5f, true)
+                            ) {
+                                Text("Log in")
                             }
-                            TextButton(onClick = { action(SettingsViewModel.Action.Logout) }) {
-                                Text(text = "Yes", color = MaterialTheme.colorScheme.error)
+                            Spacer(Modifier.width(8.dp))
+                            OutlinedButton(
+                                onClick = { navAction(SettingsScreenNavAction.GoSignup) },
+                                shape = TvTrackerTheme.ShapeButton,
+                                modifier = Modifier.weight(0.5f, true)
+                            ) {
+                                Text("Create account")
                             }
                         }
                     } else {
-                        Row {
-                            TextButton(onClick = {
-                                navAction(SettingsScreenNavAction.EmailSupport("freetvtracker@proton.me"))
-                            }) {
-                                Text(text = "Contact support")
-                            }
-                            Spacer(Modifier.width(8.dp))
-                            TextButton(onClick = { showLogoutConfirmation.value = true }) {
-                                Text(text = "Log out", color = MaterialTheme.colorScheme.error)
+                        Text(
+                            text = "Logged in as: ${data.personalInfo?.username}",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                        Spacer(Modifier.height(4.dp))
+                        Text(
+                            text = "Email: ${data.personalInfo?.email ?: "n/a"}",
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                        Spacer(Modifier.height(16.dp))
+                        val showLogoutConfirmation = remember { mutableStateOf(false) }
+
+                        Crossfade(targetState = showLogoutConfirmation.value) {
+                            if (it) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Text(text = "Confirm log out?", style = MaterialTheme.typography.labelLarge)
+                                    Spacer(Modifier.width(8.dp))
+                                    TextButton(onClick = { showLogoutConfirmation.value = false }) {
+                                        Text(text = "No")
+                                    }
+                                    TextButton(onClick = { action(SettingsViewModel.Action.Logout) }) {
+                                        Text(text = "Yes", color = MaterialTheme.colorScheme.error)
+                                    }
+                                }
+                            } else {
+                                Row {
+                                    OutlinedButton(
+                                        onClick = { showLogoutConfirmation.value = true },
+                                        shape = TvTrackerTheme.ShapeButton,
+                                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.error),
+                                    ) {
+                                        Text(text = "Log out", color = MaterialTheme.colorScheme.error)
+                                    }
+                                }
                             }
                         }
                     }
-                    Spacer(Modifier.height(8.dp))
                 }
-                Text("Export data", style = MaterialTheme.typography.titleSmall)
-                Spacer(Modifier.height(8.dp))
-                Button(onClick = { action(SettingsViewModel.Action.Export) }, shape = TvTrackerTheme.ShapeButton) {
-                    Text("Export shows and movies as csv")
-                }
-                Spacer(Modifier.height(16.dp))
             }
         }
         Spacer(Modifier.height(24.dp))
@@ -186,7 +179,7 @@ fun SettingsContent(
                     )
                     Text(
                         text = "Receive a push notification at 6pm GMT when a new episode " +
-                            "is released of a show you track",
+                            "is released of a show you track.",
                         style = MaterialTheme.typography.bodySmall,
                     )
                 }
@@ -230,29 +223,17 @@ fun SettingsContent(
             modifier = Modifier.padding(horizontal = TvTrackerTheme.sidePadding)
         )
         Spacer(Modifier.height(8.dp))
-        Row(Modifier.padding(horizontal = TvTrackerTheme.sidePadding), verticalAlignment = Alignment.CenterVertically) {
-            Button(
-                shape = TvTrackerTheme.ShapeButton,
-                onClick = { navAction(SettingsScreenNavAction.GoBrowser("https://buymeacoffee.com/freetvtracker")) }) {
-                Text(text = "Donate")
-            }
-            Spacer(Modifier.width(16.dp))
-            Text("Powered by ", style = MaterialTheme.typography.labelSmall)
-            val tint = if (isSystemInDarkTheme()) {
-                //todo test on ios
-                Color(0xffeb4034)
-            } else {
-                null
-            }
-            ResImage(
-                Res.drawable.bmc_full_logo,
-                contentDescription = "justwatch",
-                modifier = Modifier.height(24.dp),
-                tint = tint
-            )
+        TextButton(modifier = Modifier.align(Alignment.CenterHorizontally), onClick = {
+            navAction(SettingsScreenNavAction.EmailSupport("freetvtracker@proton.me"))
+        }) {
+            Text(text = "Email developer")
         }
-        Spacer(Modifier.weight(1f))
-        Spacer(Modifier.height(16.dp))
+        Box(
+            Modifier.size(4.dp)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.outlineVariant)
+                .align(Alignment.CenterHorizontally),
+        )
         TextButton(
             onClick = { navAction(SettingsScreenNavAction.GoBrowser("https://github.com/curliq/best-tv-tracker")) },
             shape = TvTrackerTheme.ShapeButton,
@@ -268,7 +249,7 @@ fun SettingsContent(
         )
         Spacer(Modifier.height(16.dp))
         Text(
-            "Made in East London",
+            "Made in London",
             style = MaterialTheme.typography.labelMedium,
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )

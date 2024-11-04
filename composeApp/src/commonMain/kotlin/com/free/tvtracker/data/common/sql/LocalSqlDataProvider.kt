@@ -41,6 +41,10 @@ class LocalSqlDataProvider(appDatabase: AppDatabase) {
         }
     }
 
+    fun deleteTrackedShow(id: Int) {
+        dbQuery.deleteTrackedShow(id.toLong())
+    }
+
     fun saveWatchedEpisodes(episodes: List<WatchedEpisodeClientEntity>) {
         dbQuery.transaction {
             episodes.forEach { episode ->
@@ -122,5 +126,9 @@ class LocalSqlDataProvider(appDatabase: AppDatabase) {
             session.preferencesPushAllowed,
             session.isAnonymous
         )
+    }
+
+    fun deleteEpisodeWatchedOrderForTvShow(trackedTvShowId: Int) {
+        dbQuery.deleteWatchedEpisodeOrderForTvShow(trackedTvShowId.toLong())
     }
 }

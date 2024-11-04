@@ -40,7 +40,6 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -53,7 +52,6 @@ import androidx.compose.ui.text.style.TextOverflow.Companion.Ellipsis
 import androidx.compose.ui.unit.dp
 import besttvtracker.composeapp.generated.resources.Res
 import besttvtracker.composeapp.generated.resources.ic_open_window
-import besttvtracker.composeapp.generated.resources.instagram
 import besttvtracker.composeapp.generated.resources.justwatch_logo_lightmode
 import besttvtracker.composeapp.generated.resources.tmdb_logo
 import com.free.tvtracker.ui.common.composables.ErrorScreen
@@ -66,14 +64,14 @@ import com.free.tvtracker.ui.common.composables.posterRatio
 import com.free.tvtracker.ui.common.theme.ScreenContentAnimation
 import com.free.tvtracker.ui.common.theme.TvTrackerTheme
 import com.free.tvtracker.ui.common.theme.TvTrackerTheme.sidePadding
+import com.free.tvtracker.ui.details.DetailsUiModel.TrackingStatus.Action.MoveMovieToFinished
 import com.free.tvtracker.ui.details.DetailsUiModel.TrackingStatus.Action.MoveToWatching
 import com.free.tvtracker.ui.details.DetailsUiModel.TrackingStatus.Action.MoveToWatchlist
 import com.free.tvtracker.ui.details.DetailsUiModel.TrackingStatus.Action.RemoveFromWatching
 import com.free.tvtracker.ui.details.DetailsUiModel.TrackingStatus.Action.RemoveFromWatchlist
+import com.free.tvtracker.ui.details.DetailsUiModel.TrackingStatus.Action.RemoveMovieFromWatched
 import com.free.tvtracker.ui.details.DetailsUiModel.TrackingStatus.Action.TrackWatching
 import com.free.tvtracker.ui.details.DetailsUiModel.TrackingStatus.Action.TrackWatchlist
-import com.free.tvtracker.ui.details.DetailsUiModel.TrackingStatus.Action.MoveMovieToFinished
-import com.free.tvtracker.ui.details.DetailsUiModel.TrackingStatus.Action.RemoveMovieFromWatched
 
 sealed class DetailsScreenNavAction {
     data class GoYoutube(val webUrl: String) : DetailsScreenNavAction()

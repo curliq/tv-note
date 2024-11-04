@@ -110,11 +110,11 @@ fun WatchlistOk(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 InputChip(
-                    selected = data.filterMovies,
+                    selected = !data.filterTvShows,
                     onClick = { action(WatchlistedAction.ToggleMovies) },
                     label = { Text("Movies") },
                     leadingIcon = { ResImage(Res.drawable.ic_movie, "movies") },
-                    trailingIcon = { FilterCloseIcon(data.filterMovies) }
+                    trailingIcon = { FilterCloseIcon(!data.filterTvShows) }
                 )
             }
         }
@@ -171,15 +171,7 @@ fun WatchlistItem(uiModel: WatchlistShowUiModel, onClick: () -> Unit, modifier: 
             Column(Modifier.padding(16.dp)) {
                 Text(uiModel.title, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 Spacer(modifier = Modifier.height(8.dp))
-                Row {
-                    Text(
-                        uiModel.status,
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.align(Alignment.CenterVertically)
-                    )
-                    Spacer(Modifier.weight(1f))
-                    ResImage(if (uiModel.isTvShow) Res.drawable.ic_tv else Res.drawable.ic_movie, "type")
-                }
+                Text(uiModel.status, style = MaterialTheme.typography.bodyMedium)
             }
         }
     }

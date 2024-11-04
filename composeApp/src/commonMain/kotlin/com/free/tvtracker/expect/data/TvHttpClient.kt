@@ -38,7 +38,6 @@ expect fun getServerPort(): String
 @OptIn(ExperimentalSerializationApi::class)
 open class TvHttpClient(private val sessionStore: SessionStore) {
 
-    private val localhostAndroid = "10.0.2.2:${getServerPort()}"
     private val localhostiOS = "localhost:${getServerPort()}"
     private val localhostiOSPhone = "192.168.1.137:${getServerPort()}"
     private val server: String by lazy { "${getServerUrl()}:${getServerPort()}" }
@@ -63,6 +62,7 @@ open class TvHttpClient(private val sessionStore: SessionStore) {
             this.url {
                 protocol = URLProtocol.HTTP
                 host = server
+//                host = localhostiOSPhone
             }
             contentType(ContentType.Application.Json)
             accept(ContentType.Application.Json)

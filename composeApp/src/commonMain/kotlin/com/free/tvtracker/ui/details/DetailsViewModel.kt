@@ -98,7 +98,7 @@ class DetailsViewModel(
                     ) else it
                 }
                 viewModelScope.launch(ioDispatcher) {
-                    // todo: this loads infinitely if http call fails
+                    // todo: this shows loading state infinitely if http call fails
                     when (action.trackingAction) {
                         DetailsUiModel.TrackingStatus.Action.RemoveFromWatchlist -> {
                             trackedShowsRepository.removeContent(
@@ -112,6 +112,10 @@ class DetailsViewModel(
                                 action.uiModel.trackedContentId!!,
                                 action.uiModel.isTvShow
                             )
+                        }
+
+                        DetailsUiModel.TrackingStatus.Action.RemoveMovieFromWatched -> {
+                            trackedShowsRepository.removeContent(action.uiModel.trackedContentId!!, isTvShow = false)
                         }
 
                         DetailsUiModel.TrackingStatus.Action.TrackWatchlist -> {
@@ -144,10 +148,6 @@ class DetailsViewModel(
                                 isTvShow = action.uiModel.isTvShow,
                                 watchlisted = false
                             )
-                        }
-
-                        DetailsUiModel.TrackingStatus.Action.RemoveMovieFromWatched -> {
-                            trackedShowsRepository.removeContent(action.uiModel.trackedContentId!!, isTvShow = false)
                         }
 
                         DetailsUiModel.TrackingStatus.Action.MoveMovieToFinished -> {

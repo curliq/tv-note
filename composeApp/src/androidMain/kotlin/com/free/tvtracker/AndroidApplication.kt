@@ -18,8 +18,6 @@ import com.free.tvtracker.ui.watchlist.WatchlistedShowsViewModel
 import com.free.tvtracker.ui.welcome.WelcomeViewModel
 import com.posthog.android.PostHogAndroid
 import com.posthog.android.PostHogAndroidConfig
-import io.sentry.android.core.SentryAndroid
-import io.sentry.android.core.SentryAndroidOptions
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
@@ -60,9 +58,7 @@ class AndroidApplication : Application() {
                     "you set the env var, ie `nohup idea &`"
             )
         } else {
-            SentryAndroid.init(this) { options: SentryAndroidOptions ->
-                options.dsn = BuildConfig.KEY_DSN_SENTRY
-            }
+            ComposeStartup.initSentry(BuildConfig.KEY_DSN_SENTRY)
         }
         startKoin {
             modules(appModules())
