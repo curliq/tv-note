@@ -9,6 +9,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -38,6 +39,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.SearchBarDefaults.InputFieldHeight
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -56,6 +58,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow.Companion.Ellipsis
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.free.tvtracker.ui.common.composables.ErrorScreen
 import com.free.tvtracker.ui.common.composables.LoadingIndicator
 import com.free.tvtracker.ui.common.composables.TvImage
@@ -86,37 +89,52 @@ fun AddTrackedScreen(
         viewModel.clearFocus()
     }
 
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
-        viewModel.setOriginScreen(originScreen)
-    }
-
     TvTrackerTheme {
         Scaffold(modifier.fillMaxWidth()) {
             DockedSearchBar(
-                query = query,
-                onQueryChange = { v -> viewModel.setSearchQuery(v) },
-                onSearch = { viewModel.searchRefresh() },
-                active = false,
-                onActiveChange = { },
-                placeholder = { Text("Search Tv shows, movies, or people") },
-                leadingIcon = { Icon(Icons.Rounded.Search, contentDescription = null) },
-                trailingIcon = {
-                    AnimatedContent(transitionSpec = {
-                        fadeIn(animationSpec = tween(50)) togetherWith fadeOut(animationSpec = tween(50))
-                    }, targetState = results) { targetState ->
-                        if (targetState is AddTrackedUiState.Ok && targetState.isSearching ||
-                            targetState is AddTrackedUiState.Empty && targetState.isSearching
-                        ) {
-                            LoadingIndicator(modifier = Modifier.size(24.dp))
-                        } else {
-                            Icon(
-                                Icons.Rounded.Close,
-                                contentDescription = null,
-                                modifier = Modifier.clickable { viewModel.setSearchQuery("") })
+                inputField = {
+                    SearchBarDefaults.InputField(
+                        query = query,
+                        onQueryChange = { v -> viewModel.setSearchQuery(v) },
+                        onSearch = { viewModel.searchRefresh() },
+                        expanded = false,
+                        onExpandedChange = { },
+                        modifier = Modifier.height(56.dp),
+                        placeholder = {
+                            Text(
+                                "Search shows, movies, or people",
+                                maxLines = 1,
+                                overflow = Ellipsis,
+                                fontSize = 16.sp,
+                            )
+                        },
+                        leadingIcon = { Icon(Icons.Rounded.Search, contentDescription = null) },
+                        trailingIcon = {
+                            AnimatedContent(
+                                transitionSpec = {
+                                    fadeIn(animationSpec = tween(50)) togetherWith fadeOut(
+                                        animationSpec = tween(50)
+                                    )
+                                },
+                                targetState = results
+                            ) { targetState ->
+                                if (targetState is AddTrackedUiState.Ok && targetState.isSearching ||
+                                    targetState is AddTrackedUiState.Empty && targetState.isSearching
+                                ) {
+                                    LoadingIndicator(modifier = Modifier.size(24.dp))
+                                } else {
+                                    Icon(
+                                        Icons.Rounded.Close,
+                                        contentDescription = null,
+                                        modifier = Modifier.clickable { viewModel.setSearchQuery("") }
+                                    )
+                                }
+                            }
                         }
-                    }
+                    )
                 },
+                expanded = false,
+                onExpandedChange = { },
                 content = {},
                 modifier = Modifier.fillMaxWidth().padding(sidePadding).focusRequester(focusRequester)
             )
@@ -136,11 +154,14 @@ fun AddTrackedScreen(
 
                 is AddTrackedUiState.Empty -> EmptyView()
             }
+            LaunchedEffect(Unit) {
+                focusRequester.requestFocus()
+                viewModel.setOriginScreen(originScreen)
+            }
         }
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AddTrackedScreenGrid(
     contentPaddingTop: Dp,

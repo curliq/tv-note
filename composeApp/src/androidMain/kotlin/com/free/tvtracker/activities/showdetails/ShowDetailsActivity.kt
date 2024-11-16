@@ -42,7 +42,6 @@ import com.free.tvtracker.ui.details.dialogs.DetailsMediaSheet
 import com.free.tvtracker.ui.details.dialogs.DetailsFilmCollectionSheet
 import org.koin.androidx.compose.koinViewModel
 
-
 class ShowDetailsActivity : BaseActivity() {
 
     companion object {
@@ -122,7 +121,7 @@ class ShowDetailsActivity : BaseActivity() {
                 }
             }
             TvTrackerTheme {
-                val viewModel: DetailsViewModel = koinViewModel(owner = context)
+                val viewModel: DetailsViewModel = koinViewModel(viewModelStoreOwner = context)
                 Scaffold(
                     modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
                     topBar = {
@@ -168,20 +167,20 @@ class ShowDetailsActivity : BaseActivity() {
                                 showBottomSheet = null
                             },
                             sheetState = sheetState,
-                            windowInsets = WindowInsets(0, 0, 0, 0) // draw behind navbar
+                            contentWindowInsets = { WindowInsets(0, 0, 0, 0) } // draw behind navbar
                         ) {
                             Box(Modifier.heightIn(0.dp, modalMaxHeight)) {
                                 when (showBottomSheet) {
                                     ShowDetailsNavDestinations.EPISODES -> {
                                         DetailsEpisodesSheet(
-                                            viewModel = koinViewModel(owner = context),
+                                            viewModel = koinViewModel(viewModelStoreOwner = context),
                                             padding.calculateBottomPadding().value
                                         )
                                     }
 
                                     ShowDetailsNavDestinations.MEDIA -> {
                                         DetailsMediaSheet(
-                                            viewModel = koinViewModel(owner = context),
+                                            viewModel = koinViewModel(viewModelStoreOwner = context),
                                             navActions,
                                             padding.calculateBottomPadding().value
                                         )
@@ -189,7 +188,7 @@ class ShowDetailsActivity : BaseActivity() {
 
                                     ShowDetailsNavDestinations.CASTCREW -> {
                                         DetailsCastCrewSheet(
-                                            viewModel = koinViewModel(owner = context),
+                                            viewModel = koinViewModel(viewModelStoreOwner = context),
                                             navActions,
                                             padding.calculateBottomPadding().value
                                         )
@@ -197,7 +196,7 @@ class ShowDetailsActivity : BaseActivity() {
 
                                     ShowDetailsNavDestinations.FILM_COLLECTION -> {
                                         DetailsFilmCollectionSheet(
-                                            viewModel = koinViewModel(owner = context),
+                                            viewModel = koinViewModel(viewModelStoreOwner = context),
                                             navActions,
                                             padding.calculateBottomPadding().value
                                         )

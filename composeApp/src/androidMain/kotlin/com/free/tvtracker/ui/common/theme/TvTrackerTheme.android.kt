@@ -8,7 +8,6 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import com.free.tvtracker.ui.settings.SettingsUiModel
-import com.free.tvtracker.ui.settings.SettingsUiState
 import com.free.tvtracker.ui.settings.SettingsViewModel
 import org.koin.androidx.compose.get
 

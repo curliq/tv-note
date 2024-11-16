@@ -6,12 +6,20 @@ import com.free.tvtracker.ui.finished.FinishedShowsViewModel
 import com.free.tvtracker.ui.person.PersonViewModel
 import com.free.tvtracker.ui.search.AddTrackedViewModel
 import com.free.tvtracker.ui.settings.SettingsViewModel
+import com.free.tvtracker.ui.settings.login.LoginViewModel
+import com.free.tvtracker.ui.settings.signup.SignupViewModel
+import com.free.tvtracker.ui.splash.SplashViewModel
 import com.free.tvtracker.ui.watching.WatchingViewModel
 import com.free.tvtracker.ui.watchlist.WatchlistedShowsViewModel
+import com.free.tvtracker.ui.welcome.WelcomeViewModel
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 class ViewModelsModule : KoinComponent {
+    val splashViewModel: SplashViewModel by inject()
+    val loginViewModel: LoginViewModel by inject()
+    val signupViewModel: SignupViewModel by inject()
+    val welcomeViewModel: WelcomeViewModel by inject()
     val addTrackedViewModel: AddTrackedViewModel by inject()
     val watchingViewModel: WatchingViewModel by inject()
     val detailsViewModel: DetailsViewModel by inject()

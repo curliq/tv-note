@@ -88,7 +88,7 @@ class PersonDetailsActivity : BaseActivity() {
                 }
             }
             TvTrackerTheme {
-                val viewModel: PersonViewModel = koinViewModel(owner = context)
+                val viewModel: PersonViewModel = koinViewModel(viewModelStoreOwner = context)
                 Scaffold(
                     modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
                     topBar = {
@@ -118,13 +118,13 @@ class PersonDetailsActivity : BaseActivity() {
                                 showBottomSheet = null
                             },
                             sheetState = sheetState,
-                            windowInsets = WindowInsets(0, 0, 0, 0) // draw behind navbar
+                            contentWindowInsets = { WindowInsets(0, 0, 0, 0) } // draw behind navbar
                         ) {
                             Box(Modifier.heightIn(0.dp, modalMaxHeight)) {
                                 when (showBottomSheet) {
                                     PersonDetailsNavDestinations.SHOWS -> {
                                         PersonShowsSheet(
-                                            viewModel = koinViewModel(owner = context),
+                                            viewModel = koinViewModel(viewModelStoreOwner = context),
                                             navActions = navActions,
                                             padding.calculateBottomPadding().value
                                         )
@@ -132,7 +132,7 @@ class PersonDetailsActivity : BaseActivity() {
 
                                     PersonDetailsNavDestinations.MOVIES -> {
                                         PersonMoviesSheet(
-                                            viewModel = koinViewModel(owner = context),
+                                            viewModel = koinViewModel(viewModelStoreOwner = context),
                                             navActions = navActions,
                                             padding.calculateBottomPadding().value
                                         )
@@ -140,7 +140,7 @@ class PersonDetailsActivity : BaseActivity() {
 
                                     PersonDetailsNavDestinations.PHOTOS -> {
                                         PersonPhotosSheet(
-                                            viewModel = koinViewModel(owner = context),
+                                            viewModel = koinViewModel(viewModelStoreOwner = context),
                                             padding.calculateBottomPadding().value
                                         )
                                     }

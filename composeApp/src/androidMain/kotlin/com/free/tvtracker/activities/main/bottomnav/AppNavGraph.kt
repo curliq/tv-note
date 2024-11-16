@@ -150,7 +150,7 @@ fun NavGraphBuilder.mainNavGraph(navController: AppNavController, context: Activ
                     showBottomSheet = null
                 },
                 sheetState = sheetState,
-                windowInsets = WindowInsets(0, 0, 0, 0) // draw behind navbar
+                contentWindowInsets = { WindowInsets(0, 0, 0, 0) } // draw behind navbar
             ) {
                 Box(Modifier.heightIn(0.dp, modalMaxHeight)) {
                     when (showBottomSheet) {

@@ -1,5 +1,6 @@
 package com.free.tvtracker.ui.welcome
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -32,11 +33,12 @@ fun WelcomeScreen(
     val status = viewModel.status.collectAsState().value
     if (status == WelcomeViewModel.Status.GoToHome) {
         navigateHome()
-    }
-    TvTrackerTheme {
-        Scaffold(modifier = modifier) {
-            WelcomeContent(status, viewModel::actionOk)
-        }
+    } else {
+//        TvTrackerTheme {
+            Scaffold(modifier = modifier) {
+                WelcomeContent(WelcomeViewModel.Status.GoToHome, viewModel::actionOk)
+            }
+//        }
     }
 }
 

@@ -10,11 +10,9 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -24,6 +22,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
@@ -46,7 +45,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.free.tvtracker.ui.common.composables.ErrorScreen
 import com.free.tvtracker.ui.common.composables.LoadingScreen
@@ -56,7 +59,7 @@ import com.free.tvtracker.ui.common.theme.ScreenContentAnimation
 import com.free.tvtracker.ui.common.theme.TvTrackerTheme
 
 sealed class WatchingScreenNavAction {
-    data class GoShowDetails(val tmdbShowId: Int, val isTvShow:Boolean) : WatchingScreenNavAction()
+    data class GoShowDetails(val tmdbShowId: Int, val isTvShow: Boolean) : WatchingScreenNavAction()
     data object GoAddShow : WatchingScreenNavAction()
 }
 
@@ -81,13 +84,15 @@ fun WatchingScreen(navigate: (WatchingScreenNavAction) -> Unit, viewModel: Watch
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun WatchingOk(
     navigate: (WatchingScreenNavAction) -> Unit,
     markWatched: (Int?, Int?) -> Unit,
     shows: WatchingUiState.Ok
 ) {
+
+    val watchingItemHeight: Dp = calculateWatchingItemHeight()
+
     LazyColumn(
         modifier = Modifier.fillMaxHeight(),
         contentPadding = PaddingValues(vertical = TvTrackerTheme.sidePadding)
@@ -113,12 +118,13 @@ fun WatchingOk(
                 show,
                 onClick = { navigate(WatchingScreenNavAction.GoShowDetails(show.tmdbId, true)) },
                 onMarkWatched = markWatched,
-                isWatchable = true
+                isWatchable = true,
+                modifier = Modifier.height(watchingItemHeight)
             )
         }
         if (shows.waitingNextEpisode.isNotEmpty()) {
             item(key = -1) {
-                Column(Modifier.animateItemPlacement()) {
+                Column(Modifier.animateItem()) {
                     Spacer(modifier = Modifier.height(24.dp))
                     Text(
                         "Waiting for next episode",
@@ -137,6 +143,7 @@ fun WatchingOk(
                     onClick = { navigate(WatchingScreenNavAction.GoShowDetails(show.tmdbId, true)) },
                     onMarkWatched = markWatched,
                     isWatchable = false,
+                    modifier = Modifier.height(watchingItemHeight)
                 )
             }
         }
@@ -185,6 +192,31 @@ fun FabContainer(
     )
 }
 
+/**
+ * Calculates the height of a watchingitem before rendering them so that we can set the image height.
+ * Needed because IntrinsicSize is not supported on iOS
+ */
+@Composable
+private fun calculateWatchingItemHeight(): Dp {
+    val textMeasurer = rememberTextMeasurer()
+    val m1 = textMeasurer.measure(text = "A", maxLines = 1, style = MaterialTheme.typography.bodyLarge, softWrap = true)
+    val height1 = with(LocalDensity.current) {
+        m1.size.height.toDp()
+    }
+    val m2 = textMeasurer.measure(text = "A", style = MaterialTheme.typography.bodyMedium)
+    val height2 = with(LocalDensity.current) {
+        m2.size.height.toDp()
+    }
+    return 16.dp + // top margin
+        height1 + // title
+        8.dp + // spacer
+        height2 + // next ep
+        24.dp + // spacer
+        32.dp + // mark watched button
+        16.dp + // bottom margin
+        8.dp + 8.dp // padding
+}
+
 @Composable
 fun LazyItemScope.WatchingItem(
     uiModel: WatchingItemUiModel,
@@ -195,7 +227,6 @@ fun LazyItemScope.WatchingItem(
 ) {
     Card(
         modifier
-            .height(IntrinsicSize.Min)
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
             .clickable(onClick = onClick)
@@ -207,7 +238,16 @@ fun LazyItemScope.WatchingItem(
                 TvImage(uiModel.image)
             }
             Column(Modifier.padding(16.dp)) {
-                Text(uiModel.title, maxLines = 1)
+                Text(
+                    uiModel.title,
+                    maxLines = 1,
+                    // this removes font padding
+                    style = TextStyle(
+                        fontSize = MaterialTheme.typography.bodyLarge.fontSize,
+                        fontFamily = MaterialTheme.typography.bodyLarge.fontFamily,
+                        fontWeight = MaterialTheme.typography.bodyLarge.fontWeight,
+                    )
+                )
                 Spacer(Modifier.height(8.dp))
                 if (uiModel.nextEpisode != null) {
                     WatchingItemNextEpisode(uiModel.nextEpisode)
@@ -215,7 +255,7 @@ fun LazyItemScope.WatchingItem(
                 Spacer(Modifier.height(24.dp))
                 if (isWatchable) {
                     FilledTonalButton(
-                        modifier = Modifier.height(28.dp),
+                        modifier = Modifier.heightIn(min = 32.dp),
                         contentPadding = PaddingValues(vertical = 0.dp, horizontal = 24.dp),
                         shape = TvTrackerTheme.ShapeButton,
                         colors = ButtonDefaults.filledTonalButtonColors(containerColor = MaterialTheme.colorScheme.tertiaryContainer),
@@ -223,7 +263,11 @@ fun LazyItemScope.WatchingItem(
                     ) {
                         Text(
                             text = "Mark episode as watched",
-                            style = MaterialTheme.typography.labelMedium,
+                            style = TextStyle(
+                                fontSize = MaterialTheme.typography.labelMedium.fontSize,
+                                fontFamily = MaterialTheme.typography.labelMedium.fontFamily,
+                                fontWeight = MaterialTheme.typography.labelMedium.fontWeight
+                            ),
                             color = MaterialTheme.colorScheme.primary
                         )
                     }

@@ -34,7 +34,7 @@ class TrackedShowsRepositoryTest {
                 )
             }
             val taskQueue: WatchedEpisodesTaskQueue = mockk(relaxed = true)
-            val sut = TrackedShowsRepository(httpClient, localDataSource, taskQueue)
+            val sut = TrackedShowsRepository(httpClient, localDataSource, taskQueue, mockk())
             sut.watchingShows.test {
                 sut.updateWatching()
                 val init = awaitItem()

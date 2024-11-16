@@ -47,7 +47,7 @@ fun DetailsEpisodesSheet(viewModel: DetailsViewModel, bottomPadding: Float = 0f)
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailsEpisodesContent(
     show: DetailsUiModel,

@@ -39,7 +39,11 @@ sealed class LoginScreenNavAction {
 }
 
 @Composable
-fun LoginScreen(viewModel: LoginViewModel, navAction: (LoginScreenNavAction) -> Unit, paddingValues: PaddingValues) {
+fun LoginScreen(
+    viewModel: LoginViewModel,
+    navAction: (LoginScreenNavAction) -> Unit,
+    paddingValues: PaddingValues = PaddingValues(0.dp)
+) {
     TvTrackerTheme {
         Scaffold(modifier = Modifier.padding(paddingValues)) {
             LoginContent(viewModel.result.collectAsState().value, navAction, viewModel::login)

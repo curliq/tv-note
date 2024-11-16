@@ -8,6 +8,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.HttpClientConfig
 import io.ktor.client.call.body
 import io.ktor.client.plugins.DefaultRequest
+import io.ktor.client.plugins.HttpCallValidator
 import io.ktor.client.plugins.HttpSend
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -57,6 +58,8 @@ open class TvHttpClient(private val sessionStore: SessionStore) {
         }
         install(HttpTimeout) {
             requestTimeoutMillis = 5000
+            connectTimeoutMillis = 5000
+            socketTimeoutMillis = 5000
         }
         install(DefaultRequest) {
             this.url {

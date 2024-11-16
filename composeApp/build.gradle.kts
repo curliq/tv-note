@@ -1,6 +1,4 @@
 import org.flywaydb.gradle.task.AbstractFlywayTask
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -15,7 +13,6 @@ plugins {
 
 kotlin {
     androidTarget {
-        @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_17)
         }
@@ -28,6 +25,10 @@ kotlin {
         iosTarget.binaries.framework {
             baseName = "ComposeApp"
             isStatic = true
+            freeCompilerArgs += listOf(
+                "-Xbinary=packageId=com.yourapp",
+                "-Xgenerator=DEBUG"
+            )
         }
     }
     jvm()
@@ -52,6 +53,7 @@ kotlin {
             implementation(libs.androidx.core.splashscreen)
             implementation(libs.androidx.appcompat)
             implementation(libs.posthog.android)
+//            implementation(libs.sentry.android)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
@@ -67,9 +69,6 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             implementation(compose.animation)
             implementation(compose.material3)
-            implementation(libs.coil)
-            implementation(libs.coil.compose)
-            implementation(libs.coil.network.ktor)
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.logging)
@@ -80,7 +79,8 @@ kotlin {
             implementation(libs.sqldelight.coroutines.extensions)
             implementation(libs.uuid)
             implementation(libs.kotlinx.datetime)
-            implementation(libs.sentry.kotlin.multiplatform)
+            implementation(libs.landscapist.coil3)
+            implementation("io.sentry:sentry-kotlin-multiplatform:0.10.0")
         }
         jvmMain.dependencies {
             implementation(libs.ktor.client.cio)
@@ -139,17 +139,6 @@ android {
     }
     dependencies {
         debugImplementation(libs.compose.ui.tooling)
-    }
-}
-
-compose.desktop {
-    application {
-        mainClass = "MainKt"
-        nativeDistributions {
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "com.free.tvtracker"
-            packageVersion = "1.0.0"
-        }
     }
 }
 

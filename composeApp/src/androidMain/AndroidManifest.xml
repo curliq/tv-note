@@ -46,20 +46,6 @@
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/ic_notification_logo"/>
 
-        <!-- Initialisation is done in the application to keep secrets away from manifest -->
-        <meta-data android:name="io.sentry.auto-init" android:value="false"/>
-        <!-- enable automatic breadcrumbs for user interactions (clicks, swipes, scrolls) -->
-        <meta-data android:name="io.sentry.traces.user-interaction.enable" android:value="true"/>
-        <!-- enable screenshot for crashes -->
-        <meta-data android:name="io.sentry.attach-screenshot" android:value="true"/>
-        <!-- enable view hierarchy for crashes -->
-        <meta-data android:name="io.sentry.attach-view-hierarchy" android:value="true"/>
-
-        <!-- enable the performance API by setting a sample-rate, adjust in production env -->
-        <meta-data android:name="io.sentry.traces.sample-rate" android:value="1.0"/>
-        <!-- enable profiling when starting transactions, adjust in production env -->
-        <meta-data android:name="io.sentry.traces.profiling.sample-rate" android:value="1.0"/>
-
         <!-- Needed to open the file sharing system dialog with the data export csv -->
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -70,6 +56,7 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_files"/>
         </provider>
+        <meta-data android:name="io.sentry.auto-init" android:value="false" />
     </application>
 
 </manifest>

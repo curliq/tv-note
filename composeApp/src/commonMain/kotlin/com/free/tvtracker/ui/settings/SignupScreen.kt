@@ -37,7 +37,11 @@ sealed class SignupScreenAction {
 }
 
 @Composable
-fun SignupScreen(viewModel: SignupViewModel, navAction: (SignupScreenAction) -> Unit, paddingValues: PaddingValues) {
+fun SignupScreen(
+    viewModel: SignupViewModel,
+    navAction: (SignupScreenAction) -> Unit,
+    paddingValues: PaddingValues = PaddingValues(0.dp)
+) {
     TvTrackerTheme {
         Scaffold(modifier = Modifier.padding(paddingValues)) {
             SignupContent(

@@ -56,8 +56,6 @@ fun PersonMoviesSheet(
     }
 }
 
-
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PersonShowsContent(
     person: PersonUiModel,

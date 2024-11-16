@@ -7,13 +7,14 @@ import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.free.tvtracker.expect.OsPlatform
 import com.free.tvtracker.ui.settings.SettingsUiModel
-import com.free.tvtracker.ui.settings.SettingsViewModel
 
 /**
  * https://proandroiddev.com/custom-font-magic-in-compose-multiplatform-unlock-your-creativity-dcd0c9fa7756
@@ -36,13 +37,18 @@ expect fun themePreferences(): SettingsUiModel.Theme?
 @Composable
 fun TvTrackerTheme(themePrefs: SettingsUiModel.Theme? = themePreferences(), content: @Composable () -> Unit) {
 
-    val colorsLight = lightColorScheme()
-    val colorsDark = darkColorScheme()
+    val colorsLight = lightColorScheme().run {
+        if (OsPlatform().get() == OsPlatform.Platform.IOS) {
+            this.copy(
+                background = Color.White,
+                surfaceContainerLow = Color.White // sticky header background on sheets
+            )
+        } else {
+            this
+        }
+    }
 
-    // Weights for iOS todo
-//    headlineMedium = Typography().headlineMedium.copy(fontWeight = FontWeight.Bold),
-//    headlineSmall = Typography().headlineSmall.copy(fontWeight = FontWeight.Bold),
-//    titleLarge = Typography().titleLarge.copy(fontWeight = FontWeight.Bold),
+    val colorsDark = darkColorScheme()
 
     val ibmNormal = FontFamily(
         font("IBMPlexSans", "ibmplexsans_regular", FontWeight.Normal, FontStyle.Normal)

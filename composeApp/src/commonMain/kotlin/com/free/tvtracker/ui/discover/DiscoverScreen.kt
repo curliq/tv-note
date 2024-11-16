@@ -181,13 +181,13 @@ fun ResultsBasedOnText(rec: String, modifier: Modifier = Modifier) {
         Text(
             text = buildAnnotatedString {
                 append(rec)
-                if (rec.contains("and")) {
+                if (rec.contains(" and ")) {
                     addStyle(
                         style = SpanStyle(
                             fontWeight = FontWeight.Normal,
                         ),
-                        start = rec.indexOf("and"),
-                        end = rec.indexOf("and") + 3
+                        start = rec.indexOf(" and "),
+                        end = rec.indexOf(" and ") + 5
                     )
                 }
                 rec.forEachIndexed { index, c ->

@@ -217,11 +217,7 @@ fun SettingsContent(
             )
         }
         Spacer(Modifier.height(24.dp))
-        Text(
-            "About",
-            style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.padding(horizontal = TvTrackerTheme.sidePadding)
-        )
+        HorizontalDivider()
         Spacer(Modifier.height(8.dp))
         TextButton(modifier = Modifier.align(Alignment.CenterHorizontally), onClick = {
             navAction(SettingsScreenNavAction.EmailSupport("freetvtracker@proton.me"))

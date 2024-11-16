@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import android.util.Log
 import com.free.tvtracker.di.appModules
+import com.free.tvtracker.expect.initSentry
 import com.free.tvtracker.ui.details.DetailsViewModel
 import com.free.tvtracker.ui.discover.DiscoverViewModel
 import com.free.tvtracker.ui.finished.FinishedShowsViewModel
@@ -58,7 +59,7 @@ class AndroidApplication : Application() {
                     "you set the env var, ie `nohup idea &`"
             )
         } else {
-            ComposeStartup.initSentry(BuildConfig.KEY_DSN_SENTRY)
+            initSentry(BuildConfig.KEY_DSN_SENTRY)
         }
         startKoin {
             modules(appModules())

@@ -35,7 +35,6 @@ fun DetailsCastCrewSheet(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun DetailsCastCrewContent(
     show: DetailsUiModel,

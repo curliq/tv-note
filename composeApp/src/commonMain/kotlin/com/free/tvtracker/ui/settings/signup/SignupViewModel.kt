@@ -1,7 +1,6 @@
 package com.free.tvtracker.ui.settings.signup
 
 import com.free.tvtracker.data.session.SessionRepository
-import com.free.tvtracker.data.tracked.TrackedShowsRepository
 import com.free.tvtracker.expect.ui.ViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
