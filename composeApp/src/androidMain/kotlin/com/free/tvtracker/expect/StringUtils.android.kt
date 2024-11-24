@@ -8,11 +8,7 @@ actual open class StringUtils actual constructor() {
         return "%.${decimalPoints}f".format(d)
     }
 
-    actual fun shortenDouble(
-        d: Double,
-        decimalPoints: Int,
-        shortenCharacter: Char
-    ): String {
+    actual fun shortenDouble(d: Double, decimalPoints: Int, shortenCharacter: Char): String {
         return "%.${decimalPoints}f%c".format(d, shortenCharacter)
     }
 

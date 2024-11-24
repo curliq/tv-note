@@ -17,6 +17,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -44,11 +45,12 @@ fun DetailsMediaSheet(
 ) {
     val show = viewModel.result.collectAsState().value as DetailsUiState.Ok
     TvTrackerTheme {
-        DetailsMediaSheetContent(show.data, navAction, bottomPadding)
+        Scaffold {
+            DetailsMediaSheetContent(show.data, navAction, bottomPadding)
+        }
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun DetailsMediaSheetContent(
     show: DetailsUiModel,

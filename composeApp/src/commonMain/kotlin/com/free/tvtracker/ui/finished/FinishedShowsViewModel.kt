@@ -4,6 +4,7 @@ import com.free.tvtracker.data.tracked.TrackedShowsRepository
 import com.free.tvtracker.domain.GetShowsUseCase
 import com.free.tvtracker.domain.IsTrackedShowWatchableUseCase
 import com.free.tvtracker.expect.ui.ViewModel
+import com.free.tvtracker.ui.watchlist.WatchlistShowUiModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -24,7 +25,7 @@ class FinishedShowsViewModel(
     init {
         viewModelScope.launch(ioDispatcher) {
             getShowsUseCase(trackedShowsRepository.finishedShows)
-                .filter { it.status.fetched }
+                .filter { it.status.fetched == true }
                 .collect { data ->
                     if (data.status.success) {
                         val res = isTrackedShowWatchableUseCase.unwatchable(data.data).filter {
@@ -47,7 +48,6 @@ class FinishedShowsViewModel(
                     }
                 }
         }
-        refresh()
     }
 
     fun refresh() {
@@ -104,4 +104,14 @@ data class FinishedShowUiModel(
     val image: String,
     val status: String,
     val isTvShow: Boolean
-)
+) {
+    fun toWatchlistUiModel(): WatchlistShowUiModel {
+        return WatchlistShowUiModel(
+            tmdbId = this.tmdbId,
+            title = this.title,
+            image = this.image,
+            status = this.status,
+            isTvShow = this.isTvShow
+        )
+    }
+}

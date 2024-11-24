@@ -30,13 +30,13 @@ import com.free.tvtracker.ui.search.AddTrackedScreen
 import com.free.tvtracker.ui.search.AddTrackedScreenNavAction
 import com.free.tvtracker.ui.search.AddTrackedScreenOriginScreen
 import com.free.tvtracker.ui.search.AddTrackedViewModel
-import com.free.tvtracker.ui.settings.LoginScreen
-import com.free.tvtracker.ui.settings.LoginScreenNavAction
+import com.free.tvtracker.ui.settings.login.LoginScreen
+import com.free.tvtracker.ui.settings.login.LoginScreenNavAction
 import com.free.tvtracker.ui.settings.SettingsScreen
 import com.free.tvtracker.ui.settings.SettingsScreenNavAction
 import com.free.tvtracker.ui.settings.SettingsViewModel
-import com.free.tvtracker.ui.settings.SignupScreen
-import com.free.tvtracker.ui.settings.SignupScreenAction
+import com.free.tvtracker.ui.settings.signup.SignupScreen
+import com.free.tvtracker.ui.settings.signup.SignupScreenAction
 import com.free.tvtracker.ui.settings.login.LoginViewModel
 import com.free.tvtracker.ui.settings.signup.SignupViewModel
 import com.free.tvtracker.ui.splash.SplashErrorScreen

@@ -41,6 +41,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -65,6 +66,9 @@ sealed class WatchingScreenNavAction {
 
 @Composable
 fun WatchingScreen(navigate: (WatchingScreenNavAction) -> Unit, viewModel: WatchingViewModel) {
+    LaunchedEffect(Unit) {
+        viewModel.refresh()
+    }
     val shows = viewModel.shows.collectAsState().value
     TvTrackerTheme {
         FabContainer({ navigate(WatchingScreenNavAction.GoAddShow) }, content = {
@@ -90,7 +94,6 @@ fun WatchingOk(
     markWatched: (Int?, Int?) -> Unit,
     shows: WatchingUiState.Ok
 ) {
-
     val watchingItemHeight: Dp = calculateWatchingItemHeight()
 
     LazyColumn(

@@ -1,6 +1,5 @@
 package com.free.tvtracker.ui.person.dialogs
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -14,6 +13,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -40,7 +40,9 @@ fun PersonShowsSheet(
 ) {
     val show = viewModel.result.collectAsState().value as PersonUiState.Ok
     TvTrackerTheme {
-        PersonShowsContent(show.data, navActions, true, bottomPadding)
+        Scaffold {
+            PersonShowsContent(show.data, navActions, true, bottomPadding)
+        }
     }
 }
 

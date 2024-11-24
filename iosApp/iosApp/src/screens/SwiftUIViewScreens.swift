@@ -213,16 +213,20 @@ struct DetailsFilmCollectionSheet: UIViewControllerRepresentable {
 struct AddTrackedScreen: UIViewControllerRepresentable {
     
     let addTrackedViewModel: AddTrackedViewModel
+    let origin: AddTrackedScreenOriginScreen
+    let nav: (AddTrackedScreenNavAction) -> Void
     
-    init(addTrackedViewModel: AddTrackedViewModel) {
+    init(addTrackedViewModel: AddTrackedViewModel, origin: AddTrackedScreenOriginScreen, nav: @escaping (AddTrackedScreenNavAction) -> Void) {
         self.addTrackedViewModel = addTrackedViewModel
+        self.origin = origin
+        self.nav = nav
     }
     
     func makeUIViewController(context: Context) -> UIViewController {
         ViewControllersKt.AddTrackedScreenViewController(
             addTrackedViewModel: addTrackedViewModel,
-            navigate: { _ in  },
-            originScreen: AddTrackedScreenOriginScreen.discover //todo
+            navigate: nav,
+            originScreen: origin
         )
     }
     
@@ -233,14 +237,16 @@ struct AddTrackedScreen: UIViewControllerRepresentable {
 struct FinishedScreen: UIViewControllerRepresentable {
     
     let finishedViewModel: FinishedShowsViewModel
-    
-    init(finishedViewModel: FinishedShowsViewModel) {
+    let nav: (FinishedScreenNavAction) -> Void
+
+    init(finishedViewModel: FinishedShowsViewModel, nav: @escaping (FinishedScreenNavAction) -> Void) {
         self.finishedViewModel = finishedViewModel
+        self.nav = nav
     }
     
     func makeUIViewController(context: Context) -> UIViewController {
         ViewControllersKt.FinishedScreenViewController(
-            navigate:{ _ in },
+            navigate: nav,
             viewModel: finishedViewModel
         )
     }
@@ -251,14 +257,16 @@ struct FinishedScreen: UIViewControllerRepresentable {
 struct WatchlistScreen: UIViewControllerRepresentable {
     
     let watchlistViewModel: WatchlistedShowsViewModel
-    
-    init(watchlistViewModel: WatchlistedShowsViewModel) {
+    let nav: (WatchlistScreenNavAction) -> Void
+
+    init(watchlistViewModel: WatchlistedShowsViewModel, nav: @escaping (WatchlistScreenNavAction) -> Void) {
         self.watchlistViewModel = watchlistViewModel
+        self.nav = nav
     }
     
     func makeUIViewController(context: Context) -> UIViewController {
         ViewControllersKt.WatchlistScreenViewController(
-            navigate: {_ in },
+            navigate: nav,
             viewModel: watchlistViewModel
         )
     }

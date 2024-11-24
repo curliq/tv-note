@@ -4,8 +4,6 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Typography
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.Font
@@ -36,8 +34,13 @@ expect fun themePreferences(): SettingsUiModel.Theme?
 
 @Composable
 fun TvTrackerTheme(themePrefs: SettingsUiModel.Theme? = themePreferences(), content: @Composable () -> Unit) {
-
-    val colorsLight = lightColorScheme().run {
+    val isDarkTheme = when (themePrefs) {
+        SettingsUiModel.Theme.System, null -> isSystemInDarkTheme()
+        SettingsUiModel.Theme.Dark -> true
+        SettingsUiModel.Theme.Light -> false
+    }
+    val colors = Colors()
+    val colorsLight = colors.lightScheme.run {
         if (OsPlatform().get() == OsPlatform.Platform.IOS) {
             this.copy(
                 background = Color.White,
@@ -47,8 +50,16 @@ fun TvTrackerTheme(themePrefs: SettingsUiModel.Theme? = themePreferences(), cont
             this
         }
     }
-
-    val colorsDark = darkColorScheme()
+    val colorsDark = colors.darkScheme.run {
+        if (OsPlatform().get() == OsPlatform.Platform.IOS) {
+            this.copy(
+                background = Color.Black,
+                surfaceContainerLow = Color.Black
+            )
+        } else {
+            this
+        }
+    }
 
     val ibmNormal = FontFamily(
         font("IBMPlexSans", "ibmplexsans_regular", FontWeight.Normal, FontStyle.Normal)
@@ -76,11 +87,8 @@ fun TvTrackerTheme(themePrefs: SettingsUiModel.Theme? = themePreferences(), cont
         labelMedium = Typography().labelMedium.copy(fontFamily = ibmSemiBold),
         labelSmall = Typography().labelSmall.copy(fontFamily = ibmSemiBold),
     )
-    val theme = when (themePrefs) {
-        SettingsUiModel.Theme.System, null -> if (isSystemInDarkTheme()) colorsDark else colorsLight
-        SettingsUiModel.Theme.Dark -> colorsDark
-        SettingsUiModel.Theme.Light -> colorsLight
-    }
+    val theme = if (isDarkTheme) colorsDark else colorsLight
+
     MaterialTheme(
         colorScheme = theme,
         typography = Typography,

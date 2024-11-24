@@ -34,7 +34,7 @@ data class ShowsDataStatus(
      * used to check in UI if this data includes the real endpoint's data.
      * Why not just have null data? So we can combine all the data on the repo layer and have 1 single source of shows
      */
-    val fetched: Boolean,
+    val fetched: Boolean?,
     val success: Boolean
 ) {
     /**
@@ -53,9 +53,9 @@ class TrackedShowsRepository(
 ) {
     val allShows = MutableStateFlow<List<TrackedContentApiModel>>(emptyList())
 
-    private val _watchingShows = MutableStateFlow(ShowsDataStatus(false, false))
-    private val _finishedShows = MutableStateFlow(ShowsDataStatus(false, false))
-    private val _watchlistedShows = MutableStateFlow(ShowsDataStatus(false, false))
+    private val _watchingShows = MutableStateFlow(ShowsDataStatus(null, false))
+    private val _finishedShows = MutableStateFlow(ShowsDataStatus(null, false))
+    private val _watchlistedShows = MutableStateFlow(ShowsDataStatus(null, false))
     val watchingShows: Flow<ShowsData> = _watchingShows.combineWithAllShows()
     val finishedShows: Flow<ShowsData> = _finishedShows.combineWithAllShows()
     val watchlistedShows: Flow<ShowsData> = _watchlistedShows.combineWithAllShows()
@@ -67,7 +67,7 @@ class TrackedShowsRepository(
     }
 
     suspend fun updateWatching(forceUpdate: Boolean = true) {
-        if (!forceUpdate && _watchingShows.value.fetched) {
+        if (!forceUpdate && _watchingShows.value.fetched == true) {
             return
         }
         watchedEpisodesTaskQueue.emitOrders()
@@ -83,14 +83,14 @@ class TrackedShowsRepository(
     }
 
     suspend fun updateFinished(forceUpdate: Boolean = true) {
-        if (!forceUpdate && _finishedShows.value.fetched) {
+        if (!forceUpdate && _finishedShows.value.fetched == true) {
             return
         }
         fetch(_finishedShows, ::getFinishedShows)
     }
 
     suspend fun updateWatchlisted(forceUpdate: Boolean = true) {
-        if (!forceUpdate && _watchlistedShows.value.fetched) {
+        if (!forceUpdate && _watchlistedShows.value.fetched == true) {
             return
         }
         fetch(_watchlistedShows, ::getWatchlistedShows)

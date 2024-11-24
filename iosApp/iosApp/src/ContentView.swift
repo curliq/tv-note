@@ -2,9 +2,8 @@ import UIKit
 import SwiftUI
 import ComposeApp
 
-// Define your navigation paths
 enum Route: Hashable {
-    // show/movie
+    case search(origin: AddTrackedScreenOriginScreen)
     case details(content: DetailsViewModel.LoadContent)
     case episodes
     case cast
@@ -14,8 +13,6 @@ enum Route: Hashable {
     case personShows
     case personMovies
     case personPhotos
-
-    // discover
     case newReleases
     case recommended
     case trending
@@ -24,31 +21,28 @@ enum Route: Hashable {
 struct ContentView: View {
     
     @Environment(\.openURL) var openURL
+    @Environment(\.colorScheme) var colorScheme
     
-    @State private var selection: String? = nil
-    @State private var bottomSheetSelection: String = ""
-    @State private var selectedShowId: DetailsViewModel.LoadContent = DetailsViewModel.LoadContent(tmdbId: -1, isTvShow: true)
-    let vm1 = ViewModelsModule().watchingViewModel
-    let vm2 = ViewModelsModule().addTrackedViewModel
+    @State private var accountSelection: String? = nil
+    let watchingViewModel = ViewModelsModule().watchingViewModel
     let finishedViewModel = ViewModelsModule().finishedShowsViewModel
     let watchlistedViewModel = ViewModelsModule().watchlistedShowsViewModel
     let discoverViewModel = ViewModelsModule().discoverViewModel
     let settingsViewModel = ViewModelsModule().settingsViewModel
     let detailsViewModel = ViewModelsModule().detailsViewModel
     let personViewModel = ViewModelsModule().personViewModel
-    @State var detailsSelection: String? = ""
-    @State var personId: Int32 = 0
+    let addTrackedViewModel = ViewModelsModule().addTrackedViewModel
     @State private var path1 = NavigationPath()
     @State private var path2 = NavigationPath()
+    @State private var path3 = NavigationPath()
+    @State private var path4 = NavigationPath()
     @State var showAccount: Bool = false
-
+    
     func discoverNav(path: Binding<NavigationPath>) -> (DiscoverScreenNavActions) -> Void {
         return { action in
             switch action {
             case _ as DiscoverScreenNavActions.GoAddShow:
-                // If you need to handle `GoAddShow`, uncomment the code below:
-                // path.wrappedValue.append(Route.addShow)
-                break
+                path.wrappedValue.append(Route.search(origin: AddTrackedScreenOriginScreen.discover))
             case _ as DiscoverScreenNavActions.GoNewRelease:
                 path.wrappedValue.append(Route.newReleases)
             case _ as DiscoverScreenNavActions.GoRecommendations:
@@ -62,7 +56,7 @@ struct ContentView: View {
             }
         }
     }
-
+    
     var body: some View {
         TabView {
             NavigationStack(path: $path1) {
@@ -70,22 +64,18 @@ struct ContentView: View {
                     let navActions: (WatchingScreenNavAction) -> Void = { navAction in
                         switch navAction {
                         case _ as WatchingScreenNavAction.GoAddShow:
-                            selection = "addShow"
+                            path1.append(Route.search(origin: AddTrackedScreenOriginScreen.watching))
                         case let action as WatchingScreenNavAction.GoShowDetails:
-                            //                            selectedShowId = DetailsViewModel.LoadContent(tmdbId: action.tmdbShowId, isTvShow: true)
-                            //                            selection = "showDetails"
                             path1.append(Route.details(content: DetailsViewModel.LoadContent(tmdbId: action.tmdbShowId, isTvShow: true)))
                         default: break
                         }
                     }
                     
-                    NavigationLink(destination: AddTrackedScreen(addTrackedViewModel: vm2).hideToolbar(), tag: "addShow", selection: $selection) { EmptyView() }
-                    
                     WatchingScreen(
                         navigate: navActions,
-                        watchingViewModel: vm1
+                        watchingViewModel: watchingViewModel
                     )
-                    .styleToolbar(title: "Watching")
+                    .styleToolbar(title: "Currently Watching")
                     .toolbar {
                         ToolbarItemGroup(placement: .primaryAction) {
                             Button {
@@ -102,11 +92,9 @@ struct ContentView: View {
                             let navSettings: (SettingsScreenNavAction) -> Void = { navAction in
                                 switch navAction {
                                 case let action as SettingsScreenNavAction.GoLogin:
-                                    selection = "login"
-                                    break
+                                    accountSelection = "login"
                                 case let action as SettingsScreenNavAction.GoSignup:
-                                    selection = "signup"
-                                    break
+                                    accountSelection = "signup"
                                 case let action as SettingsScreenNavAction.EmailSupport:
                                     if let url = URL(string: "mailto:\(action.email)") {
                                         if #available(iOS 10.0, *) {
@@ -115,10 +103,8 @@ struct ContentView: View {
                                             UIApplication.shared.openURL(url)
                                         }
                                     }
-                                    break
                                 case let action as SettingsScreenNavAction.GoBrowser:
                                     openURL(URL(string: action.url)!)
-                                    break
                                 default:
                                     break
                                 }
@@ -130,15 +116,19 @@ struct ContentView: View {
                                     ToolbarItem(placement: .navigationBarTrailing) {
                                         Button("Done", role: .cancel) {
                                             showAccount = false
-                                        }.bold()
+                                        }
+                                        .font(Font.custom("IBMPlexSans-Bold", size: 17))
                                     }
                                 }
-                            NavigationLink(destination: LoginScreen(vm: ViewModelsModule().loginViewModel, nav: { _ in }), tag: "login", selection: $selection) { EmptyView() }
-                            NavigationLink(destination: SignupScreen(vm: ViewModelsModule().signupViewModel, nav: { _ in }), tag: "signup", selection: $selection) { EmptyView() }
+                            let navBack: (Any) -> Void = { _ in
+                                accountSelection = ""
+                                showAccount = false
+                            }
+                            NavigationLink(destination: LoginScreen(vm: ViewModelsModule().loginViewModel, nav: navBack), tag: "login", selection: $accountSelection) { EmptyView() }
+                            NavigationLink(destination: SignupScreen(vm: ViewModelsModule().signupViewModel, nav: navBack), tag: "signup", selection: $accountSelection) { EmptyView() }
                         }
-                        
                     }
-                    
+                    .sheetBackgroundColor(isDarkTheme: colorScheme == .dark)
                 }
                 .navigationDestination(for: Route.self) { route in
                     handleRouteNavigation(route: route, path: $path1)
@@ -149,28 +139,60 @@ struct ContentView: View {
                 Label("Watching", systemImage: "play.tv.fill")
             }
             
-            NavigationView {
-                FinishedScreen(finishedViewModel: finishedViewModel)
-                    .navigationTitle("finishh")
+            NavigationStack(path: $path2) {
+                VStack {
+                    let finishedNav: (FinishedScreenNavAction) -> Void = { action in
+                        switch action {
+                        case _ as FinishedScreenNavAction.GoAddShow:
+                            path2.append(Route.search(origin: AddTrackedScreenOriginScreen.finished))
+                        case let action as FinishedScreenNavAction.GoShowDetails:
+                            path2.append(Route.details(content: DetailsViewModel.LoadContent(tmdbId: action.tmdbShowId, isTvShow: action.isTvShow)))
+                        default:
+                            break
+                        }
+                    }
+                    FinishedScreen(finishedViewModel: finishedViewModel, nav: finishedNav)
+                        .styleToolbar(title: "Finished Watching")
+                }
+                .navigationDestination(for: Route.self) { route in
+                    handleRouteNavigation(route: route, path: $path2)
+                }
+                .navigationViewStyle(StackNavigationViewStyle())
             }
             .tabItem {
                 Label("Finished", systemImage: "flag.checkered")
             }
-            .navigationTitle("Finished watching")
             
-            WatchlistScreen(watchlistViewModel: watchlistedViewModel)
-                .tabItem {
-                    Label("Watchlist", systemImage: "star.square")
+            NavigationStack(path: $path3) {
+                VStack {
+                    let watchlistNav: (WatchlistScreenNavAction) -> Void = { action in
+                        switch action {
+                        case _ as WatchlistScreenNavAction.GoAddShow:
+                            path3.append(Route.search(origin: AddTrackedScreenOriginScreen.watchlist))
+                        case let action as WatchlistScreenNavAction.GoShowDetails:
+                            path3.append(Route.details(content: DetailsViewModel.LoadContent(tmdbId: action.tmdbShowId, isTvShow: action.isTvShow)))
+                        default:
+                            break
+                        }
+                    }
+                    WatchlistScreen(watchlistViewModel: watchlistedViewModel, nav: watchlistNav)
+                        .styleToolbar(title: "Watchlist")
+                }
+                .navigationDestination(for: Route.self) { route in
+                    handleRouteNavigation(route: route, path: $path3)
                 }
                 .navigationViewStyle(StackNavigationViewStyle())
-                .navigationTitle("Watchlist")
-            NavigationStack(path: $path2) {
+            }.tabItem {
+                Label("Watchlist", systemImage: "star.square")
+            }
+            
+            NavigationStack(path: $path4) {
                 VStack {
-                    DiscoverScreen(discoverViewModel: discoverViewModel, nav: discoverNav(path: $path2))
+                    DiscoverScreen(discoverViewModel: discoverViewModel, nav: discoverNav(path: $path4))
                         .styleToolbar(title: "Discover")
                 }
                 .navigationDestination(for: Route.self) { route in
-                    handleRouteNavigation(route: route, path: $path2)
+                    handleRouteNavigation(route: route, path: $path4)
                 }
                 .navigationViewStyle(StackNavigationViewStyle())
             }
@@ -182,8 +204,27 @@ struct ContentView: View {
             let standardAppearance = UITabBarAppearance()
             standardAppearance.configureWithTransparentBackground()
             standardAppearance.backgroundColor = UIColor.systemGray6
+            // tabbar label
+            standardAppearance.stackedLayoutAppearance.normal.titleTextAttributes = [
+                .font: UIFont(name: "IBMPlexSans-Regular", size: 10)!
+            ]
             UITabBar.appearance().standardAppearance = standardAppearance
             
+            // back button
+            let navbarAppearance = UINavigationBarAppearance();            navbarAppearance.backButtonAppearance.normal.titleTextAttributes = [
+                .font: UIFont(name: "IBMPlexSans-Regular", size: 17)!
+            ]
+            UINavigationBar.appearance().standardAppearance = navbarAppearance
+            
+            // large title eg Watching
+            UINavigationBar.appearance().largeTitleTextAttributes = [
+                .font: UIFont(name: "IBMPlexSans-Bold", size: 34)!
+            ]
+            
+            // normal size title, eg search screen
+            UINavigationBar.appearance().titleTextAttributes = [
+                .font: UIFont(name: "IBMPlexSans-Semibold", size: 17)!
+            ]
         }
     }
     
@@ -191,6 +232,16 @@ struct ContentView: View {
         route: Route,
         path: Binding<NavigationPath>
     ) -> some View {
+        let addTrackedNav: (AddTrackedScreenNavAction) -> Void = { action in
+            switch action {
+            case let action as AddTrackedScreenNavAction.GoContentDetails:
+                path.wrappedValue.append(Route.details(content: DetailsViewModel.LoadContent(tmdbId: action.showTmdbId, isTvShow: action.isTvShow)))
+            case let action as AddTrackedScreenNavAction.GoPersonDetails:
+                path.wrappedValue.append(Route.person(personId: action.personTmdbId))
+            default:
+                break
+            }
+        }
         let detailsNav: (DetailsScreenNavAction) -> Void = { navAction in
             switch navAction {
             case let action as DetailsScreenNavAction.GoYoutube:
@@ -213,7 +264,6 @@ struct ContentView: View {
                 break
             }
         }
-
         let personNav: (PersonScreenNavAction) -> Void = { action in
             switch action {
             case let action as PersonScreenNavAction.GoShowDetails:
@@ -239,6 +289,8 @@ struct ContentView: View {
             }
         }
         switch route {
+        case .search(let origin):
+            return SearchScreen(addTrackedViewModel: addTrackedViewModel, origin: origin, nav: addTrackedNav).eraseToAnyView()
         case .details(let content):
             return ShowDetailsScreen(detailsViewModel: ViewModelsModule().detailsViewModel, content: content, nav: detailsNav).eraseToAnyView()
         case .episodes:
@@ -258,12 +310,45 @@ struct ContentView: View {
         case .personPhotos:
             return PersonPhotosDetails(vm: personViewModel).eraseToAnyView()
         case .newReleases:
-            return NewReleasesScreen(discoverViewModel: discoverViewModel, nav: discoverNav(path: $path2))
+            return NewReleasesScreen(discoverViewModel: discoverViewModel, nav: discoverNav(path: $path4))
         case .recommended:
             return RecommendedScreen(discoverViewModel: discoverViewModel, nav: recommendedNav)
         case .trending:
-            return TrendingScreen(discoverViewModel: discoverViewModel, nav: discoverNav(path: $path2))
+            return TrendingScreen(discoverViewModel: discoverViewModel, nav: discoverNav(path: $path4))
         }
+    }
+}
+
+struct SearchScreen: View {
+    
+    let addTrackedViewModel: AddTrackedViewModel
+    let origin: AddTrackedScreenOriginScreen
+    let nav: (AddTrackedScreenNavAction) -> Void
+    
+    private func title() -> String {
+        switch origin {
+        case AddTrackedScreenOriginScreen.watching:
+            return "Add to currently watching"
+        case AddTrackedScreenOriginScreen.finished:
+            return "Add to finished watching"
+        case AddTrackedScreenOriginScreen.watchlist:
+            return "Add to watchlist"
+        case AddTrackedScreenOriginScreen.discover:
+            return "Search"
+        default:
+            return ""
+        }
+    }
+    
+    var body: some View {
+        NavigationView {
+            VStack {
+                AddTrackedScreen(addTrackedViewModel: addTrackedViewModel, origin: origin, nav: nav)
+            }
+        }
+        .navigationTitle(title())
+        .navigationBarTitleDisplayMode(.inline)
+        .eraseToAnyView()
     }
 }
 
@@ -271,9 +356,7 @@ extension View {
     func eraseToAnyView() -> AnyView {
         AnyView(self)
     }
-}
 
-extension View {
     func hideToolbar() -> some View {
         if #available(iOS 16.0, *) {
             return self.toolbar(.hidden)
@@ -281,15 +364,23 @@ extension View {
             return self.navigationBarHidden(true)
         }
     }
+
     func styleToolbar(title: String) -> some View {
         return self.navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Text(title)
-                        .font(.title2.bold())
+                        .font(.custom("IBMPlexSans-Bold", size: 22)) //title2
                 }
-                
             }
+    }
+
+    func sheetBackgroundColor(isDarkTheme: Bool) -> some View {
+        if #available(iOS 16.4, *) {
+            return self.presentationBackground(isDarkTheme ? .black : .white)
+        } else {
+            return self
+        }
     }
 }
 

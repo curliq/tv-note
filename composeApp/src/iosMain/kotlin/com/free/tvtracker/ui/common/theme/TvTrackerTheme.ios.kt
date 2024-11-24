@@ -26,7 +26,10 @@ actual fun font(name: String, res: String, weight: FontWeight, style: FontStyle)
     }
 }
 
+/**
+ * Not implemented on iOS (yet)
+ */
 @Composable
 actual fun themePreferences(): SettingsUiModel.Theme? {
-    return SettingsUiModel.Theme.Light
+    return SettingsUiModel.Theme.System
 }

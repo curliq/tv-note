@@ -3,6 +3,7 @@ package com.free.tvtracker.ui.settings
 import com.free.tvtracker.data.common.sql.LocalSqlDataProvider
 import com.free.tvtracker.data.session.LocalPreferencesClientEntity
 import com.free.tvtracker.data.session.SessionRepository
+import com.free.tvtracker.expect.logout
 import com.free.tvtracker.expect.ui.ViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -23,7 +24,6 @@ class SettingsViewModel(
     val data: MutableStateFlow<SettingsUiState> = MutableStateFlow(SettingsUiState.Idle)
     val shareCsvFile: MutableStateFlow<String?> = MutableStateFlow(null)
     val theme: Flow<SettingsUiModel.Theme?> = data.map { (it as? SettingsUiState.Ok)?.data?.theme }
-    val logout = MutableStateFlow(false)
 
     init {
         viewModelScope.launch(ioDispatcher) {
@@ -70,7 +70,7 @@ class SettingsViewModel(
                 }
 
                 Action.Logout -> {
-                    logout.emit(true)
+                    logout()
                 }
 
                 Action.Export -> {

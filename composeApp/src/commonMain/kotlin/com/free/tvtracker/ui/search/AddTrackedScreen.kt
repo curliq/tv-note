@@ -8,8 +8,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -59,6 +57,7 @@ import androidx.compose.ui.text.style.TextOverflow.Companion.Ellipsis
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.free.tvtracker.expect.OsPlatform
 import com.free.tvtracker.ui.common.composables.ErrorScreen
 import com.free.tvtracker.ui.common.composables.LoadingIndicator
 import com.free.tvtracker.ui.common.composables.TvImage
@@ -155,7 +154,10 @@ fun AddTrackedScreen(
                 is AddTrackedUiState.Empty -> EmptyView()
             }
             LaunchedEffect(Unit) {
-                focusRequester.requestFocus()
+                // triggering keyboard on iOS is glitchy
+                if (OsPlatform().get() == OsPlatform.Platform.Android) {
+                    focusRequester.requestFocus()
+                }
                 viewModel.setOriginScreen(originScreen)
             }
         }

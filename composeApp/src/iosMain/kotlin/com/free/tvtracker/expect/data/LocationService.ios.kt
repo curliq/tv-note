@@ -8,17 +8,14 @@ import platform.Foundation.regionCode
 
 actual open class LocationService {
     actual fun platformCountryCode(): String {
-        println("platformCountryCode: ${NSLocale.currentLocale.regionCode}")
-        return NSLocale.currentLocale.regionCode ?: "US" //todo test
+        return NSLocale.currentLocale.regionCode ?: "US"
     }
 
     actual fun countryName(countryCode: String): String {
-        println("countryName: ${NSLocale.currentLocale.localizedStringForCountryCode(countryCode)}")
-        return NSLocale.currentLocale.localizedStringForCountryCode(countryCode) ?: "-" //todo test
+        return NSLocale.currentLocale.localizedStringForCountryCode(countryCode) ?: "-"
     }
 
     actual fun languageCode(): String {
-        println("languageCode: ${NSLocale.currentLocale.languageCode()}")
         return NSLocale.currentLocale.languageCode()
     }
 }

@@ -4,10 +4,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.free.tvtracker.ui.common.theme.TvTrackerTheme
-import com.free.tvtracker.ui.settings.LoginContent
+import com.free.tvtracker.ui.settings.login.LoginContent
 import com.free.tvtracker.ui.settings.SettingsContent
 import com.free.tvtracker.ui.settings.SettingsUiModel
-import com.free.tvtracker.ui.settings.SignupContent
+import com.free.tvtracker.ui.settings.signup.SignupContent
 import com.free.tvtracker.ui.settings.login.LoginViewModel
 import com.free.tvtracker.ui.settings.signup.SignupViewModel
 

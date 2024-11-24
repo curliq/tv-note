@@ -24,7 +24,7 @@ class WatchlistedShowsViewModel(
     init {
         viewModelScope.launch(ioDispatcher) {
             getShowsUseCase(trackedShowsRepository.watchlistedShows)
-                .filter { it.status.fetched }
+                .filter { it.status.fetched == true }
                 .collect { data ->
                     if (data.status.success) {
                         val res = getWatchlistedShowsUseCase(data.data)
@@ -43,7 +43,6 @@ class WatchlistedShowsViewModel(
                     }
                 }
         }
-        refresh()
     }
 
     fun refresh() {

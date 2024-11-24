@@ -32,11 +32,15 @@ import androidx.compose.material3.InputChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import besttvtracker.composeapp.generated.resources.Res
 import besttvtracker.composeapp.generated.resources.ic_movie
@@ -59,6 +63,9 @@ sealed class WatchlistScreenNavAction {
 
 @Composable
 fun WatchlistScreen(viewModel: WatchlistedShowsViewModel, navigate: (WatchlistScreenNavAction) -> Unit) {
+    LaunchedEffect(Unit) {
+        viewModel.refresh()
+    }
     val shows = viewModel.shows.collectAsState().value
     TvTrackerTheme {
         FabContainer({ navigate(WatchlistScreenNavAction.GoAddShow) }, content = {
@@ -105,7 +112,7 @@ fun WatchlistOk(
                     selected = data.filterTvShows,
                     onClick = { action(WatchlistedAction.ToggleTvShows) },
                     label = { Text("Tv Shows") },
-                    leadingIcon = { ResImage(Res.drawable.ic_tv, "tv") },
+                    leadingIcon = { ResImage(Res.drawable.ic_tv, "tv", tint = MaterialTheme.colorScheme.onBackground) },
                     trailingIcon = { FilterCloseIcon(data.filterTvShows) }
                 )
                 Spacer(modifier = Modifier.width(8.dp))
@@ -113,7 +120,13 @@ fun WatchlistOk(
                     selected = !data.filterTvShows,
                     onClick = { action(WatchlistedAction.ToggleMovies) },
                     label = { Text("Movies") },
-                    leadingIcon = { ResImage(Res.drawable.ic_movie, "movies") },
+                    leadingIcon = {
+                        ResImage(
+                            Res.drawable.ic_movie,
+                            "movies",
+                            tint = MaterialTheme.colorScheme.onBackground
+                        )
+                    },
                     trailingIcon = { FilterCloseIcon(!data.filterTvShows) }
                 )
             }
@@ -128,7 +141,7 @@ fun WatchlistOk(
             WatchlistItem(
                 model,
                 { navigate(WatchlistScreenNavAction.GoShowDetails(model.tmdbId, model.isTvShow)) },
-                Modifier.animateItem()
+                Modifier.animateItem().height(calculateWatchlistItemHeight())
             )
         }
     }
@@ -154,11 +167,33 @@ fun FilterCloseIcon(visible: Boolean) {
     }
 }
 
+/**
+ * Calculates the height of a watchlistitem before rendering them so that we can set the image height.
+ * Needed because IntrinsicSize is not supported on iOS
+ */
+@Composable
+fun calculateWatchlistItemHeight(): Dp {
+    val textMeasurer = rememberTextMeasurer()
+    val m1 = textMeasurer.measure(text = "A", maxLines = 1, style = MaterialTheme.typography.bodyLarge, softWrap = true)
+    val height1 = with(LocalDensity.current) {
+        m1.size.height.toDp()
+    }
+    val m2 = textMeasurer.measure(text = "A", style = MaterialTheme.typography.bodyMedium)
+    val height2 = with(LocalDensity.current) {
+        m2.size.height.toDp()
+    }
+    return 16.dp + // top margin
+        height1 + // title
+        8.dp + // spacer
+        height2 + // status
+        16.dp + // bottom margin
+        8.dp + 8.dp // padding
+}
+
 @Composable
 fun WatchlistItem(uiModel: WatchlistShowUiModel, onClick: () -> Unit, modifier: Modifier = Modifier) {
     Card(
         modifier
-            .height(IntrinsicSize.Min)
             .fillMaxWidth()
             .padding(vertical = 8.dp)
             .clickable(onClick = onClick),
@@ -169,7 +204,12 @@ fun WatchlistItem(uiModel: WatchlistShowUiModel, onClick: () -> Unit, modifier: 
                 TvImage(uiModel.image)
             }
             Column(Modifier.padding(16.dp)) {
-                Text(uiModel.title, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                Text(
+                    uiModel.title,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    style = MaterialTheme.typography.bodyLarge
+                )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(uiModel.status, style = MaterialTheme.typography.bodyMedium)
             }

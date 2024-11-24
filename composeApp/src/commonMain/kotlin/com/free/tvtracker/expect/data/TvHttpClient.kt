@@ -8,7 +8,6 @@ import io.ktor.client.HttpClient
 import io.ktor.client.HttpClientConfig
 import io.ktor.client.call.body
 import io.ktor.client.plugins.DefaultRequest
-import io.ktor.client.plugins.HttpCallValidator
 import io.ktor.client.plugins.HttpSend
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -27,7 +26,6 @@ import io.ktor.http.URLProtocol
 import io.ktor.http.contentType
 import io.ktor.http.path
 import io.ktor.serialization.kotlinx.json.json
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 
 expect fun getHttpClient(block: HttpClientConfig<*>.() -> Unit): HttpClient
@@ -36,11 +34,10 @@ expect fun getServerUrl(): String
 
 expect fun getServerPort(): String
 
-@OptIn(ExperimentalSerializationApi::class)
 open class TvHttpClient(private val sessionStore: SessionStore) {
 
     private val localhostiOS = "localhost:${getServerPort()}"
-    private val localhostiOSPhone = "192.168.1.137:${getServerPort()}"
+    private val localhostiOSPhone = "192.168.1.10:${getServerPort()}"
     private val server: String by lazy { "${getServerUrl()}:${getServerPort()}" }
 
     fun cli() = getHttpClient {
@@ -64,8 +61,8 @@ open class TvHttpClient(private val sessionStore: SessionStore) {
         install(DefaultRequest) {
             this.url {
                 protocol = URLProtocol.HTTP
-                host = server
-//                host = localhostiOSPhone
+//                host = server
+                host = localhostiOSPhone
             }
             contentType(ContentType.Application.Json)
             accept(ContentType.Application.Json)

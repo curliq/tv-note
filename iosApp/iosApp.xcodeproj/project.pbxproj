@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -16,7 +16,6 @@
 		AF25A5772C1AE82B005B1113 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = AF25A5762C1AE82B005B1113 /* FirebaseMessaging */; };
 		AF25A57A2C1B84E6005B1113 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = AF25A5792C1B84E6005B1113 /* GoogleService-Info.plist */; };
 		AF2A3E172CE283D400854BE0 /* PostHog in Frameworks */ = {isa = PBXBuildFile; productRef = AF2A3E162CE283D400854BE0 /* PostHog */; };
-		AF2A3E192CE9077100854BE0 /* ScreenStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF2A3E182CE9076900854BE0 /* ScreenStack.swift */; };
 		AFB3D95F2CDF6D85002ECB99 /* Secrets.plist in Resources */ = {isa = PBXBuildFile; fileRef = AFB3D95E2CDF6D85002ECB99 /* Secrets.plist */; };
 		AFB3D9692CDF7583002ECB99 /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = AFB3D9682CDF7583002ECB99 /* Sentry */; };
 		AFB3D96F2CDF8207002ECB99 /* SplashScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFB3D96E2CDF8202002ECB99 /* SplashScreen.swift */; };
@@ -33,10 +32,13 @@
 		AF231A252BB0F1D500E83E1B /* SwiftUIViewScreens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUIViewScreens.swift; sourceTree = "<group>"; };
 		AF25A5782C1AEEDE005B1113 /* iosApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = iosApp.entitlements; sourceTree = "<group>"; };
 		AF25A5792C1B84E6005B1113 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		AF2A3E182CE9076900854BE0 /* ScreenStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenStack.swift; sourceTree = "<group>"; };
 		AFB3D95E2CDF6D85002ECB99 /* Secrets.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Secrets.plist; sourceTree = "<group>"; };
 		AFB3D96E2CDF8202002ECB99 /* SplashScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashScreen.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		AF2A3E1A2CEAB6F800854BE0 /* fonts */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = fonts; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		B92378962B6B1156000C7307 /* Frameworks */ = {
@@ -82,6 +84,7 @@
 		7555FF7D242A565900829871 /* iosApp */ = {
 			isa = PBXGroup;
 			children = (
+				AF2A3E1A2CEAB6F800854BE0 /* fonts */,
 				AF25A5782C1AEEDE005B1113 /* iosApp.entitlements */,
 				AF231A232BB0F19E00E83E1B /* src */,
 				058557BA273AAA24004C7B11 /* Assets.xcassets */,
@@ -103,7 +106,6 @@
 		AF231A232BB0F19E00E83E1B /* src */ = {
 			isa = PBXGroup;
 			children = (
-				AF2A3E182CE9076900854BE0 /* ScreenStack.swift */,
 				AF231A242BB0F1B300E83E1B /* screens */,
 				7555FF82242A565900829871 /* ContentView.swift */,
 				AFB3D96E2CDF8202002ECB99 /* SplashScreen.swift */,
@@ -137,6 +139,9 @@
 			buildRules = (
 			);
 			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				AF2A3E1A2CEAB6F800854BE0 /* fonts */,
 			);
 			name = iosApp;
 			packageProductDependencies = (
@@ -265,7 +270,6 @@
 				AFB3D96F2CDF8207002ECB99 /* SplashScreen.swift in Sources */,
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
 				AF231A262BB0F1D500E83E1B /* SwiftUIViewScreens.swift in Sources */,
-				AF2A3E192CE9077100854BE0 /* ScreenStack.swift in Sources */,
 				7555FF83242A565900829871 /* ContentView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

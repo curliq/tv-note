@@ -45,15 +45,19 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
 @available(iOS 16.0, *)
 @main
 struct iOSApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    
     init() {
         initSentry()
         initPosthog()
         IosKoinProviderKt.startKoin()
     }
+    
     var body: some Scene {
         WindowGroup {
             SplashScreen()
         }
+        
     }
     
     private func initSentry() {

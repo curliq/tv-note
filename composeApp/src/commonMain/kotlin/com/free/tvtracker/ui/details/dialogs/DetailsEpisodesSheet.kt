@@ -1,6 +1,5 @@
 package com.free.tvtracker.ui.details.dialogs
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,6 +20,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LocalMinimumInteractiveComponentEnforcement
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -43,7 +43,9 @@ import com.free.tvtracker.ui.details.DetailsViewModel
 fun DetailsEpisodesSheet(viewModel: DetailsViewModel, bottomPadding: Float = 0f) {
     val show = viewModel.result.collectAsState().value as DetailsUiState.Ok
     TvTrackerTheme {
-        DetailsEpisodesContent(show.data, viewModel::action, bottomPadding)
+        Scaffold {
+            DetailsEpisodesContent(show.data, viewModel::action, bottomPadding)
+        }
     }
 }
 

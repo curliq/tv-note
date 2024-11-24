@@ -39,10 +39,6 @@ class DiscoverViewModel(
      */
     val filterTvShows = MutableStateFlow(true)
 
-    init {
-        refresh(showLoading = true)
-    }
-
     fun refresh(showLoading: Boolean = false) {
         if (showLoading) {
             data.value = DiscoverUiState.Loading

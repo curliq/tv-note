@@ -1,6 +1,5 @@
 package com.free.tvtracker.ui.details.dialogs
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -8,6 +7,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -31,7 +31,9 @@ fun DetailsCastCrewSheet(
 ) {
     val show = viewModel.result.collectAsState().value as DetailsUiState.Ok
     TvTrackerTheme {
-        DetailsCastCrewContent(show.data, navActions, bottomPadding)
+        Scaffold {
+            DetailsCastCrewContent(show.data, navActions, bottomPadding)
+        }
     }
 }
 
@@ -48,7 +50,7 @@ fun DetailsCastCrewContent(
         item {
             PersonGrid(show.cast) { item ->
                 val cast = item as DetailsUiModel.Cast
-                CastCard(cast) { navActions(DetailsScreenNavAction.GoCastAndCrewDetails(item.tmdbId))}
+                CastCard(cast) { navActions(DetailsScreenNavAction.GoCastAndCrewDetails(item.tmdbId)) }
             }
         }
         stickyHeader {
@@ -57,7 +59,7 @@ fun DetailsCastCrewContent(
         item {
             PersonGrid(show.crew) { item ->
                 val crew = item as DetailsUiModel.Crew
-                CastCard(crew) { navActions(DetailsScreenNavAction.GoCastAndCrewDetails(item.tmdbId))}
+                CastCard(crew) { navActions(DetailsScreenNavAction.GoCastAndCrewDetails(item.tmdbId)) }
             }
         }
         item {

@@ -22,7 +22,10 @@ class WatchingViewModel(
     init {
         viewModelScope.launch(ioDispatcher) {
             getWatchingShows().collect { data ->
-                if (data.status.success) {
+                if (data.status.fetched == null) {
+                    shows.value = WatchingUiState.Loading
+                }
+                else if (data.status.success) {
                     if (data.data.isEmpty()) {
                         shows.value = WatchingUiState.Empty
                     } else {
@@ -39,18 +42,16 @@ class WatchingViewModel(
                 }
             }
         }
-        refresh()
-        viewModelScope.launch(ioDispatcher) {
-            // fetch everything so we can check if something is tracked in the search screen
-            trackedShowsRepository.updateFinished()
-            trackedShowsRepository.updateWatchlisted()
-        }
     }
 
     fun refresh() {
         shows.value = WatchingUiState.Loading
         viewModelScope.launch(ioDispatcher) {
             trackedShowsRepository.updateWatching()
+
+            // fetch everything so we can check if something is tracked in the search screen
+            trackedShowsRepository.updateFinished(forceUpdate = false)
+            trackedShowsRepository.updateWatchlisted(forceUpdate = false)
         }
     }
 

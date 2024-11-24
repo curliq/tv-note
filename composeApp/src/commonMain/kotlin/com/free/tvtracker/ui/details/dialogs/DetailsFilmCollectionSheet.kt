@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -33,7 +34,9 @@ fun DetailsFilmCollectionSheet(
 ) {
     val data = viewModel.result.collectAsState().value as DetailsUiState.Ok
     TvTrackerTheme {
-        DetailsFilmCollectionContent(data.data.movieSeries!!, navAction, bottomPadding)
+        Scaffold {
+            DetailsFilmCollectionContent(data.data.movieSeries!!, navAction, bottomPadding)
+        }
     }
 }
 

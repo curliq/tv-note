@@ -28,6 +28,7 @@ import androidx.compose.material3.InputChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -66,6 +67,9 @@ fun DiscoverScreen(
     navigate: (DiscoverScreenNavActions) -> Unit,
     paddingValues: PaddingValues = PaddingValues()
 ) {
+    LaunchedEffect(Unit) {
+        viewModel.refresh(showLoading = true)
+    }
     val data = viewModel.data.collectAsState().value
     TvTrackerTheme {
         FabContainer(
@@ -109,7 +113,7 @@ fun DiscoverOk(
                     selected = filterTvShows,
                     onClick = { toggleFilterTvShows(!filterTvShows) },
                     label = { Text("Tv Shows") },
-                    leadingIcon = { ResImage(Res.drawable.ic_tv, "tv") },
+                    leadingIcon = { ResImage(Res.drawable.ic_tv, "tv", tint = MaterialTheme.colorScheme.onBackground) },
                     trailingIcon = { FilterCloseIcon(filterTvShows) }
                 )
                 Spacer(modifier = Modifier.width(8.dp))
@@ -117,7 +121,13 @@ fun DiscoverOk(
                     selected = !filterTvShows,
                     onClick = { toggleFilterTvShows(!filterTvShows) },
                     label = { Text("Movies") },
-                    leadingIcon = { ResImage(Res.drawable.ic_movie, "movies") },
+                    leadingIcon = {
+                        ResImage(
+                            Res.drawable.ic_movie,
+                            "movies",
+                            tint = MaterialTheme.colorScheme.onBackground
+                        )
+                    },
                     trailingIcon = { FilterCloseIcon(!filterTvShows) }
                 )
             }

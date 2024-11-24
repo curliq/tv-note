@@ -7,11 +7,13 @@ import com.squareup.sqldelight.db.SqlDriver
 import com.squareup.sqldelight.drivers.native.NativeSqliteDriver
 import com.squareup.sqldelight.drivers.native.wrapConnection
 
+const val DatabaseNameIos = "tracked.db"
+
 actual class DatabaseDriverFactory actual constructor() {
     actual fun createDriver(): SqlDriver {
 
         val dbConfig = DatabaseConfiguration(
-            name = "tracked.db",
+            name = DatabaseNameIos,
             version = 1,
             extendedConfig = Extended(foreignKeyConstraints = true),
             create = { connection ->

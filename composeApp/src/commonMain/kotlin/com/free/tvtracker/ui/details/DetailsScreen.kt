@@ -4,7 +4,6 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -174,8 +173,8 @@ fun DetailsScreenContent(
                     modifier = Modifier.weight(0.5f, true)
                 ) {
                     val color = when (action) {
-                        RemoveFromWatchlist, RemoveFromWatching -> Color.Red
-                        else -> Color.Unspecified
+                        RemoveFromWatchlist, RemoveFromWatching -> MaterialTheme.colorScheme.error
+                        else ->  MaterialTheme.colorScheme.primary
                     }
                     if (!show.trackingStatus.isLoading) {
                         Text(text(show.trackingStatus.action2), color = color)
@@ -193,17 +192,11 @@ fun DetailsScreenContent(
         Row(verticalAlignment = Alignment.Bottom) {
             Text("Country: ${show.watchProviderCountry}, ", style = MaterialTheme.typography.labelSmall)
             Text("Source:  ", style = MaterialTheme.typography.labelSmall)
-            val tint = if (isSystemInDarkTheme()) {
-                //todo test on ios
-                Color(0xffFBD446)
-            } else {
-                null
-            }
             ResImage(
                 Res.drawable.justwatch_logo_lightmode,
                 contentDescription = "justwatch",
                 modifier = Modifier.height(20.dp),
-                tint = tint
+                tint = Color(0xffDDBC43)
             )
         }
         Spacer(Modifier.height(8.dp))

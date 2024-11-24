@@ -39,6 +39,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
+import com.free.tvtracker.expect.OsPlatform
 import com.free.tvtracker.ui.common.theme.TvTrackerTheme
 
 sealed class SettingsScreenNavAction {
@@ -86,7 +87,7 @@ fun SettingsContent(
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     Button(onClick = { action(SettingsViewModel.Action.Export) }, shape = TvTrackerTheme.ShapeButton) {
-                        Text("Export shows and movies as csv")
+                        Text("Export tracked content as csv")
                     }
                     Spacer(modifier = Modifier.height(16.dp))
                 }
@@ -104,7 +105,7 @@ fun SettingsContent(
                                 shape = TvTrackerTheme.ShapeButton,
                                 modifier = Modifier.weight(0.5f, true)
                             ) {
-                                Text("Log in")
+                                Text("Log in", color = MaterialTheme.colorScheme.primary)
                             }
                             Spacer(Modifier.width(8.dp))
                             OutlinedButton(
@@ -112,7 +113,7 @@ fun SettingsContent(
                                 shape = TvTrackerTheme.ShapeButton,
                                 modifier = Modifier.weight(0.5f, true)
                             ) {
-                                Text("Create account")
+                                Text("Create account", color = MaterialTheme.colorScheme.primary)
                             }
                         }
                     } else {
@@ -131,13 +132,24 @@ fun SettingsContent(
                         Crossfade(targetState = showLogoutConfirmation.value) {
                             if (it) {
                                 Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Text(text = "Confirm log out?", style = MaterialTheme.typography.labelLarge)
+                                    Text(
+                                        text = "".run {
+                                            if (OsPlatform().get() == OsPlatform.Platform.IOS)
+                                                "The app will close."
+                                            else
+                                                "Confirm log out?"
+                                        },
+                                        style = MaterialTheme.typography.labelLarge
+                                    )
                                     Spacer(Modifier.width(8.dp))
                                     TextButton(onClick = { showLogoutConfirmation.value = false }) {
-                                        Text(text = "No")
+                                        Text(text = if (OsPlatform().get() == OsPlatform.Platform.IOS) "Cancel" else "No")
                                     }
                                     TextButton(onClick = { action(SettingsViewModel.Action.Logout) }) {
-                                        Text(text = "Yes", color = MaterialTheme.colorScheme.error)
+                                        Text(
+                                            text = if (OsPlatform().get() == OsPlatform.Platform.IOS) "Confirm" else "Yes",
+                                            color = MaterialTheme.colorScheme.error
+                                        )
                                     }
                                 }
                             } else {
@@ -205,16 +217,18 @@ fun SettingsContent(
                 "System default",
                 { action(SettingsViewModel.Action.SetTheme(SettingsUiModel.Theme.System)) }
             )
-            RadioBtn(
-                data.theme == SettingsUiModel.Theme.Light,
-                "Light",
-                { action(SettingsViewModel.Action.SetTheme(SettingsUiModel.Theme.Light)) }
-            )
-            RadioBtn(
-                data.theme == SettingsUiModel.Theme.Dark,
-                "Dark",
-                { action(SettingsViewModel.Action.SetTheme(SettingsUiModel.Theme.Dark)) }
-            )
+            if (OsPlatform().get() == OsPlatform.Platform.Android) {
+                RadioBtn(
+                    data.theme == SettingsUiModel.Theme.Light,
+                    "Light",
+                    { action(SettingsViewModel.Action.SetTheme(SettingsUiModel.Theme.Light)) }
+                )
+                RadioBtn(
+                    data.theme == SettingsUiModel.Theme.Dark,
+                    "Dark",
+                    { action(SettingsViewModel.Action.SetTheme(SettingsUiModel.Theme.Dark)) }
+                )
+            }
         }
         Spacer(Modifier.height(24.dp))
         HorizontalDivider()

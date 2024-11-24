@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
@@ -35,7 +36,9 @@ fun PersonPhotosSheet(
 ) {
     val show = viewModel.result.collectAsState().value as PersonUiState.Ok
     TvTrackerTheme {
-        PersonPhotosContent(show.data, bottomPadding)
+        Scaffold {
+            PersonPhotosContent(show.data, bottomPadding)
+        }
     }
 }
 

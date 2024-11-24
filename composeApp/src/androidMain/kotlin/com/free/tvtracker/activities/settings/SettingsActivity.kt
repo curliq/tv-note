@@ -44,14 +44,14 @@ class SettingsActivity : BaseActivity() {
         setContent {
             val context = LocalContext.current
             val viewModel: SettingsViewModel = get()
-            if (viewModel.logout.collectAsState().value) {
-                this.deleteDatabase(DatabaseNameAndroid)
-                val intent = Intent(context, SplashActivity::class.java)
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                context.startActivity(intent)
-                (context as Activity).finish()
-                Runtime.getRuntime().exit(0)
-            }
+//            if (viewModel.logout.collectAsState().value) {
+//                this.deleteDatabase(DatabaseNameAndroid)
+//                val intent = Intent(context, SplashActivity::class.java)
+//                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//                context.startActivity(intent)
+//                (context as Activity).finish()
+//                Runtime.getRuntime().exit(0)
+//            }
             viewModel.shareCsvFile.collectAsState().value?.let { csvContent ->
                 try {
                     // Get the Downloads directory

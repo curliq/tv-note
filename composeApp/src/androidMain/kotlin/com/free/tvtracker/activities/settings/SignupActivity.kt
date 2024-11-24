@@ -15,8 +15,8 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import com.free.tvtracker.core.ui.BaseActivity
 import com.free.tvtracker.ui.common.theme.TvTrackerTheme
-import com.free.tvtracker.ui.settings.SignupScreen
-import com.free.tvtracker.ui.settings.SignupScreenAction
+import com.free.tvtracker.ui.settings.signup.SignupScreen
+import com.free.tvtracker.ui.settings.signup.SignupScreenAction
 import org.koin.androidx.compose.get
 
 @OptIn(ExperimentalMaterial3Api::class)
