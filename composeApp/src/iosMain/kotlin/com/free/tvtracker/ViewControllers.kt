@@ -1,6 +1,7 @@
 package com.free.tvtracker
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.ui.uikit.OnFocusBehavior
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.ComposeUIViewController
 import com.free.tvtracker.ui.details.DetailsScreen
@@ -60,12 +61,20 @@ fun WelcomeScreenViewController(navigateHome: () -> Unit, viewModel: WelcomeView
     }
 
 fun LoginScreenViewController(nav: (LoginScreenNavAction) -> Unit, viewModel: LoginViewModel) =
-    ComposeUIViewController {
+    ComposeUIViewController(
+        configure = {
+            onFocusBehavior = OnFocusBehavior.DoNothing
+        }
+    ) {
         LoginScreen(viewModel, nav)
     }
 
 fun SignupScreenViewController(nav: (SignupScreenAction) -> Unit, viewModel: SignupViewModel) =
-    ComposeUIViewController {
+    ComposeUIViewController(
+        configure = {
+            onFocusBehavior = OnFocusBehavior.DoNothing
+        }
+    ) {
         SignupScreen(viewModel, nav)
     }
 
@@ -105,7 +114,11 @@ fun NewReleasesScreenViewController(navigate: (DiscoverScreenNavActions) -> Unit
     }
 
 fun SettingsScreenViewController(navigate: (SettingsScreenNavAction) -> Unit, viewModel: SettingsViewModel) =
-    ComposeUIViewController {
+    ComposeUIViewController(
+        configure = {
+            onFocusBehavior = OnFocusBehavior.DoNothing
+        }
+    ) {
         SettingsScreen(viewModel, navigate, PaddingValues(0.dp))
     }
 
@@ -161,6 +174,10 @@ fun AddTrackedScreenViewController(
     addTrackedViewModel: AddTrackedViewModel,
     navigate: (AddTrackedScreenNavAction) -> Unit,
     originScreen: AddTrackedScreenOriginScreen
-) = ComposeUIViewController {
+) = ComposeUIViewController(
+    configure = {
+        onFocusBehavior = OnFocusBehavior.DoNothing
+    }
+) {
     AddTrackedScreen(addTrackedViewModel, navigate, originScreen)
 }

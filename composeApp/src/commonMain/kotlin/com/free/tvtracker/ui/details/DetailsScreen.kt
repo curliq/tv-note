@@ -30,6 +30,7 @@ import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FilledTonalButton
@@ -96,6 +97,7 @@ fun DetailsScreen(
                 viewModel.loadContent(content)
             }
             val show = viewModel.result.collectAsState().value
+            val isActionsAllowed = viewModel.isActionsAllowed.collectAsState(true).value
             AnimatedContent(
                 show,
                 transitionSpec = ScreenContentAnimation(),
@@ -104,7 +106,12 @@ fun DetailsScreen(
                 when (targetState) {
                     DetailsUiState.Error -> ErrorScreen { viewModel.loadContent(content) }
                     DetailsUiState.Loading -> LoadingScreen()
-                    is DetailsUiState.Ok -> DetailsScreenContent(targetState.data, navAction, viewModel::action)
+                    is DetailsUiState.Ok -> DetailsScreenContent(
+                        targetState.data,
+                        isActionsAllowed,
+                        navAction,
+                        viewModel::action
+                    )
                 }
             }
         }
@@ -114,6 +121,7 @@ fun DetailsScreen(
 @Composable
 fun DetailsScreenContent(
     show: DetailsUiModel,
+    isActionsAllowed: Boolean,
     navAction: (DetailsScreenNavAction) -> Unit,
     showAction: (DetailsViewModel.DetailsAction) -> Unit
 ) {
@@ -153,6 +161,7 @@ fun DetailsScreenContent(
                 Button(
                     onClick = { showAction(DetailsViewModel.DetailsAction.TrackingAction(show, action)) },
                     shape = TvTrackerTheme.ShapeButton,
+                    enabled = isActionsAllowed,
                     modifier = Modifier.weight(0.5f, true)
                 ) {
                     if (!show.trackingStatus.isLoading) {
@@ -167,17 +176,19 @@ fun DetailsScreenContent(
             }
             Spacer(Modifier.width(8.dp))
             show.trackingStatus.action2?.let { action ->
+                val color = when (action) {
+                    RemoveFromWatchlist, RemoveFromWatching -> MaterialTheme.colorScheme.error
+                    else -> MaterialTheme.colorScheme.primary
+                }
                 OutlinedButton(
                     onClick = { showAction(DetailsViewModel.DetailsAction.TrackingAction(show, action)) },
                     shape = TvTrackerTheme.ShapeButton,
+                    enabled = isActionsAllowed,
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = color),
                     modifier = Modifier.weight(0.5f, true)
                 ) {
-                    val color = when (action) {
-                        RemoveFromWatchlist, RemoveFromWatching -> MaterialTheme.colorScheme.error
-                        else ->  MaterialTheme.colorScheme.primary
-                    }
                     if (!show.trackingStatus.isLoading) {
-                        Text(text(show.trackingStatus.action2), color = color)
+                        Text(text(show.trackingStatus.action2))
                     } else {
                         LoadingIndicator(
                             modifier = Modifier.height(24.dp).aspectRatio(1f),
@@ -378,7 +389,7 @@ fun DetailsScreenContent(
         Text("Website", style = MaterialTheme.typography.titleSmall)
         if (!show.website.isNullOrEmpty()) {
             FilledTonalButton(
-                onClick = {  navAction(DetailsScreenNavAction.GoWebsite(show.website))  },
+                onClick = { navAction(DetailsScreenNavAction.GoWebsite(show.website)) },
                 contentPadding = PaddingValues(vertical = 0.dp, horizontal = 12.dp),
                 shape = TvTrackerTheme.ShapeButton,
             ) {

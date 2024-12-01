@@ -1,4 +1,4 @@
-package com.free.tvtracker.expect.ui
+package com.free.tvtracker.expect
 
 import kotlinx.coroutines.CoroutineScope
 

@@ -1,13 +1,17 @@
 package com.free.tvtracker.ui.finished
 
+import com.free.tvtracker.data.iap.IapRepository
 import com.free.tvtracker.data.tracked.TrackedShowsRepository
+import com.free.tvtracker.domain.GetPurchaseStatusUseCase
 import com.free.tvtracker.domain.GetShowsUseCase
 import com.free.tvtracker.domain.IsTrackedShowWatchableUseCase
-import com.free.tvtracker.expect.ui.ViewModel
+import com.free.tvtracker.domain.PurchaseStatus
+import com.free.tvtracker.expect.ViewModel
 import com.free.tvtracker.ui.watchlist.WatchlistShowUiModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.update
@@ -18,9 +22,12 @@ class FinishedShowsViewModel(
     private val getShowsUseCase: GetShowsUseCase,
     private val isTrackedShowWatchableUseCase: IsTrackedShowWatchableUseCase,
     private val mapper: FinishedShowUiModelMapper,
+    private val purchaseStatus: GetPurchaseStatusUseCase,
+    private val iapRepository: IapRepository,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : ViewModel() {
     val shows: MutableStateFlow<FinishedUiState> = MutableStateFlow(FinishedUiState.Loading)
+    val status: Flow<PurchaseStatus> = purchaseStatus.invoke()
 
     init {
         viewModelScope.launch(ioDispatcher) {
@@ -74,12 +81,19 @@ class FinishedShowsViewModel(
                     } else it
                 }
             }
+
+            FinishedAction.Buy -> {
+                viewModelScope.launch(ioDispatcher) {
+                    iapRepository.purchase()
+                }
+            }
         }
     }
 
     sealed class FinishedAction {
         data object ToggleTvShows : FinishedAction()
         data object ToggleMovies : FinishedAction()
+        data object Buy : FinishedAction()
     }
 }
 

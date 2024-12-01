@@ -2,7 +2,7 @@ package com.free.tvtracker.ui.splash
 
 import com.free.tvtracker.data.common.sql.LocalSqlDataProvider
 import com.free.tvtracker.data.session.SessionRepository
-import com.free.tvtracker.expect.ui.ViewModel
+import com.free.tvtracker.expect.ViewModel
 
 class SplashViewModel(
     private val localDataSource: LocalSqlDataProvider,

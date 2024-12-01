@@ -12,29 +12,33 @@ import ComposeApp
 
 struct SplashScreen: View {
     
+    @Environment(\.colorScheme) var colorScheme
+    
     let vm = ViewModelsModule().splashViewModel
     let welcomeVm = ViewModelsModule().welcomeViewModel
-
+    
     @State private var showHome = false
     
     var body: some View {
-        let dest = vm.initialDestination()
-        switch dest {
-        case SplashViewModel.Destination.welcome:
-            if (!showHome) {
-                let nav: () -> Void = {
-                    showHome = true
+        VStack {
+            let dest = vm.initialDestination()
+            switch dest {
+            case SplashViewModel.Destination.welcome:
+                if (!showHome) {
+                    let nav: () -> Void = {
+                        showHome = true
+                    }
+                    WelcomeScreen(vm: welcomeVm, nav: nav)
+                } else {
+                    ContentView()
                 }
-                WelcomeScreen(vm: welcomeVm, nav: nav)
-            } else {
+            case SplashViewModel.Destination.home:
                 ContentView()
+            case SplashViewModel.Destination.error:
+                SplashErrorScreen()
+            default:
+                SplashErrorScreen()
             }
-        case SplashViewModel.Destination.home:
-            ContentView()
-        case SplashViewModel.Destination.error:
-            SplashErrorScreen()
-        default:
-            SplashErrorScreen()
-        }
+        }.nestedBackgroundColor(isDarkTheme: colorScheme == .dark)
     }
 }

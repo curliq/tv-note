@@ -10,7 +10,6 @@ import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -34,6 +33,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import besttvtracker.composeapp.generated.resources.Res
 import besttvtracker.composeapp.generated.resources.ic_movie
 import besttvtracker.composeapp.generated.resources.ic_tv
+import com.free.tvtracker.domain.PurchaseStatus
 import com.free.tvtracker.ui.common.composables.ErrorScreen
 import com.free.tvtracker.ui.common.composables.LoadingScreen
 import com.free.tvtracker.ui.common.composables.ResImage
@@ -54,6 +55,7 @@ import com.free.tvtracker.ui.common.theme.ScreenContentAnimation
 import com.free.tvtracker.ui.common.theme.TvTrackerTheme
 import com.free.tvtracker.ui.common.theme.TvTrackerTheme.sidePadding
 import com.free.tvtracker.ui.watching.FabContainer
+import com.free.tvtracker.ui.watching.TrialView
 import com.free.tvtracker.ui.watchlist.WatchlistedShowsViewModel.WatchlistedAction
 
 sealed class WatchlistScreenNavAction {
@@ -67,6 +69,8 @@ fun WatchlistScreen(viewModel: WatchlistedShowsViewModel, navigate: (WatchlistSc
         viewModel.refresh()
     }
     val shows = viewModel.shows.collectAsState().value
+    val purchaseStatus by viewModel.status.collectAsState(PurchaseStatus(PurchaseStatus.Status.Purchased, null))
+
     TvTrackerTheme {
         FabContainer({ navigate(WatchlistScreenNavAction.GoAddShow) }, content = {
             AnimatedContent(
@@ -75,10 +79,14 @@ fun WatchlistScreen(viewModel: WatchlistedShowsViewModel, navigate: (WatchlistSc
                 contentKey = { targetState -> targetState::class }
             ) { targetState ->
                 when (targetState) {
-                    WatchlistUiState.Empty -> WatchlistEmpty()
+                    WatchlistUiState.Empty -> WatchlistEmpty(
+                        purchaseStatus,
+                        { viewModel.action(WatchlistedAction.Buy) }
+                    )
+
                     WatchlistUiState.Error -> ErrorScreen { viewModel.refresh() }
                     WatchlistUiState.Loading -> LoadingScreen()
-                    is WatchlistUiState.Ok -> WatchlistOk(targetState, viewModel::action, navigate)
+                    is WatchlistUiState.Ok -> WatchlistOk(targetState, purchaseStatus, viewModel::action, navigate)
                 }
             }
         })
@@ -86,19 +94,25 @@ fun WatchlistScreen(viewModel: WatchlistedShowsViewModel, navigate: (WatchlistSc
 }
 
 @Composable
-private fun WatchlistEmpty() {
+fun WatchlistEmpty(status: PurchaseStatus, onBuy: () -> Unit) {
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text(
-            text = "No content watchlisted.",
-            style = MaterialTheme.typography.labelMedium,
-            textAlign = TextAlign.Center
-        )
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = "No content watchlisted.",
+                style = MaterialTheme.typography.labelMedium,
+                textAlign = TextAlign.Center
+            )
+            if (status.status != PurchaseStatus.Status.Purchased) {
+                TrialView(status, onBuy)
+            }
+        }
     }
 }
 
 @Composable
 fun WatchlistOk(
     data: WatchlistUiState.Ok,
+    status: PurchaseStatus,
     action: (WatchlistedAction) -> Unit,
     navigate: (WatchlistScreenNavAction) -> Unit
 ) {
@@ -131,18 +145,17 @@ fun WatchlistOk(
                 )
             }
         }
-        item {
-            if (data.shows.isEmpty()) {
-                Spacer(modifier = Modifier.height(24.dp))
-                WatchlistEmpty()
-            }
-        }
         items(data.shows, key = { it.tmdbId }) { model ->
             WatchlistItem(
                 model,
                 { navigate(WatchlistScreenNavAction.GoShowDetails(model.tmdbId, model.isTvShow)) },
                 Modifier.animateItem().height(calculateWatchlistItemHeight())
             )
+        }
+        if (status.status != PurchaseStatus.Status.Purchased) {
+            item(key = -1) {
+                TrialView(status, { action(WatchlistedAction.Buy) })
+            }
         }
     }
 }

@@ -16,6 +16,7 @@
 		AF25A5772C1AE82B005B1113 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = AF25A5762C1AE82B005B1113 /* FirebaseMessaging */; };
 		AF25A57A2C1B84E6005B1113 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = AF25A5792C1B84E6005B1113 /* GoogleService-Info.plist */; };
 		AF2A3E172CE283D400854BE0 /* PostHog in Frameworks */ = {isa = PBXBuildFile; productRef = AF2A3E162CE283D400854BE0 /* PostHog */; };
+		AF83C4532CFCBF4200F3C5E9 /* storekittest.storekit in Resources */ = {isa = PBXBuildFile; fileRef = AF83C4522CFCBF4200F3C5E9 /* storekittest.storekit */; };
 		AFB3D95F2CDF6D85002ECB99 /* Secrets.plist in Resources */ = {isa = PBXBuildFile; fileRef = AFB3D95E2CDF6D85002ECB99 /* Secrets.plist */; };
 		AFB3D9692CDF7583002ECB99 /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = AFB3D9682CDF7583002ECB99 /* Sentry */; };
 		AFB3D96F2CDF8207002ECB99 /* SplashScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFB3D96E2CDF8202002ECB99 /* SplashScreen.swift */; };
@@ -32,6 +33,7 @@
 		AF231A252BB0F1D500E83E1B /* SwiftUIViewScreens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUIViewScreens.swift; sourceTree = "<group>"; };
 		AF25A5782C1AEEDE005B1113 /* iosApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = iosApp.entitlements; sourceTree = "<group>"; };
 		AF25A5792C1B84E6005B1113 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		AF83C4522CFCBF4200F3C5E9 /* storekittest.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = storekittest.storekit; sourceTree = "<group>"; };
 		AFB3D95E2CDF6D85002ECB99 /* Secrets.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Secrets.plist; sourceTree = "<group>"; };
 		AFB3D96E2CDF8202002ECB99 /* SplashScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashScreen.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -66,6 +68,7 @@
 		7555FF72242A565900829871 = {
 			isa = PBXGroup;
 			children = (
+				AF83C4522CFCBF4200F3C5E9 /* storekittest.storekit */,
 				AFB3D95E2CDF6D85002ECB99 /* Secrets.plist */,
 				AB1DB47929225F7C00F7AF9C /* Configuration */,
 				7555FF7D242A565900829871 /* iosApp */,
@@ -199,6 +202,7 @@
 			files = (
 				AFB3D95F2CDF6D85002ECB99 /* Secrets.plist in Resources */,
 				058557D9273AAEEB004C7B11 /* Preview Assets.xcassets in Resources */,
+				AF83C4532CFCBF4200F3C5E9 /* storekittest.storekit in Resources */,
 				058557BB273AAA24004C7B11 /* Assets.xcassets in Resources */,
 				AF25A57A2C1B84E6005B1113 /* GoogleService-Info.plist in Resources */,
 			);

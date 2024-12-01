@@ -2,7 +2,8 @@ package com.free.tvtracker.ui.search
 
 import com.free.tvtracker.base.ApiError
 import com.free.tvtracker.constants.TmdbContentType
-import com.free.tvtracker.expect.ui.ViewModel
+import com.free.tvtracker.core.Logger
+import com.free.tvtracker.expect.ViewModel
 import com.free.tvtracker.data.search.SearchRepository
 import com.free.tvtracker.data.tracked.TrackedShowsRepository
 import kotlinx.coroutines.CoroutineDispatcher
@@ -21,6 +22,7 @@ class AddTrackedViewModel(
     private val showsMapper: ShowSearchUiModelMapper,
     private val moviesMapper: MovieSearchUiModelMapper,
     private val peopleMapper: PersonSearchUiModelMapper,
+    private val logger: Logger,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : ViewModel() {
 
@@ -62,8 +64,8 @@ class AddTrackedViewModel(
                             }
                         )
                     } else {
+                        logger.w("error code: c365f831-6131-4518-8a23-bccc02d0d38a")
                         it
-                        // todo: track event (see comment above)
                     }
                 }
             }

@@ -5,20 +5,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.free.tvtracker.domain.PurchaseStatus
 import com.free.tvtracker.ui.common.theme.TvTrackerTheme
-import com.free.tvtracker.ui.watchlist.WatchlistEmpty
-import com.free.tvtracker.ui.watchlist.WatchlistOk
-import com.free.tvtracker.ui.watchlist.WatchlistShowUiModel
-import com.free.tvtracker.ui.watchlist.WatchlistUiState
+import com.free.tvtracker.ui.finished.FinishedEmpty
+import com.free.tvtracker.ui.finished.FinishedOk
+import com.free.tvtracker.ui.finished.FinishedShowUiModel
+import com.free.tvtracker.ui.finished.FinishedUiState
 
 @Preview
 @Composable
-fun WatchlistPreview() {
+fun FinishedPreview() {
     TvTrackerTheme {
         Scaffold { p ->
-            WatchlistOk(
-                WatchlistUiState.Ok(
+            FinishedOk(
+                FinishedUiState.Ok(
                     listOf(
-                        WatchlistShowUiModel(
+                        FinishedShowUiModel(
                             tmdbId = 1,
                             title = "Game of thrones",
                             image = "",
@@ -38,10 +38,10 @@ fun WatchlistPreview() {
 
 @Preview
 @Composable
-fun WatchlistEmptyPreview() {
+fun FinishedEmptyPreview() {
     TvTrackerTheme {
         Scaffold { p ->
-            WatchlistEmpty(
+            FinishedEmpty(
                 PurchaseStatus(PurchaseStatus.Status.Purchased, "123"),
                 {}
             )
@@ -51,10 +51,10 @@ fun WatchlistEmptyPreview() {
 
 @Preview
 @Composable
-fun WatchlistEmptyTrialPreview() {
+fun FinishedEmptyTrialPreview() {
     TvTrackerTheme {
         Scaffold { p ->
-            WatchlistEmpty(
+            FinishedEmpty(
                 PurchaseStatus(PurchaseStatus.Status.TrialOn, "123"),
                 {}
             )
@@ -64,13 +64,13 @@ fun WatchlistEmptyTrialPreview() {
 
 @Preview
 @Composable
-fun WatchlistOkTrialPreview() {
+fun FinishedOkTrialPreview() {
     TvTrackerTheme {
         Scaffold { p ->
-            WatchlistOk(
-                WatchlistUiState.Ok(
+            FinishedOk(
+                FinishedUiState.Ok(
                     listOf(
-                        WatchlistShowUiModel(
+                        FinishedShowUiModel(
                             tmdbId = 1,
                             title = "Game of thrones",
                             image = "",

@@ -53,7 +53,8 @@ kotlin {
             implementation(libs.androidx.core.splashscreen)
             implementation(libs.androidx.appcompat)
             implementation(libs.posthog.android)
-//            implementation(libs.sentry.android)
+            implementation(libs.billing)
+            implementation(libs.billing.ktx)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
@@ -80,10 +81,11 @@ kotlin {
             implementation(libs.uuid)
             implementation(libs.kotlinx.datetime)
             implementation(libs.landscapist.coil3)
-            implementation("io.sentry:sentry-kotlin-multiplatform:0.10.0")
+            implementation(libs.sentry.kotlin.multiplatform)
         }
         jvmMain.dependencies {
             implementation(libs.ktor.client.cio)
+            implementation(libs.sqlite.driver)
         }
         jvmTest.dependencies {
             implementation(libs.kotlin.test)
@@ -114,7 +116,7 @@ android {
         applicationId = "com.free.tvtracker"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 4
+        versionCode = 5
         versionName = "1.3"
         buildConfigField("String", "ANDROID_KEY_POSTHOG", "\"${System.getenv("ANDROID_KEY_POSTHOG")}\"")
         buildConfigField("String", "KEY_DSN_SENTRY", "\"${System.getenv("ANDROID_KEY_DSN_SENTRY")}\"")

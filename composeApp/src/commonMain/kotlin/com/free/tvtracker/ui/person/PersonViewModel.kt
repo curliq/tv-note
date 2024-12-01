@@ -1,6 +1,6 @@
 package com.free.tvtracker.ui.person
 
-import com.free.tvtracker.expect.ui.ViewModel
+import com.free.tvtracker.expect.ViewModel
 import com.free.tvtracker.data.search.SearchRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers

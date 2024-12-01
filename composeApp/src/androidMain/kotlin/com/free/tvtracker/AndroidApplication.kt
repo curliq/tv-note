@@ -3,13 +3,18 @@ package com.free.tvtracker
 import android.app.Application
 import android.content.Context
 import android.util.Log
+import com.free.tvtracker.core.ui.BaseActivity
 import com.free.tvtracker.di.appModules
+import com.free.tvtracker.expect.AndroidAppPriceProvider
+import com.free.tvtracker.data.iap.AppPriceProvider
+import com.free.tvtracker.expect.AndroidFileExporter
 import com.free.tvtracker.expect.initSentry
 import com.free.tvtracker.ui.details.DetailsViewModel
 import com.free.tvtracker.ui.discover.DiscoverViewModel
 import com.free.tvtracker.ui.finished.FinishedShowsViewModel
 import com.free.tvtracker.ui.person.PersonViewModel
 import com.free.tvtracker.ui.search.AddTrackedViewModel
+import com.free.tvtracker.ui.settings.FileExporter
 import com.free.tvtracker.ui.settings.SettingsViewModel
 import com.free.tvtracker.ui.settings.login.LoginViewModel
 import com.free.tvtracker.ui.settings.signup.SignupViewModel
@@ -26,12 +31,16 @@ import org.koin.dsl.module
 class AndroidApplication : Application() {
     companion object {
         lateinit var context: Context
+        lateinit var instance: AndroidApplication
     }
+
+    var currentActivity: BaseActivity? = null
 
     @Suppress("KotlinConstantConditions")
     override fun onCreate() {
         super.onCreate()
         context = applicationContext
+        instance = this
         if (BuildConfig.ANDROID_KEY_POSTHOG == "null") {
             Log.i(
                 "SETUP",
@@ -65,19 +74,21 @@ class AndroidApplication : Application() {
             modules(appModules())
             modules(
                 module {
+                    single<AppPriceProvider> { AndroidAppPriceProvider(context) }
+                    single<FileExporter> { AndroidFileExporter() }
                     viewModel { SplashViewModel(get(), get()) }
-                    viewModel { WelcomeViewModel(get(), get()) }
-                    viewModel { AddTrackedViewModel(get(), get(), get(), get(), get()) }
-                    viewModel { WatchingViewModel(get(), get(), get(), get()) }
-                    viewModel { FinishedShowsViewModel(get(), get(), get(), get()) }
-                    viewModel { WatchlistedShowsViewModel(get(), get(), get(), get()) }
-                    viewModel { DetailsViewModel(get(), get(), get(), get(), get()) }
+                    viewModel { WelcomeViewModel(get(), get(), get()) }
+                    viewModel { AddTrackedViewModel(get(), get(), get(), get(), get(), get()) }
+                    viewModel { WatchingViewModel(get(), get(), get(), get(), get(), get()) }
+                    viewModel { FinishedShowsViewModel(get(), get(), get(), get(), get(), get()) }
+                    viewModel { WatchlistedShowsViewModel(get(), get(), get(), get(), get(), get()) }
+                    viewModel { DetailsViewModel(get(), get(), get(), get(), get(), get()) }
                     viewModel { PersonViewModel(get(), get()) }
                     viewModel { LoginViewModel(get(), get()) }
                     viewModel { SignupViewModel(get()) }
                     single {
                         // shared on TvTrackerTheme for all activities
-                        SettingsViewModel(get(), get(), get())
+                        SettingsViewModel(get(), get(), get(), get(), get())
                     }
                     single {
                         // why `single` and not `viewmodel`? to share it

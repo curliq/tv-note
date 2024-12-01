@@ -17,7 +17,10 @@ object DetailsScreenPreviews {
         posterUrl = "",
         releaseStatus = "2014 - Ongoing",
         duration = null,
-        trackingStatus = DetailsUiModel.TrackingStatus(null, null),
+        trackingStatus = DetailsUiModel.TrackingStatus(
+            DetailsUiModel.TrackingStatus.Action.MoveToWatching,
+            DetailsUiModel.TrackingStatus.Action.TrackWatchlist
+        ),
         trackedContentId = null,
         homepageUrl = "",
         description = "game of thrones is a show about society",
@@ -124,7 +127,7 @@ object DetailsScreenPreviews {
 fun DetailsScreenPreview() {
     TvTrackerTheme {
         Scaffold { padding ->
-            DetailsScreenContent(showDetailsUiModel, {}, {})
+            DetailsScreenContent(showDetailsUiModel, true, {}, {})
         }
     }
 }
@@ -135,7 +138,7 @@ fun DetailsScreenPreview() {
 fun DetailsScreenPreviewMovie() {
     TvTrackerTheme {
         Scaffold { padding ->
-            DetailsScreenContent(showDetailsUiModel.copy(isTvShow = false), {}, {})
+            DetailsScreenContent(showDetailsUiModel.copy(isTvShow = false), false, {}, {})
         }
     }
 }

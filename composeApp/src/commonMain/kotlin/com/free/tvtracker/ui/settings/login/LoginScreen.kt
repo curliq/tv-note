@@ -88,7 +88,8 @@ fun LoginContent(
             onClick = {
                 action(LoginViewModel.LoginAction(username, password))
             },
-            modifier = Modifier.align(Alignment.End).fillMaxWidth(0.5f)
+            modifier = Modifier.align(Alignment.End).fillMaxWidth(0.5f),
+            shape = TvTrackerTheme.ShapeButton,
         ) {
             val isLoading = result == LoginViewModel.Result.Loading
             if (isLoading) {

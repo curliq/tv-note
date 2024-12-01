@@ -21,19 +21,25 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -55,13 +61,18 @@ fun SettingsScreen(
     navAction: (SettingsScreenNavAction) -> Unit,
     paddingValues: PaddingValues
 ) {
+    val snackbarHostState = remember { SnackbarHostState() }
     val data = viewModel.data.collectAsState().value
     TvTrackerTheme {
-        Scaffold(Modifier.padding(paddingValues)) {
+        Scaffold(
+            modifier = Modifier.padding(paddingValues),
+            snackbarHost = { SnackbarHost(snackbarHostState) },
+        )
+        {
             when (data) {
                 SettingsUiState.Error -> {}
                 SettingsUiState.Idle -> {}
-                is SettingsUiState.Ok -> SettingsContent(data.data, navAction, viewModel::action)
+                is SettingsUiState.Ok -> SettingsContent(data.data, snackbarHostState, navAction, viewModel::action)
             }
         }
     }
@@ -70,6 +81,7 @@ fun SettingsScreen(
 @Composable
 fun SettingsContent(
     data: SettingsUiModel,
+    snackbarHostState: SnackbarHostState,
     navAction: (SettingsScreenNavAction) -> Unit,
     action: (SettingsViewModel.Action) -> Unit
 ) {
@@ -103,17 +115,23 @@ fun SettingsContent(
                             OutlinedButton(
                                 onClick = { navAction(SettingsScreenNavAction.GoLogin) },
                                 shape = TvTrackerTheme.ShapeButton,
+                                colors = ButtonDefaults.outlinedButtonColors(
+                                    contentColor = MaterialTheme.colorScheme.primary
+                                ),
                                 modifier = Modifier.weight(0.5f, true)
                             ) {
-                                Text("Log in", color = MaterialTheme.colorScheme.primary)
+                                Text("Log in")
                             }
                             Spacer(Modifier.width(8.dp))
                             OutlinedButton(
                                 onClick = { navAction(SettingsScreenNavAction.GoSignup) },
                                 shape = TvTrackerTheme.ShapeButton,
+                                colors = ButtonDefaults.outlinedButtonColors(
+                                    contentColor = MaterialTheme.colorScheme.primary
+                                ),
                                 modifier = Modifier.weight(0.5f, true)
                             ) {
-                                Text("Create account", color = MaterialTheme.colorScheme.primary)
+                                Text("Create account")
                             }
                         }
                     } else {
@@ -157,9 +175,12 @@ fun SettingsContent(
                                     OutlinedButton(
                                         onClick = { showLogoutConfirmation.value = true },
                                         shape = TvTrackerTheme.ShapeButton,
+                                        colors = ButtonDefaults.outlinedButtonColors(
+                                            contentColor = MaterialTheme.colorScheme.error
+                                        ),
                                         border = BorderStroke(1.dp, MaterialTheme.colorScheme.error),
                                     ) {
-                                        Text(text = "Log out", color = MaterialTheme.colorScheme.error)
+                                        Text(text = "Log out")
                                     }
                                 }
                             }
@@ -258,10 +279,20 @@ fun SettingsContent(
                 .align(Alignment.CenterHorizontally),
         )
         Spacer(Modifier.height(16.dp))
+        var tapCount by remember { mutableStateOf(0) }
+
+        // Trigger an action when tapCount reaches 10
+        LaunchedEffect(tapCount) {
+            if (tapCount >= 10) {
+                action(SettingsViewModel.Action.EnableFreeApp)
+                snackbarHostState.showSnackbar("Marxism enabled")
+                tapCount = 0
+            }
+        }
         Text(
             "Made in London",
             style = MaterialTheme.typography.labelMedium,
-            modifier = Modifier.align(Alignment.CenterHorizontally)
+            modifier = Modifier.align(Alignment.CenterHorizontally).clickable { tapCount++ },
         )
         Spacer(Modifier.height(24.dp))
     }

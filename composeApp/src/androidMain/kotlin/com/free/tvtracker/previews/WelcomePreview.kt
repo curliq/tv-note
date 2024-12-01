@@ -7,12 +7,44 @@ import com.free.tvtracker.ui.common.theme.TvTrackerTheme
 import com.free.tvtracker.ui.welcome.WelcomeContent
 import com.free.tvtracker.ui.welcome.WelcomeViewModel
 
-@Preview
+@Preview(showSystemUi = true)
 @Composable
 fun WelcomePreview() {
     TvTrackerTheme {
         Scaffold { a ->
-            WelcomeContent(status = WelcomeViewModel.Status.GreenLight, actionOk = {})
+            WelcomeContent(status = WelcomeViewModel.Status.GreenLight, actionOk = {}, price = "£2.99", refresh = {})
+        }
+    }
+}
+
+@Preview(showSystemUi = true)
+@Composable
+fun WelcomePreview2() {
+    TvTrackerTheme {
+        Scaffold { a ->
+            WelcomeContent(
+                status = WelcomeViewModel.Status.GreenLight,
+                actionOk = {},
+                price = "£2.99",
+                refresh = {},
+                pageIndex = 1
+            )
+        }
+    }
+}
+
+@Preview(showSystemUi = true)
+@Composable
+fun WelcomePreviewLoading() {
+    TvTrackerTheme {
+        Scaffold { a ->
+            WelcomeContent(
+                status = WelcomeViewModel.Status.LoadingPrice,
+                actionOk = {},
+                price = "£2.99",
+                refresh = {},
+                pageIndex = 1
+            )
         }
     }
 }

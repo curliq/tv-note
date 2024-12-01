@@ -42,6 +42,7 @@ CREATE TABLE local_preferences(
     -- local session id to enforce only 1 row existing
     local_prefs_id INTEGER NOT NULL PRIMARY KEY,
     welcome_complete INTEGER AS Boolean DEFAULT 0,
+    purchased_app INTEGER AS Boolean DEFAULT 0,
     theme INTEGER DEFAULT 0
 );
 
@@ -120,12 +121,13 @@ getLocalPreferences:
 SELECT * FROM local_preferences;
 
 saveLocalPreferences:
-INSERT INTO local_preferences(local_prefs_id, welcome_complete, theme)
-VALUES(?, ?, ?)
+INSERT INTO local_preferences(local_prefs_id, welcome_complete, theme, purchased_app)
+VALUES(?, ?, ?, ?)
 ON CONFLICT(local_prefs_id)
   DO UPDATE SET
   welcome_complete = excluded.welcome_complete,
-  theme = excluded.theme;
+  theme = excluded.theme,
+  purchased_app = excluded.purchased_app;
 
 getSession:
 SELECT * FROM session;

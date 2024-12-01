@@ -2,6 +2,7 @@ package com.free.tvtracker.di
 
 import com.free.tvtracker.core.Logger
 import com.free.tvtracker.data.common.sql.LocalSqlDataProvider
+import com.free.tvtracker.data.iap.IapRepository
 import com.free.tvtracker.data.search.SearchRepository
 import com.free.tvtracker.data.session.SessionRepository
 import com.free.tvtracker.data.session.SessionStore
@@ -9,6 +10,7 @@ import com.free.tvtracker.data.tracked.TrackedShowsRepository
 import com.free.tvtracker.data.tracked.WatchedEpisodesTaskQueue
 import com.free.tvtracker.domain.GetMovieByTmdbIdUseCase
 import com.free.tvtracker.domain.GetNextUnwatchedEpisodeUseCase
+import com.free.tvtracker.domain.GetPurchaseStatusUseCase
 import com.free.tvtracker.domain.GetShowStatusUseCase
 import com.free.tvtracker.domain.GetShowsUseCase
 import com.free.tvtracker.domain.GetShowByTmdbIdUseCase
@@ -59,6 +61,7 @@ fun appModules() = module {
     single<TrackedShowsRepository> { TrackedShowsRepository(get(), get(), get(), get()) }
     single<WatchedEpisodesTaskQueue> { WatchedEpisodesTaskQueue(get(), get(), get()) }
     single<SearchRepository> { SearchRepository(get()) }
+    single<IapRepository> { IapRepository(get(), get()) }
     factory<ShowSearchUiModelMapper> { ShowSearchUiModelMapper() }
     factory<MovieSearchUiModelMapper> { MovieSearchUiModelMapper() }
     factory<PersonSearchUiModelMapper> { PersonSearchUiModelMapper() }
@@ -93,4 +96,5 @@ fun appModules() = module {
     factory<SettingsUiModelMapper> { SettingsUiModelMapper() }
     factory<GetShowStatusUseCase> { GetShowStatusUseCase() }
     factory<GetNextUnwatchedEpisodeUseCase> { GetNextUnwatchedEpisodeUseCase() }
+    factory<GetPurchaseStatusUseCase> { GetPurchaseStatusUseCase(get(), get()) }
 }

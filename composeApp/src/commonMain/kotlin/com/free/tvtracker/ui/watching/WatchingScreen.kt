@@ -29,6 +29,7 @@ import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -43,6 +44,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -52,6 +54,7 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.free.tvtracker.domain.PurchaseStatus
 import com.free.tvtracker.ui.common.composables.ErrorScreen
 import com.free.tvtracker.ui.common.composables.LoadingScreen
 import com.free.tvtracker.ui.common.composables.TvImage
@@ -70,6 +73,7 @@ fun WatchingScreen(navigate: (WatchingScreenNavAction) -> Unit, viewModel: Watch
         viewModel.refresh()
     }
     val shows = viewModel.shows.collectAsState().value
+    val purchaseStatus by viewModel.status.collectAsState(PurchaseStatus(PurchaseStatus.Status.Purchased, null))
     TvTrackerTheme {
         FabContainer({ navigate(WatchingScreenNavAction.GoAddShow) }, content = {
             AnimatedContent(
@@ -78,10 +82,17 @@ fun WatchingScreen(navigate: (WatchingScreenNavAction) -> Unit, viewModel: Watch
                 contentKey = { targetState -> targetState::class }
             ) { targetState ->
                 when (targetState) {
-                    is WatchingUiState.Ok -> WatchingOk(navigate, viewModel::markEpisodeWatched, targetState)
+                    is WatchingUiState.Ok -> WatchingOk(
+                        navigate,
+                        viewModel::markEpisodeWatched,
+                        targetState,
+                        purchaseStatus,
+                        viewModel::onBuy
+                    )
+
                     WatchingUiState.Error -> ErrorScreen { viewModel.refresh() }
                     WatchingUiState.Loading -> LoadingScreen()
-                    WatchingUiState.Empty -> WatchingEmpty()
+                    WatchingUiState.Empty -> WatchingEmpty(purchaseStatus, viewModel::onBuy)
                 }
             }
         })
@@ -92,7 +103,9 @@ fun WatchingScreen(navigate: (WatchingScreenNavAction) -> Unit, viewModel: Watch
 fun WatchingOk(
     navigate: (WatchingScreenNavAction) -> Unit,
     markWatched: (Int?, Int?) -> Unit,
-    shows: WatchingUiState.Ok
+    shows: WatchingUiState.Ok,
+    purchaseStatus: PurchaseStatus,
+    onBuy: () -> Unit
 ) {
     val watchingItemHeight: Dp = calculateWatchingItemHeight()
 
@@ -102,8 +115,9 @@ fun WatchingOk(
     ) {
         if (shows.watching.isEmpty()) {
             item {
-                Box(
-                    Modifier.padding(start = TvTrackerTheme.sidePadding, bottom = 32.dp)
+                Column(
+                    Modifier.fillMaxWidth().padding(start = TvTrackerTheme.sidePadding, bottom = 32.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
                         text = "Nothing to watch. :(",
@@ -112,18 +126,19 @@ fun WatchingOk(
                     )
                 }
             }
-        }
-        itemsIndexed(
-            shows.watching,
-            key = { _, item -> item.tmdbId }
-        ) { index, show ->
-            WatchingItem(
-                show,
-                onClick = { navigate(WatchingScreenNavAction.GoShowDetails(show.tmdbId, true)) },
-                onMarkWatched = markWatched,
-                isWatchable = true,
-                modifier = Modifier.height(watchingItemHeight)
-            )
+        } else {
+            itemsIndexed(
+                shows.watching,
+                key = { _, item -> item.trackedShowId }
+            ) { index, show ->
+                WatchingItem(
+                    show,
+                    onClick = { navigate(WatchingScreenNavAction.GoShowDetails(show.tmdbId, true)) },
+                    onMarkWatched = markWatched,
+                    isWatchable = true,
+                    modifier = Modifier.height(watchingItemHeight)
+                )
+            }
         }
         if (shows.waitingNextEpisode.isNotEmpty()) {
             item(key = -1) {
@@ -139,7 +154,7 @@ fun WatchingOk(
             }
             itemsIndexed(
                 shows.waitingNextEpisode,
-                key = { _, item -> item.tmdbId }
+                key = { _, item -> item.trackedShowId }
             ) { index, show ->
                 WatchingItem(
                     show,
@@ -150,17 +165,27 @@ fun WatchingOk(
                 )
             }
         }
+        if (purchaseStatus.status != PurchaseStatus.Status.Purchased) {
+            item(key = -2) {
+                TrialView(purchaseStatus, onBuy)
+            }
+        }
     }
 }
 
 @Composable
-fun WatchingEmpty() {
+fun WatchingEmpty(status: PurchaseStatus, onBuy: () -> Unit) {
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text(
-            text = "Not tracking any show yet.",
-            style = MaterialTheme.typography.labelMedium,
-            textAlign = TextAlign.Center
-        )
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = "Not tracking any show.",
+                style = MaterialTheme.typography.labelMedium,
+                textAlign = TextAlign.Center
+            )
+            if (status.status != PurchaseStatus.Status.Purchased) {
+                TrialView(status, onBuy)
+            }
+        }
     }
 }
 
@@ -327,6 +352,24 @@ private fun WatchingItemNextEpisode(nextEpisode: WatchingItemUiModel.NextEpisode
             }
         ) { targetCount ->
             Text(targetCount.episode, style = style)
+        }
+    }
+}
+
+@Composable
+fun TrialView(status: PurchaseStatus, onBuy: () -> Unit) {
+    Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+        val trialFinished = status.status == PurchaseStatus.Status.TrialFinished
+        val addedShows = if (trialFinished) 1 else 0
+        Spacer(modifier = Modifier.height(48.dp))
+        Text(
+            "App in trial, $addedShows/1 shows tracked.",
+            style = MaterialTheme.typography.labelLarge,
+            color = if (trialFinished) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
+        )
+        Spacer(Modifier.height(8.dp))
+        Button(onClick = onBuy, modifier = Modifier.fillMaxWidth(0.5f), shape = TvTrackerTheme.ShapeButton) {
+            Text("Buy for ${status.price}")
         }
     }
 }

@@ -1,0 +1,1 @@
+ALTER TABLE local_preferences ADD COLUMN purchased_app INTEGER AS Boolean DEFAULT 0;

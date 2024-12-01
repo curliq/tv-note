@@ -93,7 +93,8 @@ class LocalSqlDataProvider(appDatabase: AppDatabase) {
         return dbQuery.getLocalPreferences(LocalPreferencesClientEntity::fromSql).executeAsOneOrNull()
             ?: LocalPreferencesClientEntity(
                 welcomeComplete = false,
-                theme = LocalPreferencesClientEntity.Theme.SystemDefault
+                theme = LocalPreferencesClientEntity.Theme.SystemDefault,
+                purchasedApp = false
             )
     }
 
@@ -101,7 +102,8 @@ class LocalSqlDataProvider(appDatabase: AppDatabase) {
         dbQuery.saveLocalPreferences(
             local_prefs_id = 1,
             welcome_complete = prefs.welcomeComplete,
-            theme = prefs.theme.value.toLong()
+            theme = prefs.theme.value.toLong(),
+            purchased_app = prefs.purchasedApp
         )
     }
 

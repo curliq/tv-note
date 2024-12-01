@@ -1,10 +1,11 @@
 package com.free.tvtracker.ui.settings
 
 import com.free.tvtracker.data.common.sql.LocalSqlDataProvider
+import com.free.tvtracker.data.iap.IapRepository
 import com.free.tvtracker.data.session.LocalPreferencesClientEntity
 import com.free.tvtracker.data.session.SessionRepository
+import com.free.tvtracker.expect.ViewModel
 import com.free.tvtracker.expect.logout
-import com.free.tvtracker.expect.ui.ViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -18,11 +19,12 @@ class SettingsViewModel(
     private val sessionRepository: SessionRepository,
     private val localDataSource: LocalSqlDataProvider,
     private val settingsUiModelMapper: SettingsUiModelMapper,
+    private val fileExporter: FileExporter,
+    private val iapRepository: IapRepository,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : ViewModel() {
 
     val data: MutableStateFlow<SettingsUiState> = MutableStateFlow(SettingsUiState.Idle)
-    val shareCsvFile: MutableStateFlow<String?> = MutableStateFlow(null)
     val theme: Flow<SettingsUiModel.Theme?> = data.map { (it as? SettingsUiState.Ok)?.data?.theme }
 
     init {
@@ -74,8 +76,13 @@ class SettingsViewModel(
                 }
 
                 Action.Export -> {
-                    sessionRepository.exportData()
-                        .coAsSuccess { shareCsvFile.emit(it) }
+                    sessionRepository.exportData().coAsSuccess {
+                        fileExporter.export(it, "tvtracker-data-export.csv")
+                    }
+                }
+
+                Action.EnableFreeApp -> {
+                    iapRepository.setAppPurchased()
                 }
             }
         }
@@ -86,6 +93,7 @@ class SettingsViewModel(
         data class SetTheme(val theme: SettingsUiModel.Theme) : Action()
         data object Logout : Action()
         data object Export : Action()
+        data object EnableFreeApp : Action()
     }
 }
 

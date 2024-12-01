@@ -124,8 +124,16 @@ struct ContentView: View {
                                 accountSelection = ""
                                 showAccount = false
                             }
-                            NavigationLink(destination: LoginScreen(vm: ViewModelsModule().loginViewModel, nav: navBack), tag: "login", selection: $accountSelection) { EmptyView() }
-                            NavigationLink(destination: SignupScreen(vm: ViewModelsModule().signupViewModel, nav: navBack), tag: "signup", selection: $accountSelection) { EmptyView() }
+                            NavigationLink(
+                                destination: LoginScreen(vm: ViewModelsModule().loginViewModel, nav: navBack).nestedBackgroundColor(isDarkTheme: colorScheme == .dark),
+                                tag: "login",
+                                selection: $accountSelection
+                            ) { EmptyView() }
+                            NavigationLink(
+                                destination: SignupScreen(vm: ViewModelsModule().signupViewModel, nav: navBack).nestedBackgroundColor(isDarkTheme: colorScheme == .dark),
+                                tag: "signup",
+                                selection: $accountSelection
+                            ) { EmptyView() }
                         }
                     }
                     .sheetBackgroundColor(isDarkTheme: colorScheme == .dark)
@@ -200,6 +208,7 @@ struct ContentView: View {
                 Label("Discover", systemImage: "safari")
             }
         }
+        .nestedBackgroundColor(isDarkTheme: colorScheme == .dark)
         .onAppear() {
             let standardAppearance = UITabBarAppearance()
             standardAppearance.configureWithTransparentBackground()
@@ -211,7 +220,8 @@ struct ContentView: View {
             UITabBar.appearance().standardAppearance = standardAppearance
             
             // back button
-            let navbarAppearance = UINavigationBarAppearance();            navbarAppearance.backButtonAppearance.normal.titleTextAttributes = [
+            let navbarAppearance = UINavigationBarAppearance();
+            navbarAppearance.backButtonAppearance.normal.titleTextAttributes = [
                 .font: UIFont(name: "IBMPlexSans-Regular", size: 17)!
             ]
             UINavigationBar.appearance().standardAppearance = navbarAppearance
@@ -356,7 +366,7 @@ extension View {
     func eraseToAnyView() -> AnyView {
         AnyView(self)
     }
-
+    
     func hideToolbar() -> some View {
         if #available(iOS 16.0, *) {
             return self.toolbar(.hidden)
@@ -364,7 +374,7 @@ extension View {
             return self.navigationBarHidden(true)
         }
     }
-
+    
     func styleToolbar(title: String) -> some View {
         return self.navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -374,10 +384,19 @@ extension View {
                 }
             }
     }
-
+    
     func sheetBackgroundColor(isDarkTheme: Bool) -> some View {
         if #available(iOS 16.4, *) {
             return self.presentationBackground(isDarkTheme ? .black : .white)
+        } else {
+            return self
+        }
+    }
+    
+    func nestedBackgroundColor(isDarkTheme: Bool) -> some View {
+        if #available(iOS 16.4, *) {
+            let color = isDarkTheme ? Color.black : Color.white
+            return self.background(color.ignoresSafeArea())
         } else {
             return self
         }

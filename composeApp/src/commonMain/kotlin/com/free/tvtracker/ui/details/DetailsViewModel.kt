@@ -1,17 +1,24 @@
 package com.free.tvtracker.ui.details
 
-import com.free.tvtracker.expect.ui.ViewModel
+import com.free.tvtracker.expect.ViewModel
 import com.free.tvtracker.data.tracked.MarkEpisodeWatched
 import com.free.tvtracker.data.tracked.TrackedShowsRepository
 import com.free.tvtracker.domain.GetMovieByTmdbIdUseCase
+import com.free.tvtracker.domain.GetPurchaseStatusUseCase
 import com.free.tvtracker.domain.GetShowByTmdbIdUseCase
+import com.free.tvtracker.domain.PurchaseStatus
 import com.free.tvtracker.ui.details.mappers.DetailsUiModelForMovieMapper
 import com.free.tvtracker.ui.details.mappers.DetailsUiModelForShowMapper
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -21,12 +28,14 @@ class DetailsViewModel(
     private val trackedShowsRepository: TrackedShowsRepository,
     private val getShowByTmdbIdUseCase: GetShowByTmdbIdUseCase,
     private val getMovieByTmdbIdUseCase: GetMovieByTmdbIdUseCase,
+    private val purchaseStatus: GetPurchaseStatusUseCase,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : ViewModel() {
 
     data class LoadContent(val tmdbId: Int, val isTvShow: Boolean)
 
     val result: MutableStateFlow<DetailsUiState> = MutableStateFlow(DetailsUiState.Loading)
+    val isActionsAllowed: Flow<Boolean> = purchaseStatus.invoke().map { it.status == PurchaseStatus.Status.Purchased }
 
     fun getShareLink(): String = (result.value as? DetailsUiState.Ok)?.data?.homepageUrl ?: "Missing url"
 

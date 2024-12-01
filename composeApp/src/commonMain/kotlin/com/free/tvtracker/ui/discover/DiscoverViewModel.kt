@@ -4,7 +4,7 @@ import com.free.tvtracker.data.search.SearchRepository
 import com.free.tvtracker.data.tracked.TrackedShowsRepository
 import com.free.tvtracker.discover.response.RecommendedContentApiResponse
 import com.free.tvtracker.expect.CommonStringUtils
-import com.free.tvtracker.expect.ui.ViewModel
+import com.free.tvtracker.expect.ViewModel
 import com.free.tvtracker.ui.common.TmdbConfigData
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers

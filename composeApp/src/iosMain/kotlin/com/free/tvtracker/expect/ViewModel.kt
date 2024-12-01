@@ -1,4 +1,4 @@
-package com.free.tvtracker.expect.ui
+package com.free.tvtracker.expect
 
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
@@ -13,6 +13,7 @@ actual abstract class ViewModel {
      * is cancelled in [clear]
      */
     protected actual open fun onClear() {
+        viewModelScope.cancel()
     }
 
     /**
@@ -21,6 +22,5 @@ actual abstract class ViewModel {
      */
     fun clear() {
         onClear()
-        viewModelScope.cancel()
     }
 }

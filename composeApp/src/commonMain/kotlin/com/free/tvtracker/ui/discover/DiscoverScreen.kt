@@ -173,7 +173,10 @@ fun DiscoverOk(
                 seeAllAction = { navigate(DiscoverScreenNavActions.GoTrending) })
             Spacer(Modifier.height(24.dp))
 
-            Text("New episode out soon", style = MaterialTheme.typography.titleLarge)
+            Text(
+                if (filterTvShows) "New episode out soon" else "Upcoming releases",
+                style = MaterialTheme.typography.titleLarge
+            )
             Spacer(Modifier.height(8.dp))
             DiscoverRow(
                 data.showsReleasedSoonPreview,

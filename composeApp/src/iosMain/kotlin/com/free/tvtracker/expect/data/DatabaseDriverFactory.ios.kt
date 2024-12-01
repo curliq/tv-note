@@ -14,14 +14,14 @@ actual class DatabaseDriverFactory actual constructor() {
 
         val dbConfig = DatabaseConfiguration(
             name = DatabaseNameIos,
-            version = 1,
+            version = 3,
             extendedConfig = Extended(foreignKeyConstraints = true),
             create = { connection ->
                 wrapConnection(connection) { Schema.create(it) }
             },
-//            upgrade = { connection, oldVersion, newVersion ->
-//                wrapConnection(connection) { Schema.migrate(it, oldVersion, newVersion) }
-//            }
+            upgrade = { connection, oldVersion, newVersion ->
+                wrapConnection(connection) { Schema.migrate(it, oldVersion, newVersion) }
+            }
         )
         return NativeSqliteDriver(dbConfig)
     }

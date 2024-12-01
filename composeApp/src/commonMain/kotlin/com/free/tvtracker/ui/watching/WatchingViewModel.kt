@@ -1,12 +1,16 @@
 package com.free.tvtracker.ui.watching
 
-import com.free.tvtracker.expect.ui.ViewModel
+import com.free.tvtracker.data.iap.IapRepository
 import com.free.tvtracker.data.tracked.MarkEpisodeWatched
 import com.free.tvtracker.data.tracked.TrackedShowsRepository
+import com.free.tvtracker.domain.GetPurchaseStatusUseCase
 import com.free.tvtracker.domain.IsTrackedShowWatchableUseCase
+import com.free.tvtracker.domain.PurchaseStatus
+import com.free.tvtracker.expect.ViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
@@ -15,17 +19,20 @@ class WatchingViewModel(
     private val getWatchingShows: GetWatchingShowsUseCase,
     private val isTrackedShowWatchableUseCase: IsTrackedShowWatchableUseCase,
     private val watchingShowUiModelMapper: WatchingShowUiModelMapper,
+    private val purchaseStatus: GetPurchaseStatusUseCase,
+    private val iapRepository: IapRepository,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : ViewModel() {
+
     val shows: MutableStateFlow<WatchingUiState> = MutableStateFlow(WatchingUiState.Loading)
+    val status: Flow<PurchaseStatus> = purchaseStatus.invoke()
 
     init {
         viewModelScope.launch(ioDispatcher) {
             getWatchingShows().collect { data ->
                 if (data.status.fetched == null) {
                     shows.value = WatchingUiState.Loading
-                }
-                else if (data.status.success) {
+                } else if (data.status.success) {
                     if (data.data.isEmpty()) {
                         shows.value = WatchingUiState.Empty
                     } else {
@@ -36,8 +43,7 @@ class WatchingViewModel(
                                 .map(watchingShowUiModelMapper.map())
                         )
                     }
-                }
-                else {
+                } else {
                     shows.value = WatchingUiState.Error
                 }
             }
@@ -60,6 +66,12 @@ class WatchingViewModel(
             episodeId?.let {
                 trackedShowsRepository.markEpisodeAsWatched(listOf(MarkEpisodeWatched(showId!!, it)))
             }
+        }
+    }
+
+    fun onBuy() {
+        viewModelScope.launch(ioDispatcher) {
+            iapRepository.purchase()
         }
     }
 }

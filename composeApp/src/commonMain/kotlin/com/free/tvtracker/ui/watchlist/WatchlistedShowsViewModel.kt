@@ -1,12 +1,16 @@
 package com.free.tvtracker.ui.watchlist
 
+import com.free.tvtracker.data.iap.IapRepository
 import com.free.tvtracker.data.tracked.TrackedShowsRepository
+import com.free.tvtracker.domain.GetPurchaseStatusUseCase
 import com.free.tvtracker.domain.GetShowsUseCase
 import com.free.tvtracker.domain.GetWatchlistedShowsUseCase
-import com.free.tvtracker.expect.ui.ViewModel
+import com.free.tvtracker.domain.PurchaseStatus
+import com.free.tvtracker.expect.ViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.update
@@ -17,9 +21,12 @@ class WatchlistedShowsViewModel(
     private val getShowsUseCase: GetShowsUseCase,
     private val getWatchlistedShowsUseCase: GetWatchlistedShowsUseCase,
     private val mapper: WatchlistShowUiModelMapper,
+    private val purchaseStatus: GetPurchaseStatusUseCase,
+    private val iapRepository: IapRepository,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : ViewModel() {
     val shows: MutableStateFlow<WatchlistUiState> = MutableStateFlow(WatchlistUiState.Loading)
+    val status: Flow<PurchaseStatus> = purchaseStatus.invoke()
 
     init {
         viewModelScope.launch(ioDispatcher) {
@@ -69,12 +76,19 @@ class WatchlistedShowsViewModel(
                     } else it
                 }
             }
+
+            WatchlistedAction.Buy -> {
+                viewModelScope.launch(ioDispatcher) {
+                    iapRepository.purchase()
+                }
+            }
         }
     }
 
     sealed class WatchlistedAction {
         data object ToggleTvShows : WatchlistedAction()
         data object ToggleMovies : WatchlistedAction()
+        data object Buy : WatchlistedAction()
     }
 }
 

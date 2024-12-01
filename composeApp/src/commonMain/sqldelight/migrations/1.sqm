@@ -1,4 +1,4 @@
-CREATE TABLE episode_watched_order(
+CREATE TABLE IF NOT EXISTS episode_watched_order(
     id TEXT NOT NULL PRIMARY KEY,
     show_id INTEGER NOT NULL,
     stored_episode_id TEXT NOT NULL

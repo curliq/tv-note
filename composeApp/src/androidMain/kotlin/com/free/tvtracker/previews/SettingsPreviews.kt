@@ -1,6 +1,7 @@
 package com.free.tvtracker.previews
 
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.free.tvtracker.ui.common.theme.TvTrackerTheme
@@ -24,7 +25,7 @@ fun SettingsPreview() {
     )
     TvTrackerTheme {
         Scaffold { a ->
-            SettingsContent(data, {}, { })
+            SettingsContent(data, SnackbarHostState(), {}, { })
         }
     }
 }

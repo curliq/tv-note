@@ -40,10 +40,10 @@ class SessionRepository(
             try {
                 storeSession(res)
                 sessionStore.token = session.data!!.authToken
+                return true
             } catch (e: Exception) {
                 return false
             }
-            return true
         } else {
             return false
         }
@@ -109,7 +109,7 @@ class SessionRepository(
     suspend fun exportData(): DataExportApiResponse {
         return try {
             httpClient.call(Endpoints.getDataExport)
-        } catch (e:Throwable) {
+        } catch (e: Throwable) {
             DataExportApiResponse.error(ApiError.Unknown)
         }
     }

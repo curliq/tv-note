@@ -6,6 +6,7 @@ accompanistNavigationMaterial = "0.35.0-alpha"
 agp = "8.6.0-alpha07"
 androidx-activityCompose = "1.9.3"
 androidx-appcompat = "1.7.0"
+billingAndroid = "7.1.1"
 compose = "1.7.5"
 compose-plugin = "1.8.0-dev1905"
 coreSplashscreen = "1.0.1"
@@ -13,12 +14,12 @@ foundation = "1.7.0-dev1690"
 landscapistCoil3 = "2.4.2"
 opencsv = "5.9"
 posthogAndroid = "3.4.2"
+sentryKotlinMultiplatform = "0.10.0"
 sentrySpring = "7.11.0"
-sentryAndroid = "7.16.0"
 sentryLogback = "7.3.0"
 sqldelightCoroutinesExtensions = "1.5.5"
 firebaseAdmin = "9.4.0"
-firebaseMessaging = "24.0.3"
+firebaseMessaging = "24.1.0"
 koinCore = "3.5.3"
 kotlin = "2.1.0-RC"
 kotlinxCoroutinesCore = "1.9.0"
@@ -27,7 +28,7 @@ kotlinxSerializationJson = "1.7.3"
 ktorClient = "3.0.1"
 logbackClassic = "1.5.0"
 mockk = "1.13.10"
-navigationCompose = "2.8.3"
+navigationCompose = "2.8.4"
 sqldelight = "1.5.5"
 slf4jAndroid = "1.7.36"
 spring = "3.2.3"
@@ -39,12 +40,14 @@ uuid = "0.8.4"
 [libraries]
 accompanist-navigation-material = { module = "com.google.accompanist:accompanist-navigation-material", version.ref = "accompanistNavigationMaterial" }
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
+billing = { module = "com.android.billingclient:billing", version.ref = "billingAndroid" }
+billing-ktx = { module = "com.android.billingclient:billing-ktx", version.ref = "billingAndroid" }
 compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "foundation" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 landscapist-coil3 = { module = "com.github.skydoves:landscapist-coil3", version.ref = "landscapistCoil3" }
 opencsv = { module = "com.opencsv:opencsv", version.ref = "opencsv" }
 posthog-android = { module = "com.posthog:posthog-android", version.ref = "posthogAndroid" }
-sentry-android = { module = "io.sentry:sentry-android", version.ref = "sentryAndroid" }
+sentry-kotlin-multiplatform = { module = "io.sentry:sentry-kotlin-multiplatform", version.ref = "sentryKotlinMultiplatform" }
 sentry-logback = { module = "io.sentry:sentry-logback", version.ref = "sentryLogback" }
 sentry-spring-boot-starter-jakarta = { module = "io.sentry:sentry-spring-boot-starter-jakarta", version.ref = "sentrySpring" }
 sqldelight-coroutines-extensions = { module = "com.squareup.sqldelight:coroutines-extensions", version.ref = "sqldelightCoroutinesExtensions" }
@@ -88,6 +91,7 @@ kotlinReflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }
 jjtw = { module = "io.jsonwebtoken:jjwt", version = "0.12.3" }
 flywayPostgres = { module = "org.flywaydb:flyway-database-postgresql", version.ref = "flyway" }
 postgres = { module = "org.postgresql:postgresql", version = "42.7.3" }
+sqlite-driver = { module = "com.squareup.sqldelight:sqlite-driver", version.ref = "sqldelightCoroutinesExtensions" }
 testSpringBoot = { module = "org.springframework.boot:spring-boot-starter-test" }
 testSpringBootSecurity = { module = "org.springframework.security:spring-security-test" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
