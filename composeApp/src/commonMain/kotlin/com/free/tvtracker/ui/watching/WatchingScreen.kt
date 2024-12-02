@@ -69,9 +69,6 @@ sealed class WatchingScreenNavAction {
 
 @Composable
 fun WatchingScreen(navigate: (WatchingScreenNavAction) -> Unit, viewModel: WatchingViewModel) {
-    LaunchedEffect(Unit) {
-        viewModel.refresh()
-    }
     val shows = viewModel.shows.collectAsState().value
     val purchaseStatus by viewModel.status.collectAsState(PurchaseStatus(PurchaseStatus.Status.Purchased, null))
     TvTrackerTheme {

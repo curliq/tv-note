@@ -285,7 +285,7 @@ private fun TrackAction(
                         Icons.Rounded.Check,
                         "",
                         modifier = Modifier.size(16.dp).align(Alignment.Center),
-                        tint = Color.Black,
+                        tint = MaterialTheme.colorScheme.onBackground,
                     )
                 }
                 this@Row.AnimatedVisibility(

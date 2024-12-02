@@ -48,6 +48,7 @@ class WatchingViewModel(
                 }
             }
         }
+        refresh()
     }
 
     fun refresh() {

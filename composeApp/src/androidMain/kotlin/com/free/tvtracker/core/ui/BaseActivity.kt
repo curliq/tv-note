@@ -33,7 +33,7 @@ open class BaseActivity : AppCompatActivity() {
         this.lifecycleScope.launch {
             settingsViewModel.theme.collectLatest {
                 val mode = when (it) {
-                    SettingsUiModel.Theme.System, null -> AppCompatDelegate.MODE_NIGHT_NO
+                    SettingsUiModel.Theme.System, null -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
                     SettingsUiModel.Theme.Dark -> AppCompatDelegate.MODE_NIGHT_YES
                     SettingsUiModel.Theme.Light -> AppCompatDelegate.MODE_NIGHT_NO
                 }

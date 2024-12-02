@@ -65,9 +65,6 @@ sealed class WatchlistScreenNavAction {
 
 @Composable
 fun WatchlistScreen(viewModel: WatchlistedShowsViewModel, navigate: (WatchlistScreenNavAction) -> Unit) {
-    LaunchedEffect(Unit) {
-        viewModel.refresh()
-    }
     val shows = viewModel.shows.collectAsState().value
     val purchaseStatus by viewModel.status.collectAsState(PurchaseStatus(PurchaseStatus.Status.Purchased, null))
 

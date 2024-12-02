@@ -46,9 +46,6 @@ sealed class FinishedScreenNavAction {
 
 @Composable
 fun FinishedScreen(navigate: (FinishedScreenNavAction) -> Unit, viewModel: FinishedShowsViewModel) {
-    LaunchedEffect(Unit) {
-        viewModel.refresh()
-    }
     val shows = viewModel.shows.collectAsState().value
     val purchaseStatus by viewModel.status.collectAsState(PurchaseStatus(PurchaseStatus.Status.Purchased, null))
 

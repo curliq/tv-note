@@ -12,7 +12,12 @@ import com.free.tvtracker.ui.welcome.WelcomeViewModel
 fun WelcomePreview() {
     TvTrackerTheme {
         Scaffold { a ->
-            WelcomeContent(status = WelcomeViewModel.Status.GreenLight, actionOk = {}, price = "£2.99", refresh = {})
+            WelcomeContent(
+                status = WelcomeViewModel.Status.GreenLight,
+                actionOk = {},
+                price = "£2.99",
+                buy = {},
+                refresh = {})
         }
     }
 }
@@ -27,6 +32,7 @@ fun WelcomePreview2() {
                 actionOk = {},
                 price = "£2.99",
                 refresh = {},
+                buy = {},
                 pageIndex = 1
             )
         }
@@ -43,6 +49,7 @@ fun WelcomePreviewLoading() {
                 actionOk = {},
                 price = "£2.99",
                 refresh = {},
+                buy = {},
                 pageIndex = 1
             )
         }

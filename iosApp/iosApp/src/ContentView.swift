@@ -320,12 +320,15 @@ struct ContentView: View {
         case .personPhotos:
             return PersonPhotosDetails(vm: personViewModel).eraseToAnyView()
         case .newReleases:
-            return NewReleasesScreen(discoverViewModel: discoverViewModel, nav: discoverNav(path: $path4))
+            return AnyView(NewReleasesScreen(discoverViewModel: discoverViewModel, nav: discoverNav(path: $path4)))
         case .recommended:
-            return RecommendedScreen(discoverViewModel: discoverViewModel, nav: recommendedNav)
+            return AnyView(RecommendedScreen(discoverViewModel: discoverViewModel, nav: recommendedNav))
         case .trending:
-            return TrendingScreen(discoverViewModel: discoverViewModel, nav: discoverNav(path: $path4))
+            return AnyView(TrendingScreen(discoverViewModel: discoverViewModel, nav: discoverNav(path: $path4)))
+        default:
+            return AnyView(Text("error"))
         }
+        
     }
 }
 

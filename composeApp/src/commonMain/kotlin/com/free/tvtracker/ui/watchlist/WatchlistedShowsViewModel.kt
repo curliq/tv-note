@@ -50,6 +50,7 @@ class WatchlistedShowsViewModel(
                     }
                 }
         }
+        refresh()
     }
 
     fun refresh() {

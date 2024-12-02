@@ -74,7 +74,7 @@ class TrackedShowsRepository(
         val localWatching = localDataSource.getTrackedShows().map { it.toApiModel() }.filter { !it.watchlisted }
         if (localWatching.isNotEmpty()) {
             _watchingShows.emit(ShowsDataStatus(false, true))
-            allShows.emit(allShows.value.plus(localWatching))
+            allShows.emit(allShows.value.plus(localWatching).distinctBy { it.typedId })
         }
         fetch(_watchingShows, ::getTrackedShows, ignoreResultIfError = true).coAsSuccess {
             _watchingShows.emit(ShowsDataStatus(true, true))
@@ -108,7 +108,9 @@ class TrackedShowsRepository(
             TrackedShowsApiResponse.error(ApiError.Network)
         }
         if (res.isSuccess()) {
-            allShows.update { it.plus(res.data!!).distinctBy { it.typedId } }
+            allShows.update {
+                it.plus(res.data!!).distinctBy { it.typedId }
+            }
         }
         if (!ignoreResultIfError) {
             flow.emit(ShowsDataStatus(true, res.isSuccess()))

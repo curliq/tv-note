@@ -55,6 +55,7 @@ class FinishedShowsViewModel(
                     }
                 }
         }
+        refresh()
     }
 
     fun refresh() {
