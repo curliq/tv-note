@@ -66,7 +66,7 @@ sealed class WatchlistScreenNavAction {
 @Composable
 fun WatchlistScreen(viewModel: WatchlistedShowsViewModel, navigate: (WatchlistScreenNavAction) -> Unit) {
     val shows = viewModel.shows.collectAsState().value
-    val purchaseStatus by viewModel.status.collectAsState(PurchaseStatus(PurchaseStatus.Status.Purchased, null))
+    val purchaseStatus by viewModel.status.collectAsState(PurchaseStatus(PurchaseStatus.Status.Purchased, "$2.99"))
 
     TvTrackerTheme {
         FabContainer({ navigate(WatchlistScreenNavAction.GoAddShow) }, content = {

@@ -24,9 +24,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,6 +49,7 @@ import com.free.tvtracker.ui.common.theme.TvTrackerTheme
 import com.free.tvtracker.ui.common.theme.TvTrackerTheme.sidePadding
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.coil3.CoilImage
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @Composable
@@ -53,12 +58,23 @@ fun WelcomeScreen(
     viewModel: WelcomeViewModel,
     modifier: Modifier = Modifier,
 ) {
+    val snackbarHostState = remember { SnackbarHostState() }
+    LaunchedEffect(Unit) {
+        viewModel.toaster.collectLatest {
+            it?.let {
+                snackbarHostState.showSnackbar(it)
+            }
+        }
+    }
     val status = viewModel.status.collectAsState().value
     if (status == WelcomeViewModel.Status.GoToHome) {
         navigateHome()
     } else {
         TvTrackerTheme {
-            Scaffold(modifier = modifier) {
+            Scaffold(
+                modifier = modifier,
+                snackbarHost = { SnackbarHost(snackbarHostState) },
+            ) {
                 WelcomeContent(
                     status,
                     viewModel.price.collectAsState().value,

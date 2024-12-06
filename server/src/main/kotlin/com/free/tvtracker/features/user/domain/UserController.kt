@@ -67,7 +67,7 @@ class UserController(
     }
 
     @PostMapping(Endpoints.Path.UPDATE_PREFERENCES)
-    fun updatePreferences(@RequestBody body : UpdatePreferencesApiRequestBody): ResponseEntity<UserApiResponse> {
+    fun updatePreferences(@RequestBody body: UpdatePreferencesApiRequestBody): ResponseEntity<UserApiResponse> {
         val result = userService.updatePreferences(body)
         return if (result != null) {
             ResponseEntity.ok(UserApiResponse.ok(userApiModelMapper.map(result)))

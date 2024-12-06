@@ -29,10 +29,9 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
 expect fun getHttpClient(block: HttpClientConfig<*>.() -> Unit): HttpClient
-
 expect fun getServerUrl(): String
-
 expect fun getServerPort(): String
+expect fun getUserAgent(): String
 
 open class TvHttpClient(private val sessionStore: SessionStore) {
 
@@ -76,6 +75,7 @@ open class TvHttpClient(private val sessionStore: SessionStore) {
                         "Bearer $it"
                     )
                 }
+                append("User-Agent", "ktor-client-${getUserAgent()}")
             }
             execute(request)
         }

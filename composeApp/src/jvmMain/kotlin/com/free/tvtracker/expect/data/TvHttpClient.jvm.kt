@@ -9,5 +9,5 @@ actual fun getHttpClient(block: HttpClientConfig<*>.() -> Unit): HttpClient {
 }
 
 actual fun getServerUrl(): String = ""
-
 actual fun getServerPort(): String = ""
+actual fun getUserAgent(): String = "jvm"

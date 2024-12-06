@@ -8,25 +8,7 @@ import ComposeApp
 import StoreKit
 
 class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {
-    func application(_ application: UIApplication,
-                     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-        
-        // Firebase libraries from SPM only work for arm64 but not m1 simulators for undoubtedly good and valid reasons
-#if (!targetEnvironment(simulator))
-        FirebaseApp.configure()
-        UNUserNotificationCenter.current().delegate = self
-        
-        let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
-        UNUserNotificationCenter.current().requestAuthorization(
-            options: authOptions,
-            completionHandler: { _, _ in }
-        )
-        
-        application.registerForRemoteNotifications()
-#endif
-        return true
-    }
-    
+
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
 #if (!targetEnvironment(simulator))
         Messaging.messaging().setAPNSToken(deviceToken, type: .unknown)
@@ -102,8 +84,11 @@ class IosAppPriceProvider: AppPriceProvider {
     func buyApp(completionHandler: @escaping (KotlinBoolean?, (any Error)?) -> Void) {
         Task {
             do {
-                let product = try await Product.products(for: ["01"]).first
-                let result = try await product!.purchase()
+                guard let product = try await Product.products(for: ["02"]).first else {
+                    completionHandler(false, nil)
+                    return
+                }
+                let result = try await product.purchase()
                 switch result {
                 case .success(let verificationResult):
                     switch verificationResult {
@@ -136,7 +121,7 @@ class IosAppPriceProvider: AppPriceProvider {
     
     
     func appPrice(completionHandler: @escaping (String?, (any Error)?) -> Void) {
-        let request = SKProductsRequest(productIdentifiers: ["01"])
+        let request = SKProductsRequest(productIdentifiers: ["02"])
         
         let delegate = ProductsRequestDelegate { result in
             switch result {

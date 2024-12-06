@@ -114,7 +114,7 @@ class UserService(
     }
 
     fun saveFcmToken(token: String) {
-        val user = getAuthenticatedUser() ?: return
+        val user = getAuthenticatedUser()!!
         user.fcmToken = token
         userJpaRepository.save(user)
     }

@@ -40,11 +40,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.LargeFloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -61,6 +64,7 @@ import com.free.tvtracker.ui.common.composables.TvImage
 import com.free.tvtracker.ui.common.composables.posterRatio
 import com.free.tvtracker.ui.common.theme.ScreenContentAnimation
 import com.free.tvtracker.ui.common.theme.TvTrackerTheme
+import kotlinx.coroutines.flow.collectLatest
 
 sealed class WatchingScreenNavAction {
     data class GoShowDetails(val tmdbShowId: Int, val isTvShow: Boolean) : WatchingScreenNavAction()
@@ -70,29 +74,40 @@ sealed class WatchingScreenNavAction {
 @Composable
 fun WatchingScreen(navigate: (WatchingScreenNavAction) -> Unit, viewModel: WatchingViewModel) {
     val shows = viewModel.shows.collectAsState().value
-    val purchaseStatus by viewModel.status.collectAsState(PurchaseStatus(PurchaseStatus.Status.Purchased, null))
-    TvTrackerTheme {
-        FabContainer({ navigate(WatchingScreenNavAction.GoAddShow) }, content = {
-            AnimatedContent(
-                shows,
-                transitionSpec = ScreenContentAnimation(),
-                contentKey = { targetState -> targetState::class }
-            ) { targetState ->
-                when (targetState) {
-                    is WatchingUiState.Ok -> WatchingOk(
-                        navigate,
-                        viewModel::markEpisodeWatched,
-                        targetState,
-                        purchaseStatus,
-                        viewModel::onBuy
-                    )
-
-                    WatchingUiState.Error -> ErrorScreen { viewModel.refresh() }
-                    WatchingUiState.Loading -> LoadingScreen()
-                    WatchingUiState.Empty -> WatchingEmpty(purchaseStatus, viewModel::onBuy)
-                }
+    val purchaseStatus by viewModel.status.collectAsState(PurchaseStatus(PurchaseStatus.Status.Purchased, "$2.99"))
+    val snackbarHostState = remember { SnackbarHostState() }
+    LaunchedEffect(Unit) {
+        viewModel.toaster.collectLatest {
+            it?.let {
+                snackbarHostState.showSnackbar(it)
             }
-        })
+        }
+    }
+    TvTrackerTheme {
+        FabContainer(
+            { navigate(WatchingScreenNavAction.GoAddShow) },
+            snackbarHost = { SnackbarHost(snackbarHostState) },
+            content = {
+                AnimatedContent(
+                    shows,
+                    transitionSpec = ScreenContentAnimation(),
+                    contentKey = { targetState -> targetState::class }
+                ) { targetState ->
+                    when (targetState) {
+                        is WatchingUiState.Ok -> WatchingOk(
+                            navigate,
+                            viewModel::markEpisodeWatched,
+                            targetState,
+                            purchaseStatus,
+                            viewModel::onBuy
+                        )
+
+                        WatchingUiState.Error -> ErrorScreen { viewModel.refresh() }
+                        WatchingUiState.Loading -> LoadingScreen()
+                        WatchingUiState.Empty -> WatchingEmpty(purchaseStatus, viewModel::onBuy)
+                    }
+                }
+            })
     }
 }
 
@@ -191,6 +206,7 @@ fun FabContainer(
     navigate: () -> Unit,
     icon: ImageVector = Icons.Default.Add,
     largeFab: Boolean = false,
+    snackbarHost: @Composable () -> Unit = {},
     content: @Composable (PaddingValues) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -213,7 +229,8 @@ fun FabContainer(
                 }
             }
         },
-        content = content
+        content = content,
+        snackbarHost = snackbarHost
     )
 }
 

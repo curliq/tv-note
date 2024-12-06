@@ -285,7 +285,7 @@ fun SettingsContent(
         LaunchedEffect(tapCount) {
             if (tapCount >= 10) {
                 action(SettingsViewModel.Action.EnableFreeApp)
-                snackbarHostState.showSnackbar("Marxism enabled")
+                snackbarHostState.showSnackbar("Communism enabled")
                 tapCount = 0
             }
         }

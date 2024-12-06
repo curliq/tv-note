@@ -16,7 +16,6 @@ import androidx.compose.material3.InputChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -47,7 +46,7 @@ sealed class FinishedScreenNavAction {
 @Composable
 fun FinishedScreen(navigate: (FinishedScreenNavAction) -> Unit, viewModel: FinishedShowsViewModel) {
     val shows = viewModel.shows.collectAsState().value
-    val purchaseStatus by viewModel.status.collectAsState(PurchaseStatus(PurchaseStatus.Status.Purchased, null))
+    val purchaseStatus by viewModel.status.collectAsState(PurchaseStatus(PurchaseStatus.Status.Purchased, "$2.99"))
 
     TvTrackerTheme {
         FabContainer({ navigate(FinishedScreenNavAction.GoAddShow) }, content = {

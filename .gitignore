@@ -50,3 +50,4 @@ server/db_update.sql
 db_update.sql
 composeApp/release/*
 iosApp/Secrets.plist
+publishing/*

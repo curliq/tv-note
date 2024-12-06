@@ -7,6 +7,7 @@ import com.free.tvtracker.expect.ViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -20,6 +21,7 @@ class WelcomeViewModel(
 
     val status = MutableStateFlow(Status.LoadingPrice)
     val price = MutableStateFlow("")
+    val toaster: MutableSharedFlow<String?> = MutableSharedFlow()
 
     init {
         refresh()
@@ -48,7 +50,7 @@ class WelcomeViewModel(
 
     fun refresh() {
         viewModelScope.launch(ioDispatcher) {
-            val price = iapRepository.getPrice()
+            val price = iapRepository.getPrice() ?: "$2.99" //todo remove 2.99
             if (price == null) {
                 status.emit(Status.InitialisationError)
             } else {
@@ -80,6 +82,8 @@ class WelcomeViewModel(
             val res = iapRepository.purchase()
             if (res) {
                 actionOk()
+            } else {
+                toaster.emit("Error completing purchase, try again later.")
             }
         }
     }

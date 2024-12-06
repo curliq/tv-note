@@ -25,3 +25,5 @@ actual fun getServerUrl(): String {
 actual fun getServerPort(): String {
     return BuildConfig.SERVER_PORT
 }
+
+actual fun getUserAgent(): String = "android"

@@ -44,7 +44,6 @@ class MainActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        MainActivity::class.java.name
         setContent {
             val appNavController = remember { AppNavController() }
             val currentDestination = appNavController.rememberCurrentDestination()

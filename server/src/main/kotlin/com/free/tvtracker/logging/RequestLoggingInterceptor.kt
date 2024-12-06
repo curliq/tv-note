@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
 import org.springframework.web.servlet.HandlerInterceptor
+import org.springframework.web.util.ContentCachingResponseWrapper
 import java.util.Enumeration
 
 /**
@@ -24,13 +25,20 @@ class RequestResponseLogInterceptor : OncePerRequestFilter() {
         response: HttpServletResponse,
         filterChain: FilterChain
     ) {
+        val wrappedResponse = ContentCachingResponseWrapper(response)
+
         // Continue with the next filter in the chain
         filterChain.doFilter(request, response)
 
         // Log the response status after the request has been processed
         requestLogger.debug("Request completed: ${response.status}")
         if (response.status >= 400) {
-            val error = "Request unsuccessful: ${request.method} ${request.requestURI}${getParameters(request)}"
+            val responseBody: ByteArray = wrappedResponse.contentAsByteArray
+            val responseString = java.lang.String(responseBody, wrappedResponse.characterEncoding)
+
+            val error = "Request unsuccessful: ${response.status} ${request.method} ${request.requestURI}${getParameters(request)}\n" +
+                "headers: ${response.headerNames.map { "$it: ${response.getHeader(it)}, " }}\n" +
+                "body: $responseString"
             requestLogger.error(Throwable(error))
         }
     }

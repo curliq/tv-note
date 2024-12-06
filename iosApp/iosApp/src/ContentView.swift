@@ -1,4 +1,5 @@
 import UIKit
+import FirebaseCore
 import SwiftUI
 import ComposeApp
 
@@ -235,6 +236,28 @@ struct ContentView: View {
             UINavigationBar.appearance().titleTextAttributes = [
                 .font: UIFont(name: "IBMPlexSans-Semibold", size: 17)!
             ]
+            
+            // push permission
+            
+            // Firebase libraries from SPM only work for arm64
+            // but not m1 simulators for undoubtedly good and valid reasons
+    #if (!targetEnvironment(simulator))
+            FirebaseApp.configure()
+            let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
+            UNUserNotificationCenter.current().requestAuthorization(
+                options: authOptions,
+                completionHandler: { granted, error in
+                    if (granted) {
+                        DispatchQueue.main.async {
+                            UIApplication.shared.registerForRemoteNotifications()
+                        }
+                    }
+                
+                }
+            )
+            
+            
+    #endif
         }
     }
     

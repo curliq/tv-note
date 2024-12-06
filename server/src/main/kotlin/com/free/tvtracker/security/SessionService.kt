@@ -16,7 +16,6 @@ class SessionService {
         authorities.add(authority)
         val authenticatedUser = UsernamePasswordAuthenticationToken(userId, null, authorities)
         authenticatedUser.details = WebAuthenticationDetailsSource().buildDetails(request)
-        println("user: $userId, role: $role, request: $request")
         SecurityContextHolder.getContext().authentication = authenticatedUser
     }
 

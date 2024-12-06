@@ -10,7 +10,9 @@ import com.free.tvtracker.expect.ViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
@@ -70,9 +72,12 @@ class WatchingViewModel(
         }
     }
 
+    val toaster: MutableSharedFlow<String?> = MutableSharedFlow()
     fun onBuy() {
         viewModelScope.launch(ioDispatcher) {
-            iapRepository.purchase()
+            if (!iapRepository.purchase()) {
+                toaster.emit("Error completing purchase, try again later.")
+            }
         }
     }
 }

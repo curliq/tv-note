@@ -18,3 +18,5 @@ actual fun getServerPort(): String {
     val secrets = NSBundle.mainBundle.pathForResource("Secrets", "plist") ?:""
     return NSDictionary.dictionaryWithContentsOfFile(secrets)?.get("SERVER_PORT") as? String ?: ""
 }
+
+actual fun getUserAgent(): String = "ios"

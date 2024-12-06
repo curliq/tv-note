@@ -26,13 +26,13 @@ class GetPurchaseStatusUseCase(
         }.map {
             PurchaseStatus(
                 status = it,
-                price = iapRepository.getPrice()
+                price = iapRepository.getPrice() ?: "$2.99" //todo remove 2.99
             )
         }
     }
 }
 
-data class PurchaseStatus(val status: Status, val price: String?) {
+data class PurchaseStatus(val status: Status, val price: String) {
     enum class Status {
         Purchased, TrialOn, TrialFinished
     }
