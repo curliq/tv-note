@@ -5,10 +5,13 @@ import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.BillingClientStateListener
 import com.android.billingclient.api.BillingFlowParams
 import com.android.billingclient.api.BillingResult
+import com.android.billingclient.api.Purchase
 import com.android.billingclient.api.SkuDetailsParams
 import com.free.tvtracker.AndroidApplication
 import com.free.tvtracker.data.iap.AppPriceProvider
+import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
+
 
 class AndroidAppPriceProvider(private val context: Context) : AppPriceProvider {
 
@@ -79,7 +82,6 @@ class AndroidAppPriceProvider(private val context: Context) : AppPriceProvider {
                         .setSkusList(skuList)
                         .setType(BillingClient.SkuType.INAPP) // or SkuType.SUBS for subscriptions
                         .build()
-
                     billingClient.querySkuDetailsAsync(params) { billingResult, skuDetailsList ->
                         if (billingResult.responseCode == BillingClient.BillingResponseCode.OK && skuDetailsList != null) {
                             for (skuDetail in skuDetailsList) {
@@ -107,6 +109,38 @@ class AndroidAppPriceProvider(private val context: Context) : AppPriceProvider {
 
             override fun onBillingServiceDisconnected() {
                 // Try to restart the connection on the next request to Google Play by calling the startConnection() method.
+            }
+        })
+    }
+
+    override suspend fun restorePurchase(): Boolean = suspendCoroutine { continuation ->
+        val billingClient = BillingClient.newBuilder(context)
+            .enablePendingPurchases()
+            .build()
+        billingClient.startConnection(object : BillingClientStateListener {
+            override fun onBillingSetupFinished(billingResult: BillingResult) {
+                if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
+                    billingClient.queryPurchasesAsync(
+                        BillingClient.SkuType.INAPP
+                    ) { billingResult, purchases ->
+                        if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
+                            for (purchase in purchases) {
+                                if (purchase.purchaseState == Purchase.PurchaseState.PURCHASED &&
+                                    purchase.skus.any { sku -> sku == id }
+                                ) {
+                                    continuation.resume(true)
+                                }
+                            }
+                        }
+                        continuation.resume(false)
+                    }
+                } else {
+                    continuation.resume(false)
+                }
+            }
+
+            override fun onBillingServiceDisconnected() {
+                continuation.resume(false)
             }
         })
     }

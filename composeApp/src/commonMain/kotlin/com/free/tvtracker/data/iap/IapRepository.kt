@@ -30,4 +30,8 @@ class IapRepository(
     }
 
     suspend fun getPrice(): String? = appPriceProvider.appPrice()
+
+    suspend fun restorePurchase(): Boolean {
+        return appPriceProvider.restorePurchase()
+    }
 }

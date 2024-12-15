@@ -47,6 +47,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.free.tvtracker.expect.OsPlatform
 import com.free.tvtracker.ui.common.theme.TvTrackerTheme
+import kotlinx.coroutines.flow.collectLatest
 
 sealed class SettingsScreenNavAction {
     data object GoLogin : SettingsScreenNavAction()
@@ -62,6 +63,13 @@ fun SettingsScreen(
     paddingValues: PaddingValues
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
+    LaunchedEffect(Unit) {
+        viewModel.toaster.collectLatest {
+            it?.let {
+                snackbarHostState.showSnackbar(it)
+            }
+        }
+    }
     val data = viewModel.data.collectAsState().value
     TvTrackerTheme {
         Scaffold(
@@ -252,32 +260,37 @@ fun SettingsContent(
             }
         }
         Spacer(Modifier.height(24.dp))
+        Text(
+            "App settings",
+            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier.padding(horizontal = TvTrackerTheme.sidePadding)
+        )
+        Column(modifier = Modifier.padding(horizontal = TvTrackerTheme.sidePadding)) {
+            Spacer(Modifier.height(8.dp))
+            TextButton(onClick = {
+                action(SettingsViewModel.Action.RestorePurchase)
+            }) {
+                Text(text = "Restore purchase")
+            }
+            TextButton(onClick = {
+                navAction(SettingsScreenNavAction.EmailSupport("freetvtracker@proton.me"))
+            }) {
+                Text(text = "Email developer")
+            }
+            TextButton(
+                onClick = { navAction(SettingsScreenNavAction.GoBrowser("https://github.com/curliq/best-tv-tracker")) },
+                shape = TvTrackerTheme.ShapeButton,
+            ) {
+                Text("github.com/curliq/best-tv-tracker")
+            }
+            TextButton(onClick = {
+                action(SettingsViewModel.Action.Logout)
+            }) {
+                Text(text = "Delete account", color = MaterialTheme.colorScheme.error)
+            }
+        }
+        Spacer(Modifier.height(24.dp))
         HorizontalDivider()
-        Spacer(Modifier.height(8.dp))
-        TextButton(modifier = Modifier.align(Alignment.CenterHorizontally), onClick = {
-            navAction(SettingsScreenNavAction.EmailSupport("freetvtracker@proton.me"))
-        }) {
-            Text(text = "Email developer")
-        }
-        Box(
-            Modifier.size(4.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.outlineVariant)
-                .align(Alignment.CenterHorizontally),
-        )
-        TextButton(
-            onClick = { navAction(SettingsScreenNavAction.GoBrowser("https://github.com/curliq/best-tv-tracker")) },
-            shape = TvTrackerTheme.ShapeButton,
-            modifier = Modifier.align(Alignment.CenterHorizontally)
-        ) {
-            Text("github.com/curliq/best-tv-tracker")
-        }
-        Box(
-            Modifier.size(4.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.outlineVariant)
-                .align(Alignment.CenterHorizontally),
-        )
         Spacer(Modifier.height(16.dp))
         var tapCount by remember { mutableStateOf(0) }
 

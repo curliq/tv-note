@@ -10,6 +10,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
@@ -26,6 +27,7 @@ class SettingsViewModel(
 
     val data: MutableStateFlow<SettingsUiState> = MutableStateFlow(SettingsUiState.Idle)
     val theme: Flow<SettingsUiModel.Theme?> = data.map { (it as? SettingsUiState.Ok)?.data?.theme }
+    val toaster: MutableSharedFlow<String?> = MutableSharedFlow()
 
     init {
         viewModelScope.launch(ioDispatcher) {
@@ -84,6 +86,15 @@ class SettingsViewModel(
                 Action.EnableFreeApp -> {
                     iapRepository.setAppPurchased()
                 }
+
+                Action.RestorePurchase -> {
+                    val res = iapRepository.restorePurchase()
+                    if (res) {
+                        toaster.emit("Purchase restored successfully.")
+                    } else {
+                        toaster.emit("No purchase found on your apple account.")
+                    }
+                }
             }
         }
     }
@@ -94,6 +105,7 @@ class SettingsViewModel(
         data object Logout : Action()
         data object Export : Action()
         data object EnableFreeApp : Action()
+        data object RestorePurchase : Action()
     }
 }
 

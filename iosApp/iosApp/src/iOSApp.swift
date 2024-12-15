@@ -81,10 +81,47 @@ class IosFileExporter: FileExporter {
 
 class IosAppPriceProvider: AppPriceProvider {
 
+    let id = "02"
+    
+    func restorePurchase() async throws -> KotlinBoolean {
+        for await item in Transaction.currentEntitlements {
+            if case let .verified(transaction) = item {
+                let productID = transaction.productID
+                print("Restored: \(productID)")
+                if (productID == id) {
+                    return true
+                }
+            }
+        }
+        return false
+    }
+    
+    class ProductFetcher: NSObject, SKProductsRequestDelegate {
+        var products: [SKProduct] = []
+
+        func fetchProducts(productIdentifiers: Set<String>) {
+            let request = SKProductsRequest(productIdentifiers: productIdentifiers)
+            request.delegate = self
+            request.start()
+        }
+
+        func productsRequest(_ request: SKProductsRequest, didReceive response: SKProductsResponse) {
+            products = response.products
+            // Handle the received products (e.g., display them in your UI)
+            for product in products {
+                print("Product found: \(product.localizedTitle) - \(product.price)")
+            }
+        }
+    }
+
     func buyApp(completionHandler: @escaping (KotlinBoolean?, (any Error)?) -> Void) {
         Task {
             do {
-                guard let product = try await Product.products(for: ["02"]).first else {
+//                let productFetcher = ProductFetcher()
+//                let productIdentifiers: Set<String> = ["01", "02"]
+//                productFetcher.fetchProducts(productIdentifiers: productIdentifiers)
+
+                guard let product = try await Product.products(for: [id]).first else {
                     completionHandler(false, nil)
                     return
                 }
@@ -121,7 +158,7 @@ class IosAppPriceProvider: AppPriceProvider {
     
     
     func appPrice(completionHandler: @escaping (String?, (any Error)?) -> Void) {
-        let request = SKProductsRequest(productIdentifiers: ["02"])
+        let request = SKProductsRequest(productIdentifiers: [id])
         
         let delegate = ProductsRequestDelegate { result in
             switch result {

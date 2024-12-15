@@ -12,7 +12,7 @@ import com.free.tvtracker.ui.settings.signup.SignupContent
 import com.free.tvtracker.ui.settings.login.LoginViewModel
 import com.free.tvtracker.ui.settings.signup.SignupViewModel
 
-@Preview
+@Preview(heightDp = 1000)
 @Composable
 fun SettingsPreview() {
     val data = SettingsUiModel(
