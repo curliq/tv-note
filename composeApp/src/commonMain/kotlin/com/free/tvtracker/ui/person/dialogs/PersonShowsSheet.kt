@@ -1,5 +1,6 @@
 package com.free.tvtracker.ui.person.dialogs
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -65,7 +66,7 @@ fun PersonShowsContent(
     isTvShows: Boolean,
     bottomPadding: Float = 0f
 ) {
-    LazyColumn {
+    LazyColumn(modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainerLow)) {
         stickyHeader {
             DetailsSheetHeader("Acting")
         }

@@ -28,6 +28,7 @@ logging:
 server:
   ssl:
     enabled: false
+  port: ${PORT}
 spring:
   datasource:
     username: ${BOOT_DATABASE_USERNAME}

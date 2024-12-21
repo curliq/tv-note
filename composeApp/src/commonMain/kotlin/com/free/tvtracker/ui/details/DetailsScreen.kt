@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -29,6 +31,7 @@ import androidx.compose.material.icons.automirrored.rounded.ArrowForward
 import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material.icons.rounded.Star
+import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -40,6 +43,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -47,6 +51,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow.Companion.Ellipsis
 import androidx.compose.ui.unit.dp
@@ -118,6 +123,7 @@ fun DetailsScreen(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun DetailsScreenContent(
     show: DetailsUiModel,
@@ -173,8 +179,8 @@ fun DetailsScreenContent(
                         )
                     }
                 }
+                Spacer(Modifier.width(8.dp))
             }
-            Spacer(Modifier.width(8.dp))
             show.trackingStatus.action2?.let { action ->
                 val color = when (action) {
                     RemoveFromWatchlist, RemoveFromWatching -> MaterialTheme.colorScheme.error
@@ -227,6 +233,32 @@ fun DetailsScreenContent(
         }
         Spacer(Modifier.height(24.dp))
 
+        if (show.isTvShow) {
+            Text(text = "Episodes", style = MaterialTheme.typography.titleLarge)
+            Spacer(Modifier.height(8.dp))
+            Text(text = show.seasonsInfo ?: "No seasons available")
+            Spacer(Modifier.height(8.dp))
+            Row {
+                FilledTonalButton(
+                    onClick = { navAction(DetailsScreenNavAction.GoAllEpisodes) },
+                    content = { Text("See all episodes") },
+                    shape = TvTrackerTheme.ShapeButton
+                )
+                if (show.seasons?.any { it.isWatchable } == true) {
+                    Spacer(Modifier.width(8.dp))
+                    TextButton(shape = TvTrackerTheme.ShapeButton, onClick = {
+                        showAction(DetailsViewModel.DetailsAction.MarkShowWatched(show.tmdbId, show.trackedContentId))
+                    }) {
+                        Text(
+                            text = "Mark all as watched",
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
+            }
+            Spacer(Modifier.height(24.dp))
+        }
+
         Text("Plot", style = MaterialTheme.typography.titleLarge)
         Spacer(Modifier.height(8.dp))
         Text(text = show.description ?: "No description available")
@@ -234,21 +266,14 @@ fun DetailsScreenContent(
         if (!show.genres.isNullOrEmpty()) {
             Text("Genres", style = MaterialTheme.typography.titleLarge)
             Spacer(Modifier.height(8.dp))
-            Text(text = show.genres)
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                show.genres.forEach { text ->
+                    AssistChip(onClick = {}, label = { Text(text = text) })
+                }
+            }
             Spacer(Modifier.height(24.dp))
         }
-        if (show.isTvShow) {
-            Text(text = "Episodes", style = MaterialTheme.typography.titleLarge)
-            Spacer(Modifier.height(8.dp))
-            Text(text = show.seasonsInfo ?: "No seasons available")
-            Spacer(Modifier.height(8.dp))
-            FilledTonalButton(
-                onClick = { navAction(DetailsScreenNavAction.GoAllEpisodes) },
-                content = { Text("See all episodes") },
-                shape = TvTrackerTheme.ShapeButton
-            )
-            Spacer(Modifier.height(24.dp))
-        } else if (show.movieSeries?.movies?.isNotEmpty() == true) {
+        if (show.movieSeries?.movies?.isNotEmpty() == true) {
             Text(
                 text = "Film series",
                 style = MaterialTheme.typography.titleLarge
@@ -359,12 +384,12 @@ fun DetailsScreenContent(
                     Row {
                         Icon(Icons.Rounded.Star, "rating", Modifier.size(20.dp))
                         Spacer(Modifier.width(4.dp))
-                        Text(show.ratingTmdbVoteAverage)
+                        Text(show.ratingTmdbVoteAverage, style = MaterialTheme.typography.bodySmall)
                     }
                     Row {
                         Icon(Icons.Rounded.Person, "person", Modifier.size(20.dp))
                         Spacer(Modifier.width(4.dp))
-                        Text(show.ratingTmdbVoteCount)
+                        Text(show.ratingTmdbVoteCount, style = MaterialTheme.typography.bodySmall)
                     }
                 }
             }
@@ -380,10 +405,10 @@ fun DetailsScreenContent(
         Spacer(Modifier.height(8.dp))
         if (!show.isTvShow) {
             Text("Budget", style = MaterialTheme.typography.titleSmall)
-            Text(show.budget)
+            Text(show.budget, style = MaterialTheme.typography.bodySmall)
             Spacer(Modifier.height(8.dp))
             Text("Revenue", style = MaterialTheme.typography.titleSmall)
-            Text(show.revenue)
+            Text(show.revenue, style = MaterialTheme.typography.bodySmall)
             Spacer(Modifier.height(8.dp))
         }
         Text("Website", style = MaterialTheme.typography.titleSmall)
@@ -472,9 +497,10 @@ fun BoxScope.SeeAllCard(textAppend: String = "", onClick: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                "See\nAll$textAppend",
+                "More$textAppend",
                 color = MaterialTheme.colorScheme.primary,
                 textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold,
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(Modifier.height(8.dp))

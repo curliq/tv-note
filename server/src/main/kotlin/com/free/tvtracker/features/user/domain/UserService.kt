@@ -55,8 +55,11 @@ class UserService(
         return userJpaRepository.getReferenceById(userId)
     }
 
-    fun setUserCredentials(body: SignupApiRequestBody): AuthenticatedUser? {
-        if (body.password.isEmpty() || body.username.isEmpty()) return null
+    object DataMissing : Throwable()
+    object AccountExists : Throwable()
+
+    fun setUserCredentials(body: SignupApiRequestBody): Result<AuthenticatedUser> {
+        if (body.password.isEmpty() || body.username.isEmpty()) return Result.failure(DataMissing)
         val anonUserId = sessionService.getSessionUserId()
         logger.get.debug("setting credentials for user: $anonUserId")
         val encryptedPassword = encoder.encode(body.password)
@@ -72,11 +75,11 @@ class UserService(
             logger.get.debug("Saving user: $user")
             userJpaRepository.save(user)
         } catch (e: Exception) {
-            logger.get.debug("Unable to create user: ", e)
-            return null
+            logger.get.warn("Unable to create user: ", e)
+            return Result.failure(AccountExists) // assumed any db issue is bc user already exists
         }
-        val accessToken = tokenService.generate(user.id, user.role) ?: return null
-        return AuthenticatedUser(user = user, token = accessToken)
+        val accessToken = tokenService.generate(user.id, user.role) ?: return Result.failure(Exception())
+        return Result.success(AuthenticatedUser(user = user, token = accessToken))
     }
 
     fun createAnonUser(): AuthenticatedUser? {
@@ -84,7 +87,7 @@ class UserService(
         try {
             userJpaRepository.save(user)
         } catch (e: Exception) {
-            logger.get.debug("Unable to create user: ", e)
+            logger.get.warn("Unable to create user: ", e)
             return null
         }
         val accessToken = tokenService.generate(user.id, user.role) ?: return null

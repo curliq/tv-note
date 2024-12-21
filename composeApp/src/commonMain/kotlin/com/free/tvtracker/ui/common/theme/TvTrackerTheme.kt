@@ -44,10 +44,12 @@ fun TvTrackerTheme(themePrefs: SettingsUiModel.Theme? = themePreferences(), cont
         if (OsPlatform().get() == OsPlatform.Platform.IOS) {
             this.copy(
                 background = Color.White,
-                surfaceContainerLow = Color.White // sticky header background on sheets
+                surfaceContainerLow = Color.White // background on bottom sheets
             )
         } else {
-            this
+            this.copy(
+                surfaceContainerLow = colors.backgroundLight // this is better for bottom sheets
+            )
         }
     }
     val colorsDark = colors.darkScheme.run {

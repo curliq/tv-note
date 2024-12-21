@@ -31,7 +31,6 @@ import androidx.compose.material3.InputChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -66,7 +65,7 @@ sealed class WatchlistScreenNavAction {
 @Composable
 fun WatchlistScreen(viewModel: WatchlistedShowsViewModel, navigate: (WatchlistScreenNavAction) -> Unit) {
     val shows = viewModel.shows.collectAsState().value
-    val purchaseStatus by viewModel.status.collectAsState(PurchaseStatus(PurchaseStatus.Status.Purchased, "$2.99"))
+    val purchaseStatus by viewModel.status.collectAsState(PurchaseStatus(PurchaseStatus.Status.Purchased, "", ""))
 
     TvTrackerTheme {
         FabContainer({ navigate(WatchlistScreenNavAction.GoAddShow) }, content = {
@@ -78,7 +77,8 @@ fun WatchlistScreen(viewModel: WatchlistedShowsViewModel, navigate: (WatchlistSc
                 when (targetState) {
                     WatchlistUiState.Empty -> WatchlistEmpty(
                         purchaseStatus,
-                        { viewModel.action(WatchlistedAction.Buy) }
+                        { viewModel.action(WatchlistedAction.Buy) },
+                        { viewModel.action(WatchlistedAction.Sub) }
                     )
 
                     WatchlistUiState.Error -> ErrorScreen { viewModel.refresh() }
@@ -91,7 +91,7 @@ fun WatchlistScreen(viewModel: WatchlistedShowsViewModel, navigate: (WatchlistSc
 }
 
 @Composable
-fun WatchlistEmpty(status: PurchaseStatus, onBuy: () -> Unit) {
+fun WatchlistEmpty(status: PurchaseStatus, onBuy: () -> Unit, onSub: () -> Unit) {
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
@@ -100,7 +100,7 @@ fun WatchlistEmpty(status: PurchaseStatus, onBuy: () -> Unit) {
                 textAlign = TextAlign.Center
             )
             if (status.status != PurchaseStatus.Status.Purchased) {
-                TrialView(status, onBuy)
+                TrialView(status, onBuy, onSub)
             }
         }
     }
@@ -142,6 +142,17 @@ fun WatchlistOk(
                 )
             }
         }
+        if (data.shows.isEmpty()) {
+            item {
+                Box(modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp)) {
+                    Text(
+                        text = "No content watchlisted.",
+                        style = MaterialTheme.typography.labelMedium,
+                        textAlign = TextAlign.Center,
+                    )
+                }
+            }
+        }
         items(data.shows, key = { it.tmdbId }) { model ->
             WatchlistItem(
                 model,
@@ -151,7 +162,7 @@ fun WatchlistOk(
         }
         if (status.status != PurchaseStatus.Status.Purchased) {
             item(key = -1) {
-                TrialView(status, { action(WatchlistedAction.Buy) })
+                TrialView(status, { action(WatchlistedAction.Buy) }, { action(WatchlistedAction.Sub) })
             }
         }
     }

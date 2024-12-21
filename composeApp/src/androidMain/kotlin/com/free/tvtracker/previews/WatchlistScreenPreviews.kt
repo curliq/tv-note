@@ -28,7 +28,7 @@ fun WatchlistPreview() {
                     ),
                     filterTvShows = true,
                 ),
-                PurchaseStatus(PurchaseStatus.Status.Purchased, "123"),
+                PurchaseStatus(PurchaseStatus.Status.Purchased, "123", ""),
                 {},
                 {}
             )
@@ -42,7 +42,8 @@ fun WatchlistEmptyPreview() {
     TvTrackerTheme {
         Scaffold { p ->
             WatchlistEmpty(
-                PurchaseStatus(PurchaseStatus.Status.Purchased, "123"),
+                PurchaseStatus(PurchaseStatus.Status.Purchased, "123", ""),
+                {},
                 {}
             )
         }
@@ -55,7 +56,8 @@ fun WatchlistEmptyTrialPreview() {
     TvTrackerTheme {
         Scaffold { p ->
             WatchlistEmpty(
-                PurchaseStatus(PurchaseStatus.Status.TrialOn, "123"),
+                PurchaseStatus(PurchaseStatus.Status.TrialOn, "123", ""),
+                {},
                 {}
             )
         }
@@ -80,7 +82,7 @@ fun WatchlistOkTrialPreview() {
                     ),
                     filterTvShows = true,
                 ),
-                PurchaseStatus(PurchaseStatus.Status.TrialFinished, "123"),
+                PurchaseStatus(PurchaseStatus.Status.TrialFinished, "123", ""),
                 {},
                 {}
             )

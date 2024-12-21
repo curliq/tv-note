@@ -4,6 +4,7 @@ import com.free.tvtracker.data.common.sql.LocalSqlDataProvider
 import com.free.tvtracker.data.iap.IapRepository
 import com.free.tvtracker.data.session.LocalPreferencesClientEntity
 import com.free.tvtracker.data.session.SessionRepository
+import com.free.tvtracker.expect.OsPlatform
 import com.free.tvtracker.expect.ViewModel
 import com.free.tvtracker.expect.logout
 import kotlinx.coroutines.CoroutineDispatcher
@@ -84,7 +85,7 @@ class SettingsViewModel(
                 }
 
                 Action.EnableFreeApp -> {
-                    iapRepository.setAppPurchased()
+                    iapRepository.setAppPurchased(true)
                 }
 
                 Action.RestorePurchase -> {
@@ -92,7 +93,8 @@ class SettingsViewModel(
                     if (res) {
                         toaster.emit("Purchase restored successfully.")
                     } else {
-                        toaster.emit("No purchase found on your apple account.")
+                        val platform = if (OsPlatform().get() == OsPlatform.Platform.Android) "Google" else "Apple"
+                        toaster.emit("No purchase found on your $platform account.")
                     }
                 }
             }

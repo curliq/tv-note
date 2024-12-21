@@ -103,7 +103,11 @@ fun LoginContent(
         }
         if (result == LoginViewModel.Result.Error) {
             Spacer(Modifier.height(16.dp))
-            Text("Something went wrong, please try again", color = MaterialTheme.colorScheme.error)
+            Text(
+                "Something went wrong, please try again.",
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.align(Alignment.End)
+            )
         }
     }
 }

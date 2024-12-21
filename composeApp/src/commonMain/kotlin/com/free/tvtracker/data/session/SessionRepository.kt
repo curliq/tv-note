@@ -74,7 +74,7 @@ class SessionRepository(
         return true
     }
 
-    fun geSession(): SessionClientEntity? {
+    fun getSession(): SessionClientEntity? {
         return localDataSource.getSession()
     }
 

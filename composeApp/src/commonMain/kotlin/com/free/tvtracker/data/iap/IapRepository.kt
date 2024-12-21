@@ -17,21 +17,29 @@ class IapRepository(
 
     suspend fun purchase(): Boolean {
         val success = appPriceProvider.buyApp()
-        if (success) {
-            setAppPurchased()
-        }
+        setAppPurchased(owned = success)
         return success
     }
 
-    fun setAppPurchased() {
+    suspend fun subscribe(): Boolean {
+        val success = appPriceProvider.subscribe()
+        setAppPurchased(owned = success)
+        return success
+    }
+
+    fun setAppPurchased(owned: Boolean) {
         val localPrefs = localDataSource.getLocalPreferences()
-        localDataSource.setLocalPreferences(localPrefs.copy(purchasedApp = true))
-        isPurchased.value = true
+        localDataSource.setLocalPreferences(localPrefs.copy(purchasedApp = owned))
+        isPurchased.value = owned
     }
 
     suspend fun getPrice(): String? = appPriceProvider.appPrice()
 
     suspend fun restorePurchase(): Boolean {
-        return appPriceProvider.restorePurchase()
+        val success = appPriceProvider.restorePurchase()
+        setAppPurchased(owned = success)
+        return success
     }
+
+    suspend fun getSubPrice(): String? = appPriceProvider.appSubPrice()
 }

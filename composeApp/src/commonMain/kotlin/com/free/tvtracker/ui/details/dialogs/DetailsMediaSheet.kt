@@ -58,7 +58,7 @@ fun DetailsMediaSheetContent(
     bottomPadding: Float = 0f
 ) {
     fun onClick(url: String) = run { navAction(DetailsScreenNavAction.GoYoutube(url)) }
-    LazyColumn {
+    LazyColumn(modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainerLow)) {
         stickyHeader {
             DetailsSheetHeader("Trailers")
         }

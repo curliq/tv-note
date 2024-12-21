@@ -24,8 +24,8 @@ object DetailsScreenPreviews {
         trackedContentId = null,
         homepageUrl = "",
         description = "game of thrones is a show about society",
-        genres = "action, anime",
-        seasonsInfo = "2 seasons - 16 episodes - 0h40m each",
+        genres = listOf("action", "anime", "drama", "thriller", "pg13"),
+        seasonsInfo = "2 seasons - 16 episodes",
         seasons = listOf(
             DetailsUiModel.Season(
                 1, 1, "", false, true,

@@ -45,9 +45,10 @@ class DetailsUiModelForShowMapper(
             trackedContentId = options?.tvShow?.id,
             homepageUrl = from.homepage,
             description = from.overview,
-            genres = from.genres.joinToString(", "),
+            genres = from.genres,
             seasonsInfo =
-            "${from.seasons.size} seasons - ${from.seasons.sumOf { it.episodeCount ?: 0 }} episodes total",
+            "${from.seasons.size} ${if (from.seasons.size == 1) "season" else "seasons"} - " +
+                "${from.seasons.sumOf { it.episodeCount ?: 0 }} episodes total", // eg: "1 season - 10 episodes total"
             seasons = from.seasons.map { seasonUiModelMapper.map(it, ShowSeasonUiModelMapper.O(from.id, options)) },
             movieSeries = null,
             castFirst = castMapper.map(from.cast?.getOrNull(0)),

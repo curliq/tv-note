@@ -31,6 +31,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextLayoutResult
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import com.free.tvtracker.ui.common.composables.TvImage
@@ -56,7 +57,7 @@ fun DetailsEpisodesContent(
     action: (DetailsViewModel.DetailsAction) -> Unit,
     bottomPadding: Float = 0f
 ) {
-    LazyColumn {
+    LazyColumn(modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainerLow)) {
         show.seasons?.forEach { season ->
             stickyHeader {
                 Column(Modifier.fillParentMaxWidth().background(MaterialTheme.colorScheme.surfaceContainerLow)) {
@@ -87,7 +88,12 @@ fun DetailsEpisodesContent(
                                 ) {
                                     Text(
                                         text = "Mark season as watched",
-                                        style = MaterialTheme.typography.labelMedium
+                                        style = TextStyle(
+                                            fontSize = MaterialTheme.typography.labelMedium.fontSize,
+                                            fontFamily = MaterialTheme.typography.labelMedium.fontFamily,
+                                            fontWeight = MaterialTheme.typography.labelMedium.fontWeight
+                                        ),
+                                        color = MaterialTheme.colorScheme.primary
                                     )
                                 }
                             }

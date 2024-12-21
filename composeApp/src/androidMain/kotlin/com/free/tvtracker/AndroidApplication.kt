@@ -7,6 +7,7 @@ import com.free.tvtracker.core.ui.BaseActivity
 import com.free.tvtracker.di.appModules
 import com.free.tvtracker.expect.AndroidAppPriceProvider
 import com.free.tvtracker.data.iap.AppPriceProvider
+import com.free.tvtracker.data.iap.IapRepository
 import com.free.tvtracker.expect.AndroidFileExporter
 import com.free.tvtracker.expect.initSentry
 import com.free.tvtracker.ui.details.DetailsViewModel
@@ -24,6 +25,11 @@ import com.free.tvtracker.ui.watchlist.WatchlistedShowsViewModel
 import com.free.tvtracker.ui.welcome.WelcomeViewModel
 import com.posthog.android.PostHogAndroid
 import com.posthog.android.PostHogAndroidConfig
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import org.koin.android.ext.android.get
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
@@ -36,6 +42,7 @@ class AndroidApplication : Application() {
 
     var currentActivity: BaseActivity? = null
 
+    @OptIn(DelicateCoroutinesApi::class)
     @Suppress("KotlinConstantConditions")
     override fun onCreate() {
         super.onCreate()
@@ -77,12 +84,12 @@ class AndroidApplication : Application() {
                     single<AppPriceProvider> { AndroidAppPriceProvider(context) }
                     single<FileExporter> { AndroidFileExporter() }
                     viewModel { SplashViewModel(get(), get()) }
-                    viewModel { WelcomeViewModel(get(), get(), get()) }
+                    viewModel { WelcomeViewModel(get(), get(), get(), get()) }
                     viewModel { AddTrackedViewModel(get(), get(), get(), get(), get(), get()) }
-                    viewModel { WatchingViewModel(get(), get(), get(), get(), get(), get()) }
-                    viewModel { FinishedShowsViewModel(get(), get(), get(), get(), get(), get()) }
-                    viewModel { WatchlistedShowsViewModel(get(), get(), get(), get(), get(), get()) }
-                    viewModel { DetailsViewModel(get(), get(), get(), get(), get(), get()) }
+                    viewModel { WatchingViewModel(get(), get(), get(), get(), get(), get(), get()) }
+                    viewModel { FinishedShowsViewModel(get(), get(), get(), get(), get(), get(), get()) }
+                    viewModel { WatchlistedShowsViewModel(get(), get(), get(), get(), get(), get(), get()) }
+                    viewModel { DetailsViewModel(get(), get(), get(), get(), get(), get(), get()) }
                     viewModel { PersonViewModel(get(), get()) }
                     viewModel { LoginViewModel(get(), get()) }
                     viewModel { SignupViewModel(get()) }
@@ -97,6 +104,12 @@ class AndroidApplication : Application() {
                     }
                 }
             )
+        }
+
+        // Check app purchase wasnt refunded or subscription cancelled
+        val iapRepository: IapRepository = get()
+        GlobalScope.launch(Dispatchers.IO) {
+            iapRepository.restorePurchase()
         }
     }
 }

@@ -13,7 +13,8 @@ class SplashViewModelTest {
     private val localStore: LocalSqlDataProvider = mockk {
         every { getLocalPreferences() } returns LocalPreferencesClientEntity(
             true,
-            LocalPreferencesClientEntity.Theme.SystemDefault
+            LocalPreferencesClientEntity.Theme.SystemDefault,
+            true
         )
     }
 

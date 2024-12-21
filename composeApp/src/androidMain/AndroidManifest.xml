@@ -7,14 +7,16 @@
     <application
         android:name=".AndroidApplication"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_launcher_cutie"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/ic_launcher_cutie_round"
         android:supportsRtl="true"
         android:usesCleartextTraffic="true"
         android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
         <activity
             android:exported="true"
+            android:theme="@style/SplashTheme"
+            android:icon="@drawable/splash_screen_icon"
             android:name=".activities.splash.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -45,7 +47,7 @@
 
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@drawable/ic_notification_logo"/>
+            android:resource="@drawable/ic_notification_logo_cutie"/>
 
         <!-- Needed to open the file sharing system dialog with the data export csv -->
         <provider

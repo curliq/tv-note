@@ -1,5 +1,6 @@
 package com.free.tvtracker.ui.details.dialogs
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -46,7 +47,7 @@ fun DetailsFilmCollectionContent(
     action: (DetailsScreenNavAction) -> Unit,
     bottomPadding: Float = 0f
 ) {
-    LazyColumn {
+    LazyColumn(modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainerLow)) {
         item {
             NonLazyGrid(
                 columns = 3,

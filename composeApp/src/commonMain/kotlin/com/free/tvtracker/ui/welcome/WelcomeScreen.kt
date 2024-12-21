@@ -78,9 +78,11 @@ fun WelcomeScreen(
                 WelcomeContent(
                     status,
                     viewModel.price.collectAsState().value,
+                    viewModel.subPrice.collectAsState().value,
                     viewModel::refresh,
                     viewModel::actionOk,
-                    viewModel::buy
+                    viewModel::buy,
+                    viewModel::sub
                 )
             }
         }
@@ -91,9 +93,11 @@ fun WelcomeScreen(
 fun WelcomeContent(
     status: WelcomeViewModel.Status,
     price: String,
+    subPrice: String,
     refresh: () -> Unit,
     actionOk: () -> Unit,
     buy: () -> Unit,
+    sub: () -> Unit,
     pageIndex: Int = 0
 ) {
     val pagerState = rememberPagerState(pageCount = { 2 }, initialPage = pageIndex)
@@ -121,7 +125,7 @@ fun WelcomeContent(
                                 coroutineScope.launch { pagerState.animateScrollToPage(1) }
                             })
                         } else {
-                            Screen2(status, price, actionOk, buy)
+                            Screen2(status, price, subPrice, actionOk, buy, sub)
                         }
                     }
                 }
@@ -159,7 +163,14 @@ private fun Screen1(next: () -> Unit) {
 }
 
 @Composable
-private fun Screen2(status: WelcomeViewModel.Status, price: String, goToApp: () -> Unit, buy: () -> Unit) {
+private fun Screen2(
+    status: WelcomeViewModel.Status,
+    price: String,
+    subPrice: String,
+    goToApp: () -> Unit,
+    buy: () -> Unit,
+    sub: () -> Unit
+) {
     Column(Modifier.fillMaxHeight()) {
         Spacer(Modifier.height(32.dp))
         FeatureCard("Notifications when episodes are released.".colored("Notifications"))
@@ -175,9 +186,17 @@ private fun Screen2(status: WelcomeViewModel.Status, price: String, goToApp: () 
             )
         } else {
             Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-                Button(onClick = buy, modifier = Modifier.fillMaxWidth(0.5f), shape = TvTrackerTheme.ShapeButton) {
+                Button(onClick = buy, modifier = Modifier.fillMaxWidth(1f), shape = TvTrackerTheme.ShapeButton) {
                     Text("Buy for $price")
                 }
+                Spacer(Modifier.height(8.dp))
+                Text("Or", style = MaterialTheme.typography.labelSmall)
+                Spacer(Modifier.height(8.dp))
+                Button(onClick = sub, modifier = Modifier.fillMaxWidth(1f), shape = TvTrackerTheme.ShapeButton) {
+                    Text("Subscribe for ${subPrice}/month (30d free)")
+                }
+                Spacer(Modifier.height(8.dp))
+                Text("Or", style = MaterialTheme.typography.labelSmall)
                 Spacer(Modifier.height(8.dp))
                 OutlinedButton(
                     onClick = goToApp,
@@ -185,7 +204,7 @@ private fun Screen2(status: WelcomeViewModel.Status, price: String, goToApp: () 
                     colors = ButtonDefaults.outlinedButtonColors(
                         contentColor = MaterialTheme.colorScheme.primary
                     ),
-                    modifier = Modifier.fillMaxWidth(0.5f)
+                    modifier = Modifier.fillMaxWidth(1f)
                 ) {
                     Text("Pay later")
                     Spacer(Modifier.width(8.dp))

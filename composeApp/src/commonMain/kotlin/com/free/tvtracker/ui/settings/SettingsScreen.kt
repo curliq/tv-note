@@ -20,10 +20,12 @@ import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.RadioButton
@@ -45,7 +47,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
+import besttvtracker.composeapp.generated.resources.Res
+import besttvtracker.composeapp.generated.resources.ic_code
+import besttvtracker.composeapp.generated.resources.ic_customer_support
+import besttvtracker.composeapp.generated.resources.ic_delete_account
+import besttvtracker.composeapp.generated.resources.ic_settings_restore
+import besttvtracker.composeapp.generated.resources.ic_tv
 import com.free.tvtracker.expect.OsPlatform
+import com.free.tvtracker.ui.common.composables.ResImage
 import com.free.tvtracker.ui.common.theme.TvTrackerTheme
 import kotlinx.coroutines.flow.collectLatest
 
@@ -168,10 +177,14 @@ fun SettingsContent(
                                         style = MaterialTheme.typography.labelLarge
                                     )
                                     Spacer(Modifier.width(8.dp))
-                                    TextButton(onClick = { showLogoutConfirmation.value = false }) {
+                                    TextButton(
+                                        shape = TvTrackerTheme.ShapeButton,
+                                        onClick = { showLogoutConfirmation.value = false }) {
                                         Text(text = if (OsPlatform().get() == OsPlatform.Platform.IOS) "Cancel" else "No")
                                     }
-                                    TextButton(onClick = { action(SettingsViewModel.Action.Logout) }) {
+                                    TextButton(
+                                        shape = TvTrackerTheme.ShapeButton,
+                                        onClick = { action(SettingsViewModel.Action.Logout) }) {
                                         Text(
                                             text = if (OsPlatform().get() == OsPlatform.Platform.IOS) "Confirm" else "Yes",
                                             color = MaterialTheme.colorScheme.error
@@ -265,29 +278,46 @@ fun SettingsContent(
             style = MaterialTheme.typography.titleLarge,
             modifier = Modifier.padding(horizontal = TvTrackerTheme.sidePadding)
         )
-        Column(modifier = Modifier.padding(horizontal = TvTrackerTheme.sidePadding)) {
-            Spacer(Modifier.height(8.dp))
-            TextButton(onClick = {
-                action(SettingsViewModel.Action.RestorePurchase)
-            }) {
-                Text(text = "Restore purchase")
-            }
-            TextButton(onClick = {
-                navAction(SettingsScreenNavAction.EmailSupport("freetvtracker@proton.me"))
-            }) {
-                Text(text = "Email developer")
-            }
-            TextButton(
-                onClick = { navAction(SettingsScreenNavAction.GoBrowser("https://github.com/curliq/best-tv-tracker")) },
-                shape = TvTrackerTheme.ShapeButton,
-            ) {
-                Text("github.com/curliq/best-tv-tracker")
-            }
-            TextButton(onClick = {
-                action(SettingsViewModel.Action.Logout)
-            }) {
-                Text(text = "Delete account", color = MaterialTheme.colorScheme.error)
-            }
+        Spacer(Modifier.height(8.dp))
+        TextButton(
+            shape = TvTrackerTheme.ShapeButton,
+            modifier = Modifier.padding(horizontal = TvTrackerTheme.sidePaddingHalf),
+            contentPadding = PaddingValues(TvTrackerTheme.sidePaddingHalf),
+            onClick = { action(SettingsViewModel.Action.RestorePurchase) }
+        ) {
+            ResImage(Res.drawable.ic_settings_restore, "restore purchase", tint = MaterialTheme.colorScheme.primary)
+            Spacer(Modifier.width(8.dp))
+            Text(text = "Restore purchase")
+        }
+        TextButton(
+            shape = TvTrackerTheme.ShapeButton,
+            modifier = Modifier.padding(horizontal = TvTrackerTheme.sidePaddingHalf),
+            contentPadding = PaddingValues(TvTrackerTheme.sidePaddingHalf),
+            onClick = { navAction(SettingsScreenNavAction.EmailSupport("freetvtracker@proton.me")) }
+        ) {
+            ResImage(Res.drawable.ic_customer_support, "email developer", tint = MaterialTheme.colorScheme.primary)
+            Spacer(Modifier.width(8.dp))
+            Text(text = "Email developer")
+        }
+        TextButton(
+            shape = TvTrackerTheme.ShapeButton,
+            modifier = Modifier.padding(horizontal = TvTrackerTheme.sidePaddingHalf),
+            contentPadding = PaddingValues(TvTrackerTheme.sidePaddingHalf),
+            onClick = { navAction(SettingsScreenNavAction.GoBrowser("https://github.com/curliq/best-tv-tracker")) },
+        ) {
+            ResImage(Res.drawable.ic_code, "restore", tint = MaterialTheme.colorScheme.primary)
+            Spacer(Modifier.width(8.dp))
+            Text("github.com/curliq/best-tv-tracker")
+        }
+        TextButton(
+            shape = TvTrackerTheme.ShapeButton,
+            modifier = Modifier.padding(horizontal = TvTrackerTheme.sidePaddingHalf),
+            contentPadding = PaddingValues(TvTrackerTheme.sidePaddingHalf),
+            onClick = { action(SettingsViewModel.Action.Logout) }
+        ) {
+            ResImage(Res.drawable.ic_delete_account, "delete", tint = MaterialTheme.colorScheme.error)
+            Spacer(Modifier.width(8.dp))
+            Text(text = "Delete account", color = MaterialTheme.colorScheme.error)
         }
         Spacer(Modifier.height(24.dp))
         HorizontalDivider()
@@ -302,8 +332,9 @@ fun SettingsContent(
                 tapCount = 0
             }
         }
+        Spacer(Modifier.height(24.dp))
         Text(
-            "Made in London",
+            "Made in London, UK",
             style = MaterialTheme.typography.labelMedium,
             modifier = Modifier.align(Alignment.CenterHorizontally).clickable { tapCount++ },
         )

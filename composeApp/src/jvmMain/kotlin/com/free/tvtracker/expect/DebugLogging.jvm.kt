@@ -7,3 +7,7 @@ actual fun logW(tag: String, message: String) {
 actual fun logE(tag: String, error: Throwable) {
     println("[E] $tag: $error")
 }
+
+actual fun logD(tag: String, message:String) {
+    println("[D] $tag: $message")
+}

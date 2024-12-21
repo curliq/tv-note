@@ -16,8 +16,11 @@ fun WelcomePreview() {
                 status = WelcomeViewModel.Status.GreenLight,
                 actionOk = {},
                 price = "£2.99",
+                subPrice = "£0.99",
                 buy = {},
-                refresh = {})
+                refresh = {},
+                sub = {}
+            )
         }
     }
 }
@@ -31,8 +34,28 @@ fun WelcomePreview2() {
                 status = WelcomeViewModel.Status.GreenLight,
                 actionOk = {},
                 price = "£2.99",
-                refresh = {},
+                subPrice = "£0.99",
                 buy = {},
+                refresh = {},
+                sub = {}
+            )
+        }
+    }
+}
+
+@Preview(showSystemUi = true)
+@Composable
+fun WelcomePreview3() {
+    TvTrackerTheme {
+        Scaffold { a ->
+            WelcomeContent(
+                status = WelcomeViewModel.Status.GreenLight,
+                actionOk = {},
+                price = "£2.99",
+                subPrice = "£0.99",
+                buy = {},
+                refresh = {},
+                sub = {},
                 pageIndex = 1
             )
         }
@@ -48,8 +71,10 @@ fun WelcomePreviewLoading() {
                 status = WelcomeViewModel.Status.LoadingPrice,
                 actionOk = {},
                 price = "£2.99",
-                refresh = {},
+                subPrice = "£0.99",
                 buy = {},
+                refresh = {},
+                sub = {},
                 pageIndex = 1
             )
         }

@@ -40,7 +40,8 @@ class AddTrackedViewModelTest {
             ShowSearchUiModelMapper(),
             MovieSearchUiModelMapper(),
             PersonSearchUiModelMapper(),
-            ioDispatcher = dispatcher
+            ioDispatcher = dispatcher,
+            logger = mockk(relaxed = true),
         )
         vm.setOriginScreen(AddTrackedScreenOriginScreen.Watching)
     }

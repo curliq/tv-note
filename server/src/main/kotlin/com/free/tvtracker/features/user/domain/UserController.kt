@@ -8,7 +8,9 @@ import com.free.tvtracker.user.request.LoginApiRequestBody
 import com.free.tvtracker.user.request.PostFcmTokenApiRequestBody
 import com.free.tvtracker.user.request.SignupApiRequestBody
 import com.free.tvtracker.user.request.UpdatePreferencesApiRequestBody
+import com.free.tvtracker.user.response.ErrorAccountAlreadyExists
 import com.free.tvtracker.user.response.ErrorInvalidCredentials
+import com.free.tvtracker.user.response.ErrorMissingCreds
 import com.free.tvtracker.user.response.SessionApiResponse
 import com.free.tvtracker.user.response.UserApiResponse
 import org.springframework.http.HttpStatus
@@ -39,10 +41,22 @@ class UserController(
     @PostMapping(Endpoints.Path.POST_USER_CREDENTIALS)
     fun setUserCredentials(@RequestBody body: SignupApiRequestBody): ResponseEntity<SessionApiResponse> {
         val result = userService.setUserCredentials(body)
-        return if (result != null) {
-            ResponseEntity.ok(SessionApiResponse.ok(sessionApiMapper.map(result)))
+        return if (result.isSuccess) {
+            ResponseEntity.ok(SessionApiResponse.ok(sessionApiMapper.map(result.getOrThrow())))
         } else {
-            ResponseEntity(SessionApiResponse.error(ApiError.Unknown), HttpStatus.BAD_REQUEST)
+            when (result.exceptionOrNull()) {
+                is UserService.DataMissing -> {
+                    ResponseEntity(SessionApiResponse.error(ErrorMissingCreds), HttpStatus.BAD_REQUEST)
+                }
+
+                is UserService.AccountExists -> {
+                    ResponseEntity(SessionApiResponse.error(ErrorAccountAlreadyExists), HttpStatus.BAD_REQUEST)
+                }
+
+                else -> {
+                    ResponseEntity(SessionApiResponse.error(ApiError.Unknown), HttpStatus.BAD_REQUEST)
+                }
+            }
         }
     }
 

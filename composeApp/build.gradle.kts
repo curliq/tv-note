@@ -81,6 +81,7 @@ kotlin {
             implementation(libs.uuid)
             implementation(libs.kotlinx.datetime)
             implementation(libs.landscapist.coil3)
+            implementation("androidx.compose.runtime:runtime-tracing:1.7.6")
             implementation(libs.sentry.kotlin.multiplatform)
         }
         jvmMain.dependencies {
@@ -116,12 +117,13 @@ android {
         applicationId = "com.free.tvtracker"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 7
-        versionName = "1.5"
+        versionCode = 8
+        versionName = "1.6"
+        vectorDrawables.useSupportLibrary = true
         buildConfigField("String", "ANDROID_KEY_POSTHOG", "\"${System.getenv("ANDROID_KEY_POSTHOG")}\"")
         buildConfigField("String", "KEY_DSN_SENTRY", "\"${System.getenv("ANDROID_KEY_DSN_SENTRY")}\"")
-        buildConfigField("String", "SERVER_URL", "\"${System.getenv("SERVER_URL")}\"")
-        buildConfigField("String", "SERVER_PORT", "\"${System.getenv("SERVER_PORT")}\"")
+        buildConfigField("String", "SERVER_URL", "\"${System.getenv("ANDROID_SERVER_URL")}\"")
+        buildConfigField("String", "SERVER_PORT", "\"${System.getenv("ANDROID_SERVER_PORT")}\"")
     }
     packaging {
         resources {

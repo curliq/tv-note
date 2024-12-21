@@ -10,7 +10,7 @@ class ShowCrewUiModelMapper : Mapper<TmdbShowDetailsApiModel.Crew?, Crew> {
         return Crew(
             tmdbId = from?.id ?: 0,
             irlName = from?.name ?: "",
-            job = from?.job ?: "",
+            job = from?.job ?: from?.department ?: from?.knownForDepartment ?: "",
             photo = TmdbConfigData.get().getPosterUrl(from?.profilePath ?: "")
         )
     }

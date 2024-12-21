@@ -1,5 +1,6 @@
 package com.free.tvtracker.ui.welcome
 
+import com.free.tvtracker.core.Logger
 import com.free.tvtracker.data.common.sql.LocalSqlDataProvider
 import com.free.tvtracker.data.iap.IapRepository
 import com.free.tvtracker.data.session.SessionRepository
@@ -16,11 +17,13 @@ class WelcomeViewModel(
     private val localDataSource: LocalSqlDataProvider,
     private val sessionRepository: SessionRepository,
     private val iapRepository: IapRepository,
+    private val logger: Logger,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : ViewModel() {
 
     val status = MutableStateFlow(Status.LoadingPrice)
     val price = MutableStateFlow("")
+    val subPrice = MutableStateFlow("")
     val toaster: MutableSharedFlow<String?> = MutableSharedFlow()
 
     init {
@@ -34,6 +37,7 @@ class WelcomeViewModel(
             return
         }
         val sessionCreated = sessionRepository.createAnonSession()
+        logger.d("session created: $sessionCreated")
         if (sessionCreated) {
             status.update {
                 if (it == Status.Loading) {
@@ -50,11 +54,14 @@ class WelcomeViewModel(
 
     fun refresh() {
         viewModelScope.launch(ioDispatcher) {
-            val price = iapRepository.getPrice() ?: "$2.99" //todo remove 2.99
-            if (price == null) {
+            val price = iapRepository.getPrice()
+            val subPrice = iapRepository.getSubPrice()
+            logger.d("price: $price, subprice: $subPrice")
+            if (price == null || subPrice == null) {
                 status.emit(Status.InitialisationError)
             } else {
                 this@WelcomeViewModel.price.emit(price)
+                this@WelcomeViewModel.subPrice.emit(subPrice)
                 status.emit(Status.CreatingSession)
                 loadSession()
             }
@@ -84,6 +91,17 @@ class WelcomeViewModel(
                 actionOk()
             } else {
                 toaster.emit("Error completing purchase, try again later.")
+            }
+        }
+    }
+
+    fun sub() {
+        viewModelScope.launch(ioDispatcher) {
+            val res = iapRepository.subscribe()
+            if (res) {
+                actionOk()
+            } else {
+                toaster.emit("Error completing subscription, try again later.")
             }
         }
     }

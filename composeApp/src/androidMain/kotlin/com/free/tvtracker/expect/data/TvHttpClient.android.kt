@@ -12,7 +12,9 @@ actual fun getHttpClient(block: HttpClientConfig<*>.() -> Unit): HttpClient {
         engine {
             val loggingInterceptor = HttpLoggingInterceptor()
             loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
-//            addInterceptor(loggingInterceptor )
+            if (BuildConfig.DEBUG) {
+                addInterceptor(loggingInterceptor)
+            }
         }
         block()
     }

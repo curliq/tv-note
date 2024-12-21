@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import com.free.tvtracker.expect.OsPlatform
 import com.free.tvtracker.ui.common.composables.LoadingIndicator
 import com.free.tvtracker.ui.common.theme.TvTrackerTheme
+import com.free.tvtracker.ui.settings.login.LoginViewModel
 
 sealed class SignupScreenAction {
     data object GoBack : SignupScreenAction()
@@ -132,6 +133,10 @@ fun SignupContent(
                     color = MaterialTheme.colorScheme.onPrimary
                 )
             }
+        }
+        if (result is SignupViewModel.Result.Error) {
+            Spacer(Modifier.height(16.dp))
+            Text(result.message, color = MaterialTheme.colorScheme.error, modifier = Modifier.align(Alignment.End))
         }
     }
 }

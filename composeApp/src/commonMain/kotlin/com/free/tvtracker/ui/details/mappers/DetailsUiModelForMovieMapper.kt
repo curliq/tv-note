@@ -55,7 +55,7 @@ class DetailsUiModelForMovieMapper(
             trackedContentId = options?.movie?.id,
             homepageUrl = from.homepage,
             description = from.overview,
-            genres = from.genres.joinToString(", "),
+            genres = from.genres,
             seasonsInfo = null,
             seasons = null,
             movieSeries = from.belongsToCollection?.let {

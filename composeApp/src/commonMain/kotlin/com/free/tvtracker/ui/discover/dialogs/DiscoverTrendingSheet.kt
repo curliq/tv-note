@@ -1,5 +1,6 @@
 package com.free.tvtracker.ui.discover.dialogs
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -71,7 +72,7 @@ fun DiscoverTrendingSheetContent(
             loadPageAction()
         }
     }
-    LazyColumn(state = listState) {
+    LazyColumn(modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainerLow), state = listState) {
         item {
             Spacer(modifier = Modifier.height(sidePadding))
         }

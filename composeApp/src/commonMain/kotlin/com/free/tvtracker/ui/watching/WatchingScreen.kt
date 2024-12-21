@@ -10,6 +10,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -50,6 +51,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
@@ -57,6 +59,7 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.free.tvtracker.core.Logger
 import com.free.tvtracker.domain.PurchaseStatus
 import com.free.tvtracker.ui.common.composables.ErrorScreen
 import com.free.tvtracker.ui.common.composables.LoadingScreen
@@ -73,8 +76,10 @@ sealed class WatchingScreenNavAction {
 
 @Composable
 fun WatchingScreen(navigate: (WatchingScreenNavAction) -> Unit, viewModel: WatchingViewModel) {
+    val logger: Logger = viewModel.logger
     val shows = viewModel.shows.collectAsState().value
-    val purchaseStatus by viewModel.status.collectAsState(PurchaseStatus(PurchaseStatus.Status.Purchased, "$2.99"))
+    logger.d("recomposing watching screen, shows: $shows", "WatchingScreen")
+    val purchaseStatus by viewModel.status.collectAsState(PurchaseStatus(PurchaseStatus.Status.Purchased, "", "$2.99"))
     val snackbarHostState = remember { SnackbarHostState() }
     LaunchedEffect(Unit) {
         viewModel.toaster.collectLatest {
@@ -99,12 +104,14 @@ fun WatchingScreen(navigate: (WatchingScreenNavAction) -> Unit, viewModel: Watch
                             viewModel::markEpisodeWatched,
                             targetState,
                             purchaseStatus,
-                            viewModel::onBuy
+                            viewModel::onBuy,
+                            viewModel::onSub,
+                            { logger.d(it, "WatchingScreen") }
                         )
 
                         WatchingUiState.Error -> ErrorScreen { viewModel.refresh() }
                         WatchingUiState.Loading -> LoadingScreen()
-                        WatchingUiState.Empty -> WatchingEmpty(purchaseStatus, viewModel::onBuy)
+                        WatchingUiState.Empty -> WatchingEmpty(purchaseStatus, viewModel::onBuy, viewModel::onSub)
                     }
                 }
             })
@@ -117,10 +124,12 @@ fun WatchingOk(
     markWatched: (Int?, Int?) -> Unit,
     shows: WatchingUiState.Ok,
     purchaseStatus: PurchaseStatus,
-    onBuy: () -> Unit
+    onBuy: () -> Unit,
+    onSub: () -> Unit,
+    log: (msg: String) -> Unit = { }
 ) {
     val watchingItemHeight: Dp = calculateWatchingItemHeight()
-
+    log("recomposing watching OK screen, shows: ${shows.watching.map { it.tmdbId }}")
     LazyColumn(
         modifier = Modifier.fillMaxHeight(),
         contentPadding = PaddingValues(vertical = TvTrackerTheme.sidePadding)
@@ -179,14 +188,14 @@ fun WatchingOk(
         }
         if (purchaseStatus.status != PurchaseStatus.Status.Purchased) {
             item(key = -2) {
-                TrialView(purchaseStatus, onBuy)
+                TrialView(purchaseStatus, onBuy, onSub)
             }
         }
     }
 }
 
 @Composable
-fun WatchingEmpty(status: PurchaseStatus, onBuy: () -> Unit) {
+fun WatchingEmpty(status: PurchaseStatus, onBuy: () -> Unit, onSub: () -> Unit) {
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
@@ -195,7 +204,7 @@ fun WatchingEmpty(status: PurchaseStatus, onBuy: () -> Unit) {
                 textAlign = TextAlign.Center
             )
             if (status.status != PurchaseStatus.Status.Purchased) {
-                TrialView(status, onBuy)
+                TrialView(status, onBuy, onSub)
             }
         }
     }
@@ -371,19 +380,28 @@ private fun WatchingItemNextEpisode(nextEpisode: WatchingItemUiModel.NextEpisode
 }
 
 @Composable
-fun TrialView(status: PurchaseStatus, onBuy: () -> Unit) {
-    Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+fun TrialView(status: PurchaseStatus, onBuy: () -> Unit, onSub: () -> Unit) {
+    Column(
+        Modifier.fillMaxWidth().padding(horizontal = TvTrackerTheme.sidePadding),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         val trialFinished = status.status == PurchaseStatus.Status.TrialFinished
         val addedShows = if (trialFinished) 1 else 0
         Spacer(modifier = Modifier.height(48.dp))
         Text(
-            "App in trial, $addedShows/1 shows tracked.",
+            "App in demo, $addedShows/1 shows tracked.",
             style = MaterialTheme.typography.labelLarge,
             color = if (trialFinished) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
         )
         Spacer(Modifier.height(8.dp))
-        Button(onClick = onBuy, modifier = Modifier.fillMaxWidth(0.5f), shape = TvTrackerTheme.ShapeButton) {
+        Button(onClick = onBuy, modifier = Modifier.fillMaxWidth(1f), shape = TvTrackerTheme.ShapeButton) {
             Text("Buy for ${status.price}")
+        }
+        Spacer(Modifier.height(8.dp))
+        Text("Or", style = MaterialTheme.typography.labelSmall)
+        Spacer(Modifier.height(8.dp))
+        Button(onClick = onSub, modifier = Modifier.fillMaxWidth(1f), shape = TvTrackerTheme.ShapeButton) {
+            Text("Subscribe for ${status.subPrice}/month (30d free)")
         }
     }
 }

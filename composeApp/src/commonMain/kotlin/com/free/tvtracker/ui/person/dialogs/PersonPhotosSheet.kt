@@ -1,5 +1,6 @@
 package com.free.tvtracker.ui.person.dialogs
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -47,7 +48,7 @@ fun PersonPhotosContent(
     person: PersonUiModel,
     bottomPadding: Float = 0f
 ) {
-    Column {
+    Column(modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainerLow)) {
         DetailsSheetHeader("Photos")
         LazyVerticalGrid(
             modifier = Modifier.fillMaxWidth(),

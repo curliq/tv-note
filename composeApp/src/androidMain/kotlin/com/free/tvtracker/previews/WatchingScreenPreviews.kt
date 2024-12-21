@@ -15,7 +15,7 @@ import com.free.tvtracker.ui.watching.WatchingEmpty
 fun WatchingEmptyPreview() {
     TvTrackerTheme {
         Surface {
-            WatchingEmpty(PurchaseStatus(PurchaseStatus.Status.Purchased, "123"), {})
+            WatchingEmpty(PurchaseStatus(PurchaseStatus.Status.Purchased, "£2.99", "£0.99"), {}, {})
         }
     }
 }
@@ -63,7 +63,7 @@ fun WatchingOkNoWaitingPreview() {
                     ),
                     waitingNextEpisode = emptyList()
                 ),
-                PurchaseStatus(PurchaseStatus.Status.Purchased, "123"),
+                PurchaseStatus(PurchaseStatus.Status.Purchased, "£2.99", "£0.99"), {},
                 {}
             )
         }
@@ -129,7 +129,7 @@ fun WatchingOkWithWaitingPreview() {
                         )
                     )
                 ),
-                PurchaseStatus(PurchaseStatus.Status.Purchased, "123"),
+                PurchaseStatus(PurchaseStatus.Status.Purchased, "£2.99", "£0.99"), {},
                 {}
             )
         }
@@ -164,7 +164,7 @@ fun WatchingOkNoWatchablePreview() {
                         )
                     )
                 ),
-                PurchaseStatus(PurchaseStatus.Status.Purchased, "123"),
+                PurchaseStatus(PurchaseStatus.Status.Purchased, "£2.99", "£0.99"), {},
                 {}
             )
         }
@@ -176,7 +176,7 @@ fun WatchingOkNoWatchablePreview() {
 fun WatchingEmptyTrialOnPreview() {
     TvTrackerTheme {
         Surface {
-            WatchingEmpty(PurchaseStatus(PurchaseStatus.Status.TrialOn, "£2.99"), {})
+            WatchingEmpty(PurchaseStatus(PurchaseStatus.Status.TrialOn, "£2.99", "£0.99"), {}, {})
         }
     }
 }
@@ -186,7 +186,7 @@ fun WatchingEmptyTrialOnPreview() {
 fun WatchingEmptyTrialFinishedPreview() {
     TvTrackerTheme {
         Surface {
-            WatchingEmpty(PurchaseStatus(PurchaseStatus.Status.TrialFinished, "£2.99"), {})
+            WatchingEmpty(PurchaseStatus(PurchaseStatus.Status.TrialFinished, "£2.99", "£0.99"), {}, {})
         }
     }
 }
@@ -219,7 +219,7 @@ fun WatchingOkNoWatchableTrialOnPreview() {
                         )
                     )
                 ),
-                PurchaseStatus(PurchaseStatus.Status.TrialFinished, "£2.99"),
+                PurchaseStatus(PurchaseStatus.Status.TrialFinished, "£2.99", "£0.99"), {},
                 {}
             )
         }
@@ -254,7 +254,7 @@ fun WatchingOkNoWaitingTrialOnPreview() {
                     ),
                     waitingNextEpisode = emptyList()
                 ),
-                PurchaseStatus(PurchaseStatus.Status.TrialFinished, "£2.99"),
+                PurchaseStatus(PurchaseStatus.Status.TrialFinished, "£2.99", "£0.99"), {},
                 {}
             )
         }
@@ -274,7 +274,7 @@ fun WatchingOkEmptyTrialOverPreview() {
                     watching = emptyList(),
                     waitingNextEpisode = emptyList()
                 ),
-                PurchaseStatus(PurchaseStatus.Status.TrialFinished, "£2.99"),
+                PurchaseStatus(PurchaseStatus.Status.TrialFinished, "£2.99", "£0.99"), {},
                 {}
             )
         }

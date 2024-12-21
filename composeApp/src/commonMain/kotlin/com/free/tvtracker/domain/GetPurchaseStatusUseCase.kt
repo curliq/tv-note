@@ -17,22 +17,23 @@ class GetPurchaseStatusUseCase(
             } else {
                 if (shows.isEmpty()) {
                     PurchaseStatus.Status.TrialOn
-                } else if (shows.count() == 1) {
+                } else if (shows.isNotEmpty()) {
                     PurchaseStatus.Status.TrialFinished
                 } else {
-                    PurchaseStatus.Status.Purchased // allow existing users from when the app was free, also restoring
+                    PurchaseStatus.Status.Purchased
                 }
             }
         }.map {
             PurchaseStatus(
                 status = it,
-                price = iapRepository.getPrice() ?: "$2.99" //todo remove 2.99
+                price = iapRepository.getPrice() ?: "",
+                subPrice = iapRepository.getSubPrice() ?: ""
             )
         }
     }
 }
 
-data class PurchaseStatus(val status: Status, val price: String) {
+data class PurchaseStatus(val status: Status, val price: String, val subPrice: String) {
     enum class Status {
         Purchased, TrialOn, TrialFinished
     }

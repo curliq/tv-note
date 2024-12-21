@@ -21,6 +21,8 @@
 		AFB3D95F2CDF6D85002ECB99 /* Secrets.plist in Resources */ = {isa = PBXBuildFile; fileRef = AFB3D95E2CDF6D85002ECB99 /* Secrets.plist */; };
 		AFB3D9692CDF7583002ECB99 /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = AFB3D9682CDF7583002ECB99 /* Sentry */; };
 		AFB3D96F2CDF8207002ECB99 /* SplashScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFB3D96E2CDF8202002ECB99 /* SplashScreen.swift */; };
+		AFDF00752D0F9098002BB6DF /* IosAppPriceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFDF00732D0F9098002BB6DF /* IosAppPriceProvider.swift */; };
+		AFDF00762D0F9098002BB6DF /* IosFileExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFDF00742D0F9098002BB6DF /* IosFileExporter.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -38,6 +40,8 @@
 		AF83C4522CFCBF4200F3C5E9 /* storekittest.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = storekittest.storekit; sourceTree = "<group>"; };
 		AFB3D95E2CDF6D85002ECB99 /* Secrets.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Secrets.plist; sourceTree = "<group>"; };
 		AFB3D96E2CDF8202002ECB99 /* SplashScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashScreen.swift; sourceTree = "<group>"; };
+		AFDF00732D0F9098002BB6DF /* IosAppPriceProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IosAppPriceProvider.swift; sourceTree = "<group>"; };
+		AFDF00742D0F9098002BB6DF /* IosFileExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IosFileExporter.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -114,6 +118,8 @@
 			isa = PBXGroup;
 			children = (
 				AF231A242BB0F1B300E83E1B /* screens */,
+				AFDF00732D0F9098002BB6DF /* IosAppPriceProvider.swift */,
+				AFDF00742D0F9098002BB6DF /* IosFileExporter.swift */,
 				7555FF82242A565900829871 /* ContentView.swift */,
 				AFB3D96E2CDF8202002ECB99 /* SplashScreen.swift */,
 				2152FB032600AC8F00CF470E /* iOSApp.swift */,
@@ -286,6 +292,8 @@
 				AFB3D96F2CDF8207002ECB99 /* SplashScreen.swift in Sources */,
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
 				AF231A262BB0F1D500E83E1B /* SwiftUIViewScreens.swift in Sources */,
+				AFDF00752D0F9098002BB6DF /* IosAppPriceProvider.swift in Sources */,
+				AFDF00762D0F9098002BB6DF /* IosFileExporter.swift in Sources */,
 				7555FF83242A565900829871 /* ContentView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -415,11 +423,11 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = AB3632DC29227652001CCB65 /* Config.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon 1";
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon 2";
 				CODE_SIGN_ENTITLEMENTS = iosApp/iosApp.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 11;
 				DEVELOPMENT_ASSET_PATHS = "\"iosApp/Preview Content\"";
 				DEVELOPMENT_TEAM = 757A8V3F59;
 				ENABLE_PREVIEWS = YES;
@@ -428,7 +436,8 @@
 					"$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)\n$(SRCROOT)/../composeApp/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)",
 				);
 				INFOPLIST_FILE = iosApp/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "TV Tracker";
+				INFOPLIST_KEY_CFBundleDisplayName = "TV Note";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -454,11 +463,11 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = AB3632DC29227652001CCB65 /* Config.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon 1";
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon 2";
 				CODE_SIGN_ENTITLEMENTS = iosApp/iosApp.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 11;
 				DEVELOPMENT_ASSET_PATHS = "\"iosApp/Preview Content\"";
 				DEVELOPMENT_TEAM = 757A8V3F59;
 				ENABLE_PREVIEWS = YES;
@@ -467,7 +476,8 @@
 					"$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)\n$(SRCROOT)/../composeApp/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)",
 				);
 				INFOPLIST_FILE = iosApp/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "TV Tracker";
+				INFOPLIST_KEY_CFBundleDisplayName = "TV Note";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

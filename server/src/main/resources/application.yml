@@ -28,6 +28,7 @@ logging:
 server:
   ssl:
     enabled: false
+  port: 8080
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver

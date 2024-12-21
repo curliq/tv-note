@@ -38,7 +38,15 @@ class DetailsViewModelTest {
             )
         }
     private val viewModel =
-        DetailsViewModel(showMapper,movieMapper, trackedShowsRepository, getShowByTmdbIdUseCase,mockk(), dispatcher)
+        DetailsViewModel(
+            showMapper,
+            movieMapper,
+            trackedShowsRepository,
+            getShowByTmdbIdUseCase,
+            mockk(),
+            mockk(),
+            dispatcher
+        )
 
     @Test
     fun `GIVEN data is available THEN ui state is ok`() {

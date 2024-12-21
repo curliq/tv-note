@@ -17,7 +17,7 @@ fun buildDetailsUiModel(
     homepageUrl: String? = null,
     description: String? = null,
     duration: String? = null,
-    genres: String = "",
+    genres: List<String> = emptyList(),
     seasonsInfo: String? = null,
     seasons: List<Season>? = null,
     movieSeries: DetailsUiModel.MovieSeries? = null,

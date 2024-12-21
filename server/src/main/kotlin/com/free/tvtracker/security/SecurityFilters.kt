@@ -34,9 +34,8 @@ class SecurityFilters(private val authenticationProvider: AuthenticationProvider
                 authz
                     .requestMatchers(
                         Endpoints.Path.CREATE_ANON_USER,
-                        "/user/login",
-                        "/user/create",
-                        "/error",
+                        Endpoints.Path.LOGIN,
+                        "/error/",
                     ).permitAll()
                     .anyRequest().fullyAuthenticated()
             }

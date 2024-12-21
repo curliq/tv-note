@@ -21,7 +21,9 @@ class FcmService : FirebaseMessagingService() {
         super.onNewToken(token)
         val repo: SessionRepository = get()
         scope.launch {
-            repo.postFcmToken(token)
+            if (repo.getSession() != null) {
+                repo.postFcmToken(token)
+            }
         }
     }
 

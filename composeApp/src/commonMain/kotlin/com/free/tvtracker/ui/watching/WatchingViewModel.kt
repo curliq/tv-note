@@ -1,5 +1,6 @@
 package com.free.tvtracker.ui.watching
 
+import com.free.tvtracker.core.Logger
 import com.free.tvtracker.data.iap.IapRepository
 import com.free.tvtracker.data.tracked.MarkEpisodeWatched
 import com.free.tvtracker.data.tracked.TrackedShowsRepository
@@ -10,7 +11,6 @@ import com.free.tvtracker.expect.ViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,6 +23,7 @@ class WatchingViewModel(
     private val watchingShowUiModelMapper: WatchingShowUiModelMapper,
     private val purchaseStatus: GetPurchaseStatusUseCase,
     private val iapRepository: IapRepository,
+    val logger: Logger,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : ViewModel() {
 
@@ -35,6 +36,10 @@ class WatchingViewModel(
                 if (data.status.fetched == null) {
                     shows.value = WatchingUiState.Loading
                 } else if (data.status.success) {
+                    logger.d(
+                        "watching shows updated: ${data.data.map { it.typedId }}",
+                        this@WatchingViewModel::class.simpleName!!
+                    )
                     if (data.data.isEmpty()) {
                         shows.value = WatchingUiState.Empty
                     } else {
@@ -46,6 +51,7 @@ class WatchingViewModel(
                         )
                     }
                 } else {
+                    logger.d("watching shows error updating")
                     shows.value = WatchingUiState.Error
                 }
             }
@@ -73,10 +79,19 @@ class WatchingViewModel(
     }
 
     val toaster: MutableSharedFlow<String?> = MutableSharedFlow()
+
     fun onBuy() {
         viewModelScope.launch(ioDispatcher) {
             if (!iapRepository.purchase()) {
                 toaster.emit("Error completing purchase, try again later.")
+            }
+        }
+    }
+
+    fun onSub() {
+        viewModelScope.launch(ioDispatcher) {
+            if (!iapRepository.subscribe()) {
+                toaster.emit("Error completing subscription, try again later.")
             }
         }
     }

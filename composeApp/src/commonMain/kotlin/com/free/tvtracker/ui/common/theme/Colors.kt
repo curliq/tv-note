@@ -15,7 +15,7 @@ class Colors{
     val onSecondaryContainerLight = Color(0xFF131C2B)
     val tertiaryLight = Color(0xFF705575)
     val onTertiaryLight = Color(0xFFFFFFFF)
-    val tertiaryContainerLight = Color(0xFFFAD8FD)
+    val tertiaryContainerLight = Color(0xFFF8D4DF)
     val onTertiaryContainerLight = Color(0xFF28132E)
     val errorLight = Color(0xFFBA1A1A)
     val onErrorLight = Color(0xFFFFFFFF)

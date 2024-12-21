@@ -50,3 +50,13 @@ fun SignupPreview() {
     }
 }
 
+@Preview
+@Composable
+fun SignupPreviewError() {
+    TvTrackerTheme {
+        Scaffold { _ ->
+            SignupContent(SignupViewModel.Result.Error("This username is already taken."), {}, { }, { true })
+        }
+    }
+}
+

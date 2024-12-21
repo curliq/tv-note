@@ -32,3 +32,9 @@ data class SessionApiResponse(
 
 @Serializable
 object ErrorInvalidCredentials : ApiError("invalid_creds")
+
+@Serializable
+object ErrorAccountAlreadyExists : ApiError("account_already_exists")
+
+@Serializable
+object ErrorMissingCreds : ApiError("error_missing_creds")

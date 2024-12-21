@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -46,7 +47,7 @@ sealed class FinishedScreenNavAction {
 @Composable
 fun FinishedScreen(navigate: (FinishedScreenNavAction) -> Unit, viewModel: FinishedShowsViewModel) {
     val shows = viewModel.shows.collectAsState().value
-    val purchaseStatus by viewModel.status.collectAsState(PurchaseStatus(PurchaseStatus.Status.Purchased, "$2.99"))
+    val purchaseStatus by viewModel.status.collectAsState(PurchaseStatus(PurchaseStatus.Status.Purchased, "", ""))
 
     TvTrackerTheme {
         FabContainer({ navigate(FinishedScreenNavAction.GoAddShow) }, content = {
@@ -58,7 +59,8 @@ fun FinishedScreen(navigate: (FinishedScreenNavAction) -> Unit, viewModel: Finis
                 when (targetState) {
                     FinishedUiState.Empty -> FinishedEmpty(
                         purchaseStatus,
-                        { viewModel.action(FinishedShowsViewModel.FinishedAction.Buy) }
+                        { viewModel.action(FinishedShowsViewModel.FinishedAction.Buy) },
+                        { viewModel.action(FinishedShowsViewModel.FinishedAction.Sub) },
                     )
 
                     FinishedUiState.Error -> ErrorScreen { viewModel.refresh() }
@@ -71,7 +73,7 @@ fun FinishedScreen(navigate: (FinishedScreenNavAction) -> Unit, viewModel: Finis
 }
 
 @Composable
-fun FinishedEmpty(status: PurchaseStatus, onBuy: () -> Unit) {
+fun FinishedEmpty(status: PurchaseStatus, onBuy: () -> Unit, onSub: () -> Unit) {
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
@@ -80,7 +82,7 @@ fun FinishedEmpty(status: PurchaseStatus, onBuy: () -> Unit) {
                 textAlign = TextAlign.Center
             )
             if (status.status != PurchaseStatus.Status.Purchased) {
-                TrialView(status, onBuy)
+                TrialView(status, onBuy, onSub)
             }
         }
     }
@@ -122,6 +124,17 @@ fun FinishedOk(
                 )
             }
         }
+        if (data.shows.isEmpty()) {
+            item {
+                Box(modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp)) {
+                    Text(
+                        text = "No finished content.",
+                        style = MaterialTheme.typography.labelMedium,
+                        textAlign = TextAlign.Center,
+                    )
+                }
+            }
+        }
         items(data.shows) { model ->
             WatchlistItem(
                 model.toWatchlistUiModel(),
@@ -131,7 +144,11 @@ fun FinishedOk(
         }
         if (purchaseStatus.status != PurchaseStatus.Status.Purchased) {
             item(key = -1) {
-                TrialView(purchaseStatus, { action(FinishedShowsViewModel.FinishedAction.Buy) })
+                TrialView(
+                    purchaseStatus,
+                    { action(FinishedShowsViewModel.FinishedAction.Buy) },
+                    { action(FinishedShowsViewModel.FinishedAction.Sub) }
+                )
             }
         }
     }

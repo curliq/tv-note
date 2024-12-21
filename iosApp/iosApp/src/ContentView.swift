@@ -61,6 +61,7 @@ struct ContentView: View {
     var body: some View {
         TabView {
             NavigationStack(path: $path1) {
+                let detailsViewModel = ViewModelsModule().detailsViewModel
                 VStack {
                     let navActions: (WatchingScreenNavAction) -> Void = { navAction in
                         switch navAction {
@@ -140,7 +141,7 @@ struct ContentView: View {
                     .sheetBackgroundColor(isDarkTheme: colorScheme == .dark)
                 }
                 .navigationDestination(for: Route.self) { route in
-                    handleRouteNavigation(route: route, path: $path1)
+                    handleRouteNavigation(route: route, path: $path1, detailsViewModel: detailsViewModel)
                 }
                 .navigationViewStyle(StackNavigationViewStyle())
             }
@@ -149,6 +150,7 @@ struct ContentView: View {
             }
             
             NavigationStack(path: $path2) {
+                let detailsViewModel = ViewModelsModule().detailsViewModel
                 VStack {
                     let finishedNav: (FinishedScreenNavAction) -> Void = { action in
                         switch action {
@@ -164,7 +166,7 @@ struct ContentView: View {
                         .styleToolbar(title: "Finished Watching")
                 }
                 .navigationDestination(for: Route.self) { route in
-                    handleRouteNavigation(route: route, path: $path2)
+                    handleRouteNavigation(route: route, path: $path2, detailsViewModel: detailsViewModel)
                 }
                 .navigationViewStyle(StackNavigationViewStyle())
             }
@@ -173,6 +175,7 @@ struct ContentView: View {
             }
             
             NavigationStack(path: $path3) {
+                let detailsViewModel = ViewModelsModule().detailsViewModel
                 VStack {
                     let watchlistNav: (WatchlistScreenNavAction) -> Void = { action in
                         switch action {
@@ -188,7 +191,7 @@ struct ContentView: View {
                         .styleToolbar(title: "Watchlist")
                 }
                 .navigationDestination(for: Route.self) { route in
-                    handleRouteNavigation(route: route, path: $path3)
+                    handleRouteNavigation(route: route, path: $path3, detailsViewModel: detailsViewModel)
                 }
                 .navigationViewStyle(StackNavigationViewStyle())
             }.tabItem {
@@ -196,12 +199,13 @@ struct ContentView: View {
             }
             
             NavigationStack(path: $path4) {
+                let detailsViewModel = ViewModelsModule().detailsViewModel
                 VStack {
                     DiscoverScreen(discoverViewModel: discoverViewModel, nav: discoverNav(path: $path4))
                         .styleToolbar(title: "Discover")
                 }
                 .navigationDestination(for: Route.self) { route in
-                    handleRouteNavigation(route: route, path: $path4)
+                    handleRouteNavigation(route: route, path: $path4, detailsViewModel: detailsViewModel)
                 }
                 .navigationViewStyle(StackNavigationViewStyle())
             }
@@ -241,7 +245,7 @@ struct ContentView: View {
             
             // Firebase libraries from SPM only work for arm64
             // but not m1 simulators for undoubtedly good and valid reasons
-    #if (!targetEnvironment(simulator))
+#if (!targetEnvironment(simulator))
             FirebaseApp.configure()
             let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
             UNUserNotificationCenter.current().requestAuthorization(
@@ -252,18 +256,19 @@ struct ContentView: View {
                             UIApplication.shared.registerForRemoteNotifications()
                         }
                     }
-                
+                    
                 }
             )
             
             
-    #endif
+#endif
         }
     }
     
     func handleRouteNavigation(
         route: Route,
-        path: Binding<NavigationPath>
+        path: Binding<NavigationPath>,
+        detailsViewModel: DetailsViewModel
     ) -> some View {
         let addTrackedNav: (AddTrackedScreenNavAction) -> Void = { action in
             switch action {
@@ -321,37 +326,72 @@ struct ContentView: View {
                 break
             }
         }
-        switch route {
-        case .search(let origin):
-            return SearchScreen(addTrackedViewModel: addTrackedViewModel, origin: origin, nav: addTrackedNav).eraseToAnyView()
-        case .details(let content):
-            return ShowDetailsScreen(detailsViewModel: ViewModelsModule().detailsViewModel, content: content, nav: detailsNav).eraseToAnyView()
-        case .episodes:
-            return DetailsEpisodesSheet(detailsViewModel: detailsViewModel).eraseToAnyView()
-        case .cast:
-            return DetailsCastCrewSheet(detailsViewModel: detailsViewModel, nav: detailsNav).eraseToAnyView()
-        case .person(let personId):
-            return PersonDetails(vm: personViewModel, personId: personId, nav: personNav).eraseToAnyView()
-        case .media:
-            return DetailsMediaSheet(detailsViewModel: detailsViewModel, nav: detailsNav).eraseToAnyView()
-        case .filmCollection:
-            return DetailsFilmCollectionSheet(detailsViewModel: detailsViewModel, nav: detailsNav).eraseToAnyView()
-        case .personShows:
-            return PersonShowsDetails(vm: personViewModel, nav: personNav).eraseToAnyView()
-        case .personMovies:
-            return PersonMoviesDetails(vm: personViewModel, nav: personNav).eraseToAnyView()
-        case .personPhotos:
-            return PersonPhotosDetails(vm: personViewModel).eraseToAnyView()
-        case .newReleases:
-            return AnyView(NewReleasesScreen(discoverViewModel: discoverViewModel, nav: discoverNav(path: $path4)))
-        case .recommended:
-            return AnyView(RecommendedScreen(discoverViewModel: discoverViewModel, nav: recommendedNav))
-        case .trending:
-            return AnyView(TrendingScreen(discoverViewModel: discoverViewModel, nav: discoverNav(path: $path4)))
-        default:
-            return AnyView(Text("error"))
-        }
         
+        let aa = switch route {
+        case .search(let origin):
+            SearchScreen(addTrackedViewModel: addTrackedViewModel, origin: origin, nav: addTrackedNav).eraseToAnyView()
+        case .details(let content):
+            ShowDetailsScreen(detailsViewModel: detailsViewModel, content: content, nav: detailsNav).eraseToAnyView()
+        case .episodes:
+            DetailsEpisodesSheet(detailsViewModel: detailsViewModel).eraseToAnyView()
+        case .cast:
+            DetailsCastCrewSheet(detailsViewModel: detailsViewModel, nav: detailsNav).eraseToAnyView()
+        case .person(let personId):
+            PersonDetails(vm: personViewModel, personId: personId, nav: personNav).eraseToAnyView()
+        case .media:
+            DetailsMediaSheet(detailsViewModel: detailsViewModel, nav: detailsNav).eraseToAnyView()
+        case .filmCollection:
+            DetailsFilmCollectionSheet(detailsViewModel: detailsViewModel, nav: detailsNav).eraseToAnyView()
+        case .personShows:
+            PersonShowsDetails(vm: personViewModel, nav: personNav).eraseToAnyView()
+        case .personMovies:
+            PersonMoviesDetails(vm: personViewModel, nav: personNav).eraseToAnyView()
+        case .personPhotos:
+            PersonPhotosDetails(vm: personViewModel).eraseToAnyView()
+        case .newReleases:
+            NewReleasesScreen(discoverViewModel: discoverViewModel, nav: discoverNav(path: $path4)).eraseToAnyView()
+        case .recommended:
+            RecommendedScreen(discoverViewModel: discoverViewModel, nav: recommendedNav).eraseToAnyView()
+        case .trending:
+            TrendingScreen(discoverViewModel: discoverViewModel, nav: discoverNav(path: $path4)).eraseToAnyView()
+        default:
+            Text("error").eraseToAnyView()
+        }
+        return aa.toolbar {
+            if case .details(let content) = route {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    ShareLink(
+                        item: ShareItemProvider(vm: detailsViewModel),
+                        preview: SharePreview("Sharing link...")
+                    ) {
+                        Image(systemName: "square.and.arrow.up")
+                    }
+                }
+            }
+        }
+    }
+    
+}
+
+struct ShareItemProvider: Transferable {
+    
+    let vm: DetailsViewModel
+    
+    init(vm: DetailsViewModel) {
+        self.vm = vm
+    }
+    
+    func generateReport() -> String {
+        print("Generating...")
+        // do some work...
+        return vm.getShareLink() // Assuming getShareLink() returns a String
+    }
+    
+    // Proper Transferable conformance with ProxyRepresentation
+    static var transferRepresentation: some TransferRepresentation {
+        ProxyRepresentation { report in
+            URL(string: report.generateReport())!
+        }
     }
 }
 

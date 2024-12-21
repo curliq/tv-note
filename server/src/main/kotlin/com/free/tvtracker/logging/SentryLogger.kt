@@ -35,7 +35,7 @@ class Sentry {
         sentryOptions.environment = env
         sentryAppender.setOptions(sentryOptions)
         sentryAppender.name = "SENTRY"
-        sentryAppender.setMinimumEventLevel(Level.ALL)
+        sentryAppender.setMinimumEventLevel(Level.WARN)
         if (dsn.isBlank()) {
             sentryOptions.tags["dsn_missing"] = "true"
         }

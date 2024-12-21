@@ -1,5 +1,6 @@
 package com.free.tvtracker.ui.finished
 
+import com.free.tvtracker.core.Logger
 import com.free.tvtracker.data.iap.IapRepository
 import com.free.tvtracker.data.tracked.TrackedShowsRepository
 import com.free.tvtracker.domain.GetPurchaseStatusUseCase
@@ -24,6 +25,7 @@ class FinishedShowsViewModel(
     private val mapper: FinishedShowUiModelMapper,
     private val purchaseStatus: GetPurchaseStatusUseCase,
     private val iapRepository: IapRepository,
+    private val logger: Logger,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : ViewModel() {
     val shows: MutableStateFlow<FinishedUiState> = MutableStateFlow(FinishedUiState.Loading)
@@ -35,6 +37,10 @@ class FinishedShowsViewModel(
                 .filter { it.status.fetched == true }
                 .collect { data ->
                     if (data.status.success) {
+                        logger.d(
+                            "finished shows updated: ${data.data.map { it.typedId }}",
+                            this@FinishedShowsViewModel::class.simpleName!!
+                        )
                         val res = isTrackedShowWatchableUseCase.unwatchable(data.data).filter {
                             if (!it.isTvShow) {
                                 !it.watchlisted
@@ -88,6 +94,12 @@ class FinishedShowsViewModel(
                     iapRepository.purchase()
                 }
             }
+
+            FinishedAction.Sub -> {
+                viewModelScope.launch(ioDispatcher) {
+                    iapRepository.subscribe()
+                }
+            }
         }
     }
 
@@ -95,6 +107,7 @@ class FinishedShowsViewModel(
         data object ToggleTvShows : FinishedAction()
         data object ToggleMovies : FinishedAction()
         data object Buy : FinishedAction()
+        data object Sub : FinishedAction()
     }
 }
 

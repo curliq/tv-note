@@ -14,27 +14,13 @@
 
   ],
   "products" : [
-    {
-      "displayPrice" : "2.99",
-      "familyShareable" : false,
-      "internalID" : "6738700439",
-      "localizations" : [
-        {
-          "description" : "Unlock access to the full app",
-          "displayName" : "Full access",
-          "locale" : "en_GB"
-        }
-      ],
-      "productID" : "02",
-      "referenceName" : "full access",
-      "type" : "NonConsumable"
-    }
+
   ],
   "settings" : {
     "_applicationInternalID" : "6504262750",
     "_developerTeamID" : "757A8V3F59",
     "_failTransactionsEnabled" : false,
-    "_lastSynchronizedDate" : 754761541.05708098,
+    "_lastSynchronizedDate" : 756443048.51047504,
     "_locale" : "en_GB",
     "_storefront" : "GBR",
     "_storeKitErrors" : [
@@ -86,7 +72,43 @@
     ]
   },
   "subscriptionGroups" : [
+    {
+      "id" : "21611384",
+      "localizations" : [
 
+      ],
+      "name" : "access",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "0.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "6739722561",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Access to the TV Note app",
+              "displayName" : "TV Note",
+              "locale" : "en_GB"
+            }
+          ],
+          "productID" : "com.free.tvtracker.BestTvTracker.accesssub",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "TV Note subscription",
+          "subscriptionGroupID" : "21611384",
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
+        }
+      ]
+    }
   ],
   "version" : {
     "major" : 4,
