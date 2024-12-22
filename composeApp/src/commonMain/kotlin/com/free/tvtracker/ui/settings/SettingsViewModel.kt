@@ -85,7 +85,7 @@ class SettingsViewModel(
                 }
 
                 Action.EnableFreeApp -> {
-                    iapRepository.setAppPurchased(true)
+                    iapRepository.setHacked()
                 }
 
                 Action.RestorePurchase -> {

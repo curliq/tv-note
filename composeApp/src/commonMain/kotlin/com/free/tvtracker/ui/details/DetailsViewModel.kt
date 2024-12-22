@@ -182,17 +182,16 @@ class DetailsViewModel(
             }
 
             is DetailsAction.MarkShowWatched -> {
-                if (action.trackedContentId == null) {
-                    trackedShowsRepository.addTrackedShow(
-                        action.tmdbShowId,
-                        isTvShow = true,
-                        watchlisted = false
-                    )
-                }
-                val trackedShow = trackedShowsRepository.getByTmdbId(action.tmdbShowId) ?: return
-                val seasons = (result.value as? DetailsUiState.Ok)?.data?.seasons
-                if (seasons == null) return
                 viewModelScope.launch(ioDispatcher) {
+                    if (action.trackedContentId == null) {
+                        trackedShowsRepository.coAddTrackedShow(
+                            action.tmdbShowId,
+                            isTvShow = true,
+                            watchlisted = false
+                        )
+                    }
+                    val trackedShow = trackedShowsRepository.getByTmdbId(action.tmdbShowId) ?: return@launch
+                    val seasons = (result.value as? DetailsUiState.Ok)?.data?.seasons ?: return@launch
                     val episodes = seasons.flatMap { it.episodes }
                         .filter { !it.watched }
                         .filter { it.isWatchable }

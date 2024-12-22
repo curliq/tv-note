@@ -94,7 +94,8 @@ class LocalSqlDataProvider(appDatabase: AppDatabase) {
             ?: LocalPreferencesClientEntity(
                 welcomeComplete = false,
                 theme = LocalPreferencesClientEntity.Theme.SystemDefault,
-                purchasedApp = false
+                purchasedApp = false,
+                isHacked = false
             )
     }
 
@@ -103,7 +104,8 @@ class LocalSqlDataProvider(appDatabase: AppDatabase) {
             local_prefs_id = 1,
             welcome_complete = prefs.welcomeComplete,
             theme = prefs.theme.value.toLong(),
-            purchased_app = prefs.purchasedApp
+            purchased_app = prefs.purchasedApp,
+            is_hacked = prefs.isHacked
         )
     }
 

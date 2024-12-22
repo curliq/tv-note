@@ -34,6 +34,7 @@ slf4jAndroid = "1.7.36"
 spring = "3.4.0"
 flyway = "10.11.1"
 lifecycle_version = "2.8.7"
+sqliteAndroid = "3.45.0"
 turbine = "1.1.0"
 uuid = "0.8.4"
 
@@ -91,6 +92,7 @@ kotlinReflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }
 jjtw = { module = "io.jsonwebtoken:jjwt", version = "0.12.3" }
 flywayPostgres = { module = "org.flywaydb:flyway-database-postgresql", version.ref = "flyway" }
 postgres = { module = "org.postgresql:postgresql", version = "42.7.4" }
+sqlite-android = { module = "com.github.requery:sqlite-android", version.ref = "sqliteAndroid" }
 sqlite-driver = { module = "com.squareup.sqldelight:sqlite-driver", version.ref = "sqldelightCoroutinesExtensions" }
 testSpringBoot = { module = "org.springframework.boot:spring-boot-starter-test" }
 testSpringBootSecurity = { module = "org.springframework.security:spring-security-test" }

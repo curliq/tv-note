@@ -13,14 +13,14 @@ CREATE TABLE tracked_shows(
     created_at_datetime TEXT NOT NULL,
     stored_show INTEGER NOT NULL,
     watchlisted INTEGER AS Boolean DEFAULT 0,
-    FOREIGN KEY (stored_show) REFERENCES stored_shows(tmdb_id)
+    FOREIGN KEY (stored_show) REFERENCES stored_shows(tmdb_id) ON DELETE CASCADE
 );
 
 CREATE TABLE watched_episodes(
     id TEXT NOT NULL PRIMARY KEY,
     stored_episode_id INTEGER NOT NULL,
     tracked_show INTEGER NOT NULL,
-    FOREIGN KEY (tracked_show) REFERENCES tracked_shows(id)
+    FOREIGN KEY (tracked_show) REFERENCES tracked_shows(id) ON DELETE CASCADE
 );
 
 CREATE TABLE stored_episodes(
@@ -29,7 +29,7 @@ CREATE TABLE stored_episodes(
     episode INTEGER NOT NULL,
     stored_show INTEGER NOT NULL,
     air_date TEXT,
-    FOREIGN KEY (stored_show) REFERENCES stored_shows(tmdb_id)
+    FOREIGN KEY (stored_show) REFERENCES stored_shows(tmdb_id) ON DELETE CASCADE
 );
 
 CREATE TABLE episode_watched_order(
@@ -43,6 +43,7 @@ CREATE TABLE local_preferences(
     local_prefs_id INTEGER NOT NULL PRIMARY KEY,
     welcome_complete INTEGER AS Boolean DEFAULT 0,
     purchased_app INTEGER AS Boolean DEFAULT 0,
+    is_hacked INTEGER AS Boolean DEFAULT 0,
     theme INTEGER DEFAULT 0
 );
 
@@ -121,13 +122,14 @@ getLocalPreferences:
 SELECT * FROM local_preferences;
 
 saveLocalPreferences:
-INSERT INTO local_preferences(local_prefs_id, welcome_complete, theme, purchased_app)
-VALUES(?, ?, ?, ?)
+INSERT INTO local_preferences(local_prefs_id, welcome_complete, theme, purchased_app, is_hacked)
+VALUES(?, ?, ?, ?, ?)
 ON CONFLICT(local_prefs_id)
   DO UPDATE SET
   welcome_complete = excluded.welcome_complete,
   theme = excluded.theme,
-  purchased_app = excluded.purchased_app;
+  purchased_app = excluded.purchased_app,
+  is_hacked = excluded.is_hacked;
 
 getSession:
 SELECT * FROM session;

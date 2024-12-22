@@ -1,0 +1,1 @@
+ALTER TABLE local_preferences ADD COLUMN is_hacked INTEGER AS Boolean DEFAULT 0;

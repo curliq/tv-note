@@ -55,6 +55,7 @@ kotlin {
             implementation(libs.posthog.android)
             implementation(libs.billing)
             implementation(libs.billing.ktx)
+            implementation(libs.sqlite.android)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
@@ -81,7 +82,6 @@ kotlin {
             implementation(libs.uuid)
             implementation(libs.kotlinx.datetime)
             implementation(libs.landscapist.coil3)
-            implementation("androidx.compose.runtime:runtime-tracing:1.7.6")
             implementation(libs.sentry.kotlin.multiplatform)
         }
         jvmMain.dependencies {

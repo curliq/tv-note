@@ -137,7 +137,7 @@ fun WatchingOk(
         if (shows.watching.isEmpty()) {
             item {
                 Column(
-                    Modifier.fillMaxWidth().padding(start = TvTrackerTheme.sidePadding, bottom = 32.dp),
+                    Modifier.fillMaxWidth().padding(top = 32.dp, bottom = 32.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(

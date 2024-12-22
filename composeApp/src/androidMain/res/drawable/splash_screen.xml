@@ -4,5 +4,7 @@
     <item
         android:drawable="@drawable/splash_screen_icon"
         android:gravity="center"
+        android:height="80dp"
+        android:width="80dp"
     />
 </layer-list>

@@ -9,10 +9,22 @@ class IapRepository(
 ) {
 
     val isPurchased = MutableStateFlow(isPurchased())
+    val isHacked = MutableStateFlow(isHacked())
 
     private fun isPurchased(): Boolean {
         val localPrefs = localDataSource.getLocalPreferences()
         return localPrefs.purchasedApp
+    }
+
+    private fun isHacked(): Boolean {
+        val localPrefs = localDataSource.getLocalPreferences()
+        return localPrefs.isHacked
+    }
+
+    fun setHacked() {
+        val localPrefs = localDataSource.getLocalPreferences()
+        localDataSource.setLocalPreferences(localPrefs.copy(isHacked = true))
+        isHacked.value = true
     }
 
     suspend fun purchase(): Boolean {
@@ -27,13 +39,13 @@ class IapRepository(
         return success
     }
 
-    fun setAppPurchased(owned: Boolean) {
+    private fun setAppPurchased(owned: Boolean) {
         val localPrefs = localDataSource.getLocalPreferences()
         localDataSource.setLocalPreferences(localPrefs.copy(purchasedApp = owned))
         isPurchased.value = owned
     }
 
-    suspend fun getPrice(): String? = appPriceProvider.appPrice()
+    suspend fun getPrice(): String? = appPriceProvider.appPrice() ?: "£2.99"
 
     suspend fun restorePurchase(): Boolean {
         val success = appPriceProvider.restorePurchase()
@@ -41,5 +53,5 @@ class IapRepository(
         return success
     }
 
-    suspend fun getSubPrice(): String? = appPriceProvider.appSubPrice()
+    suspend fun getSubPrice(): String? = appPriceProvider.appSubPrice()  ?: "£2.99"
 }

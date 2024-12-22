@@ -11,16 +11,18 @@ class GetPurchaseStatusUseCase(
     private val trackedShowsRepository: TrackedShowsRepository
 ) {
     fun invoke(): Flow<PurchaseStatus> {
-        return trackedShowsRepository.allShows.combine(iapRepository.isPurchased) { shows, purchased ->
-            if (purchased) {
+        return combine(
+            trackedShowsRepository.allShows,
+            iapRepository.isPurchased,
+            iapRepository.isHacked
+        ) { shows, purchased, hacked ->
+            if (purchased || hacked) {
                 PurchaseStatus.Status.Purchased
             } else {
                 if (shows.isEmpty()) {
                     PurchaseStatus.Status.TrialOn
-                } else if (shows.isNotEmpty()) {
-                    PurchaseStatus.Status.TrialFinished
                 } else {
-                    PurchaseStatus.Status.Purchased
+                    PurchaseStatus.Status.TrialFinished
                 }
             }
         }.map {
