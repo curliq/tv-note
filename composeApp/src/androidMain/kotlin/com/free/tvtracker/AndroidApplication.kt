@@ -1,13 +1,16 @@
 package com.free.tvtracker
 
 import android.app.Application
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.util.Log
 import com.free.tvtracker.core.ui.BaseActivity
-import com.free.tvtracker.di.appModules
-import com.free.tvtracker.expect.AndroidAppPriceProvider
 import com.free.tvtracker.data.iap.AppPriceProvider
 import com.free.tvtracker.data.iap.IapRepository
+import com.free.tvtracker.di.appModules
+import com.free.tvtracker.expect.AndroidAppPriceProvider
 import com.free.tvtracker.expect.AndroidFileExporter
 import com.free.tvtracker.expect.initSentry
 import com.free.tvtracker.ui.details.DetailsViewModel
@@ -33,6 +36,7 @@ import org.koin.android.ext.android.get
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
+
 
 class AndroidApplication : Application() {
     companion object {

@@ -195,7 +195,11 @@ fun AddTrackedScreenGrid(
                 },
             ) {
                 Box(Modifier.aspectRatio(posterRatio())) {
-                    TvImage(item.image, modifier = Modifier.fillMaxHeight().fillMaxWidth())
+                    if (item.image.isNotEmpty()) {
+                        TvImage(item.image, modifier = Modifier.fillMaxHeight().fillMaxWidth())
+                    } else {
+                        TvImage(item.image, modifier = Modifier.fillMaxHeight().fillMaxWidth())
+                    }
                 }
                 Spacer(Modifier.width(8.dp))
                 Column(Modifier.padding(8.dp)) {

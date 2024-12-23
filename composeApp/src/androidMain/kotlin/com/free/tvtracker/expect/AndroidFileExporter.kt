@@ -46,6 +46,7 @@ class AndroidFileExporter: FileExporter {
                 putExtra(Intent.EXTRA_STREAM, fileUri)
                 type = "text/plain"
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
 
             // Show the share dialog

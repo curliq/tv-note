@@ -12,7 +12,7 @@ class PersonSearchUiModelMapper :
         return AddTrackedItemUiModel(
             from.tmdbId,
             buildPseudoId(TrackedContentApiModel.ContentType.Person, from.tmdbId),
-            from.name!!,
+            "${from.name!!} (Person)",
             TmdbConfigData.get().getPosterUrl(from.profilePath),
             options.tracked,
             AddTrackedItemUiModel.TrackAction.None,

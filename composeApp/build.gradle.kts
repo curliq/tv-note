@@ -117,8 +117,8 @@ android {
         applicationId = "com.free.tvtracker"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 8
-        versionName = "1.6"
+        versionCode = 10
+        versionName = "1.7"
         vectorDrawables.useSupportLibrary = true
         buildConfigField("String", "ANDROID_KEY_POSTHOG", "\"${System.getenv("ANDROID_KEY_POSTHOG")}\"")
         buildConfigField("String", "KEY_DSN_SENTRY", "\"${System.getenv("ANDROID_KEY_DSN_SENTRY")}\"")

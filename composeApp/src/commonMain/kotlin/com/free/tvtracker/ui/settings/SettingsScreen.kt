@@ -2,7 +2,6 @@ package com.free.tvtracker.ui.settings
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,20 +11,16 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.RadioButton
@@ -52,7 +47,7 @@ import besttvtracker.composeapp.generated.resources.ic_code
 import besttvtracker.composeapp.generated.resources.ic_customer_support
 import besttvtracker.composeapp.generated.resources.ic_delete_account
 import besttvtracker.composeapp.generated.resources.ic_settings_restore
-import besttvtracker.composeapp.generated.resources.ic_tv
+import besttvtracker.composeapp.generated.resources.ic_tos
 import com.free.tvtracker.expect.OsPlatform
 import com.free.tvtracker.ui.common.composables.ResImage
 import com.free.tvtracker.ui.common.theme.TvTrackerTheme
@@ -308,6 +303,24 @@ fun SettingsContent(
             ResImage(Res.drawable.ic_code, "restore", tint = MaterialTheme.colorScheme.primary)
             Spacer(Modifier.width(8.dp))
             Text("github.com/curliq/best-tv-tracker")
+        }
+        if (OsPlatform().get() == OsPlatform.Platform.IOS) {
+            TextButton(
+                shape = TvTrackerTheme.ShapeButton,
+                modifier = Modifier.padding(horizontal = TvTrackerTheme.sidePaddingHalf),
+                contentPadding = PaddingValues(TvTrackerTheme.sidePaddingHalf),
+                onClick = {
+                    navAction(
+                        SettingsScreenNavAction.GoBrowser(
+                            "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/"
+                        )
+                    )
+                },
+            ) {
+                ResImage(Res.drawable.ic_tos, "tos", tint = MaterialTheme.colorScheme.primary)
+                Spacer(Modifier.width(8.dp))
+                Text("Terms of use (EULA)")
+            }
         }
         TextButton(
             shape = TvTrackerTheme.ShapeButton,

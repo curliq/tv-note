@@ -2,7 +2,7 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- Centered vector drawable -->
     <item
-        android:drawable="@drawable/splash_screen_icon"
+        android:drawable="@drawable/logo_centered"
         android:gravity="center"
         android:height="80dp"
         android:width="80dp"

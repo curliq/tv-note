@@ -18,10 +18,24 @@ class AndroidAppPriceProvider(private val context: Context) : AppPriceProvider {
     private val appPriceId = "01"
     private val appSubId = "sub1"
 
+    private var responseListener: (Boolean) -> Unit = { }
+
     val billingClient by lazy {
         BillingClient.newBuilder(context)
             .enablePendingPurchases()
-            .setListener { billingResult, purchases -> }
+            .setListener { billingResult, purchases ->
+                if (billingResult.responseCode == BillingClient.BillingResponseCode.OK &&
+                    purchases?.firstOrNull() != null
+                ) {
+                    responseListener(true)
+                } else if (billingResult.responseCode == BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED) {
+                    responseListener(true)
+                } else if (billingResult.responseCode == BillingClient.BillingResponseCode.USER_CANCELED) {
+                    responseListener(false)
+                } else {
+                    responseListener(false)
+                }
+            }
             .build()
     }
 
@@ -99,23 +113,7 @@ class AndroidAppPriceProvider(private val context: Context) : AppPriceProvider {
     }
 
     override suspend fun buyApp(): Boolean = suspendCoroutine { continuation ->
-        val billingClient = BillingClient.newBuilder(context)
-            .setListener { billingResult, purchases ->
-                if (billingResult.responseCode == BillingClient.BillingResponseCode.OK &&
-                    purchases?.firstOrNull() != null
-                ) {
-                    continuation.resumeWith(Result.success(true))
-                } else if (billingResult.responseCode == BillingClient.BillingResponseCode.USER_CANCELED) {
-                    continuation.resumeWith(Result.success(false))
-                } else if (billingResult.responseCode == BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED) {
-                    continuation.resumeWith(Result.success(true))
-                } else {
-                    continuation.resumeWith(Result.success(false))
-                }
-            }
-            .enablePendingPurchases()
-            .build()
-
+        responseListener = { a -> continuation.resumeWith(Result.success(a)) }
         billingClient.startConnection(object : BillingClientStateListener {
             override fun onBillingSetupFinished(billingResult: BillingResult) {
                 if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
@@ -135,50 +133,30 @@ class AndroidAppPriceProvider(private val context: Context) : AppPriceProvider {
 
                                 val activity = AndroidApplication.instance.currentActivity
                                 if (activity == null) {
-                                    billingClient.endConnection()
                                     continuation.resumeWith(Result.success(false))
                                 }
                                 val billingResult = billingClient.launchBillingFlow(activity!!, flowParams)
                                 if (billingResult.responseCode != BillingClient.BillingResponseCode.OK) {
-                                    billingClient.endConnection()
                                     continuation.resumeWith(Result.success(false))
                                 }
                             }
                         } else {
-                            billingClient.endConnection()
                             continuation.resumeWith(Result.success(false))
                         }
                     }
                 } else {
-                    billingClient.endConnection()
                     continuation.resumeWith(Result.success(false))
                 }
             }
 
             override fun onBillingServiceDisconnected() {
-                billingClient.endConnection()
                 continuation.resumeWith(Result.success(false))
             }
         })
     }
 
     override suspend fun subscribe(): Boolean = suspendCoroutine { continuation ->
-        val billingClient = BillingClient.newBuilder(context)
-            .setListener { billingResult, purchases ->
-                if (billingResult.responseCode == BillingClient.BillingResponseCode.OK &&
-                    purchases?.firstOrNull() != null
-                ) {
-                    continuation.resumeWith(Result.success(true))
-                } else if (billingResult.responseCode == BillingClient.BillingResponseCode.USER_CANCELED) {
-                    continuation.resumeWith(Result.success(false))
-                } else if (billingResult.responseCode == BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED) {
-                    continuation.resumeWith(Result.success(true))
-                } else {
-                    continuation.resumeWith(Result.success(false))
-                }
-            }
-            .enablePendingPurchases()
-            .build()
+        responseListener = { a -> continuation.resumeWith(Result.success(a)) }
 
         billingClient.startConnection(object : BillingClientStateListener {
             override fun onBillingSetupFinished(billingResult: BillingResult) {
@@ -199,28 +177,23 @@ class AndroidAppPriceProvider(private val context: Context) : AppPriceProvider {
 
                                 val activity = AndroidApplication.instance.currentActivity
                                 if (activity == null) {
-                                    billingClient.endConnection()
                                     continuation.resumeWith(Result.success(false))
                                 }
                                 val billingResult = billingClient.launchBillingFlow(activity!!, flowParams)
                                 if (billingResult.responseCode != BillingClient.BillingResponseCode.OK) {
-                                    billingClient.endConnection()
                                     continuation.resumeWith(Result.success(false))
                                 }
                             }
                         } else {
-                            billingClient.endConnection()
                             continuation.resumeWith(Result.success(false))
                         }
                     }
                 } else {
-                    billingClient.endConnection()
                     continuation.resumeWith(Result.success(false))
                 }
             }
 
             override fun onBillingServiceDisconnected() {
-                billingClient.endConnection()
                 continuation.resumeWith(Result.success(false))
             }
         })
