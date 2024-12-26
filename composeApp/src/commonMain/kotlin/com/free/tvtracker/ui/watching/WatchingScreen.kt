@@ -54,6 +54,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
@@ -61,6 +62,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.free.tvtracker.core.Logger
 import com.free.tvtracker.domain.PurchaseStatus
+import com.free.tvtracker.expect.OsPlatform
 import com.free.tvtracker.ui.common.composables.ErrorScreen
 import com.free.tvtracker.ui.common.composables.LoadingScreen
 import com.free.tvtracker.ui.common.composables.TvImage
@@ -401,7 +403,21 @@ fun TrialView(status: PurchaseStatus, onBuy: () -> Unit, onSub: () -> Unit) {
         Text("Or", style = MaterialTheme.typography.labelSmall)
         Spacer(Modifier.height(8.dp))
         Button(onClick = onSub, modifier = Modifier.fillMaxWidth(1f), shape = TvTrackerTheme.ShapeButton) {
-            Text("Subscribe for ${status.subPrice}/month (30d free)")
+            Text("Subscribe for ${status.subPrice}/month")
+        }
+        val hand = LocalUriHandler.current
+        Row {
+            Text("Includes 1 month trial, cancel anytime.", style = MaterialTheme.typography.labelSmall)
+            if (OsPlatform().get() == OsPlatform.Platform.IOS) {
+                Text(
+                    " Terms of service",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.clickable {
+                        hand.openUri("https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")
+                    }
+                )
+            }
         }
     }
 }

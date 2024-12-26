@@ -19,7 +19,8 @@ fun WelcomePreview() {
                 subPrice = "£0.99",
                 buy = {},
                 refresh = {},
-                sub = {}
+                sub = {},
+                openUrl = {}
             )
         }
     }
@@ -37,7 +38,8 @@ fun WelcomePreview2() {
                 subPrice = "£0.99",
                 buy = {},
                 refresh = {},
-                sub = {}
+                sub = {},
+                openUrl = {}
             )
         }
     }
@@ -56,7 +58,8 @@ fun WelcomePreview3() {
                 buy = {},
                 refresh = {},
                 sub = {},
-                pageIndex = 1
+                openUrl = {},
+                pageIndex = 1,
             )
         }
     }
@@ -75,6 +78,7 @@ fun WelcomePreviewLoading() {
                 buy = {},
                 refresh = {},
                 sub = {},
+                openUrl = {},
                 pageIndex = 1
             )
         }

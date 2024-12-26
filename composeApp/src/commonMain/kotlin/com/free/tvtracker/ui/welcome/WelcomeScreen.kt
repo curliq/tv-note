@@ -1,5 +1,6 @@
 package com.free.tvtracker.ui.welcome
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -42,6 +43,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import besttvtracker.composeapp.generated.resources.Res
 import besttvtracker.composeapp.generated.resources.ic_movie
+import com.free.tvtracker.expect.OsPlatform
 import com.free.tvtracker.ui.common.composables.ErrorScreen
 import com.free.tvtracker.ui.common.composables.LoadingIndicator
 import com.free.tvtracker.ui.common.composables.LoadingScreen
@@ -55,6 +57,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun WelcomeScreen(
     navigateHome: () -> Unit,
+    openUrl: (String) -> Unit,
     viewModel: WelcomeViewModel,
     modifier: Modifier = Modifier,
 ) {
@@ -82,7 +85,8 @@ fun WelcomeScreen(
                     viewModel::refresh,
                     viewModel::actionOk,
                     viewModel::buy,
-                    viewModel::sub
+                    viewModel::sub,
+                    openUrl
                 )
             }
         }
@@ -98,6 +102,7 @@ fun WelcomeContent(
     actionOk: () -> Unit,
     buy: () -> Unit,
     sub: () -> Unit,
+    openUrl: (String) -> Unit,
     pageIndex: Int = 0
 ) {
     val pagerState = rememberPagerState(pageCount = { 2 }, initialPage = pageIndex)
@@ -125,7 +130,7 @@ fun WelcomeContent(
                                 coroutineScope.launch { pagerState.animateScrollToPage(1) }
                             })
                         } else {
-                            Screen2(status, price, subPrice, actionOk, buy, sub)
+                            Screen2(status, price, subPrice, actionOk, buy, sub, openUrl)
                         }
                     }
                 }
@@ -169,7 +174,8 @@ private fun Screen2(
     subPrice: String,
     goToApp: () -> Unit,
     buy: () -> Unit,
-    sub: () -> Unit
+    sub: () -> Unit,
+    openUrl: (String) -> Unit,
 ) {
     Column(Modifier.fillMaxHeight()) {
         Spacer(Modifier.height(32.dp))
@@ -193,7 +199,20 @@ private fun Screen2(
                 Text("Or", style = MaterialTheme.typography.labelSmall)
                 Spacer(Modifier.height(8.dp))
                 Button(onClick = sub, modifier = Modifier.fillMaxWidth(1f), shape = TvTrackerTheme.ShapeButton) {
-                    Text("Subscribe for ${subPrice}/month (30d free)")
+                    Text("Subscribe for ${subPrice}/month")
+                }
+                Row {
+                    Text("Includes 1 month trial, cancel anytime.", style = MaterialTheme.typography.labelSmall)
+                    if (OsPlatform().get() == OsPlatform.Platform.IOS) {
+                        Text(
+                            " Terms of service",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.clickable {
+                                openUrl("https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")
+                            }
+                        )
+                    }
                 }
                 Spacer(Modifier.height(8.dp))
                 Text("Or", style = MaterialTheme.typography.labelSmall)

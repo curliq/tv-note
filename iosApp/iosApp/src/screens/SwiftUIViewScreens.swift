@@ -378,15 +378,18 @@ struct WelcomeScreen: UIViewControllerRepresentable {
     
     let vm: WelcomeViewModel
     let navHome: () -> Void
-    
-    init(vm: WelcomeViewModel, nav: @escaping () -> Void) {
+    let openUrl: (String) -> Void
+
+    init(vm: WelcomeViewModel, nav: @escaping () -> Void, openUrl: @escaping (String) -> Void) {
         self.vm = vm
         self.navHome = nav
+        self.openUrl = openUrl
     }
     
     func makeUIViewController(context: Context) -> UIViewController {
         ViewControllersKt.WelcomeScreenViewController(
             navigateHome: navHome,
+            openUrl: openUrl,
             viewModel: vm
         )
     }

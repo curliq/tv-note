@@ -55,9 +55,9 @@ fun SplashErrorScreenViewController() =
         SplashErrorScreen()
     }
 
-fun WelcomeScreenViewController(navigateHome: () -> Unit, viewModel: WelcomeViewModel) =
+fun WelcomeScreenViewController(navigateHome: () -> Unit, openUrl: (String) -> Unit, viewModel: WelcomeViewModel) =
     ComposeUIViewController {
-        WelcomeScreen(navigateHome, viewModel)
+        WelcomeScreen(navigateHome, openUrl, viewModel)
     }
 
 fun LoginScreenViewController(nav: (LoginScreenNavAction) -> Unit, viewModel: LoginViewModel) =

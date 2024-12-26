@@ -60,8 +60,8 @@ open class TvHttpClient(private val sessionStore: SessionStore) {
         install(DefaultRequest) {
             this.url {
                 protocol = URLProtocol.HTTP
-//                host = server
-                host = localhostiOSPhone
+                host = server
+//                host = localhostiOSPhone
             }
             contentType(ContentType.Application.Json)
             accept(ContentType.Application.Json)

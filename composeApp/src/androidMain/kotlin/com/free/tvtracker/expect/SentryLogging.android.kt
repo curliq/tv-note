@@ -1,6 +1,5 @@
 package com.free.tvtracker.expect
 
-//import io.sentry.Sentry
 import com.free.tvtracker.BuildConfig
 import io.sentry.kotlin.multiplatform.Sentry
 

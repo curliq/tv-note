@@ -23,6 +23,7 @@ class WelcomeActivity : BaseActivity() {
                             startActivity(Intent(this, MainActivity::class.java))
                         },
                         viewModel = koinViewModel(),
+                        openUrl = {},
                         modifier = Modifier.padding(padding)
                     )
                 }

@@ -13,6 +13,7 @@ import ComposeApp
 struct SplashScreen: View {
     
     @Environment(\.colorScheme) var colorScheme
+    @Environment(\.openURL) var openURL
     
     let vm = ViewModelsModule().splashViewModel
     let welcomeVm = ViewModelsModule().welcomeViewModel
@@ -28,7 +29,13 @@ struct SplashScreen: View {
                     let nav: () -> Void = {
                         showHome = true
                     }
-                    WelcomeScreen(vm: welcomeVm, nav: nav)
+                    WelcomeScreen(vm: welcomeVm, nav: nav, openUrl: { url in
+                        if #available(iOS 10.0, *) {
+                            UIApplication.shared.open(URL(string:url)!)
+                        } else {
+                            UIApplication.shared.openURL(URL(string:url)!)
+                        }
+                    })
                 } else {
                     ContentView()
                 }

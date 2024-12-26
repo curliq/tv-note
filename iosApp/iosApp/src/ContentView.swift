@@ -33,10 +33,18 @@ struct ContentView: View {
     let detailsViewModel = ViewModelsModule().detailsViewModel
     let personViewModel = ViewModelsModule().personViewModel
     let addTrackedViewModel = ViewModelsModule().addTrackedViewModel
+    
     @State private var path1 = NavigationPath()
     @State private var path2 = NavigationPath()
     @State private var path3 = NavigationPath()
     @State private var path4 = NavigationPath()
+    
+    @State private var refreshId1 = UUID()
+    @State private var refreshId2 = UUID()
+    @State private var refreshId3 = UUID()
+    @State private var refreshId4 = UUID()
+    @State private var refreshId5 = UUID()
+    
     @State var showAccount: Bool = false
     
     func discoverNav(path: Binding<NavigationPath>) -> (DiscoverScreenNavActions) -> Void {
@@ -49,7 +57,8 @@ struct ContentView: View {
             case _ as DiscoverScreenNavActions.GoRecommendations:
                 path.wrappedValue.append(Route.recommended)
             case let action as DiscoverScreenNavActions.GoShowDetails:
-                path.wrappedValue.append(Route.details(content: DetailsViewModel.LoadContent(tmdbId: action.tmdbShowId, isTvShow: action.isTvShow)))
+                path.wrappedValue.append(Route.details(content: DetailsViewModel.LoadContent(tmdbId: action.tmdbShowId, isTvShow: action.isTvShow))
+                )
             case _ as DiscoverScreenNavActions.GoTrending:
                 path.wrappedValue.append(Route.trending)
             default:
@@ -86,6 +95,10 @@ struct ContentView: View {
                                 Image(systemName: "gear")
                             }
                         }
+                    }
+                    .id(refreshId1)
+                    .onAppear {
+                        refreshId1 = UUID()
                     }
                 }
                 .sheet(isPresented: $showAccount) {
@@ -164,6 +177,10 @@ struct ContentView: View {
                     }
                     FinishedScreen(finishedViewModel: finishedViewModel, nav: finishedNav)
                         .styleToolbar(title: "Finished Watching")
+                        .id(refreshId2)
+                        .onAppear {
+                            refreshId2 = UUID()
+                        }
                 }
                 .navigationDestination(for: Route.self) { route in
                     handleRouteNavigation(route: route, path: $path2, detailsViewModel: detailsViewModel)
@@ -189,6 +206,10 @@ struct ContentView: View {
                     }
                     WatchlistScreen(watchlistViewModel: watchlistedViewModel, nav: watchlistNav)
                         .styleToolbar(title: "Watchlist")
+                        .id(refreshId3)
+                        .onAppear {
+                            refreshId3 = UUID()
+                        }
                 }
                 .navigationDestination(for: Route.self) { route in
                     handleRouteNavigation(route: route, path: $path3, detailsViewModel: detailsViewModel)
@@ -203,6 +224,10 @@ struct ContentView: View {
                 VStack {
                     DiscoverScreen(discoverViewModel: discoverViewModel, nav: discoverNav(path: $path4))
                         .styleToolbar(title: "Discover")
+                        .id(refreshId4)
+                        .onAppear {
+                            refreshId4 = UUID()
+                        }
                 }
                 .navigationDestination(for: Route.self) { route in
                     handleRouteNavigation(route: route, path: $path4, detailsViewModel: detailsViewModel)
@@ -331,7 +356,12 @@ struct ContentView: View {
         case .search(let origin):
             SearchScreen(addTrackedViewModel: addTrackedViewModel, origin: origin, nav: addTrackedNav).eraseToAnyView()
         case .details(let content):
-            ShowDetailsScreen(detailsViewModel: detailsViewModel, content: content, nav: detailsNav).eraseToAnyView()
+            ShowDetailsScreen(detailsViewModel: detailsViewModel, content: content, nav: detailsNav)
+                .id(refreshId5)
+                .onAppear {
+                    refreshId5 = UUID()
+                }
+                .eraseToAnyView()
         case .episodes:
             DetailsEpisodesSheet(detailsViewModel: detailsViewModel).eraseToAnyView()
         case .cast:
