@@ -202,7 +202,7 @@ private fun Screen2(
                     Text("Subscribe for ${subPrice}/month")
                 }
                 Row {
-                    Text("Includes 1 month trial, cancel anytime.", style = MaterialTheme.typography.labelSmall)
+                    Text("Includes 1 month trial.", style = MaterialTheme.typography.labelSmall)
                     if (OsPlatform().get() == OsPlatform.Platform.IOS) {
                         Text(
                             " Terms of service",
@@ -210,6 +210,15 @@ private fun Screen2(
                             color = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.clickable {
                                 openUrl("https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")
+                            }
+                        )
+                        Text(" &", style = MaterialTheme.typography.labelSmall)
+                        Text(
+                            " privacy policy",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.clickable {
+                                openUrl("https://www.freeprivacypolicy.com/live/e43baeba-e657-4cfd-8eea-c7f12a64b78f")
                             }
                         )
                     }

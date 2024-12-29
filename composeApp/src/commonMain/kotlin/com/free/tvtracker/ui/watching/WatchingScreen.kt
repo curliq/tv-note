@@ -407,7 +407,7 @@ fun TrialView(status: PurchaseStatus, onBuy: () -> Unit, onSub: () -> Unit) {
         }
         val hand = LocalUriHandler.current
         Row {
-            Text("Includes 1 month trial, cancel anytime.", style = MaterialTheme.typography.labelSmall)
+            Text("Includes 1 month trial.", style = MaterialTheme.typography.labelSmall)
             if (OsPlatform().get() == OsPlatform.Platform.IOS) {
                 Text(
                     " Terms of service",
@@ -415,6 +415,15 @@ fun TrialView(status: PurchaseStatus, onBuy: () -> Unit, onSub: () -> Unit) {
                     color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.clickable {
                         hand.openUri("https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")
+                    }
+                )
+                Text(" &", style = MaterialTheme.typography.labelSmall)
+                Text(
+                    " privacy policy",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.clickable {
+                        hand.openUri("https://www.freeprivacypolicy.com/live/e43baeba-e657-4cfd-8eea-c7f12a64b78f")
                     }
                 )
             }
