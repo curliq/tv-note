@@ -30,6 +30,7 @@ import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -215,7 +216,7 @@ fun WatchingEmpty(status: PurchaseStatus, onBuy: () -> Unit, onSub: () -> Unit) 
 @Composable
 fun FabContainer(
     navigate: () -> Unit,
-    icon: ImageVector = Icons.Default.Add,
+    icon: ImageVector = Icons.Rounded.Search,
     largeFab: Boolean = false,
     snackbarHost: @Composable () -> Unit = {},
     content: @Composable (PaddingValues) -> Unit,

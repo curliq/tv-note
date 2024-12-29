@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="com.android.vending.BILLING" />
+    <uses-permission android:name="com.android.vending.BILLING"/>
 
     <application
         android:name=".AndroidApplication"
@@ -22,19 +22,20 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".activities.splash.SplashErrorActivity"/>
-        <activity android:name=".activities.settings.SettingsActivity"/>
-        <activity android:name=".activities.settings.LoginActivity"/>
-        <activity android:name=".activities.settings.SignupActivity"/>
+        <activity android:name=".activities.splash.SplashErrorActivity"
+                  android:label="SplashErrorActivity"/>
+        <activity android:name=".activities.settings.SettingsActivity" android:label="SettingsActivity"/>
+        <activity android:name=".activities.settings.LoginActivity" android:label="LoginActivity"/>
+        <activity android:name=".activities.settings.SignupActivity" android:label="SignupActivity"/>
         <activity
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|mnc|colorMode|density|fontScale|fontWeightAdjustment|keyboard|layoutDirection|locale|mcc|navigation|smallestScreenSize|touchscreen|uiMode"
             android:windowSoftInputMode="adjustResize"
-            android:name=".activities.main.MainActivity"/>
-        <activity android:name=".activities.welcome.WelcomeActivity"/>
-        <activity android:name=".activities.showdetails.ShowDetailsActivity"/>
-        <activity android:name=".activities.add.AddTrackedActivity"/>
-        <activity android:name=".activities.person.PersonDetailsActivity"/>
-        <activity android:name=".activities.discover.RecommendationsActivity"/>
+            android:name=".activities.main.MainActivity" android:label="MainActivity"/>
+        <activity android:name=".activities.welcome.WelcomeActivity" android:label="WelcomeActivity"/>
+        <activity android:name=".activities.showdetails.ShowDetailsActivity" android:label="ShowDetailsActivity"/>
+        <activity android:name=".activities.add.AddTrackedActivity" android:label="AddTrackedActivity"/>
+        <activity android:name=".activities.person.PersonDetailsActivity" android:label="PersonDetailsActivity"/>
+        <activity android:name=".activities.discover.RecommendationsActivity" android:label="RecommendationsActivity"/>
 
         <service
             android:name=".services.FcmService"
@@ -58,7 +59,7 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_files"/>
         </provider>
-        <meta-data android:name="io.sentry.auto-init" android:value="false" />
+        <meta-data android:name="io.sentry.auto-init" android:value="false"/>
     </application>
 
 </manifest>
