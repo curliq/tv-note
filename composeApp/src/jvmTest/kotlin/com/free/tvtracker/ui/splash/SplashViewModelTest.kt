@@ -14,7 +14,8 @@ class SplashViewModelTest {
         every { getLocalPreferences() } returns LocalPreferencesClientEntity(
             true,
             LocalPreferencesClientEntity.Theme.SystemDefault,
-            true
+            true,
+            false
         )
     }
 

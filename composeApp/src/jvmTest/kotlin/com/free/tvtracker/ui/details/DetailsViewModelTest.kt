@@ -43,8 +43,9 @@ class DetailsViewModelTest {
             movieMapper,
             trackedShowsRepository,
             getShowByTmdbIdUseCase,
-            mockk(),
-            mockk(),
+            mockk(relaxed = true),
+            mockk(relaxed = true),
+            mockk(relaxed = true),
             dispatcher
         )
 

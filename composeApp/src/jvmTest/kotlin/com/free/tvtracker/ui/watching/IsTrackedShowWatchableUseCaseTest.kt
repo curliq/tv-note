@@ -2,7 +2,6 @@ package com.free.tvtracker.ui.watching
 
 import com.free.tvtracker.domain.GetNextUnwatchedEpisodeUseCase
 import com.free.tvtracker.domain.IsTrackedShowWatchableUseCase
-import com.free.tvtracker.tracked.response.TrackedContentApiModel
 import com.free.tvtracker.ui.watching.GetNextUnwatchedEpisodeUseCaseTest.Companion.buildTrackedContent
 import kotlinx.datetime.Instant
 import kotlin.test.Test

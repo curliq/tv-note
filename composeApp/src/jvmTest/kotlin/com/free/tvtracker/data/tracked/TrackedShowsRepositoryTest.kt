@@ -34,13 +34,13 @@ class TrackedShowsRepositoryTest {
                 )
             }
             val taskQueue: WatchedEpisodesTaskQueue = mockk(relaxed = true)
-            val sut = TrackedShowsRepository(httpClient, localDataSource, taskQueue, mockk())
+            val sut = TrackedShowsRepository(httpClient, localDataSource, taskQueue, mockk(relaxed = true))
             sut.watchingShows.test {
                 sut.updateWatching()
                 val init = awaitItem()
                 val onLocalFetched = awaitItem()
                 val onDataCombine = awaitItem()
-                assertEquals(false, init.status.fetched)
+                assertEquals(null, init.status.fetched)
                 assertEquals(false, onLocalFetched.status.fetched)
                 assertEquals(true, onLocalFetched.status.success)
                 assertEquals(1, onDataCombine.data.size)

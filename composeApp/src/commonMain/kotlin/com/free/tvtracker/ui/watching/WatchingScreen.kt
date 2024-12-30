@@ -131,7 +131,8 @@ fun WatchingOk(
     onSub: () -> Unit,
     log: (msg: String) -> Unit = { }
 ) {
-    val watchingItemHeight: Dp = calculateWatchingItemHeight()
+    val watchingItemHeight: Dp = calculateWatchingItemHeight(isWatchable = true)
+    val watchingItemWaitingHeight: Dp = calculateWatchingItemHeight(isWatchable = false)
     log("recomposing watching OK screen, shows: ${shows.watching.map { it.tmdbId }}")
     LazyColumn(
         modifier = Modifier.fillMaxHeight(),
@@ -185,7 +186,7 @@ fun WatchingOk(
                     onClick = { navigate(WatchingScreenNavAction.GoShowDetails(show.tmdbId, true)) },
                     onMarkWatched = markWatched,
                     isWatchable = false,
-                    modifier = Modifier.height(watchingItemHeight)
+                    modifier = Modifier.height(watchingItemWaitingHeight)
                 )
             }
         }
@@ -251,22 +252,28 @@ fun FabContainer(
  * Needed because IntrinsicSize is not supported on iOS
  */
 @Composable
-private fun calculateWatchingItemHeight(): Dp {
+private fun calculateWatchingItemHeight(isWatchable: Boolean): Dp {
     val textMeasurer = rememberTextMeasurer()
-    val m1 = textMeasurer.measure(text = "A", maxLines = 1, style = MaterialTheme.typography.bodyLarge, softWrap = true)
-    val height1 = with(LocalDensity.current) {
-        m1.size.height.toDp()
+    val title =
+        textMeasurer.measure(text = "A", maxLines = 1, style = MaterialTheme.typography.bodyLarge, softWrap = true)
+    val titleHeight = with(LocalDensity.current) {
+        title.size.height.toDp()
     }
-    val m2 = textMeasurer.measure(text = "A", style = MaterialTheme.typography.bodyMedium)
-    val height2 = with(LocalDensity.current) {
-        m2.size.height.toDp()
+    val nextEp = textMeasurer.measure(text = "A", style = MaterialTheme.typography.bodyMedium)
+    val nextEpHeight = with(LocalDensity.current) {
+        nextEp.size.height.toDp()
     }
+    val watchableWhen = textMeasurer.measure(text = "A", style = MaterialTheme.typography.labelMedium)
+    val watchableWhenHeight = with(LocalDensity.current) {
+        watchableWhen.size.height.toDp()
+    }
+    val markWatchedButtonHeight = 32.dp
     return 16.dp + // top margin
-        height1 + // title
+        titleHeight + // title
         8.dp + // spacer
-        height2 + // next ep
+        nextEpHeight + // next ep
         24.dp + // spacer
-        32.dp + // mark watched button
+        (if (isWatchable) markWatchedButtonHeight else watchableWhenHeight) +
         16.dp + // bottom margin
         8.dp + 8.dp // padding
 }
@@ -327,7 +334,7 @@ fun LazyItemScope.WatchingItem(
                     }
                 } else {
                     Text(
-                        text = "Available on ${uiModel.nextEpisodeCountdown}",
+                        text = uiModel.nextEpisodeCountdown,
                         style = MaterialTheme.typography.labelMedium
                     )
                 }

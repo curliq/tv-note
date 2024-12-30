@@ -113,7 +113,7 @@ data class WatchingItemUiModel(
     val title: String,
     val image: String,
     val nextEpisode: NextEpisode?,
-    val nextEpisodeCountdown: String?,
+    val nextEpisodeCountdown: String
 ) {
     /**
      * All this splitting up is needed to build the animation, the full text is something like: "Watch next: S1 E5"
