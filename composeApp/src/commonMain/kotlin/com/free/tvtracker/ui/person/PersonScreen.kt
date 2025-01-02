@@ -58,10 +58,12 @@ fun PersonScreen(
 ) {
     TvTrackerTheme {
         Scaffold(modifier.fillMaxSize()) {
-            LaunchedEffect(personId) {
-                viewModel.setPersonId(personId)
-            }
             val person = viewModel.result.collectAsState().value
+            LaunchedEffect(personId) {
+                if (person !is PersonUiState.Ok) { // prevents always loading on ios
+                    viewModel.setPersonId(personId)
+                }
+            }
             when (person) {
                 PersonUiState.Error -> ErrorScreen(refresh = { viewModel.setPersonId(personId) })
                 PersonUiState.Loading -> LoadingScreen()

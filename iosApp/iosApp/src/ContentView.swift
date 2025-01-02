@@ -34,6 +34,11 @@ struct ContentView: View {
     let personViewModel = ViewModelsModule().personViewModel
     let addTrackedViewModel = ViewModelsModule().addTrackedViewModel
     
+    let detailsViewModel1 = ViewModelsModule().detailsViewModel
+    let detailsViewModel2 = ViewModelsModule().detailsViewModel
+    let detailsViewModel3 = ViewModelsModule().detailsViewModel
+    let detailsViewModel4 = ViewModelsModule().detailsViewModel
+    
     @State private var path1 = NavigationPath()
     @State private var path2 = NavigationPath()
     @State private var path3 = NavigationPath()
@@ -70,7 +75,6 @@ struct ContentView: View {
     var body: some View {
         TabView {
             NavigationStack(path: $path1) {
-                let detailsViewModel = ViewModelsModule().detailsViewModel
                 VStack {
                     let navActions: (WatchingScreenNavAction) -> Void = { navAction in
                         switch navAction {
@@ -154,7 +158,7 @@ struct ContentView: View {
                     .sheetBackgroundColor(isDarkTheme: colorScheme == .dark)
                 }
                 .navigationDestination(for: Route.self) { route in
-                    handleRouteNavigation(route: route, path: $path1, detailsViewModel: detailsViewModel)
+                    handleRouteNavigation(route: route, path: $path1, detailsViewModel: detailsViewModel1)
                 }
                 .navigationViewStyle(StackNavigationViewStyle())
             }
@@ -163,7 +167,6 @@ struct ContentView: View {
             }
             
             NavigationStack(path: $path2) {
-                let detailsViewModel = ViewModelsModule().detailsViewModel
                 VStack {
                     let finishedNav: (FinishedScreenNavAction) -> Void = { action in
                         switch action {
@@ -183,7 +186,7 @@ struct ContentView: View {
                         }
                 }
                 .navigationDestination(for: Route.self) { route in
-                    handleRouteNavigation(route: route, path: $path2, detailsViewModel: detailsViewModel)
+                    handleRouteNavigation(route: route, path: $path2, detailsViewModel: detailsViewModel2)
                 }
                 .navigationViewStyle(StackNavigationViewStyle())
             }
@@ -192,7 +195,6 @@ struct ContentView: View {
             }
             
             NavigationStack(path: $path3) {
-                let detailsViewModel = ViewModelsModule().detailsViewModel
                 VStack {
                     let watchlistNav: (WatchlistScreenNavAction) -> Void = { action in
                         switch action {
@@ -212,7 +214,7 @@ struct ContentView: View {
                         }
                 }
                 .navigationDestination(for: Route.self) { route in
-                    handleRouteNavigation(route: route, path: $path3, detailsViewModel: detailsViewModel)
+                    handleRouteNavigation(route: route, path: $path3, detailsViewModel: detailsViewModel3)
                 }
                 .navigationViewStyle(StackNavigationViewStyle())
             }.tabItem {
@@ -220,7 +222,6 @@ struct ContentView: View {
             }
             
             NavigationStack(path: $path4) {
-                let detailsViewModel = ViewModelsModule().detailsViewModel
                 VStack {
                     DiscoverScreen(discoverViewModel: discoverViewModel, nav: discoverNav(path: $path4))
                         .styleToolbar(title: "Discover")
@@ -230,7 +231,7 @@ struct ContentView: View {
                         }
                 }
                 .navigationDestination(for: Route.self) { route in
-                    handleRouteNavigation(route: route, path: $path4, detailsViewModel: detailsViewModel)
+                    handleRouteNavigation(route: route, path: $path4, detailsViewModel: detailsViewModel4)
                 }
                 .navigationViewStyle(StackNavigationViewStyle())
             }

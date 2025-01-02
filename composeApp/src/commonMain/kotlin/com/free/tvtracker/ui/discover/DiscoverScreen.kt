@@ -67,10 +67,12 @@ fun DiscoverScreen(
     navigate: (DiscoverScreenNavActions) -> Unit,
     paddingValues: PaddingValues = PaddingValues()
 ) {
-    LaunchedEffect(Unit) {
-        viewModel.refresh(showLoading = true)
-    }
     val data = viewModel.data.collectAsState().value
+    LaunchedEffect(Unit) {
+        if (data !is DiscoverUiState.Ok) { // prevents always loading on ios
+            viewModel.refresh(showLoading = true)
+        }
+    }
     TvTrackerTheme {
         FabContainer(
             navigate = { navigate(DiscoverScreenNavActions.GoAddShow) },

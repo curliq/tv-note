@@ -205,9 +205,9 @@ class DiscoverViewModel(
 
 
             DiscoverViewModelAction.LoadPageTrending -> {
-                if ((data.value as DiscoverUiState.Ok).uiModel.contentTrendingWeekly.isLastPage) return
+                if ((data.value as? DiscoverUiState.Ok)?.uiModel?.contentTrendingWeekly?.isLastPage != false) return
                 viewModelScope.launch(ioDispatcher) {
-                    val page = (data.value as DiscoverUiState.Ok).uiModel.contentTrendingWeekly.page + 1
+                    val page = ((data.value as? DiscoverUiState.Ok)?.uiModel?.contentTrendingWeekly?.page?:0) + 1
                     var totalPages = page
                     var responseMapped: List<DiscoverUiModel.Content> = emptyList()
                     if (filterTvShows.value) {
@@ -240,7 +240,7 @@ class DiscoverViewModel(
             }
 
             DiscoverViewModelAction.LoadPageNewReleases -> {
-                if ((data.value as DiscoverUiState.Ok).uiModel.contentReleasedSoon.isLastPage) return
+                if ((data.value as? DiscoverUiState.Ok)?.uiModel?.contentReleasedSoon?.isLastPage != false) return
                 viewModelScope.launch(ioDispatcher) {
                     val page = (data.value as DiscoverUiState.Ok).uiModel.contentReleasedSoon.page + 1
                     var totalPages = page

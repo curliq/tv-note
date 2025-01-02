@@ -98,10 +98,12 @@ fun DetailsScreen(
 ) {
     TvTrackerTheme {
         Scaffold(modifier.fillMaxSize()) {
-            LaunchedEffect(content) {
-                viewModel.loadContent(content)
-            }
             val show = viewModel.result.collectAsState().value
+            LaunchedEffect(content) {
+                if (show !is DetailsUiState.Ok) { // prevents always loading on ios
+                    viewModel.loadContent(content)
+                }
+            }
             val isActionsAllowed = viewModel.isActionsAllowed.collectAsState(true).value
             AnimatedContent(
                 show,

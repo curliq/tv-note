@@ -42,7 +42,7 @@ fun DiscoverTrendingSheet(
     navActions: (DiscoverScreenNavActions) -> Unit,
     bottomPadding: Float = 0f
 ) {
-    val show = viewModel.data.collectAsState().value as DiscoverUiState.Ok
+    val show = viewModel.data.collectAsState().value as? DiscoverUiState.Ok ?: return
     TvTrackerTheme {
         DiscoverTrendingSheetContent(
             show.uiModel.contentTrendingWeekly.data,
