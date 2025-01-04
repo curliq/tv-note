@@ -92,7 +92,7 @@ class WatchlistedShowsViewModel(
 
             WatchlistedAction.Sub -> {
                 viewModelScope.launch(ioDispatcher) {
-                    iapRepository.purchase()
+                    iapRepository.subscribe()
                 }
             }
         }
