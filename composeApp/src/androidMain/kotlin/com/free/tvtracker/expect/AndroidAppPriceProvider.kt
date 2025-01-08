@@ -1,6 +1,8 @@
 package com.free.tvtracker.expect
 
 import android.content.Context
+import com.android.billingclient.api.AcknowledgePurchaseParams
+import com.android.billingclient.api.AcknowledgePurchaseResponseListener
 import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.BillingClientStateListener
 import com.android.billingclient.api.BillingFlowParams
@@ -11,7 +13,6 @@ import com.free.tvtracker.AndroidApplication
 import com.free.tvtracker.data.iap.AppPriceProvider
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
-
 
 class AndroidAppPriceProvider(private val context: Context) : AppPriceProvider {
 
@@ -24,12 +25,12 @@ class AndroidAppPriceProvider(private val context: Context) : AppPriceProvider {
         BillingClient.newBuilder(context)
             .enablePendingPurchases()
             .setListener { billingResult, purchases ->
-                if (billingResult.responseCode == BillingClient.BillingResponseCode.OK &&
-                    purchases?.firstOrNull() != null
-                ) {
+                val purchase = purchases?.firstOrNull()
+                if (billingResult.responseCode == BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED) {
                     responseListener(true)
-                } else if (billingResult.responseCode == BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED) {
-                    responseListener(true)
+                }
+                if ((billingResult.responseCode == BillingClient.BillingResponseCode.OK && purchase != null)) {
+                    acknowledge(purchase.purchaseToken, responseListener)
                 } else if (billingResult.responseCode == BillingClient.BillingResponseCode.USER_CANCELED) {
                     responseListener(false)
                 } else {
@@ -39,11 +40,24 @@ class AndroidAppPriceProvider(private val context: Context) : AppPriceProvider {
             .build()
     }
 
+    private fun acknowledge(token: String, listener: (Boolean) -> Unit) {
+        val params =
+            AcknowledgePurchaseParams.newBuilder()
+                .setPurchaseToken(token)
+                .build()
+        val acknowledgePurchaseResponseListener = object : AcknowledgePurchaseResponseListener {
+            override fun onAcknowledgePurchaseResponse(p0: BillingResult) {
+                listener(p0.responseCode == BillingClient.BillingResponseCode.OK)
+            }
+        }
+        billingClient.acknowledgePurchase(params, acknowledgePurchaseResponseListener)
+    }
+
     override suspend fun appPrice(): String? = suspendCoroutine { continuation ->
+        var resumed = false
         billingClient.startConnection(object : BillingClientStateListener {
             override fun onBillingSetupFinished(billingResult: BillingResult) {
                 if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
-
                     val skuList = listOf(appPriceId)
                     val params = SkuDetailsParams.newBuilder()
                         .setSkusList(skuList)
@@ -68,15 +82,19 @@ class AndroidAppPriceProvider(private val context: Context) : AppPriceProvider {
                 } else {
                     continuation.resumeWith(Result.success(null))
                 }
+                resumed = true
             }
 
             override fun onBillingServiceDisconnected() {
-                continuation.resumeWith(Result.success(null))
+                if (!resumed) {
+                    continuation.resumeWith(Result.success(null))
+                }
             }
         })
     }
 
     override suspend fun appSubPrice(): String? = suspendCoroutine { continuation ->
+        var resumed = false
         billingClient.startConnection(object : BillingClientStateListener {
             override fun onBillingSetupFinished(billingResult: BillingResult) {
                 if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
@@ -104,16 +122,20 @@ class AndroidAppPriceProvider(private val context: Context) : AppPriceProvider {
                 } else {
                     continuation.resumeWith(Result.success(null))
                 }
+                resumed = true
             }
 
             override fun onBillingServiceDisconnected() {
-                continuation.resumeWith(Result.success(null))
+                if (!resumed) {
+                    continuation.resumeWith(Result.success(null))
+                }
             }
         })
     }
 
     override suspend fun buyApp(): Boolean = suspendCoroutine { continuation ->
-        responseListener = { a -> continuation.resumeWith(Result.success(a)) }
+        responseListener = { res -> continuation.resumeWith(Result.success(res)) }
+        var resumed = false
         billingClient.startConnection(object : BillingClientStateListener {
             override fun onBillingSetupFinished(billingResult: BillingResult) {
                 if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
@@ -147,17 +169,20 @@ class AndroidAppPriceProvider(private val context: Context) : AppPriceProvider {
                 } else {
                     continuation.resumeWith(Result.success(false))
                 }
+                resumed = true
             }
 
             override fun onBillingServiceDisconnected() {
-                continuation.resumeWith(Result.success(false))
+                if (!resumed) {
+                    continuation.resumeWith(Result.success(false))
+                }
             }
         })
     }
 
     override suspend fun subscribe(): Boolean = suspendCoroutine { continuation ->
         responseListener = { a -> continuation.resumeWith(Result.success(a)) }
-
+        var resumed = false
         billingClient.startConnection(object : BillingClientStateListener {
             override fun onBillingSetupFinished(billingResult: BillingResult) {
                 if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
@@ -191,10 +216,13 @@ class AndroidAppPriceProvider(private val context: Context) : AppPriceProvider {
                 } else {
                     continuation.resumeWith(Result.success(false))
                 }
+                resumed = true
             }
 
             override fun onBillingServiceDisconnected() {
-                continuation.resumeWith(Result.success(false))
+                if (!resumed) {
+                    continuation.resumeWith(Result.success(false))
+                }
             }
         })
     }
@@ -204,6 +232,7 @@ class AndroidAppPriceProvider(private val context: Context) : AppPriceProvider {
     }
 
     private suspend fun restoreOneTimePurchase(): Boolean = suspendCoroutine { continuation ->
+        var resumed = false
         billingClient.startConnection(object : BillingClientStateListener {
             override fun onBillingSetupFinished(billingResult: BillingResult) {
                 if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
@@ -224,15 +253,19 @@ class AndroidAppPriceProvider(private val context: Context) : AppPriceProvider {
                 } else {
                     continuation.resume(false)
                 }
+                resumed = true
             }
 
             override fun onBillingServiceDisconnected() {
-                continuation.resume(false)
+                if (!resumed) {
+                    continuation.resume(false)
+                }
             }
         })
     }
 
     private suspend fun restoreSubscription(): Boolean = suspendCoroutine { continuation ->
+        var resumed = false
         billingClient.startConnection(object : BillingClientStateListener {
             override fun onBillingSetupFinished(billingResult: BillingResult) {
                 if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
@@ -255,10 +288,13 @@ class AndroidAppPriceProvider(private val context: Context) : AppPriceProvider {
                 } else {
                     continuation.resume(false)
                 }
+                resumed = true
             }
 
             override fun onBillingServiceDisconnected() {
-                continuation.resume(false)
+                if (!resumed) {
+                    continuation.resume(false)
+                }
             }
         })
     }
