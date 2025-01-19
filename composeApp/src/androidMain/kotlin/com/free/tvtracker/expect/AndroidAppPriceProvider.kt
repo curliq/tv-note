@@ -240,15 +240,20 @@ class AndroidAppPriceProvider(private val context: Context) : AppPriceProvider {
                         BillingClient.SkuType.INAPP
                     ) { billingResult, purchases ->
                         if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
-                            for (purchase in purchases) {
-                                if (purchase.purchaseState == Purchase.PurchaseState.PURCHASED &&
-                                    purchase.skus.any { sku -> sku == appPriceId }
-                                ) {
-                                    continuation.resume(true)
-                                }
+                            val purchase = purchases.firstOrNull {
+                                it.purchaseState == Purchase.PurchaseState.PURCHASED &&
+                                    it.skus.any { sku -> sku == appPriceId }
                             }
+                            if (purchase != null) {
+                                acknowledge(purchase.purchaseToken) {
+                                    continuation.resume(it)
+                                }
+                            } else {
+                                continuation.resume(false)
+                            }
+                        } else {
+                            continuation.resume(false)
                         }
-                        continuation.resume(false)
                     }
                 } else {
                     continuation.resume(false)
@@ -273,17 +278,19 @@ class AndroidAppPriceProvider(private val context: Context) : AppPriceProvider {
                         BillingClient.SkuType.SUBS
                     ) { billingResult, purchases ->
                         if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
-                            for (purchase in purchases) {
-                                if (purchase.skus.any { it == appSubId }) {
-                                    if (purchase.purchaseState == Purchase.PurchaseState.PURCHASED ||
-                                        purchase.isAutoRenewing
-                                    ) {
-                                        continuation.resume(true)
-                                    }
+
+                            val purchase = purchases.firstOrNull {
+                                it.purchaseState == Purchase.PurchaseState.PURCHASED &&
+                                    it.skus.any { sku -> sku == appSubId }
+                            }
+                            if (purchase != null) {
+                                acknowledge(purchase.purchaseToken) {
+                                    continuation.resume(it)
                                 }
+                            } else {
+                                continuation.resume(false)
                             }
                         }
-                        continuation.resume(false)
                     }
                 } else {
                     continuation.resume(false)
