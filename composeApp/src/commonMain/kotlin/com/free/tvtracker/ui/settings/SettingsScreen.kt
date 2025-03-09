@@ -60,6 +60,12 @@ sealed class SettingsScreenNavAction {
     data class EmailSupport(val email: String) : SettingsScreenNavAction()
 }
 
+object Constants {
+    const val SUPPORT_EMAIL = "freetvtracker@proton.me"
+    const val GITHUB_URL = "https://github.com/curliq/best-tv-tracker"
+    const val APPLE_EULA_URL = "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/"
+}
+
 @Composable
 fun SettingsScreen(
     viewModel: SettingsViewModel,
@@ -116,93 +122,7 @@ fun SettingsContent(
                     Spacer(modifier = Modifier.height(16.dp))
                 }
                 HorizontalDivider()
-                Column(modifier = Modifier.padding(horizontal = TvTrackerTheme.sidePadding)) {
-                    Spacer(modifier = Modifier.height(24.dp))
-                    if (data.isAnon) {
-                        Text(
-                            text = "You have the option to create an account to backup your content on the cloud.",
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                        Row(modifier = Modifier.padding(top = TvTrackerTheme.sidePadding)) {
-                            OutlinedButton(
-                                onClick = { navAction(SettingsScreenNavAction.GoLogin) },
-                                shape = TvTrackerTheme.ShapeButton,
-                                colors = ButtonDefaults.outlinedButtonColors(
-                                    contentColor = MaterialTheme.colorScheme.primary
-                                ),
-                                modifier = Modifier.weight(0.5f, true)
-                            ) {
-                                Text("Log in")
-                            }
-                            Spacer(Modifier.width(8.dp))
-                            OutlinedButton(
-                                onClick = { navAction(SettingsScreenNavAction.GoSignup) },
-                                shape = TvTrackerTheme.ShapeButton,
-                                colors = ButtonDefaults.outlinedButtonColors(
-                                    contentColor = MaterialTheme.colorScheme.primary
-                                ),
-                                modifier = Modifier.weight(0.5f, true)
-                            ) {
-                                Text("Create account")
-                            }
-                        }
-                    } else {
-                        Text(
-                            text = "Logged in as: ${data.personalInfo?.username}",
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                        Spacer(Modifier.height(4.dp))
-                        Text(
-                            text = "Email: ${data.personalInfo?.email ?: "n/a"}",
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                        Spacer(Modifier.height(16.dp))
-                        val showLogoutConfirmation = remember { mutableStateOf(false) }
-
-                        Crossfade(targetState = showLogoutConfirmation.value) {
-                            if (it) {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Text(
-                                        text = "".run {
-                                            if (OsPlatform().get() == OsPlatform.Platform.IOS)
-                                                "The app will close."
-                                            else
-                                                "Confirm log out?"
-                                        },
-                                        style = MaterialTheme.typography.labelLarge
-                                    )
-                                    Spacer(Modifier.width(8.dp))
-                                    TextButton(
-                                        shape = TvTrackerTheme.ShapeButton,
-                                        onClick = { showLogoutConfirmation.value = false }) {
-                                        Text(text = if (OsPlatform().get() == OsPlatform.Platform.IOS) "Cancel" else "No")
-                                    }
-                                    TextButton(
-                                        shape = TvTrackerTheme.ShapeButton,
-                                        onClick = { action(SettingsViewModel.Action.Logout) }) {
-                                        Text(
-                                            text = if (OsPlatform().get() == OsPlatform.Platform.IOS) "Confirm" else "Yes",
-                                            color = MaterialTheme.colorScheme.error
-                                        )
-                                    }
-                                }
-                            } else {
-                                Row {
-                                    OutlinedButton(
-                                        onClick = { showLogoutConfirmation.value = true },
-                                        shape = TvTrackerTheme.ShapeButton,
-                                        colors = ButtonDefaults.outlinedButtonColors(
-                                            contentColor = MaterialTheme.colorScheme.error
-                                        ),
-                                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.error),
-                                    ) {
-                                        Text(text = "Log out")
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                AccountCard(data, navAction, action)
             }
         }
         Spacer(Modifier.height(24.dp))
@@ -268,6 +188,7 @@ fun SettingsContent(
             }
         }
         Spacer(Modifier.height(24.dp))
+
         Text(
             "App settings",
             style = MaterialTheme.typography.titleLarge,
@@ -288,7 +209,7 @@ fun SettingsContent(
             shape = TvTrackerTheme.ShapeButton,
             modifier = Modifier.padding(horizontal = TvTrackerTheme.sidePaddingHalf),
             contentPadding = PaddingValues(TvTrackerTheme.sidePaddingHalf),
-            onClick = { navAction(SettingsScreenNavAction.EmailSupport("freetvtracker@proton.me")) }
+            onClick = { navAction(SettingsScreenNavAction.EmailSupport(Constants.SUPPORT_EMAIL)) }
         ) {
             ResImage(Res.drawable.ic_customer_support, "email developer", tint = MaterialTheme.colorScheme.primary)
             Spacer(Modifier.width(8.dp))
@@ -298,7 +219,7 @@ fun SettingsContent(
             shape = TvTrackerTheme.ShapeButton,
             modifier = Modifier.padding(horizontal = TvTrackerTheme.sidePaddingHalf),
             contentPadding = PaddingValues(TvTrackerTheme.sidePaddingHalf),
-            onClick = { navAction(SettingsScreenNavAction.GoBrowser("https://github.com/curliq/best-tv-tracker")) },
+            onClick = { navAction(SettingsScreenNavAction.GoBrowser(Constants.GITHUB_URL)) },
         ) {
             ResImage(Res.drawable.ic_code, "restore", tint = MaterialTheme.colorScheme.primary)
             Spacer(Modifier.width(8.dp))
@@ -310,11 +231,7 @@ fun SettingsContent(
                 modifier = Modifier.padding(horizontal = TvTrackerTheme.sidePaddingHalf),
                 contentPadding = PaddingValues(TvTrackerTheme.sidePaddingHalf),
                 onClick = {
-                    navAction(
-                        SettingsScreenNavAction.GoBrowser(
-                            "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/"
-                        )
-                    )
+                    navAction(SettingsScreenNavAction.GoBrowser(Constants.APPLE_EULA_URL))
                 },
             ) {
                 ResImage(Res.drawable.ic_tos, "tos", tint = MaterialTheme.colorScheme.primary)
@@ -354,6 +271,101 @@ fun SettingsContent(
         Spacer(Modifier.height(24.dp))
     }
 
+}
+
+@Composable
+private fun AccountCard(
+    data: SettingsUiModel,
+    navAction: (SettingsScreenNavAction) -> Unit,
+    action: (SettingsViewModel.Action) -> Unit
+) {
+    Column(modifier = Modifier.padding(horizontal = TvTrackerTheme.sidePadding)) {
+        Spacer(modifier = Modifier.height(24.dp))
+        if (data.isAnon) {
+            Text(
+                text = "You have the option to create an account to backup your content on the cloud.",
+                style = MaterialTheme.typography.bodySmall
+            )
+            Row(modifier = Modifier.padding(top = TvTrackerTheme.sidePadding)) {
+                OutlinedButton(
+                    onClick = { navAction(SettingsScreenNavAction.GoLogin) },
+                    shape = TvTrackerTheme.ShapeButton,
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        contentColor = MaterialTheme.colorScheme.primary
+                    ),
+                    modifier = Modifier.weight(0.5f, true)
+                ) {
+                    Text("Log in")
+                }
+                Spacer(Modifier.width(8.dp))
+                OutlinedButton(
+                    onClick = { navAction(SettingsScreenNavAction.GoSignup) },
+                    shape = TvTrackerTheme.ShapeButton,
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        contentColor = MaterialTheme.colorScheme.primary
+                    ),
+                    modifier = Modifier.weight(0.5f, true)
+                ) {
+                    Text("Create account")
+                }
+            }
+        } else {
+            Text(
+                text = "Logged in as: ${data.personalInfo?.username}",
+                style = MaterialTheme.typography.bodyMedium
+            )
+            Spacer(Modifier.height(4.dp))
+            Text(
+                text = "Email: ${data.personalInfo?.email ?: "n/a"}",
+                style = MaterialTheme.typography.bodySmall
+            )
+            Spacer(Modifier.height(16.dp))
+            val showLogoutConfirmation = remember { mutableStateOf(false) }
+
+            Crossfade(targetState = showLogoutConfirmation.value) {
+                if (it) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = "".run {
+                                if (OsPlatform().get() == OsPlatform.Platform.IOS)
+                                    "The app will close."
+                                else
+                                    "Confirm log out?"
+                            },
+                            style = MaterialTheme.typography.labelLarge
+                        )
+                        Spacer(Modifier.width(8.dp))
+                        TextButton(
+                            shape = TvTrackerTheme.ShapeButton,
+                            onClick = { showLogoutConfirmation.value = false }) {
+                            Text(text = if (OsPlatform().get() == OsPlatform.Platform.IOS) "Cancel" else "No")
+                        }
+                        TextButton(
+                            shape = TvTrackerTheme.ShapeButton,
+                            onClick = { action(SettingsViewModel.Action.Logout) }) {
+                            Text(
+                                text = if (OsPlatform().get() == OsPlatform.Platform.IOS) "Confirm" else "Yes",
+                                color = MaterialTheme.colorScheme.error
+                            )
+                        }
+                    }
+                } else {
+                    Row {
+                        OutlinedButton(
+                            onClick = { showLogoutConfirmation.value = true },
+                            shape = TvTrackerTheme.ShapeButton,
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                contentColor = MaterialTheme.colorScheme.error
+                            ),
+                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.error),
+                        ) {
+                            Text(text = "Log out")
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 @Composable

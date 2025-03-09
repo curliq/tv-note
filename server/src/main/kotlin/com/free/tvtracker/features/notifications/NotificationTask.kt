@@ -11,7 +11,7 @@ class NotificationTask(
 ) {
     @Scheduled(initialDelay = 0)
     fun setupFirebase() {
-//        fcmService.init()
+        fcmService.init()
     }
 
     @Scheduled(cron = "0 0 18 * * *")
