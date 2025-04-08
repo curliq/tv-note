@@ -4,7 +4,6 @@ import com.free.tvtracker.base.Mapper
 import com.free.tvtracker.domain.GetNextUnwatchedEpisodeUseCase
 import com.free.tvtracker.tracked.response.TrackedContentApiModel
 import com.free.tvtracker.ui.common.TmdbConfigData
-import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.format
 import kotlinx.datetime.format.DayOfWeekNames
@@ -46,7 +45,7 @@ class WatchingShowUiModelMapper(
             nextEpisode = nextEpisode?.run {
                 WatchingItemUiModel.NextEpisode(
                     id = this.id,
-                    body = "Watch next: ",
+                    watchNext = "Watch next: ",
                     season = "S${season} ",
                     seasonNumber = season,
                     episode = "E${episode}",

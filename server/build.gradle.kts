@@ -46,6 +46,7 @@ dependencies {
     testImplementation(libs.testSpringBoot)
     testImplementation(libs.testSpringBootSecurity)
     testImplementation(libs.kotlin.test)
+    testImplementation(libs.hamcrest)
     testImplementation(libs.mockk)
     testImplementation(libs.kotlinx.coroutines.test)
 }

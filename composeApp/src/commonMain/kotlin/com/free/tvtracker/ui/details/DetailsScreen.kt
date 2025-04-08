@@ -185,8 +185,13 @@ fun DetailsScreenContent(
             }
             show.trackingStatus.action2?.let { action ->
                 val color = when (action) {
-                    RemoveFromWatchlist, RemoveFromWatching -> MaterialTheme.colorScheme.error
-                    else -> MaterialTheme.colorScheme.primary
+                    RemoveFromWatchlist, RemoveFromWatching, RemoveMovieFromWatched -> {
+                        MaterialTheme.colorScheme.error
+                    }
+
+                    else -> {
+                        MaterialTheme.colorScheme.primary
+                    }
                 }
                 OutlinedButton(
                     onClick = { showAction(DetailsViewModel.DetailsAction.TrackingAction(show, action)) },

@@ -120,7 +120,7 @@ data class WatchingItemUiModel(
      */
     data class NextEpisode(
         val id: Int,
-        val body: String,
+        val watchNext: String,
         val season: String,
         val seasonNumber: Int,
         val episode: String,

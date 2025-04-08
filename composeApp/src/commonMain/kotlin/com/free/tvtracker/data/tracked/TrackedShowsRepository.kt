@@ -144,7 +144,9 @@ class TrackedShowsRepository(
                 }
                 it.minus(oldShow).plus(show)
             }
-            localDataSource.saveTrackedShows(listOf(show.toClientEntity()))
+            if (isTvShow) {
+                localDataSource.saveTrackedShows(listOf(show.toClientEntity()))
+            }
         }
     }
 

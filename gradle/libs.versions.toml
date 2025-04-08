@@ -11,6 +11,7 @@ compose = "1.7.6"
 compose-plugin = "1.8.0-alpha01"
 coreSplashscreen = "1.0.1"
 foundation = "1.7.0-dev1690"
+hamcrest = "3.0"
 landscapistCoil3 = "2.4.2"
 opencsv = "5.9"
 posthogAndroid = "3.4.2"
@@ -45,6 +46,7 @@ billing = { module = "com.android.billingclient:billing", version.ref = "billing
 billing-ktx = { module = "com.android.billingclient:billing-ktx", version.ref = "billingAndroid" }
 compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "foundation" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
+hamcrest = { module = "org.hamcrest:hamcrest", version.ref = "hamcrest" }
 landscapist-coil3 = { module = "com.github.skydoves:landscapist-coil3", version.ref = "landscapistCoil3" }
 opencsv = { module = "com.opencsv:opencsv", version.ref = "opencsv" }
 posthog-android = { module = "com.posthog:posthog-android", version.ref = "posthogAndroid" }

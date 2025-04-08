@@ -88,5 +88,4 @@ class DiscoverShowsServiceRecommendationTest {
             res?.body?.data?.relatedContent
         )
     }
-
 }

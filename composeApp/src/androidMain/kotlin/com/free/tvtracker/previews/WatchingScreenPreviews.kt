@@ -37,7 +37,7 @@ fun WatchingOkNoWaitingPreview() {
                             image = "",
                             nextEpisode = WatchingItemUiModel.NextEpisode(
                                 id = 2,
-                                body = "Watch next ",
+                                watchNext = "Watch next ",
                                 episode = "E1",
                                 episodeNumber = 1,
                                 season = "S1",
@@ -52,7 +52,7 @@ fun WatchingOkNoWaitingPreview() {
                             image = "",
                             nextEpisode = WatchingItemUiModel.NextEpisode(
                                 id = 1,
-                                body = "Watch next ",
+                                watchNext = "Watch next ",
                                 episode = "E1",
                                 episodeNumber = 1,
                                 season = "S1",
@@ -87,7 +87,7 @@ fun WatchingOkWithWaitingPreview() {
                             image = "",
                             nextEpisode = WatchingItemUiModel.NextEpisode(
                                 id = 2,
-                                body = "Watch next ",
+                                watchNext = "Watch next ",
                                 episode = "E1",
                                 episodeNumber = 1,
                                 season = "S1",
@@ -102,7 +102,7 @@ fun WatchingOkWithWaitingPreview() {
                             image = "",
                             nextEpisode = WatchingItemUiModel.NextEpisode(
                                 id = 1,
-                                body = "Watch next ",
+                                watchNext = "Watch next ",
                                 episode = "E1",
                                 episodeNumber = 1,
                                 season = "S1",
@@ -119,7 +119,7 @@ fun WatchingOkWithWaitingPreview() {
                             image = "",
                             nextEpisode = WatchingItemUiModel.NextEpisode(
                                 id = 2,
-                                body = "Watch next ",
+                                watchNext = "Watch next ",
                                 episode = "E1",
                                 episodeNumber = 1,
                                 season = "S1",
@@ -154,7 +154,7 @@ fun WatchingOkNoWatchablePreview() {
                             image = "",
                             nextEpisode = WatchingItemUiModel.NextEpisode(
                                 id = 2,
-                                body = "Watch next ",
+                                watchNext = "Watch next ",
                                 episode = "E1",
                                 episodeNumber = 1,
                                 season = "S1",
@@ -209,7 +209,7 @@ fun WatchingOkNoWatchableTrialOnPreview() {
                             image = "",
                             nextEpisode = WatchingItemUiModel.NextEpisode(
                                 id = 2,
-                                body = "Watch next ",
+                                watchNext = "Watch next ",
                                 episode = "E1",
                                 episodeNumber = 1,
                                 season = "S1",
@@ -243,7 +243,7 @@ fun WatchingOkNoWaitingTrialOnPreview() {
                             image = "",
                             nextEpisode = WatchingItemUiModel.NextEpisode(
                                 id = 2,
-                                body = "Watch next ",
+                                watchNext = "Watch next ",
                                 episode = "E1",
                                 episodeNumber = 1,
                                 season = "S1",

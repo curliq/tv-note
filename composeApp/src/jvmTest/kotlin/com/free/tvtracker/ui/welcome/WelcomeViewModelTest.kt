@@ -1,5 +1,6 @@
 package com.free.tvtracker.ui.welcome
 
+import com.free.tvtracker.core.Logger
 import com.free.tvtracker.data.session.SessionRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -11,11 +12,16 @@ import kotlin.test.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class WelcomeViewModelTest {
-    val sessionRepository: SessionRepository = mockk(relaxed = true)
+    private val sessionRepository: SessionRepository = mockk(relaxed = true)
 
     @Test
     fun `GIVEN init THEN anon session is created`() {
-        WelcomeViewModel(mockk(), sessionRepository, mockk(relaxed = true), mockk(relaxed = true))
+        WelcomeViewModel(
+            mockk(),
+            sessionRepository,
+            mockk(relaxed = true),
+            logger = Logger()
+        )
         coVerify(exactly = 1) { sessionRepository.createAnonSession() }
     }
 
