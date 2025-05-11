@@ -24,17 +24,19 @@ fun startKoin(appPriceProvider: AppPriceProvider, fileExporter: FileExporter) {
             single { appPriceProvider }
             single { fileExporter }
             single { AddTrackedViewModel(get(), get(), get(), get(), get(), get()) }
-            factory { DetailsViewModel(get(), get(), get(), get(), get(), get(), get()) } // each navstack has its own state
             single { WatchingViewModel(get(), get(), get(), get(), get(), get(), get()) }
             single { FinishedShowsViewModel(get(), get(), get(), get(), get(), get(), get()) }
             single { WatchlistedShowsViewModel(get(), get(), get(), get(), get(), get(), get()) }
-            single { PersonViewModel(get(), get()) }
             single { DiscoverViewModel(get(), get(), get(), get(), get()) }
             single { SettingsViewModel(get(), get(), get(), get(), get()) }
             single { SplashViewModel(get(), get()) }
             single { WelcomeViewModel(get(), get(), get(), get()) }
             single { LoginViewModel(get(), get()) }
             single { SignupViewModel(get()) }
+
+            // each navstack has its own state
+            factory { DetailsViewModel(get(), get(), get(), get(), get(), get(), get()) }
+            factory { PersonViewModel(get(), get()) }
         })
     }
 }

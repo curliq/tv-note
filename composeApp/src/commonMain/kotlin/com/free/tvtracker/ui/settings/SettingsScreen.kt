@@ -48,6 +48,7 @@ import besttvtracker.composeapp.generated.resources.ic_customer_support
 import besttvtracker.composeapp.generated.resources.ic_delete_account
 import besttvtracker.composeapp.generated.resources.ic_settings_restore
 import besttvtracker.composeapp.generated.resources.ic_tos
+import com.free.tvtracker.expect.BuildVersion
 import com.free.tvtracker.expect.OsPlatform
 import com.free.tvtracker.ui.common.composables.ResImage
 import com.free.tvtracker.ui.common.theme.TvTrackerTheme
@@ -267,6 +268,12 @@ fun SettingsContent(
             "Made in London, UK",
             style = MaterialTheme.typography.labelMedium,
             modifier = Modifier.align(Alignment.CenterHorizontally).clickable { tapCount++ },
+        )
+        Spacer(Modifier.height(8.dp))
+        Text(
+            "Version ${BuildVersion().name()} - ${BuildVersion().code()}",
+            style = MaterialTheme.typography.labelSmall,
+            modifier = Modifier.align(Alignment.CenterHorizontally),
         )
         Spacer(Modifier.height(24.dp))
     }

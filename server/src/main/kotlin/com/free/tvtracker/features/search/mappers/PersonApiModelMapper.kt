@@ -21,7 +21,12 @@ class PersonApiModelMapper : Mapper<TmdbPersonResponse, TmdbPersonDetailsApiMode
             placeOfBirth = from.placeOfBirth,
             profilePath = from.profilePath,
             credits = Credits(
-                from.tvCredits.cast?.sortedWith(compareBy({ it.episodeCount!! < 3 }, { -it.voteCount!! }))?.map {
+                cast = from.tvCredits.cast?.sortedWith(
+                    compareBy(
+                        { (it.episodeCount ?: 0) < 3 },
+                        { -(it.voteCount ?: 0L) }
+                    )
+                )?.map {
                     Credits.Cast(
                         id = it.id,
                         posterPath = it.posterPath,
@@ -29,7 +34,12 @@ class PersonApiModelMapper : Mapper<TmdbPersonResponse, TmdbPersonDetailsApiMode
                         voteCount = it.voteCount,
                     )
                 } ?: emptyList(),
-                from.tvCredits.crew?.sortedWith(compareBy({ it.episodeCount!! < 3 }, { -it.voteCount!! }))?.map {
+                crew = from.tvCredits.crew?.sortedWith(
+                    compareBy(
+                        { (it.episodeCount ?: 0) < 3 },
+                        { -(it.voteCount ?: 0L) }
+                    )
+                )?.map {
                     Credits.Crew(
                         id = it.id,
                         posterPath = it.posterPath,

@@ -3,6 +3,7 @@ import FirebaseCore
 import SwiftUI
 import ComposeApp
 
+// Define all possible navigation routes
 enum Route: Hashable {
     case search(origin: AddTrackedScreenOriginScreen)
     case details(content: DetailsViewModel.LoadContent)
@@ -19,377 +20,333 @@ enum Route: Hashable {
     case trending
 }
 
+// Navigation state container for each tab
+class TabNavigationState: ObservableObject {
+    @Published var path = NavigationPath()
+    @Published var refreshId = UUID()
+
+    func refresh() {
+        refreshId = UUID()
+    }
+}
+
 struct ContentView: View {
-    
+
     @Environment(\.openURL) var openURL
     @Environment(\.colorScheme) var colorScheme
-    
-    @State private var accountSelection: String? = nil
+
+    // Create a navigation state for each tab
+    @StateObject private var watchingNavState = TabNavigationState()
+    @StateObject private var finishedNavState = TabNavigationState()
+    @StateObject private var watchlistNavState = TabNavigationState()
+    @StateObject private var discoverNavState = TabNavigationState()
+
+    // Create a details view model for each tab
+    let watchingDetailsVM = ViewModelsModule().detailsViewModel
+    let finishedDetailsVM = ViewModelsModule().detailsViewModel
+    let watchlistDetailsVM = ViewModelsModule().detailsViewModel
+    let discoverDetailsVM = ViewModelsModule().detailsViewModel
+
+    let watchingPersonVM = ViewModelsModule().personViewModel
+    let finishedPersonVM = ViewModelsModule().personViewModel
+    let watchlistPersonVM = ViewModelsModule().personViewModel
+    let discoverPersonVM = ViewModelsModule().personViewModel
+
+    // Tab-specific view models
     let watchingViewModel = ViewModelsModule().watchingViewModel
     let finishedViewModel = ViewModelsModule().finishedShowsViewModel
     let watchlistedViewModel = ViewModelsModule().watchlistedShowsViewModel
     let discoverViewModel = ViewModelsModule().discoverViewModel
     let settingsViewModel = ViewModelsModule().settingsViewModel
-    let detailsViewModel = ViewModelsModule().detailsViewModel
-    let personViewModel = ViewModelsModule().personViewModel
     let addTrackedViewModel = ViewModelsModule().addTrackedViewModel
-    
-    let detailsViewModel1 = ViewModelsModule().detailsViewModel
-    let detailsViewModel2 = ViewModelsModule().detailsViewModel
-    let detailsViewModel3 = ViewModelsModule().detailsViewModel
-    let detailsViewModel4 = ViewModelsModule().detailsViewModel
-    
-    @State private var path1 = NavigationPath()
-    @State private var path2 = NavigationPath()
-    @State private var path3 = NavigationPath()
-    @State private var path4 = NavigationPath()
-    
-    @State private var refreshId1 = UUID()
-    @State private var refreshId2 = UUID()
-    @State private var refreshId3 = UUID()
-    @State private var refreshId4 = UUID()
-    @State private var refreshId5 = UUID()
-    
-    @State var showAccount: Bool = false
-    
-    func discoverNav(path: Binding<NavigationPath>) -> (DiscoverScreenNavActions) -> Void {
+
+
+    @State private var accountSelection: String? = nil
+    @State private var showAccount: Bool = false
+
+    var body: some View {
+        TabView {
+            // WATCHING TAB
+            watchingTab
+                .tabItem {
+                    Label("Watching", systemImage: "play.tv.fill")
+                }
+
+            // FINISHED TAB
+            finishedTab
+                .tabItem {
+                    Label("Finished", systemImage: "flag.checkered")
+                }
+
+            // WATCHLIST TAB
+            watchlistTab
+                .tabItem {
+                    Label("Watchlist", systemImage: "star.square")
+                }
+
+            // DISCOVER TAB
+            discoverTab
+                .tabItem {
+                    Label("Discover", systemImage: "safari")
+                }
+        }
+        .nestedBackgroundColor(isDarkTheme: colorScheme == .dark)
+        .onAppear {
+            configureAppearance()
+            configurePushNotifications()
+        }
+    }
+
+    // MARK: - Tab Views
+
+    private var watchingTab: some View {
+        NavigationStack(path: $watchingNavState.path) {
+            VStack {
+                WatchingScreen(
+                    navigate: createWatchingNavHandler(),
+                    watchingViewModel: watchingViewModel
+                )
+                .styleToolbar(title: "Currently Watching")
+                .toolbar {
+                    ToolbarItemGroup(placement: .primaryAction) {
+                        Button {
+                            showAccount = true
+                        } label: {
+                            Image(systemName: "gear")
+                        }
+                    }
+                }
+                .id(watchingNavState.refreshId)
+                .onAppear {
+                    watchingNavState.refresh()
+                }
+            }
+            .sheet(isPresented: $showAccount) {
+                accountSheet
+            }
+            .navigationDestination(for: Route.self) { route in
+                handleRouteNavigation(
+                    route: route,
+                    navState: watchingNavState,
+                    detailsViewModel: watchingDetailsVM,
+                    personViewModel: watchingPersonVM
+                )
+            }
+            .navigationViewStyle(StackNavigationViewStyle())
+        }
+    }
+
+    private var finishedTab: some View {
+        NavigationStack(path: $finishedNavState.path) {
+            VStack {
+                FinishedScreen(
+                    finishedViewModel: finishedViewModel,
+                    nav: createFinishedNavHandler()
+                )
+                .styleToolbar(title: "Finished Watching")
+                .id(finishedNavState.refreshId)
+                .onAppear {
+                    finishedNavState.refresh()
+                }
+            }
+            .navigationDestination(for: Route.self) { route in
+                handleRouteNavigation(
+                    route: route,
+                    navState: finishedNavState,
+                    detailsViewModel: finishedDetailsVM,
+                    personViewModel: finishedPersonVM
+                )
+            }
+            .navigationViewStyle(StackNavigationViewStyle())
+        }
+    }
+
+    private var watchlistTab: some View {
+        NavigationStack(path: $watchlistNavState.path) {
+            VStack {
+                WatchlistScreen(
+                    watchlistViewModel: watchlistedViewModel,
+                    nav: createWatchlistNavHandler()
+                )
+                .styleToolbar(title: "Watchlist")
+                .id(watchlistNavState.refreshId)
+                .onAppear {
+                    watchlistNavState.refresh()
+                }
+            }
+            .navigationDestination(for: Route.self) { route in
+                handleRouteNavigation(
+                    route: route,
+                    navState: watchlistNavState,
+                    detailsViewModel: watchlistDetailsVM,
+                    personViewModel: watchlistPersonVM
+                )
+            }
+            .navigationViewStyle(StackNavigationViewStyle())
+        }
+    }
+
+    private var discoverTab: some View {
+        NavigationStack(path: $discoverNavState.path) {
+            VStack {
+                DiscoverScreen(
+                    discoverViewModel: discoverViewModel,
+                    nav: createDiscoverNavHandler()
+                )
+                .styleToolbar(title: "Discover")
+                .id(discoverNavState.refreshId)
+                .onAppear {
+                    discoverNavState.refresh()
+                }
+            }
+            .navigationDestination(for: Route.self) { route in
+                handleRouteNavigation(
+                    route: route,
+                    navState: discoverNavState,
+                    detailsViewModel: discoverDetailsVM,
+                    personViewModel: discoverPersonVM
+                )
+            }
+            .navigationViewStyle(StackNavigationViewStyle())
+        }
+    }
+
+    // MARK: - Navigation Handlers
+
+    private func createWatchingNavHandler() -> (WatchingScreenNavAction) -> Void {
+        return { navAction in
+            switch navAction {
+            case _ as WatchingScreenNavAction.GoAddShow:
+                watchingNavState.path.append(Route.search(origin: AddTrackedScreenOriginScreen.watching))
+            case let action as WatchingScreenNavAction.GoShowDetails:
+                watchingNavState.path.append(Route.details(content: DetailsViewModel.LoadContent(tmdbId: action.tmdbShowId, isTvShow: true)))
+            default: break
+            }
+        }
+    }
+
+    private func createFinishedNavHandler() -> (FinishedScreenNavAction) -> Void {
+        return { action in
+            switch action {
+            case _ as FinishedScreenNavAction.GoAddShow:
+                finishedNavState.path.append(Route.search(origin: AddTrackedScreenOriginScreen.finished))
+            case let action as FinishedScreenNavAction.GoShowDetails:
+                finishedNavState.path.append(Route.details(content: DetailsViewModel.LoadContent(tmdbId: action.tmdbShowId, isTvShow: action.isTvShow)))
+            default: break
+            }
+        }
+    }
+
+    private func createWatchlistNavHandler() -> (WatchlistScreenNavAction) -> Void {
+        return { action in
+            switch action {
+            case _ as WatchlistScreenNavAction.GoAddShow:
+                watchlistNavState.path.append(Route.search(origin: AddTrackedScreenOriginScreen.watchlist))
+            case let action as WatchlistScreenNavAction.GoShowDetails:
+                watchlistNavState.path.append(Route.details(content: DetailsViewModel.LoadContent(tmdbId: action.tmdbShowId, isTvShow: action.isTvShow)))
+            default: break
+            }
+        }
+    }
+
+    private func createDiscoverNavHandler() -> (DiscoverScreenNavActions) -> Void {
         return { action in
             switch action {
             case _ as DiscoverScreenNavActions.GoAddShow:
-                path.wrappedValue.append(Route.search(origin: AddTrackedScreenOriginScreen.discover))
+                discoverNavState.path.append(Route.search(origin: AddTrackedScreenOriginScreen.discover))
             case _ as DiscoverScreenNavActions.GoNewRelease:
-                path.wrappedValue.append(Route.newReleases)
+                discoverNavState.path.append(Route.newReleases)
             case _ as DiscoverScreenNavActions.GoRecommendations:
-                path.wrappedValue.append(Route.recommended)
+                discoverNavState.path.append(Route.recommended)
             case let action as DiscoverScreenNavActions.GoShowDetails:
-                path.wrappedValue.append(Route.details(content: DetailsViewModel.LoadContent(tmdbId: action.tmdbShowId, isTvShow: action.isTvShow))
-                )
+                discoverNavState.path.append(Route.details(content: DetailsViewModel.LoadContent(tmdbId: action.tmdbShowId, isTvShow: action.isTvShow)))
             case _ as DiscoverScreenNavActions.GoTrending:
-                path.wrappedValue.append(Route.trending)
-            default:
-                break
+                discoverNavState.path.append(Route.trending)
+            default: break
             }
         }
     }
-    
-    var body: some View {
-        TabView {
-            NavigationStack(path: $path1) {
-                VStack {
-                    let navActions: (WatchingScreenNavAction) -> Void = { navAction in
-                        switch navAction {
-                        case _ as WatchingScreenNavAction.GoAddShow:
-                            path1.append(Route.search(origin: AddTrackedScreenOriginScreen.watching))
-                        case let action as WatchingScreenNavAction.GoShowDetails:
-                            path1.append(Route.details(content: DetailsViewModel.LoadContent(tmdbId: action.tmdbShowId, isTvShow: true)))
-                        default: break
-                        }
-                    }
-                    
-                    WatchingScreen(
-                        navigate: navActions,
-                        watchingViewModel: watchingViewModel
-                    )
-                    .styleToolbar(title: "Currently Watching")
-                    .toolbar {
-                        ToolbarItemGroup(placement: .primaryAction) {
-                            Button {
-                                showAccount = true
-                            } label: {
-                                Image(systemName: "gear")
-                            }
-                        }
-                    }
-                    .id(refreshId1)
-                    .onAppear {
-                        refreshId1 = UUID()
-                    }
-                }
-                .sheet(isPresented: $showAccount) {
-                    NavigationView {
-                        VStack {
-                            let navSettings: (SettingsScreenNavAction) -> Void = { navAction in
-                                switch navAction {
-                                case let action as SettingsScreenNavAction.GoLogin:
-                                    accountSelection = "login"
-                                case let action as SettingsScreenNavAction.GoSignup:
-                                    accountSelection = "signup"
-                                case let action as SettingsScreenNavAction.EmailSupport:
-                                    if let url = URL(string: "mailto:\(action.email)") {
-                                        if #available(iOS 10.0, *) {
-                                            UIApplication.shared.open(url)
-                                        } else {
-                                            UIApplication.shared.openURL(url)
-                                        }
-                                    }
-                                case let action as SettingsScreenNavAction.GoBrowser:
-                                    openURL(URL(string: action.url)!)
-                                default:
-                                    break
-                                }
-                            }
-                            SettingsScreen(vm: settingsViewModel, nav: navSettings)
-                                .navigationTitle("Settings")
-                                .navigationBarTitleDisplayMode(.inline)
-                                .toolbar {
-                                    ToolbarItem(placement: .navigationBarTrailing) {
-                                        Button("Done", role: .cancel) {
-                                            showAccount = false
-                                        }
-                                        .font(Font.custom("IBMPlexSans-Bold", size: 17))
-                                    }
-                                }
-                            let navBack: (Any) -> Void = { _ in
-                                accountSelection = ""
-                                showAccount = false
-                            }
-                            NavigationLink(
-                                destination: LoginScreen(vm: ViewModelsModule().loginViewModel, nav: navBack).nestedBackgroundColor(isDarkTheme: colorScheme == .dark),
-                                tag: "login",
-                                selection: $accountSelection
-                            ) { EmptyView() }
-                            NavigationLink(
-                                destination: SignupScreen(vm: ViewModelsModule().signupViewModel, nav: navBack).nestedBackgroundColor(isDarkTheme: colorScheme == .dark),
-                                tag: "signup",
-                                selection: $accountSelection
-                            ) { EmptyView() }
-                        }
-                    }
-                    .sheetBackgroundColor(isDarkTheme: colorScheme == .dark)
-                }
-                .navigationDestination(for: Route.self) { route in
-                    handleRouteNavigation(route: route, path: $path1, detailsViewModel: detailsViewModel1)
-                }
-                .navigationViewStyle(StackNavigationViewStyle())
-            }
-            .tabItem {
-                Label("Watching", systemImage: "play.tv.fill")
-            }
-            
-            NavigationStack(path: $path2) {
-                VStack {
-                    let finishedNav: (FinishedScreenNavAction) -> Void = { action in
-                        switch action {
-                        case _ as FinishedScreenNavAction.GoAddShow:
-                            path2.append(Route.search(origin: AddTrackedScreenOriginScreen.finished))
-                        case let action as FinishedScreenNavAction.GoShowDetails:
-                            path2.append(Route.details(content: DetailsViewModel.LoadContent(tmdbId: action.tmdbShowId, isTvShow: action.isTvShow)))
-                        default:
-                            break
-                        }
-                    }
-                    FinishedScreen(finishedViewModel: finishedViewModel, nav: finishedNav)
-                        .styleToolbar(title: "Finished Watching")
-                        .id(refreshId2)
-                        .onAppear {
-                            refreshId2 = UUID()
-                        }
-                }
-                .navigationDestination(for: Route.self) { route in
-                    handleRouteNavigation(route: route, path: $path2, detailsViewModel: detailsViewModel2)
-                }
-                .navigationViewStyle(StackNavigationViewStyle())
-            }
-            .tabItem {
-                Label("Finished", systemImage: "flag.checkered")
-            }
-            
-            NavigationStack(path: $path3) {
-                VStack {
-                    let watchlistNav: (WatchlistScreenNavAction) -> Void = { action in
-                        switch action {
-                        case _ as WatchlistScreenNavAction.GoAddShow:
-                            path3.append(Route.search(origin: AddTrackedScreenOriginScreen.watchlist))
-                        case let action as WatchlistScreenNavAction.GoShowDetails:
-                            path3.append(Route.details(content: DetailsViewModel.LoadContent(tmdbId: action.tmdbShowId, isTvShow: action.isTvShow)))
-                        default:
-                            break
-                        }
-                    }
-                    WatchlistScreen(watchlistViewModel: watchlistedViewModel, nav: watchlistNav)
-                        .styleToolbar(title: "Watchlist")
-                        .id(refreshId3)
-                        .onAppear {
-                            refreshId3 = UUID()
-                        }
-                }
-                .navigationDestination(for: Route.self) { route in
-                    handleRouteNavigation(route: route, path: $path3, detailsViewModel: detailsViewModel3)
-                }
-                .navigationViewStyle(StackNavigationViewStyle())
-            }.tabItem {
-                Label("Watchlist", systemImage: "star.square")
-            }
-            
-            NavigationStack(path: $path4) {
-                VStack {
-                    DiscoverScreen(discoverViewModel: discoverViewModel, nav: discoverNav(path: $path4))
-                        .styleToolbar(title: "Discover")
-                        .id(refreshId4)
-                        .onAppear {
-                            refreshId4 = UUID()
-                        }
-                }
-                .navigationDestination(for: Route.self) { route in
-                    handleRouteNavigation(route: route, path: $path4, detailsViewModel: detailsViewModel4)
-                }
-                .navigationViewStyle(StackNavigationViewStyle())
-            }
-            .tabItem {
-                Label("Discover", systemImage: "safari")
-            }
-        }
-        .nestedBackgroundColor(isDarkTheme: colorScheme == .dark)
-        .onAppear() {
-            let standardAppearance = UITabBarAppearance()
-            standardAppearance.configureWithTransparentBackground()
-            standardAppearance.backgroundColor = UIColor.systemGray6
-            // tabbar label
-            standardAppearance.stackedLayoutAppearance.normal.titleTextAttributes = [
-                .font: UIFont(name: "IBMPlexSans-Regular", size: 10)!
-            ]
-            UITabBar.appearance().standardAppearance = standardAppearance
-            
-            // back button
-            let navbarAppearance = UINavigationBarAppearance();
-            navbarAppearance.backButtonAppearance.normal.titleTextAttributes = [
-                .font: UIFont(name: "IBMPlexSans-Regular", size: 17)!
-            ]
-            UINavigationBar.appearance().standardAppearance = navbarAppearance
-            
-            // large title eg Watching
-            UINavigationBar.appearance().largeTitleTextAttributes = [
-                .font: UIFont(name: "IBMPlexSans-Bold", size: 34)!
-            ]
-            
-            // normal size title, eg search screen
-            UINavigationBar.appearance().titleTextAttributes = [
-                .font: UIFont(name: "IBMPlexSans-Semibold", size: 17)!
-            ]
-            
-            // push permission
-            
-            // Firebase libraries from SPM only work for arm64
-            // but not m1 simulators for undoubtedly good and valid reasons
-#if (!targetEnvironment(simulator))
-            FirebaseApp.configure()
-            let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
-            UNUserNotificationCenter.current().requestAuthorization(
-                options: authOptions,
-                completionHandler: { granted, error in
-                    if (granted) {
-                        DispatchQueue.main.async {
-                            UIApplication.shared.registerForRemoteNotifications()
-                        }
-                    }
-                    
-                }
-            )
-            
-            
-#endif
-        }
-    }
-    
-    func handleRouteNavigation(
+
+    // MARK: - Route Navigation Handler
+
+    private func handleRouteNavigation(
         route: Route,
-        path: Binding<NavigationPath>,
-        detailsViewModel: DetailsViewModel
+        navState: TabNavigationState,
+        detailsViewModel: DetailsViewModel,
+        personViewModel: PersonViewModel
     ) -> some View {
-        let addTrackedNav: (AddTrackedScreenNavAction) -> Void = { action in
-            switch action {
-            case let action as AddTrackedScreenNavAction.GoContentDetails:
-                path.wrappedValue.append(Route.details(content: DetailsViewModel.LoadContent(tmdbId: action.showTmdbId, isTvShow: action.isTvShow)))
-            case let action as AddTrackedScreenNavAction.GoPersonDetails:
-                path.wrappedValue.append(Route.person(personId: action.personTmdbId))
-            default:
-                break
-            }
-        }
-        let detailsNav: (DetailsScreenNavAction) -> Void = { navAction in
-            switch navAction {
-            case let action as DetailsScreenNavAction.GoYoutube:
-                openURL(URL(string: action.webUrl)!)
-            case _ as DetailsScreenNavAction.GoAllEpisodes:
-                path.wrappedValue.append(Route.episodes)
-            case _ as DetailsScreenNavAction.GoMedia:
-                path.wrappedValue.append(Route.media)
-            case _ as DetailsScreenNavAction.GoCastAndCrew:
-                path.wrappedValue.append(Route.cast)
-            case _ as DetailsScreenNavAction.GoFilmCollection:
-                path.wrappedValue.append(Route.filmCollection)
-            case let action as DetailsScreenNavAction.GoCastAndCrewDetails:
-                path.wrappedValue.append(Route.person(personId: action.personTmdbId))
-            case let action as DetailsScreenNavAction.GoContentDetails:
-                path.wrappedValue.append(Route.details(content: DetailsViewModel.LoadContent(tmdbId: action.tmdbId, isTvShow: action.isTvShow)))
-            case let action as DetailsScreenNavAction.GoWebsite:
-                openURL(URL(string: action.url)!)
-            default:
-                break
-            }
-        }
-        let personNav: (PersonScreenNavAction) -> Void = { action in
-            switch action {
-            case let action as PersonScreenNavAction.GoShowDetails:
-                path.wrappedValue.append(Route.details(content: DetailsViewModel.LoadContent(tmdbId: action.tmdbShowId, isTvShow: action.isTvShow)))
-            case _ as PersonScreenNavAction.GoAllMovies:
-                path.wrappedValue.append(Route.personMovies)
-            case _ as PersonScreenNavAction.GoAllPhotos:
-                path.wrappedValue.append(Route.personPhotos)
-            case _ as PersonScreenNavAction.GoAllShows:
-                path.wrappedValue.append(Route.personShows)
-            case let action as PersonScreenNavAction.GoInstagram:
-                openURL(URL(string: action.url)!)
-            default:
-                break
-            }
-        }
-        let recommendedNav: (RecommendedScreenNavActions) -> Void = { action in
-            switch action {
-            case let action as RecommendedScreenNavActions.GoShowDetails:
-                path.wrappedValue.append(Route.details(content: DetailsViewModel.LoadContent(tmdbId: action.tmdbShowId, isTvShow: action.isTvShow)))
-            default:
-                break
-            }
-        }
-        
-        let aa = switch route {
+        // Create navigation handlers for the route
+        let addTrackedNav = createAddTrackedNavHandler(navState: navState)
+        let detailsNav = createDetailsNavHandler(navState: navState)
+        let personNav = createPersonNavHandler(navState: navState)
+        let recommendedNav = createRecommendedNavHandler(navState: navState)
+
+        // Handle the route
+        let contentView: AnyView
+
+        switch route {
         case .search(let origin):
-            SearchScreen(addTrackedViewModel: addTrackedViewModel, origin: origin, nav: addTrackedNav).eraseToAnyView()
+            contentView = SearchScreen(
+                addTrackedViewModel: addTrackedViewModel,
+                origin: origin,
+                nav: addTrackedNav
+            ).eraseToAnyView()
+
         case .details(let content):
-            ShowDetailsScreen(detailsViewModel: detailsViewModel, content: content, nav: detailsNav)
-                .id(refreshId5)
-                .onAppear {
-                    refreshId5 = UUID()
-                }
-                .eraseToAnyView()
+            contentView = ShowDetailsScreen(
+                detailsViewModel: detailsViewModel,
+                content: content,
+                nav: detailsNav
+            )
+            .id(UUID()) // Always refresh details view
+            .eraseToAnyView()
+
         case .episodes:
-            DetailsEpisodesSheet(detailsViewModel: detailsViewModel).eraseToAnyView()
+            contentView = DetailsEpisodesSheet(detailsViewModel: detailsViewModel).eraseToAnyView()
+
         case .cast:
-            DetailsCastCrewSheet(detailsViewModel: detailsViewModel, nav: detailsNav).eraseToAnyView()
+            contentView = DetailsCastCrewSheet(detailsViewModel: detailsViewModel, nav: detailsNav).eraseToAnyView()
+
         case .person(let personId):
-            PersonDetails(vm: personViewModel, personId: personId, nav: personNav).eraseToAnyView()
+            contentView = PersonDetails(vm: personViewModel, personId: personId, nav: personNav).eraseToAnyView()
+
         case .media:
-            DetailsMediaSheet(detailsViewModel: detailsViewModel, nav: detailsNav).eraseToAnyView()
+            contentView = DetailsMediaSheet(detailsViewModel: detailsViewModel, nav: detailsNav).eraseToAnyView()
+
         case .filmCollection:
-            DetailsFilmCollectionSheet(detailsViewModel: detailsViewModel, nav: detailsNav).eraseToAnyView()
+            contentView = DetailsFilmCollectionSheet(detailsViewModel: detailsViewModel, nav: detailsNav).eraseToAnyView()
+
         case .personShows:
-            PersonShowsDetails(vm: personViewModel, nav: personNav).eraseToAnyView()
+            contentView = PersonShowsDetails(vm: personViewModel, nav: personNav).eraseToAnyView()
+
         case .personMovies:
-            PersonMoviesDetails(vm: personViewModel, nav: personNav).eraseToAnyView()
+            contentView = PersonMoviesDetails(vm: personViewModel, nav: personNav).eraseToAnyView()
+
         case .personPhotos:
-            PersonPhotosDetails(vm: personViewModel).eraseToAnyView()
+            contentView = PersonPhotosDetails(vm: personViewModel).eraseToAnyView()
+
         case .newReleases:
-            NewReleasesScreen(discoverViewModel: discoverViewModel, nav: discoverNav(path: $path4)).eraseToAnyView()
+            contentView = NewReleasesScreen(
+                discoverViewModel: discoverViewModel,
+                nav: createDiscoverNavHandler()
+            ).eraseToAnyView()
+
         case .recommended:
-            RecommendedScreen(discoverViewModel: discoverViewModel, nav: recommendedNav).eraseToAnyView()
+            contentView = RecommendedScreen(discoverViewModel: discoverViewModel, nav: recommendedNav).eraseToAnyView()
+
         case .trending:
-            TrendingScreen(discoverViewModel: discoverViewModel, nav: discoverNav(path: $path4)).eraseToAnyView()
+            contentView = TrendingScreen(
+                discoverViewModel: discoverViewModel,
+                nav: createDiscoverNavHandler()
+            ).eraseToAnyView()
+
         default:
-            Text("error").eraseToAnyView()
+            contentView = Text("Error: Unknown route").eraseToAnyView()
         }
-        return aa.toolbar {
-            if case .details(let content) = route {
+
+        // Add optional share button for details pages
+        return contentView.toolbar {
+            if case .details = route {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     ShareLink(
                         item: ShareItemProvider(vm: detailsViewModel),
@@ -401,37 +358,201 @@ struct ContentView: View {
             }
         }
     }
-    
-}
 
-struct ShareItemProvider: Transferable {
-    
-    let vm: DetailsViewModel
-    
-    init(vm: DetailsViewModel) {
-        self.vm = vm
-    }
-    
-    func generateReport() -> String {
-        print("Generating...")
-        // do some work...
-        return vm.getShareLink() // Assuming getShareLink() returns a String
-    }
-    
-    // Proper Transferable conformance with ProxyRepresentation
-    static var transferRepresentation: some TransferRepresentation {
-        ProxyRepresentation { report in
-            URL(string: report.generateReport())!
+    // MARK: - Sub-navigation Handlers
+
+    private func createAddTrackedNavHandler(navState: TabNavigationState) -> (AddTrackedScreenNavAction) -> Void {
+        return { action in
+            switch action {
+            case let action as AddTrackedScreenNavAction.GoContentDetails:
+                navState.path.append(Route.details(content: DetailsViewModel.LoadContent(
+                    tmdbId: action.showTmdbId,
+                    isTvShow: action.isTvShow
+                )))
+            case let action as AddTrackedScreenNavAction.GoPersonDetails:
+                navState.path.append(Route.person(personId: action.personTmdbId))
+            default: break
+            }
         }
     }
+
+    private func createDetailsNavHandler(navState: TabNavigationState) -> (DetailsScreenNavAction) -> Void {
+        return { navAction in
+            switch navAction {
+            case let action as DetailsScreenNavAction.GoYoutube:
+                openURL(URL(string: action.webUrl)!)
+            case _ as DetailsScreenNavAction.GoAllEpisodes:
+                navState.path.append(Route.episodes)
+            case _ as DetailsScreenNavAction.GoMedia:
+                navState.path.append(Route.media)
+            case _ as DetailsScreenNavAction.GoCastAndCrew:
+                navState.path.append(Route.cast)
+            case _ as DetailsScreenNavAction.GoFilmCollection:
+                navState.path.append(Route.filmCollection)
+            case let action as DetailsScreenNavAction.GoCastAndCrewDetails:
+                navState.path.append(Route.person(personId: action.personTmdbId))
+            case let action as DetailsScreenNavAction.GoContentDetails:
+                navState.path.append(Route.details(content: DetailsViewModel.LoadContent(
+                    tmdbId: action.tmdbId,
+                    isTvShow: action.isTvShow
+                )))
+            case let action as DetailsScreenNavAction.GoWebsite:
+                openURL(URL(string: action.url)!)
+            default: break
+            }
+        }
+    }
+
+    private func createPersonNavHandler(navState: TabNavigationState) -> (PersonScreenNavAction) -> Void {
+        return { action in
+            switch action {
+            case let action as PersonScreenNavAction.GoShowDetails:
+                navState.path.append(Route.details(content: DetailsViewModel.LoadContent(
+                    tmdbId: action.tmdbShowId,
+                    isTvShow: action.isTvShow
+                )))
+            case _ as PersonScreenNavAction.GoAllMovies:
+                navState.path.append(Route.personMovies)
+            case _ as PersonScreenNavAction.GoAllPhotos:
+                navState.path.append(Route.personPhotos)
+            case _ as PersonScreenNavAction.GoAllShows:
+                navState.path.append(Route.personShows)
+            case let action as PersonScreenNavAction.GoInstagram:
+                openURL(URL(string: action.url)!)
+            default: break
+            }
+        }
+    }
+
+    private func createRecommendedNavHandler(navState: TabNavigationState) -> (RecommendedScreenNavActions) -> Void {
+        return { action in
+            switch action {
+            case let action as RecommendedScreenNavActions.GoShowDetails:
+                navState.path.append(Route.details(content: DetailsViewModel.LoadContent(
+                    tmdbId: action.tmdbShowId,
+                    isTvShow: action.isTvShow
+                )))
+            default: break
+            }
+        }
+    }
+
+    // MARK: - Account Sheet View
+
+    private var accountSheet: some View {
+        NavigationView {
+            VStack {
+                let navSettings: (SettingsScreenNavAction) -> Void = { navAction in
+                    switch navAction {
+                    case _ as SettingsScreenNavAction.GoLogin:
+                        accountSelection = "login"
+                    case _ as SettingsScreenNavAction.GoSignup:
+                        accountSelection = "signup"
+                    case let action as SettingsScreenNavAction.EmailSupport:
+                        if let url = URL(string: "mailto:\(action.email)") {
+                            if #available(iOS 10.0, *) {
+                                UIApplication.shared.open(url)
+                            } else {
+                                UIApplication.shared.openURL(url)
+                            }
+                        }
+                    case let action as SettingsScreenNavAction.GoBrowser:
+                        openURL(URL(string: action.url)!)
+                    default: break
+                    }
+                }
+
+                SettingsScreen(vm: settingsViewModel, nav: navSettings)
+                    .navigationTitle("Settings")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            Button("Done", role: .cancel) {
+                                showAccount = false
+                            }
+                            .font(Font.custom("IBMPlexSans-Bold", size: 17))
+                        }
+                    }
+
+                let navBack: (Any) -> Void = { _ in
+                    accountSelection = ""
+                    showAccount = false
+                }
+
+                // Auth navigation links
+                NavigationLink(
+                    destination: LoginScreen(vm: ViewModelsModule().loginViewModel, nav: navBack)
+                        .nestedBackgroundColor(isDarkTheme: colorScheme == .dark),
+                    tag: "login",
+                    selection: $accountSelection
+                ) { EmptyView() }
+
+                NavigationLink(
+                    destination: SignupScreen(vm: ViewModelsModule().signupViewModel, nav: navBack)
+                        .nestedBackgroundColor(isDarkTheme: colorScheme == .dark),
+                    tag: "signup",
+                    selection: $accountSelection
+                ) { EmptyView() }
+            }
+        }
+        .sheetBackgroundColor(isDarkTheme: colorScheme == .dark)
+    }
+
+    // MARK: - Utility Methods
+
+    private func configureAppearance() {
+        // Configure tab bar appearance
+        let standardAppearance = UITabBarAppearance()
+        standardAppearance.configureWithTransparentBackground()
+        standardAppearance.backgroundColor = UIColor.systemGray6
+        standardAppearance.stackedLayoutAppearance.normal.titleTextAttributes = [
+            .font: UIFont(name: "IBMPlexSans-Regular", size: 10)!
+        ]
+        UITabBar.appearance().standardAppearance = standardAppearance
+
+        // Configure navigation bar appearance
+        let navbarAppearance = UINavigationBarAppearance()
+        navbarAppearance.backButtonAppearance.normal.titleTextAttributes = [
+            .font: UIFont(name: "IBMPlexSans-Regular", size: 17)!
+        ]
+        UINavigationBar.appearance().standardAppearance = navbarAppearance
+
+        // Configure title text attributes
+        UINavigationBar.appearance().largeTitleTextAttributes = [
+            .font: UIFont(name: "IBMPlexSans-Bold", size: 34)!
+        ]
+        UINavigationBar.appearance().titleTextAttributes = [
+            .font: UIFont(name: "IBMPlexSans-Semibold", size: 17)!
+        ]
+    }
+
+    private func configurePushNotifications() {
+        // Firebase libraries from SPM only work for arm64
+        // but not m1 simulators for undoubtedly good and valid reasons
+        #if (!targetEnvironment(simulator))
+        FirebaseApp.configure()
+        let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
+        UNUserNotificationCenter.current().requestAuthorization(
+            options: authOptions,
+            completionHandler: { granted, error in
+                if (granted) {
+                    DispatchQueue.main.async {
+                        UIApplication.shared.registerForRemoteNotifications()
+                    }
+                }
+            }
+        )
+        #endif
+    }
 }
 
+// MARK: - Helper Views
+
 struct SearchScreen: View {
-    
     let addTrackedViewModel: AddTrackedViewModel
     let origin: AddTrackedScreenOriginScreen
     let nav: (AddTrackedScreenNavAction) -> Void
-    
+
     private func title() -> String {
         switch origin {
         case AddTrackedScreenOriginScreen.watching:
@@ -446,11 +567,15 @@ struct SearchScreen: View {
             return ""
         }
     }
-    
+
     var body: some View {
         NavigationView {
             VStack {
-                AddTrackedScreen(addTrackedViewModel: addTrackedViewModel, origin: origin, nav: nav)
+                AddTrackedScreen(
+                    addTrackedViewModel: addTrackedViewModel,
+                    origin: origin,
+                    nav: nav
+                )
             }
         }
         .navigationTitle(title())
@@ -459,11 +584,34 @@ struct SearchScreen: View {
     }
 }
 
+// MARK: - Helpers
+
+struct ShareItemProvider: Transferable {
+    let vm: DetailsViewModel
+
+    init(vm: DetailsViewModel) {
+        self.vm = vm
+    }
+
+    func generateReport() -> String {
+        print("Generating...")
+        return vm.getShareLink()
+    }
+
+    static var transferRepresentation: some TransferRepresentation {
+        ProxyRepresentation { report in
+            URL(string: report.generateReport())!
+        }
+    }
+}
+
+// MARK: - View Extensions
+
 extension View {
     func eraseToAnyView() -> AnyView {
         AnyView(self)
     }
-    
+
     func hideToolbar() -> some View {
         if #available(iOS 16.0, *) {
             return self.toolbar(.hidden)
@@ -471,17 +619,17 @@ extension View {
             return self.navigationBarHidden(true)
         }
     }
-    
+
     func styleToolbar(title: String) -> some View {
         return self.navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Text(title)
-                        .font(.custom("IBMPlexSans-Bold", size: 22)) //title2
+                        .font(.custom("IBMPlexSans-Bold", size: 22))
                 }
             }
     }
-    
+
     func sheetBackgroundColor(isDarkTheme: Bool) -> some View {
         if #available(iOS 16.4, *) {
             return self.presentationBackground(isDarkTheme ? .black : .white)
@@ -489,7 +637,7 @@ extension View {
             return self
         }
     }
-    
+
     func nestedBackgroundColor(isDarkTheme: Bool) -> some View {
         if #available(iOS 16.4, *) {
             let color = isDarkTheme ? Color.black : Color.white
@@ -500,12 +648,14 @@ extension View {
     }
 }
 
+// MARK: - UIKit Extensions
+
 extension UINavigationController: UIGestureRecognizerDelegate {
     override open func viewDidLoad() {
         super.viewDidLoad()
         interactivePopGestureRecognizer?.delegate = self
     }
-    
+
     public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         return viewControllers.count > 1
     }

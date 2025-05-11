@@ -1,10 +1,7 @@
 package com.free.tvtracker
 
 import android.app.Application
-import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
 import android.util.Log
 import com.free.tvtracker.core.ui.BaseActivity
 import com.free.tvtracker.data.iap.AppPriceProvider

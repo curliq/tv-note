@@ -100,9 +100,7 @@ fun DetailsScreen(
         Scaffold(modifier.fillMaxSize()) {
             val show = viewModel.result.collectAsState().value
             LaunchedEffect(content) {
-                if (show !is DetailsUiState.Ok) { // prevents always loading on ios
-                    viewModel.loadContent(content)
-                }
+                viewModel.loadContent(content)
             }
             val isActionsAllowed = viewModel.isActionsAllowed.collectAsState(true).value
             AnimatedContent(
