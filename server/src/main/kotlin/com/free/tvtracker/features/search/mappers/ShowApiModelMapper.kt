@@ -56,7 +56,8 @@ class ShowApiModelMapper :
             crew = from.credits?.crew?.map { it.toApiModel() },
             watchProvider = from.watchProviders?.results?.get(options.countryCode.uppercase())?.flatrate?.map {
                 it.toApiModel()
-            }
+            },
+            imdbId = from.externalIds?.imdbId
         )
     }
 }

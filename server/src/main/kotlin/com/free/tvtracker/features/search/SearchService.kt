@@ -50,7 +50,7 @@ class SearchService(
             "/3/tv/$tmdbShowId",
             TmdbShowBigResponse::class.java,
             params = mapOf(
-                "append_to_response" to "aggregate_credits,watch/providers,videos,images"
+                "append_to_response" to "aggregate_credits,watch/providers,videos,images,external_ids"
             )
         )
         return respEntity.body!!

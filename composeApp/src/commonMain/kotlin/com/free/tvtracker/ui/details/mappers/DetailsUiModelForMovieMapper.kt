@@ -13,9 +13,6 @@ import kotlinx.datetime.format
 import kotlinx.datetime.format.MonthNames
 import kotlinx.datetime.format.Padding
 import kotlinx.datetime.format.char
-import kotlin.math.ln
-import kotlin.math.pow
-
 
 class DetailsUiModelForMovieMapper(
     private val castMapper: ShowCastUiModelMapper,
@@ -23,6 +20,7 @@ class DetailsUiModelForMovieMapper(
     private val showWatchProviderUiModelMapper: ShowWatchProviderUiModelMapper,
     private val showVideoUiModelMapper: ShowVideoUiModelMapper,
     private val locationService: CachingLocationService,
+    private val ratingsUiModelMapper: DetailsRatingsUiModelMapper,
     private val stringUtils: CommonStringUtils = CommonStringUtils(),
 ) : MapperWithOptions<TmdbMovieDetailsApiModel, DetailsUiModel, TrackedContentApiModel?> {
     override fun map(from: TmdbMovieDetailsApiModel, options: TrackedContentApiModel?): DetailsUiModel {
@@ -100,8 +98,10 @@ class DetailsUiModelForMovieMapper(
                 ?: emptyList(),
             mediaImagesBackdrops = from.images?.backdrops?.map { TmdbConfigData.get().getBackdropUrl(it.filePath) }
                 ?: emptyList(),
-            ratingTmdbVoteAverage = stringUtils.roundDouble((from.voteAverage ?: 0.toDouble()), 1) + "/10",
-            ratingTmdbVoteCount = formatVoteCount(from.voteCount ?: 0),
+            ratingTmdbVoteAverage = ratingsUiModelMapper.formatVoteAverage(from.voteAverage),
+            ratingTmdbVoteCount = ratingsUiModelMapper.formatVoteCount(from.voteCount ?: 0),
+            omdbRatings = null,
+            reviews = null,
             budget = formatMoney(from.budget) ?: "(not available)",
             revenue = formatMoney(from.revenue) ?: "(not available)",
             website = from.homepage
@@ -134,16 +134,5 @@ class DetailsUiModelForMovieMapper(
                 )
             }
         }
-    }
-
-    private fun formatVoteCount(count: Int): String {
-        if (count < 1000) return "" + count
-        val exp = (ln(count.toDouble()) / ln(1000.0)).toInt()
-        val shortenChar = count / 1000.0.pow(exp.toDouble())
-        return stringUtils.shortenDouble(
-            d = shortenChar,
-            shortenCharacter = "kMGTPE"[exp - 1],
-            decimalPoints = 1
-        )
     }
 }

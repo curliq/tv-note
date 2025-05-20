@@ -57,7 +57,9 @@ import androidx.compose.ui.text.style.TextOverflow.Companion.Ellipsis
 import androidx.compose.ui.unit.dp
 import besttvtracker.composeapp.generated.resources.Res
 import besttvtracker.composeapp.generated.resources.ic_open_window
+import besttvtracker.composeapp.generated.resources.imdb_logo
 import besttvtracker.composeapp.generated.resources.justwatch_logo_lightmode
+import besttvtracker.composeapp.generated.resources.rotten_tomatoes_logo
 import besttvtracker.composeapp.generated.resources.tmdb_logo
 import com.free.tvtracker.ui.common.composables.ErrorScreen
 import com.free.tvtracker.ui.common.composables.LoadingIndicator
@@ -77,10 +79,12 @@ import com.free.tvtracker.ui.details.DetailsUiModel.TrackingStatus.Action.Remove
 import com.free.tvtracker.ui.details.DetailsUiModel.TrackingStatus.Action.RemoveMovieFromWatched
 import com.free.tvtracker.ui.details.DetailsUiModel.TrackingStatus.Action.TrackWatching
 import com.free.tvtracker.ui.details.DetailsUiModel.TrackingStatus.Action.TrackWatchlist
+import org.jetbrains.compose.resources.DrawableResource
 
 sealed class DetailsScreenNavAction {
     data class GoYoutube(val webUrl: String) : DetailsScreenNavAction()
     data object GoAllEpisodes : DetailsScreenNavAction()
+    data object GoReviews : DetailsScreenNavAction()
     data object GoMedia : DetailsScreenNavAction()
     data object GoCastAndCrew : DetailsScreenNavAction()
     data object GoFilmCollection : DetailsScreenNavAction()
@@ -367,43 +371,30 @@ fun DetailsScreenContent(
 
         Text(text = "Reviews & ratings", style = MaterialTheme.typography.titleLarge)
         Spacer(Modifier.height(8.dp))
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            Card(
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
-                modifier = Modifier.fillMaxWidth(0.3f)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .border(
-                            1.dp,
-                            MaterialTheme.colorScheme.outlineVariant,
-                            RoundedCornerShape(TvTrackerTheme.ShapeCornerMedium)
-                        )
-                        .clip(RoundedCornerShape(TvTrackerTheme.ShapeCornerMedium))
-                        .padding(8.dp)
-                        .fillMaxWidth()
-                ) {
-                    ResImage(Res.drawable.tmdb_logo, "tmdb", modifier = Modifier.fillMaxWidth().aspectRatio(1f))
-                }
-                Column(modifier = Modifier.padding(8.dp)) {
-                    Row {
-                        Icon(Icons.Rounded.Star, "rating", Modifier.size(20.dp))
-                        Spacer(Modifier.width(4.dp))
-                        Text(show.ratingTmdbVoteAverage, style = MaterialTheme.typography.bodySmall)
-                    }
-                    Row {
-                        Icon(Icons.Rounded.Person, "person", Modifier.size(20.dp))
-                        Spacer(Modifier.width(4.dp))
-                        Text(show.ratingTmdbVoteCount, style = MaterialTheme.typography.bodySmall)
-                    }
+        Row(
+            modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Box(Modifier.weight(0.333f).fillMaxHeight()) {
+                RatingsCard(show.ratingTmdbVoteAverage, show.ratingTmdbVoteCount, Res.drawable.tmdb_logo)
+            }
+            Box(Modifier.weight(0.333f).fillMaxHeight()) {
+                if (show.omdbRatings?.imdbVoteCount != null && show.omdbRatings.imdbRating != null) {
+                    RatingsCard(show.omdbRatings.imdbRating, show.omdbRatings.imdbVoteCount, Res.drawable.imdb_logo)
                 }
             }
-            Text(
-                "I will add IMDB and rotten tomatoes at some point",
-                style = MaterialTheme.typography.labelMedium,
-                modifier = Modifier.padding(horizontal = 24.dp).align(Alignment.CenterVertically)
-            )
+            Box(Modifier.weight(0.333f, fill = false).fillMaxHeight()) {
+                if (show.omdbRatings?.tomatoesRatingPercentage != null) {
+                    RatingsCard(show.omdbRatings.tomatoesRatingPercentage, null, Res.drawable.rotten_tomatoes_logo)
+                }
+            }
         }
+        Spacer(Modifier.height(8.dp))
+        FilledTonalButton(
+            onClick = { navAction(DetailsScreenNavAction.GoReviews) },
+            content = { Text("See reviews") },
+            shape = TvTrackerTheme.ShapeButton
+        )
         Spacer(Modifier.height(24.dp))
 
         Text(text = "About", style = MaterialTheme.typography.titleLarge)
@@ -547,6 +538,39 @@ internal fun CastCard(person: DetailsUiModel.Person, onClick: () -> Unit) {
                 overflow = Ellipsis,
                 style = MaterialTheme.typography.labelSmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
             )
+        }
+    }
+}
+
+@Composable
+private fun RatingsCard(rating: String, voteCount: String?, icon: DrawableResource) {
+    Card(
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
+        modifier = Modifier.fillMaxHeight()
+    ) {
+        Box(
+            modifier = Modifier
+                .border(
+                    1.dp,
+                    MaterialTheme.colorScheme.outlineVariant,
+                    RoundedCornerShape(TvTrackerTheme.ShapeCornerMedium)
+                )
+                .clip(RoundedCornerShape(TvTrackerTheme.ShapeCornerMedium))
+        ) {
+            ResImage(icon, "tmdb", modifier = Modifier.fillMaxWidth().aspectRatio(1f))
+        }
+        Column(modifier = Modifier.padding(8.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(Icons.Rounded.Star, "rating", Modifier.size(20.dp))
+                Spacer(Modifier.width(4.dp))
+                Text(rating, style = MaterialTheme.typography.bodySmall)
+            }
+            if (voteCount == null) return@Card
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(Icons.Rounded.Person, "person", Modifier.size(20.dp))
+                Spacer(Modifier.width(4.dp))
+                Text(voteCount, style = MaterialTheme.typography.bodySmall)
+            }
         }
     }
 }

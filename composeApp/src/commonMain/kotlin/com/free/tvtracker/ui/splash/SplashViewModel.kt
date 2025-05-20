@@ -1,6 +1,6 @@
 package com.free.tvtracker.ui.splash
 
-import com.free.tvtracker.data.common.sql.LocalSqlDataProvider
+import com.free.tvtracker.data.common.LocalSqlDataProvider
 import com.free.tvtracker.data.session.SessionRepository
 import com.free.tvtracker.expect.ViewModel
 

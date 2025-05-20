@@ -7,11 +7,8 @@ import com.free.tvtracker.domain.GetShowStatusUseCase
 import com.free.tvtracker.domain.IsTrackedShowWatchableUseCase
 import com.free.tvtracker.ui.details.DetailsUiModel
 import com.free.tvtracker.tracked.response.TrackedContentApiModel
-import com.free.tvtracker.expect.CommonStringUtils
 import com.free.tvtracker.expect.data.CachingLocationService
 import com.free.tvtracker.ui.common.TmdbConfigData
-import kotlin.math.ln
-import kotlin.math.pow
 
 class DetailsUiModelForShowMapper(
     private val seasonUiModelMapper: ShowSeasonUiModelMapper,
@@ -22,7 +19,7 @@ class DetailsUiModelForShowMapper(
     private val isTrackedShowWatchableUseCase: IsTrackedShowWatchableUseCase,
     private val getShowStatusUseCase: GetShowStatusUseCase,
     private val locationService: CachingLocationService,
-    private val stringUtils: CommonStringUtils = CommonStringUtils(),
+    private val ratingsUiModelMapper: DetailsRatingsUiModelMapper,
 ) : MapperWithOptions<TmdbShowDetailsApiModel, DetailsUiModel, TrackedContentApiModel?> {
 
     override fun map(from: TmdbShowDetailsApiModel, options: TrackedContentApiModel?): DetailsUiModel {
@@ -74,8 +71,10 @@ class DetailsUiModelForShowMapper(
                 ?: emptyList(),
             mediaImagesBackdrops = from.images?.backdrops?.map { TmdbConfigData.get().getBackdropUrl(it.filePath) }
                 ?: emptyList(),
-            ratingTmdbVoteAverage = stringUtils.roundDouble((from.voteAverage ?: 0.toDouble()), 1) + "/10",
-            ratingTmdbVoteCount = formatVoteCount(from.voteCount ?: 0),
+            ratingTmdbVoteAverage = ratingsUiModelMapper.formatVoteAverage(from.voteAverage),
+            ratingTmdbVoteCount = ratingsUiModelMapper.formatVoteCount(from.voteCount ?: 0),
+            omdbRatings = null,
+            reviews = null,
             budget = "",
             revenue = "",
             website = from.homepage ?: "(no website)"
@@ -108,16 +107,5 @@ class DetailsUiModelForShowMapper(
                 }
             }
         }
-    }
-
-    private fun formatVoteCount(count: Int): String {
-        if (count < 1000) return "" + count
-        val exp = (ln(count.toDouble()) / ln(1000.0)).toInt()
-        val shortenChar = count / 1000.0.pow(exp.toDouble())
-        return stringUtils.shortenDouble(
-            d = shortenChar,
-            shortenCharacter = "kMGTPE"[exp - 1],
-            decimalPoints = 1
-        )
     }
 }

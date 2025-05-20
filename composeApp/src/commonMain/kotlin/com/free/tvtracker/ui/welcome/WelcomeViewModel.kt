@@ -1,7 +1,7 @@
 package com.free.tvtracker.ui.welcome
 
 import com.free.tvtracker.core.Logger
-import com.free.tvtracker.data.common.sql.LocalSqlDataProvider
+import com.free.tvtracker.data.common.LocalSqlDataProvider
 import com.free.tvtracker.data.iap.IapRepository
 import com.free.tvtracker.data.session.SessionRepository
 import com.free.tvtracker.expect.ViewModel

@@ -2,7 +2,7 @@ package com.free.tvtracker.data.tracked
 
 import app.cash.turbine.test
 import com.free.tvtracker.base.ApiError
-import com.free.tvtracker.data.common.sql.LocalSqlDataProvider
+import com.free.tvtracker.data.common.LocalSqlDataProvider
 import com.free.tvtracker.data.tracked.entities.StoredShowClientEntity
 import com.free.tvtracker.data.tracked.entities.TrackedShowClientEntity
 import com.free.tvtracker.expect.data.TvHttpClientEndpoints

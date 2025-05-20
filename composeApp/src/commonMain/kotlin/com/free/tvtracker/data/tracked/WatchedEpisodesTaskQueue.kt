@@ -2,7 +2,7 @@ package com.free.tvtracker.data.tracked
 
 import com.free.tvtracker.Endpoints
 import com.free.tvtracker.core.Logger
-import com.free.tvtracker.data.common.sql.LocalSqlDataProvider
+import com.free.tvtracker.data.common.LocalSqlDataProvider
 import com.free.tvtracker.data.tracked.entities.MarkEpisodeWatchedOrderClientEntity
 import com.free.tvtracker.expect.data.TvHttpClient
 import com.free.tvtracker.tracked.request.AddEpisodesApiRequestBody

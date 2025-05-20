@@ -117,14 +117,38 @@ object DetailsScreenPreviews {
         ratingTmdbVoteCount = "40k",
         budget = "10k",
         revenue = "20k",
-        website = "www.google.com"
+        website = "www.google.com",
+        omdbRatings = DetailsUiModel.Ratings(
+            imdbVoteCount = "200,131",
+            imdbRating = "8.4",
+            tomatoesRatingPercentage = null
+        ),
+        reviews = DetailsUiModel.Reviews(
+            reviews = listOf(
+                DetailsUiModel.Reviews.Review(
+                    id = "1",
+                    authorName = "William Dicksdoor",
+                    title = "great",
+                    content = "This is a great movie",
+                    created = "10/10/2023",
+                ),
+                DetailsUiModel.Reviews.Review(
+                    id = "2",
+                    authorName = "William Dicksdoor",
+                    title = "great x2",
+                    content = "This is a great movie!!",
+                    created = "10/10/2023",
+                ),
+            ),
+            total = 30
+        )
     )
 }
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@Preview(heightDp = 1600)
+@Preview(heightDp = 2000)
 @Composable
-fun DetailsScreenPreview() {
+fun DetailsScreenShowPreview() {
     TvTrackerTheme {
         Scaffold { padding ->
             DetailsScreenContent(showDetailsUiModel, true, {}, {})
@@ -133,9 +157,9 @@ fun DetailsScreenPreview() {
 }
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@Preview(heightDp = 1600)
+@Preview(heightDp = 2000)
 @Composable
-fun DetailsScreenPreviewMovie() {
+fun DetailsScreenMoviePreview() {
     TvTrackerTheme {
         Scaffold { padding ->
             DetailsScreenContent(showDetailsUiModel.copy(isTvShow = false), false, {}, {})

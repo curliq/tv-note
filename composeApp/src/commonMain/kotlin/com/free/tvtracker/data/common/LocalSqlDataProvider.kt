@@ -1,4 +1,4 @@
-package com.free.tvtracker.data.common.sql
+package com.free.tvtracker.data.common
 
 import com.free.tvtracker.data.session.LocalPreferencesClientEntity
 import com.free.tvtracker.data.session.SessionClientEntity
@@ -55,13 +55,13 @@ class LocalSqlDataProvider(appDatabase: AppDatabase) {
 
     fun getTrackedShows(): List<TrackedShowClientEntity> {
         return dbQuery.transactionWithResult {
-            val shows = dbQuery.selectAllTrackedShows(TrackedShowClientEntity::fromSql).executeAsList()
+            val shows = dbQuery.selectAllTrackedShows(TrackedShowClientEntity.Companion::fromSql).executeAsList()
             shows.forEach { show ->
                 val storedEpisodes =
-                    dbQuery.selectAllStoredEpisodes(show.storedShow.tmdbId, StoredEpisodeClientEntity::fromSql)
+                    dbQuery.selectAllStoredEpisodes(show.storedShow.tmdbId, StoredEpisodeClientEntity.Companion::fromSql)
                         .executeAsList()
                 val watchedEpisodes =
-                    dbQuery.selectAllWatchedEpisodes(show.id, WatchedEpisodeClientEntity::fromSql).executeAsList()
+                    dbQuery.selectAllWatchedEpisodes(show.id, WatchedEpisodeClientEntity.Companion::fromSql).executeAsList()
                 show.storedShow.storedEpisodes = storedEpisodes
                 show.watchedEpisodes = watchedEpisodes
             }
@@ -70,7 +70,7 @@ class LocalSqlDataProvider(appDatabase: AppDatabase) {
     }
 
     fun getEpisodeWatchedOrder(): List<MarkEpisodeWatchedOrderClientEntity> {
-        return dbQuery.getWatchedEpisodeOrder(MarkEpisodeWatchedOrderClientEntity::fromSql).executeAsList()
+        return dbQuery.getWatchedEpisodeOrder(MarkEpisodeWatchedOrderClientEntity.Companion::fromSql).executeAsList()
     }
 
     fun saveEpisodeWatchedOrder(orders: List<MarkEpisodeWatchedOrderClientEntity>) {
@@ -90,7 +90,7 @@ class LocalSqlDataProvider(appDatabase: AppDatabase) {
     }
 
     fun getLocalPreferences(): LocalPreferencesClientEntity {
-        return dbQuery.getLocalPreferences(LocalPreferencesClientEntity::fromSql).executeAsOneOrNull()
+        return dbQuery.getLocalPreferences(LocalPreferencesClientEntity.Companion::fromSql).executeAsOneOrNull()
             ?: LocalPreferencesClientEntity(
                 welcomeComplete = false,
                 theme = LocalPreferencesClientEntity.Theme.SystemDefault,
@@ -110,12 +110,12 @@ class LocalSqlDataProvider(appDatabase: AppDatabase) {
     }
 
     fun getSession(): SessionClientEntity? {
-        val res = dbQuery.getSession(SessionClientEntity::fromSql).executeAsOneOrNull()
+        val res = dbQuery.getSession(SessionClientEntity.Companion::fromSql).executeAsOneOrNull()
         return res
     }
 
     fun getSessionFlow(): Flow<SessionClientEntity?> {
-        val res = dbQuery.getSession(SessionClientEntity::fromSql).asFlow()
+        val res = dbQuery.getSession(SessionClientEntity.Companion::fromSql).asFlow()
         return res.map { it.executeAsOneOrNull() }
     }
 

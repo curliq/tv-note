@@ -1,6 +1,6 @@
 package com.free.tvtracker.data.iap
 
-import com.free.tvtracker.data.common.sql.LocalSqlDataProvider
+import com.free.tvtracker.data.common.LocalSqlDataProvider
 import kotlinx.coroutines.flow.MutableStateFlow
 
 class IapRepository(

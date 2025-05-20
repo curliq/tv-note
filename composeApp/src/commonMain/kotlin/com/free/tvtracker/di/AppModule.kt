@@ -1,8 +1,9 @@
 package com.free.tvtracker.di
 
 import com.free.tvtracker.core.Logger
-import com.free.tvtracker.data.common.sql.LocalSqlDataProvider
+import com.free.tvtracker.data.common.LocalSqlDataProvider
 import com.free.tvtracker.data.iap.IapRepository
+import com.free.tvtracker.data.reviews.ReviewsRepository
 import com.free.tvtracker.data.search.SearchRepository
 import com.free.tvtracker.data.session.SessionRepository
 import com.free.tvtracker.data.session.SessionStore
@@ -11,23 +12,27 @@ import com.free.tvtracker.data.tracked.WatchedEpisodesTaskQueue
 import com.free.tvtracker.domain.GetMovieByTmdbIdUseCase
 import com.free.tvtracker.domain.GetNextUnwatchedEpisodeUseCase
 import com.free.tvtracker.domain.GetPurchaseStatusUseCase
+import com.free.tvtracker.domain.GetShowByTmdbIdUseCase
 import com.free.tvtracker.domain.GetShowStatusUseCase
 import com.free.tvtracker.domain.GetShowsUseCase
-import com.free.tvtracker.domain.GetShowByTmdbIdUseCase
 import com.free.tvtracker.domain.GetWatchlistedShowsUseCase
 import com.free.tvtracker.domain.IsTrackedShowWatchableUseCase
 import com.free.tvtracker.domain.TrackedShowReducer
 import com.free.tvtracker.expect.data.CachingLocationService
 import com.free.tvtracker.expect.data.DatabaseDriverFactory
+import com.free.tvtracker.expect.data.OmdbHttpClient
+import com.free.tvtracker.expect.data.RapidApiHttpClient
 import com.free.tvtracker.expect.data.TvHttpClient
 import com.free.tvtracker.expect.data.TvHttpClientEndpoints
 import com.free.tvtracker.shared.db.AppDatabase
+import com.free.tvtracker.ui.details.mappers.DetailsRatingsUiModelMapper
+import com.free.tvtracker.ui.details.mappers.DetailsReviewsUiModelMapper
 import com.free.tvtracker.ui.details.mappers.DetailsUiModelForMovieMapper
+import com.free.tvtracker.ui.details.mappers.DetailsUiModelForShowMapper
 import com.free.tvtracker.ui.details.mappers.ShowCastUiModelMapper
 import com.free.tvtracker.ui.details.mappers.ShowCrewUiModelMapper
 import com.free.tvtracker.ui.details.mappers.ShowEpisodeUiModelMapper
 import com.free.tvtracker.ui.details.mappers.ShowSeasonUiModelMapper
-import com.free.tvtracker.ui.details.mappers.DetailsUiModelForShowMapper
 import com.free.tvtracker.ui.details.mappers.ShowVideoUiModelMapper
 import com.free.tvtracker.ui.details.mappers.ShowWatchProviderUiModelMapper
 import com.free.tvtracker.ui.discover.DiscoverMovieUiModelMapper
@@ -51,6 +56,8 @@ import org.koin.dsl.module
 fun appModules() = module {
     single<SessionStore> { SessionStore() }
     single<TvHttpClient> { TvHttpClient(get()) }
+    single<OmdbHttpClient> { OmdbHttpClient() }
+    single<RapidApiHttpClient> { RapidApiHttpClient() }
     single<DatabaseDriverFactory> { DatabaseDriverFactory() }
     single<SqlDriver> { get<DatabaseDriverFactory>().createDriver() }
     single<Logger> { Logger() }
@@ -62,6 +69,7 @@ fun appModules() = module {
     single<WatchedEpisodesTaskQueue> { WatchedEpisodesTaskQueue(get(), get(), get()) }
     single<SearchRepository> { SearchRepository(get()) }
     single<IapRepository> { IapRepository(get(), get()) }
+    single<ReviewsRepository> { ReviewsRepository(get(), get()) }
     factory<ShowSearchUiModelMapper> { ShowSearchUiModelMapper() }
     factory<MovieSearchUiModelMapper> { MovieSearchUiModelMapper() }
     factory<PersonSearchUiModelMapper> { PersonSearchUiModelMapper() }
@@ -80,9 +88,9 @@ fun appModules() = module {
     factory<ShowWatchProviderUiModelMapper> { ShowWatchProviderUiModelMapper() }
     factory<ShowVideoUiModelMapper> { ShowVideoUiModelMapper() }
     factory<DetailsUiModelForShowMapper> {
-        DetailsUiModelForShowMapper(get(), get(), get(), get(), get(), get(), get(), get())
+        DetailsUiModelForShowMapper(get(), get(), get(), get(), get(), get(), get(), get(), get())
     }
-    factory<DetailsUiModelForMovieMapper> { DetailsUiModelForMovieMapper(get(), get(), get(), get(), get()) }
+    factory<DetailsUiModelForMovieMapper> { DetailsUiModelForMovieMapper(get(), get(), get(), get(), get(), get()) }
     factory<PersonCastUiModelMapper> { PersonCastUiModelMapper() }
     factory<PersonCrewUiModelMapper> { PersonCrewUiModelMapper() }
     factory<PersonPhotoUiModelMapper> { PersonPhotoUiModelMapper() }
@@ -94,6 +102,8 @@ fun appModules() = module {
     factory<FinishedShowUiModelMapper> { FinishedShowUiModelMapper(get()) }
     factory<RecommendedShowUiModelMapper> { RecommendedShowUiModelMapper() }
     factory<SettingsUiModelMapper> { SettingsUiModelMapper() }
+    factory<DetailsReviewsUiModelMapper> { DetailsReviewsUiModelMapper() }
+    factory<DetailsRatingsUiModelMapper> { DetailsRatingsUiModelMapper() }
     factory<GetShowStatusUseCase> { GetShowStatusUseCase() }
     factory<GetNextUnwatchedEpisodeUseCase> { GetNextUnwatchedEpisodeUseCase() }
     factory<GetPurchaseStatusUseCase> { GetPurchaseStatusUseCase(get(), get()) }

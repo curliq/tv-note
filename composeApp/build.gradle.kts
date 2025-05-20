@@ -117,13 +117,15 @@ android {
         applicationId = "com.free.tvtracker"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 15
-        versionName = "1.11"
+        versionCode = 16
+        versionName = "1.12"
         vectorDrawables.useSupportLibrary = true
         buildConfigField("String", "ANDROID_KEY_POSTHOG", "\"${System.getenv("ANDROID_KEY_POSTHOG")}\"")
         buildConfigField("String", "KEY_DSN_SENTRY", "\"${System.getenv("ANDROID_KEY_DSN_SENTRY")}\"")
         buildConfigField("String", "SERVER_URL", "\"${System.getenv("ANDROID_SERVER_URL")}\"")
         buildConfigField("String", "SERVER_PORT", "\"${System.getenv("ANDROID_SERVER_PORT")}\"")
+        buildConfigField("String", "OMDB_TOKEN", "\"${System.getenv("ANDROID_OMDB_TOKEN")}\"")
+        buildConfigField("String", "RAPID_API_IMDB_TOKEN", "\"${System.getenv("ANDROID_RAPID_API_IMDB_TOKEN")}\"")
     }
     packaging {
         resources {

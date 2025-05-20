@@ -40,6 +40,7 @@ data class TmdbShowBigResponse(
     @JsonProperty("videos") var videos: TmdbShowVideosResponse? = null,
     @JsonProperty("images") var images: TmdbShowImagesResponse? = null,
     @JsonProperty("watch/providers") var watchProviders: TmdbShowWatchProvidersResponse? = null,
+    @JsonProperty("external_ids") var externalIds: ExternalIds? = null,
 ) {
     data class CreatedBy(
         @JsonProperty("id") var id: Int? = null,
@@ -151,4 +152,16 @@ data class TmdbShowBigResponse(
             stillPath = this.stillPath,
         )
     }
+
+    data class ExternalIds(
+        @JsonProperty("imdb_id") var imdbId: String? = null,
+        @JsonProperty("freebase_mid") var freebase_Id: String? = null,
+        @JsonProperty("freebase_id") var freebaseId: String? = null,
+        @JsonProperty("tvdb_id") var tvdbId: String? = null,
+        @JsonProperty("tvrage_id") var tvrageId: String? = null,
+        @JsonProperty("wikidata_id") var wikidataId: String? = null,
+        @JsonProperty("facebook_id") var facebookId: String? = null,
+        @JsonProperty("instagram_id") var instagramId: String? = null,
+        @JsonProperty("twitter_id") var twitterId: String? = null,
+    )
 }

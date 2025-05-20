@@ -40,6 +40,7 @@ import com.free.tvtracker.ui.details.dialogs.DetailsCastCrewSheet
 import com.free.tvtracker.ui.details.dialogs.DetailsEpisodesSheet
 import com.free.tvtracker.ui.details.dialogs.DetailsMediaSheet
 import com.free.tvtracker.ui.details.dialogs.DetailsFilmCollectionSheet
+import com.free.tvtracker.ui.details.dialogs.DetailsReviewsSheet
 import org.koin.androidx.compose.koinViewModel
 
 class ShowDetailsActivity : BaseActivity() {
@@ -57,6 +58,7 @@ class ShowDetailsActivity : BaseActivity() {
 
     enum class ShowDetailsNavDestinations {
         EPISODES,
+        REVIEWS,
         MEDIA,
         CASTCREW,
         FILM_COLLECTION
@@ -77,6 +79,10 @@ class ShowDetailsActivity : BaseActivity() {
                 when (action) {
                     DetailsScreenNavAction.GoAllEpisodes -> {
                         showBottomSheet = ShowDetailsNavDestinations.EPISODES
+                    }
+
+                    DetailsScreenNavAction.GoReviews -> {
+                        showBottomSheet = ShowDetailsNavDestinations.REVIEWS
                     }
 
                     is DetailsScreenNavAction.GoYoutube -> {
@@ -173,6 +179,13 @@ class ShowDetailsActivity : BaseActivity() {
                                 when (showBottomSheet) {
                                     ShowDetailsNavDestinations.EPISODES -> {
                                         DetailsEpisodesSheet(
+                                            viewModel = koinViewModel(viewModelStoreOwner = context),
+                                            padding.calculateBottomPadding().value
+                                        )
+                                    }
+
+                                    ShowDetailsNavDestinations.REVIEWS -> {
+                                        DetailsReviewsSheet(
                                             viewModel = koinViewModel(viewModelStoreOwner = context),
                                             padding.calculateBottomPadding().value
                                         )

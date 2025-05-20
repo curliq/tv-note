@@ -40,6 +40,7 @@ data class TmdbShowDetailsApiModel(
     @SerialName("cast") var cast: List<Cast>? = null,
     @SerialName("crew") var crew: List<Crew>? = null,
     @SerialName("watch_provider") var watchProvider: List<WatchProvider>? = null,
+    @SerialName("imdb_id") var imdbId: String? = null
 ) {
     @Serializable
     data class Season(

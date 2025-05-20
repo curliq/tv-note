@@ -4,7 +4,7 @@ import com.benasher44.uuid.uuid4
 import com.free.tvtracker.Endpoints
 import com.free.tvtracker.base.ApiError
 import com.free.tvtracker.core.Logger
-import com.free.tvtracker.data.common.sql.LocalSqlDataProvider
+import com.free.tvtracker.data.common.LocalSqlDataProvider
 import com.free.tvtracker.data.tracked.entities.MarkEpisodeWatchedOrderClientEntity
 import com.free.tvtracker.expect.data.TvHttpClientEndpoints
 import com.free.tvtracker.tracked.request.AddMovieApiRequestBody

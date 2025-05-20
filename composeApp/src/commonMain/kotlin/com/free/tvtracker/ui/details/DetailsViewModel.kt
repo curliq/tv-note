@@ -1,6 +1,7 @@
 package com.free.tvtracker.ui.details
 
 import com.free.tvtracker.core.Logger
+import com.free.tvtracker.data.reviews.ReviewsRepository
 import com.free.tvtracker.data.tracked.MarkEpisodeWatched
 import com.free.tvtracker.data.tracked.TrackedShowsRepository
 import com.free.tvtracker.domain.GetMovieByTmdbIdUseCase
@@ -8,6 +9,8 @@ import com.free.tvtracker.domain.GetPurchaseStatusUseCase
 import com.free.tvtracker.domain.GetShowByTmdbIdUseCase
 import com.free.tvtracker.domain.PurchaseStatus
 import com.free.tvtracker.expect.ViewModel
+import com.free.tvtracker.ui.details.mappers.DetailsRatingsUiModelMapper
+import com.free.tvtracker.ui.details.mappers.DetailsReviewsUiModelMapper
 import com.free.tvtracker.ui.details.mappers.DetailsUiModelForMovieMapper
 import com.free.tvtracker.ui.details.mappers.DetailsUiModelForShowMapper
 import kotlinx.coroutines.CoroutineDispatcher
@@ -23,10 +26,13 @@ import kotlinx.coroutines.launch
 class DetailsViewModel(
     private val detailsUiModelForShowMapper: DetailsUiModelForShowMapper,
     private val detailsUiModelForMovieMapper: DetailsUiModelForMovieMapper,
+    private val ratingsMapper: DetailsRatingsUiModelMapper,
+    private val reviewsMapper: DetailsReviewsUiModelMapper,
     private val trackedShowsRepository: TrackedShowsRepository,
-    private val getShowByTmdbIdUseCase: GetShowByTmdbIdUseCase,
-    private val getMovieByTmdbIdUseCase: GetMovieByTmdbIdUseCase,
-    private val purchaseStatus: GetPurchaseStatusUseCase,
+    private val reviewsRepository: ReviewsRepository,
+    private val getShowByTmdbId: GetShowByTmdbIdUseCase,
+    private val getMovieByTmdbId: GetMovieByTmdbIdUseCase,
+    purchaseStatus: GetPurchaseStatusUseCase,
     private val logger: Logger,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : ViewModel() {
@@ -53,13 +59,14 @@ class DetailsViewModel(
 
     private fun loadTvShow(tmdbId: Int) {
         viewModelScope.launch(ioDispatcher) {
-            getShowByTmdbIdUseCase.invoke(tmdbId).catch {
+            getShowByTmdbId.invoke(tmdbId).catch {
                 result.value = DetailsUiState.Error
             }.collect { trackedShowResult ->
                 trackedShowResult.showData
-                    .asSuccess { data ->
+                    .coAsSuccess { data ->
                         result.value =
                             DetailsUiState.Ok(detailsUiModelForShowMapper.map(data, trackedShowResult.tracked))
+                        loadRatings(data.imdbId)
                     }.asError {
                         result.value = DetailsUiState.Error
                     }
@@ -69,16 +76,43 @@ class DetailsViewModel(
 
     private fun loadMovie(tmdbId: Int) {
         viewModelScope.launch(ioDispatcher) {
-            getMovieByTmdbIdUseCase.invoke(tmdbId).catch {
+            getMovieByTmdbId.invoke(tmdbId).catch {
                 result.value = DetailsUiState.Error
             }.collect { trackedShowResult ->
                 trackedShowResult.showData
-                    .asSuccess { data ->
+                    .coAsSuccess { data ->
                         result.value =
                             DetailsUiState.Ok(detailsUiModelForMovieMapper.map(data, trackedShowResult.tracked))
+                        loadRatings(data.imdbId)
                     }.coAsError {
                         result.value = DetailsUiState.Error
                     }
+            }
+        }
+    }
+
+    private suspend fun loadRatings(imdbId: String?) {
+        if (imdbId == null) return
+        val ratingsData = reviewsRepository.getRatings(imdbId)
+        val ratings = ratingsMapper.map(ratingsData)
+        if (ratings?.imdbRating != null && ratings.imdbVoteCount != null) {
+            result.update {
+                if (it is DetailsUiState.Ok) it.copy(
+                    data = it.data.copy(
+                        omdbRatings = ratings,
+                    )
+                ) else it
+            }
+        }
+        val reviewsData = reviewsRepository.getReviews(imdbId)
+        val reviews = reviewsMapper.map(reviewsData)
+        if (reviews?.reviews != null) {
+            result.update {
+                if (it is DetailsUiState.Ok) it.copy(
+                    data = it.data.copy(
+                        reviews = reviews
+                    )
+                ) else it
             }
         }
     }
@@ -250,6 +284,8 @@ data class DetailsUiModel(
     val mediaImagesBackdrops: List<String>,
     val ratingTmdbVoteAverage: String,
     val ratingTmdbVoteCount: String,
+    val omdbRatings: Ratings?,
+    val reviews: Reviews?,
     val budget: String,
     val revenue: String,
     val website: String?,
@@ -315,5 +351,24 @@ data class DetailsUiModel(
         val movies: List<Movie>
     ) {
         data class Movie(val tmdbId: Int, val posterUrl: String, val name: String, val year: String)
+    }
+
+    data class Ratings(
+        val imdbRating: String?,
+        val imdbVoteCount: String?,
+        val tomatoesRatingPercentage: String?
+    )
+
+    data class Reviews(
+        val reviews: List<Review>,
+        val total: Long
+    ) {
+        data class Review(
+            val id: String,
+            val authorName: String,
+            val title: String,
+            val content: String,
+            val created: String,
+        )
     }
 }

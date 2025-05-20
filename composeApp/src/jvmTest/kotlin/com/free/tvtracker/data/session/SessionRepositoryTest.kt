@@ -1,6 +1,6 @@
 package com.free.tvtracker.data.session
 
-import com.free.tvtracker.data.common.sql.LocalSqlDataProvider
+import com.free.tvtracker.data.common.LocalSqlDataProvider
 import com.free.tvtracker.expect.data.TvHttpClientEndpoints
 import com.free.tvtracker.user.response.SessionApiModel
 import com.free.tvtracker.user.response.SessionApiResponse
