@@ -35,7 +35,7 @@ fun startKoin(appPriceProvider: AppPriceProvider, fileExporter: FileExporter) {
             single { SignupViewModel(get()) }
 
             // each navstack has its own state
-            factory { DetailsViewModel(get(), get(), get(), get(), get(), get(), get()) }
+            factory { DetailsViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) }
             factory { PersonViewModel(get(), get()) }
         })
     }
