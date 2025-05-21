@@ -33,10 +33,11 @@ fun DetailsFilmCollectionSheet(
     navAction: (DetailsScreenNavAction) -> Unit,
     bottomPadding: Float = 0f
 ) {
-    val data = viewModel.result.collectAsState().value as DetailsUiState.Ok
+    val show = viewModel.result.collectAsState().value as? DetailsUiState.Ok
+    if (show == null) return
     TvTrackerTheme {
         Scaffold {
-            DetailsFilmCollectionContent(data.data.movieSeries!!, navAction, bottomPadding)
+            DetailsFilmCollectionContent(show.data.movieSeries!!, navAction, bottomPadding)
         }
     }
 }

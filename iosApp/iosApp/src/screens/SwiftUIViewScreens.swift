@@ -70,6 +70,23 @@ struct DetailsEpisodesSheet: UIViewControllerRepresentable {
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
 }
 
+struct DetailsReviewsSheet: UIViewControllerRepresentable {
+
+    let detailsViewModel: DetailsViewModel
+
+    init(detailsViewModel: DetailsViewModel) {
+        self.detailsViewModel = detailsViewModel
+    }
+
+    func makeUIViewController(context: Context) -> UIViewController {
+        ViewControllersKt.DetailsReviewsViewController(
+            viewModel: detailsViewModel
+        )
+    }
+
+    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
+}
+
 struct DetailsMediaSheet: UIViewControllerRepresentable {
     
     let detailsViewModel: DetailsViewModel

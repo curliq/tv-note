@@ -35,7 +35,8 @@ fun DetailsReviewsSheet(
     viewModel: DetailsViewModel,
     bottomPadding: Float = 0f
 ) {
-    val show = viewModel.result.collectAsState().value as DetailsUiState.Ok
+    val show = viewModel.result.collectAsState().value as? DetailsUiState.Ok
+    if (show == null) return
     TvTrackerTheme {
         Scaffold {
             DetailsReviewsSheetContent(show.data, bottomPadding)

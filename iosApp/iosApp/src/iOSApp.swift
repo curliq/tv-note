@@ -9,7 +9,7 @@ import ComposeApp
 
 class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {
     
-    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Foundation.Data) {
 #if (!targetEnvironment(simulator))
         Messaging.messaging().setAPNSToken(deviceToken, type: .unknown)
         Messaging.messaging().token { token, error in

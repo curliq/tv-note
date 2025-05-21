@@ -43,7 +43,8 @@ fun DetailsMediaSheet(
     navAction: (DetailsScreenNavAction) -> Unit,
     bottomPadding: Float = 0f
 ) {
-    val show = viewModel.result.collectAsState().value as DetailsUiState.Ok
+    val show = viewModel.result.collectAsState().value as? DetailsUiState.Ok
+    if (show == null) return
     TvTrackerTheme {
         Scaffold {
             DetailsMediaSheetContent(show.data, navAction, bottomPadding)

@@ -8,6 +8,7 @@ enum Route: Hashable {
     case search(origin: AddTrackedScreenOriginScreen)
     case details(content: DetailsViewModel.LoadContent)
     case episodes
+    case reviews
     case cast
     case media
     case filmCollection
@@ -304,6 +305,9 @@ struct ContentView: View {
         case .episodes:
             contentView = DetailsEpisodesSheet(detailsViewModel: detailsViewModel).eraseToAnyView()
 
+        case .reviews:
+            contentView = DetailsReviewsSheet(detailsViewModel: detailsViewModel).eraseToAnyView()
+
         case .cast:
             contentView = DetailsCastCrewSheet(detailsViewModel: detailsViewModel, nav: detailsNav).eraseToAnyView()
 
@@ -383,6 +387,8 @@ struct ContentView: View {
                 openURL(URL(string: action.webUrl)!)
             case _ as DetailsScreenNavAction.GoAllEpisodes:
                 navState.path.append(Route.episodes)
+            case _ as DetailsScreenNavAction.GoReviews:
+                navState.path.append(Route.reviews)
             case _ as DetailsScreenNavAction.GoMedia:
                 navState.path.append(Route.media)
             case _ as DetailsScreenNavAction.GoCastAndCrew:

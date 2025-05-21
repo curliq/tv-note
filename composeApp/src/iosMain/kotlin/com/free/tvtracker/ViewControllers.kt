@@ -11,6 +11,7 @@ import com.free.tvtracker.ui.details.dialogs.DetailsCastCrewSheet
 import com.free.tvtracker.ui.details.dialogs.DetailsEpisodesSheet
 import com.free.tvtracker.ui.details.dialogs.DetailsFilmCollectionSheet
 import com.free.tvtracker.ui.details.dialogs.DetailsMediaSheet
+import com.free.tvtracker.ui.details.dialogs.DetailsReviewsSheet
 import com.free.tvtracker.ui.discover.DiscoverScreen
 import com.free.tvtracker.ui.discover.DiscoverScreenNavActions
 import com.free.tvtracker.ui.discover.DiscoverViewModel
@@ -133,6 +134,11 @@ fun ShowDetailsScreenViewController(
 fun DetailsEpisodesViewController(viewModel: DetailsViewModel) =
     ComposeUIViewController {
         DetailsEpisodesSheet(viewModel)
+    }
+
+fun DetailsReviewsViewController(viewModel: DetailsViewModel) =
+    ComposeUIViewController {
+        DetailsReviewsSheet(viewModel)
     }
 
 fun DetailsMediaViewController(viewModel: DetailsViewModel, navigate: (DetailsScreenNavAction) -> Unit) =

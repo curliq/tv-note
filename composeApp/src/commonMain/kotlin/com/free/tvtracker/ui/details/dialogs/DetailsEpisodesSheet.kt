@@ -42,7 +42,8 @@ import com.free.tvtracker.ui.details.DetailsViewModel
 
 @Composable
 fun DetailsEpisodesSheet(viewModel: DetailsViewModel, bottomPadding: Float = 0f) {
-    val show = viewModel.result.collectAsState().value as DetailsUiState.Ok
+    val show = viewModel.result.collectAsState().value as? DetailsUiState.Ok
+    if (show == null) return
     TvTrackerTheme {
         Scaffold {
             DetailsEpisodesContent(show.data, viewModel::action, bottomPadding)
