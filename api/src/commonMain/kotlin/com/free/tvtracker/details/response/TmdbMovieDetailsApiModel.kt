@@ -12,41 +12,41 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class TmdbMovieDetailsApiModel(
     @SerialName("backdrop_path")
-    val backdropPath: String?,
+    val backdropPath: String? = null,
     @SerialName("belongs_to_collection")
-    val belongsToCollection: BelongsToCollection?,
-    val budget: Double?,
+    val belongsToCollection: BelongsToCollection? = null,
+    val budget: Double? = null,
     val genres: List<String> = emptyList(),
-    val homepage: String?,
+    val homepage: String? = null,
     val id: Int,
     @SerialName("imdb_id")
-    val imdbId: String?,
+    val imdbId: String? = null,
     @SerialName("origin_country")
-    val originCountry: List<String?>?,
+    val originCountry: List<String?>? = null,
     @SerialName("original_language")
-    val originalLanguage: String?,
+    val originalLanguage: String? = null,
     @SerialName("original_title")
-    val originalTitle: String?,
-    val overview: String?,
-    val popularity: Double?,
+    val originalTitle: String? = null,
+    val overview: String? = null,
+    val popularity: Double? = null,
     @SerialName("poster_path")
-    val posterPath: String?,
+    val posterPath: String? = null,
     @SerialName("production_companies")
-    val productionCompanies: List<TmdbShowDetailsApiModel.ProductionCompanies>?,
+    val productionCompanies: List<TmdbShowDetailsApiModel.ProductionCompanies>? = null,
     @SerialName("production_countries")
-    val productionCountries: List<TmdbShowDetailsApiModel.ProductionCountries>?,
+    val productionCountries: List<TmdbShowDetailsApiModel.ProductionCountries>? = null,
     @SerialName("release_date")
-    val releaseDate: String?,
-    val revenue: Double?,
-    val runtime: Int?,
-    val status: String?,
-    val tagline: String?,
-    val title: String?,
-    val video: Boolean?,
+    val releaseDate: String? = null,
+    val revenue: Double? = null,
+    val runtime: Int? = null,
+    val status: String? = null,
+    val tagline: String? = null,
+    val title: String? = null,
+    val video: Boolean? = null,
     @SerialName("vote_average")
-    val voteAverage: Double?,
+    val voteAverage: Double? = null,
     @SerialName("vote_count")
-    val voteCount: Int?,
+    val voteCount: Int? = null,
     @SerialName("videos")
     val videos: List<Video>? = null,
     @SerialName("images")

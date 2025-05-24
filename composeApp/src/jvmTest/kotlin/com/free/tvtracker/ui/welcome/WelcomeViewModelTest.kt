@@ -5,7 +5,6 @@ import com.free.tvtracker.data.iap.IapRepository
 import com.free.tvtracker.data.session.SessionRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -26,7 +25,8 @@ class WelcomeViewModelTest {
             mockk(),
             sessionRepository,
             iapRepository,
-            logger = Logger()
+            logger = Logger(),
+            ioDispatcher = UnconfinedTestDispatcher()
         )
         coVerify(exactly = 1) { sessionRepository.createAnonSession() }
     }

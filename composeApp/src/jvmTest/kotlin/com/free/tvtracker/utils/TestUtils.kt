@@ -37,6 +37,8 @@ fun buildDetailsUiModel(
     mediaImagesBackdrops: List<String> = emptyList(),
     ratingTmdbVoteAverage: String = "",
     ratingTmdbVoteCount: String = "",
+    omdbRatings: DetailsUiModel.Ratings? = null,
+    reviews: DetailsUiModel.Reviews? = null,
     isTvShow: Boolean = true,
     budget: String = "",
     revenue: String = "",
@@ -74,5 +76,7 @@ fun buildDetailsUiModel(
     mediaVideosClipsAndOther = mediaVideosClipsAndOther,
     budget = budget,
     revenue = revenue,
-    website = website
+    website = website,
+    omdbRatings = omdbRatings,
+    reviews = reviews
 )

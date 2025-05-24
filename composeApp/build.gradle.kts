@@ -9,6 +9,7 @@ plugins {
     alias(libs.plugins.sqldelight)
     alias(libs.plugins.googleServicesAndroid)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.kover)
 }
 
 kotlin {
@@ -162,5 +163,25 @@ sqldelight {
 tasks {
     withType<AbstractFlywayTask> {
         notCompatibleWithConfigurationCache("because https://github.com/flyway/flyway/issues/3550")
+    }
+}
+
+kover {
+    reports {
+        // filters for all report types of all build variants
+        filters {
+            excludes {
+                androidGeneratedClasses()
+                annotatedBy("androidx.compose.runtime.Composable")
+                classes(
+                    "**.previews**",
+                    "**.generated.resources**",
+                    "**.di**",
+                    "**.ui.common**",
+                    "**Screen.kt",
+                    "**Sheet.kt",
+                )
+            }
+        }
     }
 }

@@ -41,7 +41,10 @@ class DetailsViewModelTest {
         DetailsViewModel(
             showMapper,
             movieMapper,
+            mockk(relaxed = true),
+            mockk(relaxed = true),
             trackedShowsRepository,
+            mockk(relaxed = true),
             getShowByTmdbIdUseCase,
             mockk(relaxed = true),
             mockk(relaxed = true),

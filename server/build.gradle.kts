@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.sprintBootDependency)
     alias(libs.plugins.springBootKotlin)
     alias(libs.plugins.flyway)
+    alias(libs.plugins.kover)
 }
 
 group = "com.free.tvtracker"

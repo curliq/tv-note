@@ -1,8 +1,13 @@
+[![Compose Coverage](https://codecov.io/gh/your-username/your-repo/branch/main/graph/badge.svg?flag=compose)](https://codecov.io/gh/your-username/your-repo?flag=compose)
+[![Server Coverage](https://codecov.io/gh/your-username/your-repo/branch/main/graph/badge.svg?flag=server)](https://codecov.io/gh/your-username/your-repo?flag=server)
+[![Coverage](https://codecov.io/gh/your-username/your-repo/branch/main/graph/badge.svg)](https://codecov.io/gh/your-username/your-repo)
+[![Test and Coverage](https://github.com/curliq/tv-note/actions/workflows/coverage.yaml/badge.svg)](https://github.com/curliq/tv-note/actions/workflows/coverage.yaml)
+
 # About
 
 A simple TV show tracking mobile app. It uses TMDB for all the media.
 
-You can download for $2.99 or host your own. There are currently over 100 people using the app, and I'm planning to
+You can download for $2.99 or host your own. There are currently over 100 people using the app, and I plan to
 maintain the server forever. There is also an export button in the settings screen.
 
 PRs are welcome.
@@ -35,12 +40,15 @@ PRs are welcome.
 - [ ] Sync with Trakt.tv
 - [ ] Sharing lists (design tbd)
 - [ ] App-wide setting to show only TV shows or only Movies
+- [ ] Save movie/show filter selection in user preferences
 - [ ] Region picker override setting
 - [ ] Filters in discover screen, eg. by genre
+- [ ] Watchlist sort by: added, year, name
+- [ ] Search watchlisted items
 
 # Running locally
 
-### Web app
+### Web service and database
 
 1. Install java if you haven't already
 2. Set environment variables:
@@ -66,12 +74,12 @@ PRs are welcome.
 1. Download Android Studio (or the android sdk executable)
 2. Set the private keys as environment variables:
    ```
-      export ANDROID_KEY_DSN_SENTRY=optional_sentry_key
-      export ANDROID_KEY_POSTHOG=optional_posthog_key
-      export ANDROID_SERVER_URL=ip_of_your_tvnote_api
-      export ANDROID_SERVER_PORT=8080
-      export ANDROID_OMDB_TOKEN=optional_omdb_token
-      export ANDROID_RAPID_API_IMDB_TOKEN=optional_tapid_api_token
+   export ANDROID_KEY_DSN_SENTRY=optional_sentry_key
+   export ANDROID_KEY_POSTHOG=optional_posthog_key
+   export ANDROID_SERVER_URL=ip_of_your_tvnote_api
+   export ANDROID_SERVER_PORT=8080
+   export ANDROID_OMDB_TOKEN=optional_omdb_token
+   export ANDROID_RAPID_API_IMDB_TOKEN=optional_tapid_api_token
    ```
 3. Run `./gradlew assembleDebug`
 4. Install the apk on your android device

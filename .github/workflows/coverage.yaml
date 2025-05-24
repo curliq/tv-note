@@ -1,0 +1,85 @@
+name: Test and Coverage
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Write google-services.json
+        run: |
+          echo '{
+            "project_info": {
+              "project_number": "123",
+              "project_id": "123",
+              "storage_bucket": "123.google.com"
+            },
+            "client": [
+              {
+                "client_info": {
+                  "mobilesdk_app_id": "1:1:android:1",
+                  "android_client_info": {
+                    "package_name": "com.free.tvtracker"
+                  }
+                },
+                "oauth_client": [],
+                "api_key": [
+                  {
+                    "current_key": "123"
+                  }
+                ],
+                "services": {
+                  "appinvite_service": {
+                    "other_platform_oauth_client": []
+                  }
+                }
+              }
+            ],
+            "configuration_version": "1"
+          }' > composeApp/google-services.json
+
+
+      - name: Run tests and generate coverage
+        run: ./gradlew koverXmlReport
+
+      # Upload both reports as artifacts (with unique names)
+      - name: Upload compose coverage report to GitHub Actions
+        uses: actions/upload-artifact@v4
+        with:
+          name: compose-coverage-report
+          path: composeApp/build/reports/kover/report.xml
+
+      - name: Upload server coverage report to GitHub Actions
+        uses: actions/upload-artifact@v4
+        with:
+          name: server-coverage-report
+          path: server/build/reports/kover/report.xml
+
+      - name: Upload compose coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: composeApp/build/reports/kover/report.xml
+          flags: compose
+
+      - name: Upload server coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: server/build/reports/kover/report.xml
+          flags: server

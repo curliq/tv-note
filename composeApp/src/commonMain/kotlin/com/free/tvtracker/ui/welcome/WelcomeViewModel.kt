@@ -32,6 +32,7 @@ class WelcomeViewModel(
 
     private suspend fun loadSession() {
         val sessionAlreadyExists = sessionRepository.loadSession()
+        logger.d("session already exists: $sessionAlreadyExists")
         if (sessionAlreadyExists) {
             status.emit(Status.GreenLight)
             return
