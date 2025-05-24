@@ -35,8 +35,10 @@ PRs are welcome.
 - [ ] Sync with Trakt.tv
 - [ ] Sharing lists (design tbd)
 - [ ] App-wide setting to show only TV shows or only Movies
+- [ ] Save movie/show filter selection in user preferences
 - [ ] Region picker override setting
 - [ ] Filters in discover screen, eg. by genre
+- [ ] Watchlist sort by: added, year, name
 
 # Running locally
 
