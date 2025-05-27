@@ -1,8 +1,6 @@
-[![Compose Coverage](https://codecov.io/gh/your-username/your-repo/branch/main/graph/badge.svg?flag=compose)](https://codecov.io/gh/your-username/your-repo?flag=compose)
-[![Server Coverage](https://codecov.io/gh/your-username/your-repo/branch/main/graph/badge.svg?flag=server)](https://codecov.io/gh/your-username/your-repo?flag=server)
-[![Coverage](https://codecov.io/gh/your-username/your-repo/branch/main/graph/badge.svg)](https://codecov.io/gh/your-username/your-repo)
+[![codecov](https://codecov.io/gh/curliq/tv-note/branch/main/graph/badge.svg?token=IV6FKASRS0&flag=server)](https://codecov.io/gh/curliq/tv-note)
+[![codecov](https://codecov.io/gh/curliq/tv-note/branch/main/graph/badge.svg?token=IV6FKASRS0&flag=compose)](https://codecov.io/gh/curliq/tv-note)
 [![Test and Coverage](https://github.com/curliq/tv-note/actions/workflows/coverage.yaml/badge.svg)](https://github.com/curliq/tv-note/actions/workflows/coverage.yaml)
-
 # About
 
 A simple TV show tracking mobile app. It uses TMDB for all the media.
