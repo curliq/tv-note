@@ -12,7 +12,7 @@ flag_management:
   individual_flags: # exceptions to the default rules above, stated flag by flag
     - name: server  #fill in your own flag name
       paths:
-        - composeApp/src  #fill in your own path. Note, accepts globs, not regexes
+        - server/src  #fill in your own path. Note, accepts globs, not regexes
       carryforward: true
       statuses:
         - type: project
