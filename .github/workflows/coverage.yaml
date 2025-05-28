@@ -82,4 +82,4 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: server/build/reports/kover/report.xml
-          flags: server2
+          flags: server
