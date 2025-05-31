@@ -253,17 +253,6 @@ fun DetailsScreenContent(
                     content = { Text("See all episodes") },
                     shape = TvTrackerTheme.ShapeButton
                 )
-                if (show.seasons?.any { it.isWatchable } == true) {
-                    Spacer(Modifier.width(8.dp))
-                    TextButton(shape = TvTrackerTheme.ShapeButton, onClick = {
-                        showAction(DetailsViewModel.DetailsAction.MarkShowWatched(show.tmdbId, show.trackedContentId))
-                    }) {
-                        Text(
-                            text = "Mark all as watched",
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                }
             }
             Spacer(Modifier.height(24.dp))
         }

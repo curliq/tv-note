@@ -31,7 +31,10 @@ fun TrackedShowEntity.toApiModel(): TrackedContentApiModel {
             }
         ),
         movie = null,
-        mediaType = TrackedContentApiModel.ContentType.TvShow
+        mediaType = TrackedContentApiModel.ContentType.TvShow,
+        watchlists = this.watchlistTrackedShows.map {
+            TrackedContentApiModel.Watchlist(it.watchlist.id, it.watchlist.name)
+        }
     )
 }
 
@@ -50,7 +53,10 @@ fun TrackedMovieEntity.toApiModel(): TrackedContentApiModel {
                 releaseDate = this.storedMovie.releaseDate
             )
         ),
-        mediaType = TrackedContentApiModel.ContentType.Movie
+        mediaType = TrackedContentApiModel.ContentType.Movie,
+        watchlists = this.watchlistTrackedMovies.map {
+            TrackedContentApiModel.Watchlist(it.watchlist.id, it.watchlist.name)
+        }
     )
 }
 

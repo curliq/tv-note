@@ -23,7 +23,7 @@ class FinishedShowsViewModel(
     private val getShowsUseCase: GetShowsUseCase,
     private val isTrackedShowWatchableUseCase: IsTrackedShowWatchableUseCase,
     private val mapper: FinishedShowUiModelMapper,
-    private val purchaseStatus: GetPurchaseStatusUseCase,
+    purchaseStatus: GetPurchaseStatusUseCase,
     private val iapRepository: IapRepository,
     private val logger: Logger,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
