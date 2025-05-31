@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
@@ -20,6 +22,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LocalMinimumInteractiveComponentEnforcement
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,6 +39,7 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import com.free.tvtracker.ui.common.composables.TvImage
 import com.free.tvtracker.ui.common.theme.TvTrackerTheme
+import com.free.tvtracker.ui.common.theme.TvTrackerTheme.sidePadding
 import com.free.tvtracker.ui.details.DetailsUiModel
 import com.free.tvtracker.ui.details.DetailsUiState
 import com.free.tvtracker.ui.details.DetailsViewModel
@@ -59,6 +63,41 @@ fun DetailsEpisodesContent(
     bottomPadding: Float = 0f
 ) {
     LazyColumn(modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainerLow)) {
+        item {
+            if (show.seasons?.any { it.isWatchable } == true) {
+                Button(
+                    onClick = {
+                        action(
+                            DetailsViewModel.DetailsAction.MarkShowWatched(
+                                show.tmdbId,
+                                show.trackedContentId
+                            )
+                        )
+                    },
+                    shape = TvTrackerTheme.ShapeButton,
+                    modifier = Modifier.fillMaxWidth()
+                        .padding(start = sidePadding, top = 0.dp, end = sidePadding, bottom = sidePadding),
+                ) {
+                    Text("Mark all as watched")
+                }
+            } else if (false) { //todo
+                OutlinedButton(
+                    onClick = {
+                        action(
+                            DetailsViewModel.DetailsAction.MarkShowWatched(
+                                show.tmdbId,
+                                show.trackedContentId
+                            )
+                        )
+                    },
+                    shape = TvTrackerTheme.ShapeButton,
+                    modifier = Modifier.fillMaxWidth()
+                        .padding(start = sidePadding, top = 0.dp, end = sidePadding, bottom = sidePadding),
+                ) {
+                    Text("Reset all episodes")
+                }
+            }
+        }
         show.seasons?.forEach { season ->
             stickyHeader {
                 Column(Modifier.fillParentMaxWidth().background(MaterialTheme.colorScheme.surfaceContainerLow)) {
