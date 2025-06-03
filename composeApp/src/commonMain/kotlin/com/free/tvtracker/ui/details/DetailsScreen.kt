@@ -43,7 +43,6 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -253,17 +252,6 @@ fun DetailsScreenContent(
                     content = { Text("See all episodes") },
                     shape = TvTrackerTheme.ShapeButton
                 )
-                if (show.seasons?.any { it.isWatchable } == true) {
-                    Spacer(Modifier.width(8.dp))
-                    TextButton(shape = TvTrackerTheme.ShapeButton, onClick = {
-                        showAction(DetailsViewModel.DetailsAction.MarkShowWatched(show.tmdbId, show.trackedContentId))
-                    }) {
-                        Text(
-                            text = "Mark all as watched",
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                }
             }
             Spacer(Modifier.height(24.dp))
         }

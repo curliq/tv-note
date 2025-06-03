@@ -9,6 +9,7 @@ import com.free.tvtracker.data.session.SessionRepository
 import com.free.tvtracker.data.session.SessionStore
 import com.free.tvtracker.data.tracked.TrackedShowsRepository
 import com.free.tvtracker.data.tracked.WatchedEpisodesTaskQueue
+import com.free.tvtracker.data.watchlists.WatchlistsRepository
 import com.free.tvtracker.domain.GetMovieByTmdbIdUseCase
 import com.free.tvtracker.domain.GetNextUnwatchedEpisodeUseCase
 import com.free.tvtracker.domain.GetPurchaseStatusUseCase
@@ -50,6 +51,7 @@ import com.free.tvtracker.ui.settings.SettingsUiModelMapper
 import com.free.tvtracker.ui.watching.GetWatchingShowsUseCase
 import com.free.tvtracker.ui.watching.WatchingShowUiModelMapper
 import com.free.tvtracker.ui.watchlist.WatchlistShowUiModelMapper
+import com.free.tvtracker.ui.watchlists.details.WatchlistDetailsShowUiModelMapper
 import com.squareup.sqldelight.db.SqlDriver
 import org.koin.dsl.module
 
@@ -66,6 +68,7 @@ fun appModules() = module {
     single<TvHttpClientEndpoints> { TvHttpClientEndpoints(get()) }
     single<SessionRepository> { SessionRepository(get(), get(), get(), get()) }
     single<TrackedShowsRepository> { TrackedShowsRepository(get(), get(), get(), get()) }
+    single<WatchlistsRepository> { WatchlistsRepository(get(), get()) }
     single<WatchedEpisodesTaskQueue> { WatchedEpisodesTaskQueue(get(), get(), get()) }
     single<SearchRepository> { SearchRepository(get()) }
     single<IapRepository> { IapRepository(get(), get()) }
@@ -98,6 +101,7 @@ fun appModules() = module {
     factory<DiscoverShowUiModelMapper> { DiscoverShowUiModelMapper() }
     factory<DiscoverMovieUiModelMapper> { DiscoverMovieUiModelMapper() }
     factory<WatchingShowUiModelMapper> { WatchingShowUiModelMapper(get()) }
+    factory<WatchlistDetailsShowUiModelMapper> { WatchlistDetailsShowUiModelMapper(get()) }
     factory<WatchlistShowUiModelMapper> { WatchlistShowUiModelMapper(get()) }
     factory<FinishedShowUiModelMapper> { FinishedShowUiModelMapper(get()) }
     factory<RecommendedShowUiModelMapper> { RecommendedShowUiModelMapper() }

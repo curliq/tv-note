@@ -198,38 +198,45 @@ fun SettingsContent(
         Spacer(Modifier.height(8.dp))
         TextButton(
             shape = TvTrackerTheme.ShapeButton,
-            modifier = Modifier.padding(horizontal = TvTrackerTheme.sidePaddingHalf),
+            modifier = Modifier.padding(horizontal = TvTrackerTheme.sidePaddingHalf).fillMaxWidth()
+                .align(Alignment.Start),
             contentPadding = PaddingValues(TvTrackerTheme.sidePaddingHalf),
             onClick = { action(SettingsViewModel.Action.RestorePurchase) }
         ) {
             ResImage(Res.drawable.ic_settings_restore, "restore purchase", tint = MaterialTheme.colorScheme.primary)
             Spacer(Modifier.width(8.dp))
             Text(text = "Restore purchase")
+            Spacer(modifier = Modifier.weight(1f))
         }
         TextButton(
             shape = TvTrackerTheme.ShapeButton,
-            modifier = Modifier.padding(horizontal = TvTrackerTheme.sidePaddingHalf),
+            modifier = Modifier.padding(horizontal = TvTrackerTheme.sidePaddingHalf).fillMaxWidth()
+                .align(Alignment.Start),
             contentPadding = PaddingValues(TvTrackerTheme.sidePaddingHalf),
             onClick = { navAction(SettingsScreenNavAction.EmailSupport(Constants.SUPPORT_EMAIL)) }
         ) {
             ResImage(Res.drawable.ic_customer_support, "email developer", tint = MaterialTheme.colorScheme.primary)
             Spacer(Modifier.width(8.dp))
             Text(text = "Email developer")
+            Spacer(modifier = Modifier.weight(1f))
         }
         TextButton(
             shape = TvTrackerTheme.ShapeButton,
-            modifier = Modifier.padding(horizontal = TvTrackerTheme.sidePaddingHalf),
+            modifier = Modifier.padding(horizontal = TvTrackerTheme.sidePaddingHalf).fillMaxWidth()
+                .align(Alignment.Start),
             contentPadding = PaddingValues(TvTrackerTheme.sidePaddingHalf),
             onClick = { navAction(SettingsScreenNavAction.GoBrowser(Constants.GITHUB_URL)) },
         ) {
             ResImage(Res.drawable.ic_code, "restore", tint = MaterialTheme.colorScheme.primary)
             Spacer(Modifier.width(8.dp))
             Text("github.com/curliq/best-tv-tracker")
+            Spacer(modifier = Modifier.weight(1f))
         }
         if (OsPlatform().get() == OsPlatform.Platform.IOS) {
             TextButton(
                 shape = TvTrackerTheme.ShapeButton,
-                modifier = Modifier.padding(horizontal = TvTrackerTheme.sidePaddingHalf),
+                modifier = Modifier.padding(horizontal = TvTrackerTheme.sidePaddingHalf).fillMaxWidth()
+                    .align(Alignment.Start),
                 contentPadding = PaddingValues(TvTrackerTheme.sidePaddingHalf),
                 onClick = {
                     navAction(SettingsScreenNavAction.GoBrowser(Constants.APPLE_EULA_URL))
@@ -238,17 +245,20 @@ fun SettingsContent(
                 ResImage(Res.drawable.ic_tos, "tos", tint = MaterialTheme.colorScheme.primary)
                 Spacer(Modifier.width(8.dp))
                 Text("Terms of use (EULA)")
+                Spacer(modifier = Modifier.weight(1f))
             }
         }
         TextButton(
             shape = TvTrackerTheme.ShapeButton,
-            modifier = Modifier.padding(horizontal = TvTrackerTheme.sidePaddingHalf),
+            modifier = Modifier.padding(horizontal = TvTrackerTheme.sidePaddingHalf).fillMaxWidth()
+                .align(Alignment.Start),
             contentPadding = PaddingValues(TvTrackerTheme.sidePaddingHalf),
             onClick = { action(SettingsViewModel.Action.Logout) }
         ) {
             ResImage(Res.drawable.ic_delete_account, "delete", tint = MaterialTheme.colorScheme.error)
             Spacer(Modifier.width(8.dp))
             Text(text = "Delete account", color = MaterialTheme.colorScheme.error)
+            Spacer(modifier = Modifier.weight(1f))
         }
         Spacer(Modifier.height(24.dp))
         HorizontalDivider()
