@@ -22,6 +22,8 @@ import com.free.tvtracker.ui.settings.signup.SignupViewModel
 import com.free.tvtracker.ui.splash.SplashViewModel
 import com.free.tvtracker.ui.watching.WatchingViewModel
 import com.free.tvtracker.ui.watchlist.WatchlistedShowsViewModel
+import com.free.tvtracker.ui.watchlists.details.WatchlistDetailsViewModel
+import com.free.tvtracker.ui.watchlists.list.WatchlistsViewModel
 import com.free.tvtracker.ui.welcome.WelcomeViewModel
 import com.posthog.android.PostHogAndroid
 import com.posthog.android.PostHogAndroidConfig
@@ -90,6 +92,8 @@ class AndroidApplication : Application() {
                     viewModel { WatchingViewModel(get(), get(), get(), get(), get(), get(), get()) }
                     viewModel { FinishedShowsViewModel(get(), get(), get(), get(), get(), get(), get()) }
                     viewModel { WatchlistedShowsViewModel(get(), get(), get(), get(), get(), get(), get()) }
+                    viewModel { WatchlistsViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
+                    viewModel { WatchlistDetailsViewModel(get(), get(),get(),get(),get(), get(), get()) }
                     viewModel { DetailsViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) }
                     viewModel { PersonViewModel(get(), get()) }
                     viewModel { LoginViewModel(get(), get()) }

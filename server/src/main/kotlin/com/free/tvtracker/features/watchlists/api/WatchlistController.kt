@@ -103,15 +103,18 @@ class WatchlistController(
         return ResponseEntity.ok(Unit)
     }
 
-    @PostMapping(Endpoints.Path.DELETE_WATCHLISTS)
-    fun deleteWatchlist(@RequestBody body: DeleteWatchlistApiRequestBody): ResponseEntity<Unit> {
+    @PostMapping(Endpoints.Path.REMOVE_WATCHLIST)
+    fun deleteWatchlist(@RequestBody body: DeleteWatchlistApiRequestBody): ResponseEntity<WatchlistsApiResponse> {
         try {
-            watchlistService.deleteWatchlist(body.watchlistId)
+            val res = watchlistService.deleteWatchlist(body.watchlistId)
+            return ResponseEntity.ok(WatchlistsApiResponse.ok(res))
         } catch (e: Exception) {
             logger.get.error(e)
-            return ResponseEntity(Unit, HttpStatus.BAD_REQUEST)
+            return ResponseEntity(
+                WatchlistsApiResponse.error(ApiError.Network),
+                HttpStatus.BAD_REQUEST
+            )
         }
-        return ResponseEntity.ok(Unit)
     }
 
     @PostMapping(Endpoints.Path.EDIT_WATCHLIST)

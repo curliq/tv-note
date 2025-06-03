@@ -7,6 +7,9 @@ import android.os.Build
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.rounded.AddCircle
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -79,6 +82,17 @@ class MainActivity : BaseActivity() {
                                     ) {
                                         Icon(
                                             painter = painterResource(id = R.drawable.ic_settings_heart),
+                                            contentDescription = "My Button"
+                                        )
+                                    }
+                                } else if (currentDestination?.route == AppNavDestinations.WATCHLISTS.id) {
+                                    IconButton(
+                                        onClick = {
+                                            startActivity(Intent(this@MainActivity, SettingsActivity::class.java))
+                                        }
+                                    ) {
+                                        Icon(
+                                            Icons.Rounded.AddCircle,
                                             contentDescription = "My Button"
                                         )
                                     }

@@ -23,18 +23,17 @@ import com.free.tvtracker.activities.add.AddTrackedActivity
 import com.free.tvtracker.activities.discover.RecommendationsActivity
 import com.free.tvtracker.activities.main.AppNavController
 import com.free.tvtracker.activities.showdetails.ShowDetailsActivity
+import com.free.tvtracker.activities.watchlists.WatchlistDetailsActivity
 import com.free.tvtracker.ui.discover.DiscoverScreen
 import com.free.tvtracker.ui.discover.DiscoverScreenNavActions
 import com.free.tvtracker.ui.discover.DiscoverViewModel
 import com.free.tvtracker.ui.discover.dialogs.DiscoverNewReleasesSheet
 import com.free.tvtracker.ui.discover.dialogs.DiscoverTrendingSheet
-import com.free.tvtracker.ui.finished.FinishedScreen
-import com.free.tvtracker.ui.finished.FinishedScreenNavAction
 import com.free.tvtracker.ui.search.AddTrackedScreenOriginScreen
 import com.free.tvtracker.ui.watching.WatchingScreen
 import com.free.tvtracker.ui.watching.WatchingScreenNavAction
-import com.free.tvtracker.ui.watchlist.WatchlistScreen
-import com.free.tvtracker.ui.watchlist.WatchlistScreenNavAction
+import com.free.tvtracker.ui.watchlists.list.WatchlistsScreen
+import com.free.tvtracker.ui.watchlists.list.WatchlistsScreenNavAction
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import org.koin.androidx.compose.get
 import org.koin.androidx.compose.koinViewModel
@@ -61,44 +60,25 @@ fun NavGraphBuilder.mainNavGraph(navController: AppNavController, context: Activ
             viewModel = koinViewModel()
         )
     }
-    composable(AppNavDestinations.FINISHED.id) {
-        FinishedScreen(
+    composable(AppNavDestinations.WATCHLISTS.id) {
+        WatchlistsScreen(
             viewModel = koinViewModel(),
             navigate = { action ->
                 when (action) {
-                    FinishedScreenNavAction.GoAddShow -> {
-                        context.startActivity(
-                            AddTrackedActivity.createIntent(
-                                context,
-                                AddTrackedScreenOriginScreen.Finished
-                            )
-                        )
-                    }
-
-                    is FinishedScreenNavAction.GoShowDetails -> {
-                        context.startActivity(ShowDetailsActivity.create(context, action.tmdbShowId, action.isTvShow))
-                    }
-                }
-            },
-        )
-    }
-    composable(AppNavDestinations.WATCHLIST.id) {
-        WatchlistScreen(
-            viewModel = koinViewModel(),
-            navigate = { action ->
-                when (action) {
-                    WatchlistScreenNavAction.GoAddShow -> context.startActivity(
+                    WatchlistsScreenNavAction.GoAddShow -> context.startActivity(
                         AddTrackedActivity.createIntent(
                             context,
                             AddTrackedScreenOriginScreen.Watchlist
                         )
                     )
 
-                    is WatchlistScreenNavAction.GoShowDetails -> {
-                        context.startActivity(
-                            ShowDetailsActivity.create(context, action.tmdbShowId, action.isTvShow)
+                    is WatchlistsScreenNavAction.GoWatchlistDetails -> context.startActivity(
+                        WatchlistDetailsActivity.create(
+                            context,
+                            action.watchlistId,
+                            action.watchlistName
                         )
-                    }
+                    )
                 }
             },
         )

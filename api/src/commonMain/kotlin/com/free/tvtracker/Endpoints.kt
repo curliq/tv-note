@@ -30,6 +30,10 @@ import com.free.tvtracker.user.request.UpdatePreferencesApiRequestBody
 import com.free.tvtracker.user.response.DataExportApiResponse
 import com.free.tvtracker.user.response.SessionApiResponse
 import com.free.tvtracker.user.response.UserApiResponse
+import com.free.tvtracker.watchlists.requests.DeleteWatchlistApiRequestBody
+import com.free.tvtracker.watchlists.requests.GetWatchlistContentApiRequestBody
+import com.free.tvtracker.watchlists.requests.RenameWatchlistApiRequestBody
+import com.free.tvtracker.watchlists.response.WatchlistsApiResponse
 import kotlin.reflect.KClass
 
 object Endpoints {
@@ -60,7 +64,7 @@ object Endpoints {
         const val GET_EXPORT_SHOWS = "export/shows"
         const val GET_WATCHLISTS = "watchlists/"
         const val ADD_WATCHLISTS = "watchlists/"
-        const val DELETE_WATCHLISTS = "watchlists/delete"
+        const val REMOVE_WATCHLIST = "watchlists/delete"
         const val EDIT_WATCHLIST = "watchlists/edit"
         const val GET_WATCHLIST_CONTENT = "watchlists/content"
         const val ADD_TRACKED_CONTENT_TO_WATCHLIST = "watchlists/content/add"
@@ -176,6 +180,25 @@ object Endpoints {
             Endpoint.Verb.POST
         )
     val getDataExport = EndpointNoBody(Path.GET_EXPORT_SHOWS, DataExportApiResponse::class, Endpoint.Verb.GET)
+    val getWatchlists = EndpointNoBody(Path.GET_WATCHLISTS, WatchlistsApiResponse::class, Endpoint.Verb.GET)
+    val getWatchlistContent = Endpoint(
+        Path.GET_WATCHLIST_CONTENT,
+        TrackedShowsApiResponse::class,
+        GetWatchlistContentApiRequestBody::class,
+        Endpoint.Verb.POST
+    )
+    val postWatchlistRename = Endpoint(
+        Path.EDIT_WATCHLIST,
+        WatchlistsApiResponse::class,
+        RenameWatchlistApiRequestBody::class,
+        Endpoint.Verb.POST
+    )
+    val postWatchlistDelete = Endpoint(
+        Path.REMOVE_WATCHLIST,
+        WatchlistsApiResponse::class,
+        DeleteWatchlistApiRequestBody::class,
+        Endpoint.Verb.POST
+    )
 }
 
 open class Endpoint<ReturnType : ApiResponse<out Any>, BodyType : Any>(

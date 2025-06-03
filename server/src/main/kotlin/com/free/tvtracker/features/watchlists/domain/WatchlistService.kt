@@ -37,28 +37,8 @@ class WatchlistService(
         val userId = sessionService.getSessionUserId()
         val lists = watchlistJpaRepository.findByUserId(userId)
             .map { it.toApiModel() }
-        return getDefaultWatchlists().plus(lists)
+        return lists
     }
-
-    private fun getDefaultWatchlists(): List<WatchlistApiModel> {
-        val watchlisted = trackedContentService.getWatchlistedShows()
-        val finished = trackedContentService.getFinishedShows()
-        return listOf(
-            WatchlistApiModel(
-                id = WatchlistApiModel.WATCHLIST_LIST_ID,
-                name = "Watchlist",
-                showsCount = watchlisted.filter { it.isTvShow }.size,
-                moviesCount = watchlisted.filter { !it.isTvShow }.size
-            ),
-            WatchlistApiModel(
-                id = WatchlistApiModel.FINISHED_LIST_ID,
-                name = "Finished",
-                showsCount = finished.filter { it.isTvShow }.size,
-                moviesCount = finished.filter { !it.isTvShow }.size
-            ),
-        )
-    }
-
 
     fun saveWatchlist(name: String): List<WatchlistApiModel> {
         val userId = sessionService.getSessionUserId()
@@ -78,16 +58,15 @@ class WatchlistService(
         return getWatchlists()
     }
 
-    fun deleteWatchlist(watchlistId: Int): Boolean {
+    fun deleteWatchlist(watchlistId: Int): List<WatchlistApiModel> {
         val userId = sessionService.getSessionUserId()
         val list = watchlistJpaRepository.findById(watchlistId)
         if (list.getOrNull()?.userId != userId) {
             logger.get.error("Attempting to delete watchlist without permission")
-            return false
-        } else {
-            watchlistJpaRepository.deleteById(watchlistId)
-            return true
+            throw Exception("Attempting to delete watchlist without permission")
         }
+        watchlistJpaRepository.deleteById(watchlistId)
+        return getWatchlists()
     }
 
     fun getWatchlistContent(watchlistId: Int): List<TrackedContentApiModel> {
