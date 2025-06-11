@@ -1,4 +1,4 @@
-package com.free.tvtracker.ui.finished
+package com.free.tvtracker.ui.watchlists.details
 
 import com.free.tvtracker.base.Mapper
 import com.free.tvtracker.domain.GetShowStatusUseCase
@@ -10,12 +10,12 @@ import kotlinx.datetime.format.MonthNames
 import kotlinx.datetime.format.Padding
 import kotlinx.datetime.format.char
 
-class FinishedShowUiModelMapper(
+class WatchlistDetailsShowUiModelMapper(
     private val getShowStatusUseCase: GetShowStatusUseCase,
-) : Mapper<TrackedContentApiModel, FinishedShowUiModel> {
-    override fun map(from: TrackedContentApiModel): FinishedShowUiModel {
+) : Mapper<TrackedContentApiModel, WatchlistDetailsShowUiModel> {
+    override fun map(from: TrackedContentApiModel): WatchlistDetailsShowUiModel {
         return if (from.isTvShow) {
-            FinishedShowUiModel(
+            WatchlistDetailsShowUiModel(
                 tmdbId = from.tvShow!!.storedShow.tmdbId,
                 title = from.tvShow!!.storedShow.title,
                 image = TmdbConfigData.get().getBackdropUrl(from.tvShow!!.storedShow.backdropImage),
@@ -27,7 +27,7 @@ class FinishedShowUiModelMapper(
                 isTvShow = true
             )
         } else {
-            FinishedShowUiModel(
+            WatchlistDetailsShowUiModel(
                 tmdbId = from.movie!!.storedMovie.tmdbId,
                 title = from.movie!!.storedMovie.title,
                 image = TmdbConfigData.get().getBackdropUrl(from.movie!!.storedMovie.backdropImage),
@@ -43,4 +43,5 @@ class FinishedShowUiModelMapper(
             )
         }
     }
+
 }

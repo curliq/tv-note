@@ -49,6 +49,9 @@ class DetailsUiModelForMovieMapper(
             posterUrl = TmdbConfigData.get().getPosterUrl(from.posterPath),
             releaseStatus = airText,
             duration = duration,
+            isFinished = options != null && !options.watchlisted,
+            watchlisted = options?.watchlisted == true,
+            isWatching = options != null && !options.watchlisted,
             trackingStatus = getTrackingStatus(options),
             trackedContentId = options?.movie?.id,
             homepageUrl = from.homepage,
@@ -104,7 +107,8 @@ class DetailsUiModelForMovieMapper(
             reviews = null,
             budget = formatMoney(from.budget) ?: "(not available)",
             revenue = formatMoney(from.revenue) ?: "(not available)",
-            website = from.homepage
+            website = from.homepage,
+            watchlists = emptyList()
         )
     }
 
@@ -128,6 +132,7 @@ class DetailsUiModelForMovieMapper(
                     action2 = DetailsUiModel.TrackingStatus.Action.RemoveFromWatchlist,
                 )
             } else {
+                // watched
                 DetailsUiModel.TrackingStatus(
                     action1 = null,
                     action2 = DetailsUiModel.TrackingStatus.Action.RemoveMovieFromWatched

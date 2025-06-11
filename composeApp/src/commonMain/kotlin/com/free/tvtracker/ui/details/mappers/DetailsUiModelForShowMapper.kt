@@ -38,14 +38,17 @@ class DetailsUiModelForShowMapper(
             posterUrl = TmdbConfigData.get().getPosterUrl(from.posterPath),
             releaseStatus = getShowStatusUseCase(from.status, from.firstAirDate, from.lastAirDate),
             duration = null,
+            watchlisted = options?.watchlisted,
+            isWatching = options != null && !options.watchlisted,
+            isFinished = options != null && isTrackedShowWatchableUseCase.watchable(listOfNotNull(options)).isEmpty(),
             trackingStatus = getTrackingStatus(options),
             trackedContentId = options?.tvShow?.id,
             homepageUrl = from.homepage,
             description = from.overview,
             genres = from.genres,
             seasonsInfo =
-            "${from.seasons.size} ${if (from.seasons.size == 1) "season" else "seasons"} - " +
-                "${from.seasons.sumOf { it.episodeCount ?: 0 }} episodes total", // eg: "1 season - 10 episodes total"
+                "${from.seasons.size} ${if (from.seasons.size == 1) "season" else "seasons"} - " +
+                    "${from.seasons.sumOf { it.episodeCount ?: 0 }} episodes total", // eg: "1 season - 10 episodes total"
             seasons = from.seasons.map { seasonUiModelMapper.map(it, ShowSeasonUiModelMapper.O(from.id, options)) },
             movieSeries = null,
             castFirst = castMapper.map(from.cast?.getOrNull(0)),
@@ -77,7 +80,8 @@ class DetailsUiModelForShowMapper(
             reviews = null,
             budget = "",
             revenue = "",
-            website = from.homepage ?: "(no website)"
+            website = from.homepage ?: "(no website)",
+            watchlists = options?.watchlists?.map { DetailsUiModel.Watchlist(it.id, it.name) } ?: emptyList(),
         )
     }
 
@@ -91,18 +95,20 @@ class DetailsUiModelForShowMapper(
             if (trackedShow.watchlisted) {
                 return DetailsUiModel.TrackingStatus(
                     action1 = DetailsUiModel.TrackingStatus.Action.MoveToWatching,
-                    action2 = DetailsUiModel.TrackingStatus.Action.RemoveFromWatchlist,
+                    action2 = DetailsUiModel.TrackingStatus.Action.ManageWatchlists,
                 )
             } else {
                 return if (isTrackedShowWatchableUseCase.watchable(listOf(trackedShow)).isNotEmpty()) {
+                    // watching
                     DetailsUiModel.TrackingStatus(
                         action1 = DetailsUiModel.TrackingStatus.Action.MoveToWatchlist,
-                        action2 = DetailsUiModel.TrackingStatus.Action.RemoveFromWatching
+                        action2 = DetailsUiModel.TrackingStatus.Action.ManageWatchlists
                     )
                 } else {
+                    // finished
                     DetailsUiModel.TrackingStatus(
                         action1 = null,
-                        action2 = DetailsUiModel.TrackingStatus.Action.RemoveFromWatching
+                        action2 = DetailsUiModel.TrackingStatus.Action.ManageWatchlists
                     )
                 }
             }

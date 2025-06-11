@@ -25,7 +25,8 @@ class WatchingShowUiModelMapperTest {
                     )
                 ),
                 mediaType = TrackedContentApiModel.ContentType.TvShow,
-                movie = null
+                movie = null,
+                watchlists = emptyList()
             )
         )
         assertEquals("Available on Mon 3rd Feb 2014", res.nextEpisodeCountdown)

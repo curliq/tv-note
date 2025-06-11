@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
@@ -24,11 +25,13 @@ import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.unit.dp
 import com.free.tvtracker.activities.person.PersonDetailsActivity
 import com.free.tvtracker.ui.common.theme.TvTrackerTheme
@@ -42,6 +45,9 @@ import com.free.tvtracker.ui.details.dialogs.DetailsMediaSheet
 import com.free.tvtracker.ui.details.dialogs.DetailsFilmCollectionSheet
 import com.free.tvtracker.ui.details.dialogs.DetailsReviewsSheet
 import org.koin.androidx.compose.koinViewModel
+import androidx.core.net.toUri
+import com.free.tvtracker.ui.details.dialogs.DetailsManageWatchlistsSheet
+import kotlinx.coroutines.launch
 
 class ShowDetailsActivity : BaseActivity() {
 
@@ -61,7 +67,8 @@ class ShowDetailsActivity : BaseActivity() {
         REVIEWS,
         MEDIA,
         CASTCREW,
-        FILM_COLLECTION
+        FILM_COLLECTION,
+        MANAGE_WATCHLISTS
     }
 
     @OptIn(ExperimentalMaterial3Api::class)
@@ -70,11 +77,12 @@ class ShowDetailsActivity : BaseActivity() {
         val showId = intent.getIntExtra(EXTRA_SHOW_ID, -1)
         val isContentTvShow = intent.getBooleanExtra(EXTRA_IS_SHOW, true)
         setContent {
+            val scope = rememberCoroutineScope()
             val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
             val sheetState = rememberModalBottomSheetState()
             var showBottomSheet: ShowDetailsNavDestinations? by remember { mutableStateOf(null) }
-            val context = LocalContext.current as ShowDetailsActivity
-            val modalMaxHeight = LocalConfiguration.current.screenHeightDp.dp.times(0.7f)
+            val context = LocalActivity.current as ShowDetailsActivity
+            val modalMaxHeight = LocalWindowInfo.current.containerSize.height.dp.times(0.7f)
             val navActions: (DetailsScreenNavAction) -> Unit = { action ->
                 when (action) {
                     DetailsScreenNavAction.GoAllEpisodes -> {
@@ -89,7 +97,7 @@ class ShowDetailsActivity : BaseActivity() {
                         startActivity(
                             Intent(
                                 Intent.ACTION_VIEW,
-                                Uri.parse(action.webUrl)
+                                action.webUrl.toUri()
                             )
                         )
                     }
@@ -121,8 +129,19 @@ class ShowDetailsActivity : BaseActivity() {
 
                     is DetailsScreenNavAction.GoWebsite -> {
                         context.startActivity(
-                            Intent(Intent.ACTION_VIEW).setData(Uri.parse(action.url))
+                            Intent(Intent.ACTION_VIEW).setData(action.url.toUri())
                         )
+                    }
+
+                    DetailsScreenNavAction.GoManageWatchlists -> {
+                        showBottomSheet = ShowDetailsNavDestinations.MANAGE_WATCHLISTS
+                    }
+
+                    DetailsScreenNavAction.HideManageWatchlists -> {
+                        scope.launch {
+                            sheetState.hide()
+                            showBottomSheet = null
+                        }
                     }
                 }
             }
@@ -215,6 +234,13 @@ class ShowDetailsActivity : BaseActivity() {
                                         )
                                     }
 
+                                    ShowDetailsNavDestinations.MANAGE_WATCHLISTS -> {
+                                        DetailsManageWatchlistsSheet(
+                                            viewModel = koinViewModel(viewModelStoreOwner = context),
+                                            navActions = navActions,
+                                            padding.calculateBottomPadding().value
+                                        )
+                                    }
                                     null -> {}
                                 }
                             }

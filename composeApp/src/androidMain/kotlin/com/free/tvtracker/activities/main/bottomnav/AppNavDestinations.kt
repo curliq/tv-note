@@ -2,8 +2,6 @@ package com.free.tvtracker.activities.main.bottomnav
 
 enum class AppNavDestinations(val id: String) {
     WATCHING("watching"),
-    FINISHED("finished"),
-    WATCHLIST("watchlist"),
+    WATCHLISTS("watchlists"),
     DISCOVER("discover"),
-    SETTINGS("settings"),
 }
