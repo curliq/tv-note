@@ -51,7 +51,7 @@ import com.free.tvtracker.ui.common.theme.ScreenContentAnimation
 import com.free.tvtracker.ui.common.theme.TvTrackerTheme
 import com.free.tvtracker.ui.details.SeeAllCard
 import com.free.tvtracker.ui.watching.FabContainer
-import com.free.tvtracker.ui.watchlist.FilterCloseIcon
+import com.free.tvtracker.ui.watchlists.details.FilterCloseIcon
 
 sealed class DiscoverScreenNavActions {
     data object GoAddShow : DiscoverScreenNavActions()

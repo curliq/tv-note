@@ -12,7 +12,6 @@ import com.free.tvtracker.expect.AndroidFileExporter
 import com.free.tvtracker.expect.initSentry
 import com.free.tvtracker.ui.details.DetailsViewModel
 import com.free.tvtracker.ui.discover.DiscoverViewModel
-import com.free.tvtracker.ui.finished.FinishedShowsViewModel
 import com.free.tvtracker.ui.person.PersonViewModel
 import com.free.tvtracker.ui.search.AddTrackedViewModel
 import com.free.tvtracker.ui.settings.FileExporter
@@ -21,7 +20,6 @@ import com.free.tvtracker.ui.settings.login.LoginViewModel
 import com.free.tvtracker.ui.settings.signup.SignupViewModel
 import com.free.tvtracker.ui.splash.SplashViewModel
 import com.free.tvtracker.ui.watching.WatchingViewModel
-import com.free.tvtracker.ui.watchlist.WatchlistedShowsViewModel
 import com.free.tvtracker.ui.watchlists.details.WatchlistDetailsViewModel
 import com.free.tvtracker.ui.watchlists.list.WatchlistsViewModel
 import com.free.tvtracker.ui.welcome.WelcomeViewModel
@@ -91,8 +89,6 @@ class AndroidApplication : Application() {
                     viewModel { WelcomeViewModel(g(), g(), g(), g()) }
                     viewModel { AddTrackedViewModel(g(), g(), g(), g(), g(), g()) }
                     viewModel { WatchingViewModel(g(), g(), g(), g(), g(), g(), g()) }
-                    viewModel { FinishedShowsViewModel(g(), g(), g(), g(), g(), g(), g()) }
-                    viewModel { WatchlistedShowsViewModel(g(), g(), g(), g(), g(), g(), g()) }
                     viewModel { WatchlistsViewModel(g(), g(), g(), g(), g(), g(), g(), g()) }
                     viewModel { WatchlistDetailsViewModel(g(), g(), g(), g(), g(), g(), g()) }
                     viewModel { DetailsViewModel(g(), g(), g(), g(), g(), g(), g(), g(), g(), g(), g(), g()) }

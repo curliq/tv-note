@@ -39,7 +39,6 @@ import com.free.tvtracker.ui.details.mappers.ShowWatchProviderUiModelMapper
 import com.free.tvtracker.ui.discover.DiscoverMovieUiModelMapper
 import com.free.tvtracker.ui.discover.DiscoverShowUiModelMapper
 import com.free.tvtracker.ui.discover.RecommendedShowUiModelMapper
-import com.free.tvtracker.ui.finished.FinishedShowUiModelMapper
 import com.free.tvtracker.ui.person.PersonCastUiModelMapper
 import com.free.tvtracker.ui.person.PersonCrewUiModelMapper
 import com.free.tvtracker.ui.person.PersonPhotoUiModelMapper
@@ -50,7 +49,6 @@ import com.free.tvtracker.ui.search.ShowSearchUiModelMapper
 import com.free.tvtracker.ui.settings.SettingsUiModelMapper
 import com.free.tvtracker.ui.watching.GetWatchingShowsUseCase
 import com.free.tvtracker.ui.watching.WatchingShowUiModelMapper
-import com.free.tvtracker.ui.watchlist.WatchlistShowUiModelMapper
 import com.free.tvtracker.ui.watchlists.details.WatchlistDetailsShowUiModelMapper
 import com.squareup.sqldelight.db.SqlDriver
 import org.koin.dsl.module
@@ -102,8 +100,6 @@ fun appModules() = module {
     factory<DiscoverMovieUiModelMapper> { DiscoverMovieUiModelMapper() }
     factory<WatchingShowUiModelMapper> { WatchingShowUiModelMapper(get()) }
     factory<WatchlistDetailsShowUiModelMapper> { WatchlistDetailsShowUiModelMapper(get()) }
-    factory<WatchlistShowUiModelMapper> { WatchlistShowUiModelMapper(get()) }
-    factory<FinishedShowUiModelMapper> { FinishedShowUiModelMapper(get()) }
     factory<RecommendedShowUiModelMapper> { RecommendedShowUiModelMapper() }
     factory<SettingsUiModelMapper> { SettingsUiModelMapper() }
     factory<DetailsReviewsUiModelMapper> { DetailsReviewsUiModelMapper() }
