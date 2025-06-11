@@ -10,12 +10,14 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -34,13 +36,20 @@ import com.free.tvtracker.ui.watching.WatchingScreen
 import com.free.tvtracker.ui.watching.WatchingScreenNavAction
 import com.free.tvtracker.ui.watchlists.list.WatchlistsScreen
 import com.free.tvtracker.ui.watchlists.list.WatchlistsScreenNavAction
+import com.free.tvtracker.ui.watchlists.list.WatchlistsViewModel
+import com.free.tvtracker.ui.watchlists.list.dialogs.WatchlistAddSheet
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.get
 import org.koin.androidx.compose.koinViewModel
 
 @ExperimentalMaterial3Api
 @ExperimentalMaterialNavigationApi
-fun NavGraphBuilder.mainNavGraph(navController: AppNavController, context: Activity) {
+fun NavGraphBuilder.mainNavGraph(
+    navController: AppNavController,
+    showBottomSheet: MutableState<WatchlistNavDestinations?>,
+    context: Activity
+) {
     composable(AppNavDestinations.WATCHING.id) {
         WatchingScreen(
             navigate = { action ->
@@ -61,27 +70,62 @@ fun NavGraphBuilder.mainNavGraph(navController: AppNavController, context: Activ
         )
     }
     composable(AppNavDestinations.WATCHLISTS.id) {
-        WatchlistsScreen(
-            viewModel = koinViewModel(),
-            navigate = { action ->
-                when (action) {
-                    WatchlistsScreenNavAction.GoAddShow -> context.startActivity(
-                        AddTrackedActivity.createIntent(
-                            context,
-                            AddTrackedScreenOriginScreen.Watchlist
-                        )
+        val discoverViewModel: WatchlistsViewModel = koinViewModel()
+        val sheetState = rememberModalBottomSheetState()
+        val scope = rememberCoroutineScope()
+        val navActions: (WatchlistsScreenNavAction) -> Unit = { action ->
+            when (action) {
+                WatchlistsScreenNavAction.GoAddShow -> context.startActivity(
+                    AddTrackedActivity.createIntent(
+                        context,
+                        AddTrackedScreenOriginScreen.Watchlist
                     )
+                )
 
-                    is WatchlistsScreenNavAction.GoWatchlistDetails -> context.startActivity(
-                        WatchlistDetailsActivity.create(
-                            context,
-                            action.watchlistId,
-                            action.watchlistName
-                        )
+                is WatchlistsScreenNavAction.GoWatchlistDetails -> context.startActivity(
+                    WatchlistDetailsActivity.create(
+                        context,
+                        action.watchlistId,
+                        action.watchlistName
                     )
+                )
+
+                WatchlistsScreenNavAction.HideBottomSheet -> {
+                    scope.launch {
+                        sheetState.hide()
+                        showBottomSheet.value = null
+                    }
                 }
-            },
+            }
+        }
+        WatchlistsScreen(
+            viewModel = discoverViewModel,
+            navigate = navActions,
         )
+        val modalMaxHeight = LocalWindowInfo.current.containerSize.height.dp.times(0.7f)
+        if (showBottomSheet.value != null) {
+            ModalBottomSheet(
+                onDismissRequest = {
+                    showBottomSheet.value = null
+                },
+                sheetState = sheetState,
+                contentWindowInsets = { WindowInsets(0, 0, 0, 0) } // draw behind navbar
+            ) {
+                Box(Modifier.heightIn(0.dp, modalMaxHeight)) {
+                    when (showBottomSheet.value) {
+                        WatchlistNavDestinations.ADD_WATCHLIST -> {
+                            WatchlistAddSheet(
+                                viewModel = discoverViewModel,
+                                navAction = navActions,
+                                bottomPadding = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding().value
+                            )
+                        }
+
+                        null -> {}
+                    }
+                }
+            }
+        }
     }
     composable(AppNavDestinations.DISCOVER.id) {
         var showBottomSheet: DiscoverNavDestinations? by remember { mutableStateOf(null) }
@@ -123,7 +167,7 @@ fun NavGraphBuilder.mainNavGraph(navController: AppNavController, context: Activ
         val discoverViewModel: DiscoverViewModel = get() // get() instead of viewmodel() to share between activities
         DiscoverScreen(viewModel = discoverViewModel, action)
         val sheetState = rememberModalBottomSheetState()
-        val modalMaxHeight = LocalConfiguration.current.screenHeightDp.dp.times(0.7f)
+        val modalMaxHeight = LocalWindowInfo.current.containerSize.height.dp.times(0.7f)
         if (showBottomSheet != null) {
             ModalBottomSheet(
                 onDismissRequest = {
@@ -161,4 +205,8 @@ fun NavGraphBuilder.mainNavGraph(navController: AppNavController, context: Activ
 enum class DiscoverNavDestinations {
     TRENDING,
     RELEASES_SOON
+}
+
+enum class WatchlistNavDestinations {
+    ADD_WATCHLIST
 }

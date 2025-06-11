@@ -9,7 +9,7 @@ data class TrackedContentApiModel(
     @SerialName("content_type") val mediaType: ContentType,
     @SerialName("tv_show") val tvShow: TvShow?,
     @SerialName("movie") val movie: Movie?,
-    @SerialName("lists") val watchlists: List<Watchlist>
+    @SerialName("lists") var watchlists: List<Watchlist>
 ) {
     @Serializable
     enum class ContentType(val key: String) {

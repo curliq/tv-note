@@ -42,6 +42,7 @@ import com.free.tvtracker.ui.watchlists.details.dialogs.WatchlistDetailsMenuShee
 import com.free.tvtracker.ui.watchlists.details.dialogs.WatchlistDetailsRenameSheet
 import com.free.tvtracker.ui.watchlists.details.WatchlistDetailsScreen
 import com.free.tvtracker.ui.watchlists.details.WatchlistDetailsScreenNavAction
+import com.free.tvtracker.ui.watchlists.details.WatchlistDetailsUiState
 import com.free.tvtracker.ui.watchlists.details.WatchlistDetailsViewModel
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -68,6 +69,7 @@ class WatchlistDetailsActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val watchlistId = intent.getIntExtra(EXTRA_WATCHLIST_ID, -1)
+        val title = intent.getStringExtra(EXTRA_WATCHLIST_NAME) ?: ""
         setContent {
             val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
             val sheetState = rememberModalBottomSheetState()
@@ -97,7 +99,7 @@ class WatchlistDetailsActivity : BaseActivity() {
                         }
                     }
 
-                    WatchlistDetailsScreenNavAction.HideRenameDialog -> {
+                    WatchlistDetailsScreenNavAction.HideBottomSheet -> {
                         scope.launch {
                             sheetState.hide()
                             showBottomSheet = null
@@ -111,14 +113,13 @@ class WatchlistDetailsActivity : BaseActivity() {
             }
             TvTrackerTheme {
                 val viewModel: WatchlistDetailsViewModel = koinViewModel(viewModelStoreOwner = context)
-                val watchlistName = viewModel.title.collectAsState(initial = "").value
                 Scaffold(
                     modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
                     topBar = {
                         TopAppBar(
                             title = {
                                 Text(
-                                    text = watchlistName,
+                                    text = title,
                                     style = MaterialTheme.typography.headlineMedium
                                 )
                             },
@@ -133,7 +134,6 @@ class WatchlistDetailsActivity : BaseActivity() {
                                 IconButton(onClick = {
                                     scope.launch {
                                         showBottomSheet = ShowDetailsNavDestinations.EDIT_MENU
-//                                        sheetState.show()
                                     }
                                 }) {
                                     Icon(
@@ -147,7 +147,7 @@ class WatchlistDetailsActivity : BaseActivity() {
                 ) { padding ->
                     WatchlistDetailsScreen(
                         viewModel = viewModel,
-                        content = WatchlistDetailsViewModel.LoadContent(watchlistId, watchlistName),
+                        content = WatchlistDetailsViewModel.LoadContent(watchlistId, title),
                         navigate = navActions,
                         modifier = Modifier
                             .padding(padding)
@@ -165,7 +165,7 @@ class WatchlistDetailsActivity : BaseActivity() {
                                 when (showBottomSheet) {
                                     ShowDetailsNavDestinations.EDIT_MENU -> {
                                         WatchlistDetailsMenuSheet(
-                                            viewModel = koinViewModel(viewModelStoreOwner = context),
+                                            viewModel = viewModel,
                                             navActions,
                                             padding.calculateBottomPadding().value
                                         )
@@ -173,7 +173,7 @@ class WatchlistDetailsActivity : BaseActivity() {
 
                                     ShowDetailsNavDestinations.RENAME -> {
                                         WatchlistDetailsRenameSheet(
-                                            viewModel = koinViewModel(viewModelStoreOwner = context),
+                                            viewModel = viewModel,
                                             navActions,
                                             padding.calculateBottomPadding().value
                                         )

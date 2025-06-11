@@ -30,7 +30,10 @@ import com.free.tvtracker.user.request.UpdatePreferencesApiRequestBody
 import com.free.tvtracker.user.response.DataExportApiResponse
 import com.free.tvtracker.user.response.SessionApiResponse
 import com.free.tvtracker.user.response.UserApiResponse
+import com.free.tvtracker.watchlists.requests.AddWatchlistApiRequestBody
+import com.free.tvtracker.watchlists.requests.AddWatchlistContentApiRequestBody
 import com.free.tvtracker.watchlists.requests.DeleteWatchlistApiRequestBody
+import com.free.tvtracker.watchlists.requests.DeleteWatchlistContentApiRequestBody
 import com.free.tvtracker.watchlists.requests.GetWatchlistContentApiRequestBody
 import com.free.tvtracker.watchlists.requests.RenameWatchlistApiRequestBody
 import com.free.tvtracker.watchlists.response.WatchlistsApiResponse
@@ -197,6 +200,24 @@ object Endpoints {
         Path.REMOVE_WATCHLIST,
         WatchlistsApiResponse::class,
         DeleteWatchlistApiRequestBody::class,
+        Endpoint.Verb.POST
+    )
+    val postWatchlistCreate = Endpoint(
+        Path.ADD_WATCHLISTS,
+        WatchlistsApiResponse::class,
+        AddWatchlistApiRequestBody::class,
+        Endpoint.Verb.POST
+    )
+    val addContentToWatchlist = Endpoint(
+        Path.ADD_TRACKED_CONTENT_TO_WATCHLIST,
+        TrackedShowApiResponse::class,
+        AddWatchlistContentApiRequestBody::class,
+        Endpoint.Verb.POST
+    )
+    val removeContentToWatchlist = Endpoint(
+        Path.REMOVE_TRACKED_CONTENT_TO_WATCHLIST,
+        TrackedShowApiResponse::class,
+        DeleteWatchlistContentApiRequestBody::class,
         Endpoint.Verb.POST
     )
 }

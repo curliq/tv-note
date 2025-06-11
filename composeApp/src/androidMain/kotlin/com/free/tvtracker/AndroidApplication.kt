@@ -34,6 +34,7 @@ import kotlinx.coroutines.launch
 import org.koin.android.ext.android.get
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.startKoin
+import org.koin.core.scope.Scope
 import org.koin.dsl.module
 
 
@@ -86,26 +87,26 @@ class AndroidApplication : Application() {
                 module {
                     single<AppPriceProvider> { AndroidAppPriceProvider(context) }
                     single<FileExporter> { AndroidFileExporter() }
-                    viewModel { SplashViewModel(get(), get()) }
-                    viewModel { WelcomeViewModel(get(), get(), get(), get()) }
-                    viewModel { AddTrackedViewModel(get(), get(), get(), get(), get(), get()) }
-                    viewModel { WatchingViewModel(get(), get(), get(), get(), get(), get(), get()) }
-                    viewModel { FinishedShowsViewModel(get(), get(), get(), get(), get(), get(), get()) }
-                    viewModel { WatchlistedShowsViewModel(get(), get(), get(), get(), get(), get(), get()) }
-                    viewModel { WatchlistsViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
-                    viewModel { WatchlistDetailsViewModel(get(), get(),get(),get(),get(), get(), get()) }
-                    viewModel { DetailsViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) }
-                    viewModel { PersonViewModel(get(), get()) }
-                    viewModel { LoginViewModel(get(), get()) }
-                    viewModel { SignupViewModel(get()) }
+                    viewModel { SplashViewModel(g(), g()) }
+                    viewModel { WelcomeViewModel(g(), g(), g(), g()) }
+                    viewModel { AddTrackedViewModel(g(), g(), g(), g(), g(), g()) }
+                    viewModel { WatchingViewModel(g(), g(), g(), g(), g(), g(), g()) }
+                    viewModel { FinishedShowsViewModel(g(), g(), g(), g(), g(), g(), g()) }
+                    viewModel { WatchlistedShowsViewModel(g(), g(), g(), g(), g(), g(), g()) }
+                    viewModel { WatchlistsViewModel(g(), g(), g(), g(), g(), g(), g(), g()) }
+                    viewModel { WatchlistDetailsViewModel(g(), g(), g(), g(), g(), g(), g()) }
+                    viewModel { DetailsViewModel(g(), g(), g(), g(), g(), g(), g(), g(), g(), g(), g(), g()) }
+                    viewModel { PersonViewModel(g(), g()) }
+                    viewModel { LoginViewModel(g(), g()) }
+                    viewModel { SignupViewModel(g()) }
                     single {
                         // shared on TvTrackerTheme for all activities
-                        SettingsViewModel(get(), get(), get(), get(), get())
+                        SettingsViewModel(g(), g(), g(), g(), g())
                     }
                     single {
                         // why `single` and not `viewmodel`? to share it
                         // between the discover and recommendations activities
-                        DiscoverViewModel(get(), get(), get(), get(), get())
+                        DiscoverViewModel(g(), g(), g(), g(), g())
                     }
                 }
             )
@@ -118,3 +119,5 @@ class AndroidApplication : Application() {
         }
     }
 }
+
+inline fun <reified T : Any> Scope.g() = get<T>()

@@ -13,6 +13,8 @@ import com.free.tvtracker.ui.settings.signup.SignupViewModel
 import com.free.tvtracker.ui.splash.SplashViewModel
 import com.free.tvtracker.ui.watching.WatchingViewModel
 import com.free.tvtracker.ui.watchlist.WatchlistedShowsViewModel
+import com.free.tvtracker.ui.watchlists.details.WatchlistDetailsViewModel
+import com.free.tvtracker.ui.watchlists.list.WatchlistsViewModel
 import com.free.tvtracker.ui.welcome.WelcomeViewModel
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
@@ -28,6 +30,8 @@ fun startKoin(appPriceProvider: AppPriceProvider, fileExporter: FileExporter) {
             single { FinishedShowsViewModel(get(), get(), get(), get(), get(), get(), get()) }
             single { WatchlistedShowsViewModel(get(), get(), get(), get(), get(), get(), get()) }
             single { DiscoverViewModel(get(), get(), get(), get(), get()) }
+            single { WatchlistsViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
+            single { WatchlistDetailsViewModel(get(), get(), get(), get(), get(), get(), get()) }
             single { SettingsViewModel(get(), get(), get(), get(), get()) }
             single { SplashViewModel(get(), get()) }
             single { WelcomeViewModel(get(), get(), get(), get()) }
@@ -35,7 +39,22 @@ fun startKoin(appPriceProvider: AppPriceProvider, fileExporter: FileExporter) {
             single { SignupViewModel(get()) }
 
             // each navstack has its own state
-            factory { DetailsViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) }
+            factory {
+                DetailsViewModel(
+                    get(),
+                    get(),
+                    get(),
+                    get(),
+                    get(),
+                    get(),
+                    get(),
+                    get(),
+                    get(),
+                    get(),
+                    get(),
+                    get()
+                )
+            }
             factory { PersonViewModel(get(), get()) }
         })
     }

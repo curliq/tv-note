@@ -151,7 +151,7 @@ Authorization: Bearer {{tokenUser1}}
 Content-Type: application/json
 
 {
-    "tracked_content_id" : 77,
+    "tracked_content_id" : 75,
     "watchlist_id" : 2,
     "is_tv_show" : true
 }

@@ -12,6 +12,8 @@ import com.free.tvtracker.tracked.request.AddShowApiRequestBody
 import com.free.tvtracker.tracked.response.AddTrackedShowApiResponse
 import com.free.tvtracker.tracked.response.TrackedContentApiModel
 import com.free.tvtracker.tracked.response.TrackedShowsApiResponse
+import com.free.tvtracker.watchlists.requests.AddWatchlistContentApiRequestBody
+import com.free.tvtracker.watchlists.requests.DeleteWatchlistContentApiRequestBody
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -137,12 +139,15 @@ class TrackedShowsRepository(
         res.asSuccess { show ->
             logger.d("set watchlisted: $trackedContentId")
             allShows.update {
-                val oldShow = if (isTvShow) {
-                    it.first { it.tvShow?.id == trackedContentId }
+                val index = if (isTvShow) {
+                    it.indexOfFirst { it.tvShow?.id == trackedContentId }
                 } else {
-                    it.first { it.movie?.id == trackedContentId }
+                    it.indexOfFirst { it.movie?.id == trackedContentId }
                 }
-                it.minus(oldShow).plus(show)
+                val list = it.toMutableList()
+                list.removeAt(index)
+                list.add(index, show)
+                list
             }
             if (isTvShow) {
                 localDataSource.saveTrackedShows(listOf(show.toClientEntity()))
@@ -211,6 +216,60 @@ class TrackedShowsRepository(
             return null
         }
         return null
+    }
+
+    suspend fun addContentToWatchlist(trackedContentId: Int, watchlistId: Int, isTvShow: Boolean) {
+        try {
+            val res = httpClient.call(
+                Endpoints.addContentToWatchlist,
+                AddWatchlistContentApiRequestBody(trackedContentId, watchlistId, isTvShow)
+            )
+            res.asSuccess { show ->
+                allShows.update {
+                    val index = if (isTvShow) {
+                        it.indexOfFirst { it.tvShow?.id == trackedContentId }
+                    } else {
+                        it.indexOfFirst { it.movie?.id == trackedContentId }
+                    }
+                    val list = it.toMutableList()
+                    list.removeAt(index)
+                    list.add(index, show)
+                    list
+                }
+                if (isTvShow) {
+                    localDataSource.saveTrackedShows(listOf(show.toClientEntity()))
+                }
+            }
+        } catch (e: Exception) {
+            logger.e(e)
+        }
+    }
+
+    suspend fun removeContentFromWatchlist(trackedContentId: Int, watchlistId: Int, isTvShow: Boolean) {
+        try {
+            val res = httpClient.call(
+                Endpoints.removeContentToWatchlist,
+                DeleteWatchlistContentApiRequestBody(trackedContentId, watchlistId, isTvShow)
+            )
+            res.asSuccess { show ->
+                allShows.update {
+                    val index = if (isTvShow) {
+                        it.indexOfFirst { it.tvShow?.id == trackedContentId }
+                    } else {
+                        it.indexOfFirst { it.movie?.id == trackedContentId }
+                    }
+                    val list = it.toMutableList()
+                    list.removeAt(index)
+                    list.add(index, show)
+                    list
+                }
+                if (isTvShow) {
+                    localDataSource.saveTrackedShows(listOf(show.toClientEntity()))
+                }
+            }
+        } catch (e: Exception) {
+            logger.e(e)
+        }
     }
 
     fun getByTmdbId(tmdbShowId: Int): TrackedContentApiModel? {

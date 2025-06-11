@@ -93,14 +93,28 @@ class WatchlistController(
     @PostMapping(Endpoints.Path.REMOVE_TRACKED_CONTENT_TO_WATCHLIST)
     fun deleteTrackedContentFromWatchlist(
         @RequestBody body: DeleteWatchlistContentApiRequestBody
-    ): ResponseEntity<Unit> {
-        try {
-            watchlistService.deleteTrackedContentFromWatchlist(body.trackedContentId, body.watchlistId, body.isTvShow)
+    ): ResponseEntity<TrackedShowApiResponse> {
+        val content = try {
+            watchlistService.deleteTrackedContentFromWatchlist(
+                body.trackedContentId,
+                body.watchlistId,
+                body.isTvShow
+            )
+
         } catch (e: Exception) {
             logger.get.error(e)
-            return ResponseEntity(Unit, HttpStatus.BAD_REQUEST)
+            return ResponseEntity(
+                TrackedShowApiResponse.error(ApiError.Network),
+                HttpStatus.BAD_REQUEST
+            )
         }
-        return ResponseEntity.ok(Unit)
+        if (content == null) {
+            return ResponseEntity(
+                TrackedShowApiResponse.error(ApiError.Network),
+                HttpStatus.BAD_REQUEST
+            )
+        }
+        return ResponseEntity.ok(TrackedShowApiResponse.ok(content))
     }
 
     @PostMapping(Endpoints.Path.REMOVE_WATCHLIST)

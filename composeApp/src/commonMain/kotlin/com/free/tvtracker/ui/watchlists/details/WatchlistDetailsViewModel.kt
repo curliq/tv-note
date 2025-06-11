@@ -7,16 +7,20 @@ import com.free.tvtracker.domain.GetShowsUseCase
 import com.free.tvtracker.domain.GetWatchlistedShowsUseCase
 import com.free.tvtracker.domain.IsTrackedShowWatchableUseCase
 import com.free.tvtracker.expect.ViewModel
-import com.free.tvtracker.tracked.response.TrackedContentApiModel
 import com.free.tvtracker.watchlists.response.WatchlistApiModel.Companion.FINISHED_LIST_ID
 import com.free.tvtracker.watchlists.response.WatchlistApiModel.Companion.WATCHLIST_LIST_ID
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.IO
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
 class WatchlistDetailsViewModel(
@@ -32,86 +36,116 @@ class WatchlistDetailsViewModel(
 
     data class LoadContent(val watchlistId: Int, val watchlistName: String)
 
-    val shows: MutableStateFlow<WatchlistDetailsUiState> = MutableStateFlow(WatchlistDetailsUiState.Loading)
-    val title = watchlistsRepository.watchlists.combine(shows) { a, b: WatchlistDetailsUiState ->
-        val shows = b as? WatchlistDetailsUiState.Ok
-        a.data?.firstOrNull { it.id == shows?.watchlistId }?.name ?: ""
+    val loadContent: MutableStateFlow<LoadContent> = MutableStateFlow(LoadContent(-1, ""))
+
+    fun refresh() {
+        viewModelScope.launch(ioDispatcher) {
+            watchlistsRepository.fetchContent(loadContent.value.watchlistId)
+        }
     }
 
     fun loadContent(watchlistId: Int, watchlistName: String) {
-        shows.value = WatchlistDetailsUiState.Loading
-        viewModelScope.launch(ioDispatcher) {
-            when (watchlistId) {
-                WATCHLIST_LIST_ID -> {
-                    getShowsUseCase(trackedShowsRepository.watchlistedShows)
-                        .filter { it.status.fetched == true }
-                        .collect { data ->
-                            if (data.status.success) {
-                                logger.d(
-                                    "watchlist shows updated: ${data.data.map { it.typedId }}",
-                                    this@WatchlistDetailsViewModel::class.simpleName!!
-                                )
-                                val res = getWatchlistedShowsUseCase(data.data)
-                                updateState(watchlistId, watchlistName, res)
-                            }
-                        }
-                }
+        loadContent.value = LoadContent(watchlistId, watchlistName)
+    }
 
-                FINISHED_LIST_ID -> {
-                    getShowsUseCase(trackedShowsRepository.finishedShows)
-                        .filter { it.status.fetched == true }
-                        .collect { data ->
-                            if (data.status.success) {
-                                logger.d(
-                                    "finished shows updated: ${data.data.map { it.typedId }}",
-                                    this@WatchlistDetailsViewModel::class.simpleName!!
-                                )
-                                val res = isTrackedShowWatchableUseCase.unwatchable(data.data).filter {
-                                    if (!it.isTvShow) {
-                                        !it.watchlisted
-                                    } else true
+    val filterFlow = MutableStateFlow(true)
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val loadContentFlow2: Flow<WatchlistDetailsUiState> =
+        loadContent.flatMapLatest { loadContentValue ->
+                when (loadContentValue.watchlistId) {
+                    FINISHED_LIST_ID -> {
+                        getShowsUseCase(trackedShowsRepository.finishedShows)
+                            .filter { it.status.fetched == true }
+                            .map { data ->
+                                if (data.status.success) {
+                                    logger.d(
+                                        "finished shows updated: ${data.data.map { it.typedId }}",
+                                        this@WatchlistDetailsViewModel::class.simpleName!!
+                                    )
+                                    val res = isTrackedShowWatchableUseCase.unwatchable(data.data).filter {
+                                        if (!it.isTvShow) {
+                                            !it.watchlisted
+                                        } else true
+                                    }
+                                    WatchlistDetailsUiState.Ok(
+                                        watchlistId = loadContentValue.watchlistId,
+                                        watchlistName = loadContentValue.watchlistName,
+                                        _shows = res.map { mapper.map(it) },
+                                        filterTvShows = true
+                                    )
+                                } else {
+                                    WatchlistDetailsUiState.Error
                                 }
-                                updateState(watchlistId, watchlistName, res)
                             }
-                        }
-                }
-
-                else -> {
-                    watchlistsRepository.fetchContent(watchlistId).asSuccess { res ->
-                        updateState(watchlistId, watchlistName, res)
+                    }
+                    WATCHLIST_LIST_ID -> {
+                        getShowsUseCase(trackedShowsRepository.watchlistedShows)
+                            .filter { it.status.fetched == true }
+                            .map { data ->
+                                if (data.status.success) {
+                                    logger.d(
+                                        "watchlist shows updated: ${data.data.map { it.typedId }}",
+                                        this@WatchlistDetailsViewModel::class.simpleName!!
+                                    )
+                                    val res = getWatchlistedShowsUseCase(data.data)
+                                    WatchlistDetailsUiState.Ok(
+                                        watchlistId = loadContentValue.watchlistId,
+                                        watchlistName = loadContentValue.watchlistName,
+                                        _shows = res.map { mapper.map(it) },
+                                        filterTvShows = true
+                                    )
+                                } else {
+                                    WatchlistDetailsUiState.Error
+                                }
+                            }
+                    }
+                    else -> {
+                        watchlistsRepository.watchlistsContent
+                            .map { it.map }
+                            .map { it[loadContentValue.watchlistId] }
+                            .filterNotNull()
+                            .map {
+                                logger.d("collect watchlist $it", "WatchlistDetailsViewModel")
+                                if (it.data != null) {
+                                    WatchlistDetailsUiState.Ok(
+                                        watchlistId = loadContentValue.watchlistId,
+                                        watchlistName = loadContentValue.watchlistName,
+                                        _shows = it.data!!.map { mapper.map(it) },
+                                        filterTvShows = true
+                                    )
+                                } else {
+                                    WatchlistDetailsUiState.Error
+                                }
+                            }
+                    }
+                }.map {
+                    if (loadContentValue.watchlistId == -1) {
+                        WatchlistDetailsUiState.Error
+                    } else {
+                        it
                     }
                 }
             }
-        }
-    }
-
-    private fun updateState(watchlistId: Int, watchlistName: String, res: List<TrackedContentApiModel>) {
-        shows.update { shows ->
-            WatchlistDetailsUiState.Ok(
-                watchlistId = watchlistId,
-                watchlistName = watchlistName,
-                _shows = res.map { mapper.map(it) },
-                filterTvShows = true
-            )
-        }
-    }
+            .combine(filterFlow) { uiState, filter ->
+                if (uiState is WatchlistDetailsUiState.Ok) {
+                    uiState.copy(filterTvShows = filter)
+                } else {
+                    uiState
+                }
+            }
+            .onStart {
+                emit(WatchlistDetailsUiState.Loading)
+            }
 
     fun action(action: WatchlistDetailsAction) {
         when (action) {
             WatchlistDetailsAction.ToggleMovies -> {
-                shows.update {
-                    if (it is WatchlistDetailsUiState.Ok) {
-                        it.copy(filterTvShows = !it.filterTvShows)
-                    } else it
-                }
+                filterFlow.value = !filterFlow.value
             }
 
             WatchlistDetailsAction.ToggleTvShows -> {
-                shows.update {
-                    if (it is WatchlistDetailsUiState.Ok) {
-                        it.copy(filterTvShows = !it.filterTvShows)
-                    } else it
-                }
+                filterFlow.value = !filterFlow.value
             }
 
             is WatchlistDetailsAction.Delete -> {

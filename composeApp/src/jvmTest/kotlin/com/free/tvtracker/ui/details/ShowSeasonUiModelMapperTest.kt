@@ -21,7 +21,8 @@ class ShowSeasonUiModelMapperTest {
                 TrackedContentApiModel.TvShow.StoredShowApiModel(1, "game of thrones", emptyList(), "", "", "")
             ),
             mediaType = TrackedContentApiModel.ContentType.TvShow,
-            movie = null
+            movie = null,
+            watchlists = emptyList(),
         )
         val sut = ShowSeasonUiModelMapper(ShowEpisodeUiModelMapper())
         val data = TmdbShowDetailsApiModel.Season(
@@ -49,7 +50,8 @@ class ShowSeasonUiModelMapperTest {
                 TrackedContentApiModel.TvShow.StoredShowApiModel(1, "game of thrones", emptyList(), "", "", "")
             ),
             mediaType = TrackedContentApiModel.ContentType.TvShow,
-            movie = null
+            movie = null,
+            watchlists = emptyList(),
         )
         val sut = ShowSeasonUiModelMapper(ShowEpisodeUiModelMapper())
         val data = TmdbShowDetailsApiModel.Season(

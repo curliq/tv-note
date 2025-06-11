@@ -1,6 +1,12 @@
 package com.free.tvtracker.ui.details
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -87,6 +93,8 @@ sealed class DetailsScreenNavAction {
     data object GoMedia : DetailsScreenNavAction()
     data object GoCastAndCrew : DetailsScreenNavAction()
     data object GoFilmCollection : DetailsScreenNavAction()
+    data object GoManageWatchlists : DetailsScreenNavAction()
+    data object HideManageWatchlists : DetailsScreenNavAction()
     data class GoCastAndCrewDetails(val personTmdbId: Int) : DetailsScreenNavAction()
     data class GoContentDetails(val tmdbId: Int, val isTvShow: Boolean) : DetailsScreenNavAction()
     data class GoWebsite(val url: String) : DetailsScreenNavAction()
@@ -164,49 +172,106 @@ fun DetailsScreenContent(
                 MoveToWatchlist -> "Move to watchlist"
                 MoveToWatching -> "Move to watching"
                 MoveMovieToFinished -> "Mark watched"
+                DetailsUiModel.TrackingStatus.Action.ManageWatchlists -> "Add to list"
                 null -> ""
             }
-            show.trackingStatus.action1?.let { action ->
-                Button(
-                    onClick = { showAction(DetailsViewModel.DetailsAction.TrackingAction(show, action)) },
-                    shape = TvTrackerTheme.ShapeButton,
-                    enabled = isActionsAllowed,
-                    modifier = Modifier.weight(0.5f, true)
-                ) {
-                    if (!show.trackingStatus.isLoading) {
-                        Text(text(action))
-                    } else {
-                        LoadingIndicator(
-                            modifier = Modifier.height(24.dp).aspectRatio(1f),
-                            color = MaterialTheme.colorScheme.onPrimary
-                        )
+            show.trackingStatus.action1?.let { action1 ->
+
+                AnimatedContent(
+                    modifier = Modifier.weight(0.5f, true),
+                    targetState = action1,
+                    transitionSpec = {
+                        val enterTransition = slideInVertically(
+                            animationSpec = tween(durationMillis = 330),
+                            initialOffsetY = { fullHeight -> -fullHeight }
+                        ) + fadeIn(animationSpec = tween(durationMillis = 330))
+                        val exitTransition = slideOutVertically(
+                            animationSpec = tween(durationMillis = 330),
+                            targetOffsetY = { fullHeight -> fullHeight }
+                        ) + fadeOut(animationSpec = tween(durationMillis = 330))
+                        enterTransition togetherWith exitTransition
+                    }
+                ) { state ->
+                    Box(modifier = Modifier.fillMaxWidth().padding()) {
+                        Button(
+                            onClick = {
+                                showAction(
+                                    DetailsViewModel.DetailsAction.TrackingAction(
+                                        show,
+                                        state,
+                                        navAction
+                                    )
+                                )
+                            },
+                            shape = TvTrackerTheme.ShapeButton,
+                            enabled = isActionsAllowed,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(text(state))
+                        }
+                        if (show.trackingStatus.isLoading) {
+                            Row(modifier = Modifier.padding(end = 8.dp).align(Alignment.CenterEnd)) {
+                                LoadingIndicator(
+                                    modifier = Modifier.height(16.dp).aspectRatio(1f),
+                                    color = MaterialTheme.colorScheme.onPrimary
+                                )
+                            }
+                        }
                     }
                 }
                 Spacer(Modifier.width(8.dp))
             }
-            show.trackingStatus.action2?.let { action ->
-                val color = when (action) {
-                    RemoveFromWatchlist, RemoveFromWatching, RemoveMovieFromWatched -> {
-                        MaterialTheme.colorScheme.error
+            show.trackingStatus.action2?.let { action2 ->
+                AnimatedContent(
+                    modifier = Modifier.weight(0.5f, true),
+                    targetState = action2,
+                    transitionSpec = {
+                        val enterTransition = slideInVertically(
+                            animationSpec = tween(durationMillis = 330),
+                            initialOffsetY = { fullHeight -> -fullHeight }
+                        ) + fadeIn(animationSpec = tween(durationMillis = 330))
+                        val exitTransition = slideOutVertically(
+                            animationSpec = tween(durationMillis = 330),
+                            targetOffsetY = { fullHeight -> fullHeight }
+                        ) + fadeOut(animationSpec = tween(durationMillis = 330))
+                        enterTransition togetherWith exitTransition
                     }
+                ) { state ->
+                    val color = when (state) {
+                        RemoveFromWatchlist, RemoveFromWatching, RemoveMovieFromWatched -> {
+                            MaterialTheme.colorScheme.error
+                        }
 
-                    else -> {
-                        MaterialTheme.colorScheme.primary
+                        else -> {
+                            MaterialTheme.colorScheme.primary
+                        }
                     }
-                }
-                OutlinedButton(
-                    onClick = { showAction(DetailsViewModel.DetailsAction.TrackingAction(show, action)) },
-                    shape = TvTrackerTheme.ShapeButton,
-                    enabled = isActionsAllowed,
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = color),
-                    modifier = Modifier.weight(0.5f, true)
-                ) {
-                    if (!show.trackingStatus.isLoading) {
-                        Text(text(show.trackingStatus.action2))
-                    } else {
-                        LoadingIndicator(
-                            modifier = Modifier.height(24.dp).aspectRatio(1f),
-                        )
+                    Box(modifier = Modifier.fillMaxWidth().padding()) {
+                        OutlinedButton(
+                            onClick = {
+                                showAction(
+                                    DetailsViewModel.DetailsAction.TrackingAction(
+                                        show,
+                                        state,
+                                        navAction
+                                    )
+                                )
+                            },
+                            shape = TvTrackerTheme.ShapeButton,
+                            enabled = isActionsAllowed,
+                            colors = ButtonDefaults.outlinedButtonColors(contentColor = color),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(text(state))
+                        }
+                        if (show.trackingStatus.isLoading) {
+                            Row(modifier = Modifier.padding(end = 8.dp).align(Alignment.CenterEnd)) {
+                                LoadingIndicator(
+                                    modifier = Modifier.height(16.dp).aspectRatio(1f),
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                        }
                     }
                 }
             }

@@ -1,4 +1,4 @@
-package com.free.tvtracker.ui.watchlists.details.dialogs
+package com.free.tvtracker.ui.watchlists.list.dialogs
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -10,7 +10,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -21,22 +20,18 @@ import androidx.compose.ui.unit.dp
 import com.free.tvtracker.ui.common.theme.TvTrackerTheme
 import com.free.tvtracker.ui.common.theme.TvTrackerTheme.sidePadding
 import com.free.tvtracker.ui.details.dialogs.DetailsSheetHeader
-import com.free.tvtracker.ui.watchlists.details.WatchlistDetailsScreenNavAction
-import com.free.tvtracker.ui.watchlists.details.WatchlistDetailsViewModel
+import com.free.tvtracker.ui.watchlists.list.WatchlistsScreenNavAction
+import com.free.tvtracker.ui.watchlists.list.WatchlistsViewModel
 
 @Composable
-fun WatchlistDetailsRenameSheet(
-    viewModel: WatchlistDetailsViewModel,
-    navAction: (WatchlistDetailsScreenNavAction) -> Unit,
+fun WatchlistAddSheet(
+    viewModel: WatchlistsViewModel,
+    navAction: (WatchlistsScreenNavAction) -> Unit,
     bottomPadding: Float = 0f
 ) {
-    val list = viewModel.loadContent.collectAsState().value
-    if (list.watchlistId == -1) return
     TvTrackerTheme {
         Scaffold(modifier = Modifier.fillMaxWidth()) {
-            WatchlistDetailsRenameSheetContent(
-                list.watchlistId,
-                list.watchlistName,
+            WatchlistAddSheetContent(
                 navAction,
                 viewModel::action,
                 bottomPadding
@@ -46,16 +41,14 @@ fun WatchlistDetailsRenameSheet(
 }
 
 @Composable
-fun WatchlistDetailsRenameSheetContent(
-    watchlistId: Int,
-    watchlistName: String,
-    navAction: (WatchlistDetailsScreenNavAction) -> Unit,
-    action: (WatchlistDetailsViewModel.WatchlistDetailsAction) -> Unit,
+fun WatchlistAddSheetContent(
+    navAction: (WatchlistsScreenNavAction) -> Unit,
+    action: (WatchlistsViewModel.WatchlistsAction) -> Unit,
     bottomPadding: Float = 0f
 ) {
     var text by remember { mutableStateOf("") }
     Column(modifier = Modifier.fillMaxWidth()) {
-        DetailsSheetHeader("Rename \"${watchlistName}\"")
+        DetailsSheetHeader("Create new watchlist")
         Spacer(Modifier.height(12.dp))
         OutlinedTextField(
             value = text,
@@ -66,13 +59,15 @@ fun WatchlistDetailsRenameSheetContent(
         Spacer(Modifier.height(24.dp))
         Button(
             onClick = {
-                navAction(WatchlistDetailsScreenNavAction.HideBottomSheet)
-                action(WatchlistDetailsViewModel.WatchlistDetailsAction.Rename(watchlistId, text))
+                if (text.isNotEmpty()) {
+                    navAction(WatchlistsScreenNavAction.HideBottomSheet)
+                    action(WatchlistsViewModel.WatchlistsAction.New(text))
+                }
             },
             shape = TvTrackerTheme.ShapeButton,
             modifier = Modifier.fillMaxWidth(0.5f).padding(horizontal = sidePadding).align(Alignment.End)
         ) {
-            Text("Save")
+            Text("Create")
         }
         Spacer(Modifier.height(bottomPadding.dp))
     }

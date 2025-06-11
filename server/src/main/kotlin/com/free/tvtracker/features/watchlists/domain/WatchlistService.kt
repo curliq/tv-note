@@ -115,25 +115,25 @@ class WatchlistService(
         trackedContentId: Int,
         watchlistId: Int,
         isTvShow: Boolean,
-    ): Boolean {
+    ): TrackedContentApiModel? {
         val userId = sessionService.getSessionUserId()
         if (isTvShow) {
             val show = trackedShowJpaRepository.getReferenceById(trackedContentId)
             if (show.userId != userId) {
                 logger.get.error("Attempting to delete show from a watchlist without permission")
-                return false
+                return null
             }
             logger.get.debug("Deleting watchlist with id: $trackedContentId, watchlistId: $watchlistId")
             watchlistTrackedShowJpaRepository.deleteByShowIdAndWatchlistId(trackedContentId, watchlistId)
-            return true
+            return show.toApiModel()
         } else {
             val movie = trackedMovieJpaRepository.getReferenceById(trackedContentId)
             if (movie.userId != userId) {
                 logger.get.error("Attempting to delete movie from a watchlist without permission")
-                return false
+                return null
             }
             watchlistTrackedMovieJpaRepository.deleteByMovieIdAndWatchlistId(trackedContentId, watchlistId)
-            return true
+            return movie.toApiModel()
         }
     }
 }

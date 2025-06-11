@@ -34,6 +34,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.rememberTextMeasurer
@@ -44,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import besttvtracker.composeapp.generated.resources.Res
 import besttvtracker.composeapp.generated.resources.ic_movie
 import besttvtracker.composeapp.generated.resources.ic_tv
+import com.free.tvtracker.core.Logger
 import com.free.tvtracker.ui.common.composables.ErrorScreen
 import com.free.tvtracker.ui.common.composables.LoadingScreen
 import com.free.tvtracker.ui.common.composables.ResImage
@@ -53,12 +55,14 @@ import com.free.tvtracker.ui.common.theme.ScreenContentAnimation
 import com.free.tvtracker.ui.common.theme.TvTrackerTheme
 import com.free.tvtracker.ui.common.theme.TvTrackerTheme.sidePadding
 import com.free.tvtracker.ui.watching.FabContainer
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.stateIn
 
 sealed class WatchlistDetailsScreenNavAction {
     data class GoShowDetails(val tmdbShowId: Int, val isTvShow: Boolean) : WatchlistDetailsScreenNavAction()
     data object GoAddShow : WatchlistDetailsScreenNavAction()
     data class ShowRenameDialog(val tmdbShowId: Int, val watchlistName: String) : WatchlistDetailsScreenNavAction()
-    data object HideRenameDialog : WatchlistDetailsScreenNavAction()
+    data object HideBottomSheet : WatchlistDetailsScreenNavAction()
     data object OnDelete : WatchlistDetailsScreenNavAction()
 }
 
@@ -69,11 +73,18 @@ fun WatchlistDetailsScreen(
     navigate: (WatchlistDetailsScreenNavAction) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val shows = viewModel.shows.collectAsState().value
-
+    val scope = rememberCoroutineScope()
+    val shows = viewModel.loadContentFlow2
+        .stateIn(
+            scope = scope,
+            started = SharingStarted.WhileSubscribed(5000), WatchlistDetailsUiState.Loading
+        )
+        .collectAsState()
+        .value
+    Logger().d("WatchlistDetailsScreen,content:$content, shows: $shows", "WatchlistDetailsScreen")
     TvTrackerTheme {
         Scaffold(modifier = modifier) {
-            LaunchedEffect(content) {
+            LaunchedEffect(content.watchlistId) {
                 viewModel.loadContent(content.watchlistId, content.watchlistName)
             }
             FabContainer({ navigate(WatchlistDetailsScreenNavAction.GoAddShow) }, content = {
@@ -84,10 +95,7 @@ fun WatchlistDetailsScreen(
                 ) { targetState ->
                     when (targetState) {
                         WatchlistDetailsUiState.Error -> ErrorScreen {
-                            viewModel.loadContent(
-                                content.watchlistId,
-                                content.watchlistName
-                            )
+                            viewModel.refresh()
                         }
 
                         WatchlistDetailsUiState.Loading -> LoadingScreen()

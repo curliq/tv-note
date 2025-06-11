@@ -25,8 +25,10 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,6 +38,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.free.tvtracker.core.Logger
 import com.free.tvtracker.domain.PurchaseStatus
 import com.free.tvtracker.ui.common.composables.ErrorScreen
 import com.free.tvtracker.ui.common.composables.LoadingScreen
@@ -46,18 +49,28 @@ import com.free.tvtracker.ui.common.theme.TvTrackerTheme
 import com.free.tvtracker.ui.common.theme.TvTrackerTheme.sidePadding
 import com.free.tvtracker.ui.watching.FabContainer
 import com.free.tvtracker.ui.watching.TrialView
-
+import com.free.tvtracker.ui.watchlists.details.WatchlistDetailsUiState
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.stateIn
 
 sealed class WatchlistsScreenNavAction {
     data object GoAddShow : WatchlistsScreenNavAction()
     data class GoWatchlistDetails(val watchlistId: Int, val watchlistName: String) : WatchlistsScreenNavAction()
+    data object HideBottomSheet : WatchlistsScreenNavAction()
 }
 
 @Composable
 fun WatchlistsScreen(viewModel: WatchlistsViewModel, navigate: (WatchlistsScreenNavAction) -> Unit) {
-    val state = viewModel.watchlists.collectAsState().value
+    val scope = rememberCoroutineScope()
+    val state = viewModel.stateAsFlow.stateIn(
+        scope = scope,
+        started = SharingStarted.WhileSubscribed(),
+        initialValue = WatchlistsUiState.Loading
+    ).collectAsState().value
     val purchaseStatus by viewModel.status.collectAsState(PurchaseStatus(PurchaseStatus.Status.Purchased, "", ""))
-
+    LaunchedEffect(Unit) {
+        viewModel.fetch()
+    }
     TvTrackerTheme {
         FabContainer({ navigate(WatchlistsScreenNavAction.GoAddShow) }, content = {
             AnimatedContent(
@@ -72,7 +85,7 @@ fun WatchlistsScreen(viewModel: WatchlistsViewModel, navigate: (WatchlistsScreen
                         { viewModel.action(WatchlistsViewModel.WatchlistsAction.Sub) }
                     )
 
-                    WatchlistsUiState.Error -> ErrorScreen { viewModel.refresh() }
+                    WatchlistsUiState.Error -> ErrorScreen { viewModel.fetch() }
                     WatchlistsUiState.Loading -> LoadingScreen()
                     is WatchlistsUiState.Ok -> WatchlistsOk(targetState, purchaseStatus, viewModel::action, navigate)
                 }
@@ -104,6 +117,7 @@ fun WatchlistsOk(
     action: (WatchlistsViewModel.WatchlistsAction) -> Unit,
     navigate: (WatchlistsScreenNavAction) -> Unit
 ) {
+    Logger().d("WatchlistsOk: ${data.watchlists}", "WatchlistsScreen")
     LazyColumn(
         modifier = Modifier.fillMaxSize().padding(horizontal = sidePadding),
         contentPadding = PaddingValues(bottom = sidePadding)
@@ -120,7 +134,8 @@ fun WatchlistsOk(
                 TrialView(
                     status,
                     { action(WatchlistsViewModel.WatchlistsAction.Buy) },
-                    { action(WatchlistsViewModel.WatchlistsAction.Sub) })
+                    { action(WatchlistsViewModel.WatchlistsAction.Sub) }
+                )
             }
         }
     }

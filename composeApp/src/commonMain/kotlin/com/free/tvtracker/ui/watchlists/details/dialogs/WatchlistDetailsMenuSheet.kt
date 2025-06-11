@@ -22,6 +22,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import besttvtracker.composeapp.generated.resources.Res
@@ -31,7 +32,6 @@ import com.free.tvtracker.ui.common.theme.TvTrackerTheme
 import com.free.tvtracker.ui.common.theme.TvTrackerTheme.sidePadding
 import com.free.tvtracker.ui.common.theme.TvTrackerTheme.sidePaddingHalf
 import com.free.tvtracker.ui.watchlists.details.WatchlistDetailsScreenNavAction
-import com.free.tvtracker.ui.watchlists.details.WatchlistDetailsUiState
 import com.free.tvtracker.ui.watchlists.details.WatchlistDetailsViewModel
 import com.free.tvtracker.watchlists.response.WatchlistApiModel.Companion.FINISHED_LIST_ID
 import com.free.tvtracker.watchlists.response.WatchlistApiModel.Companion.WATCHLIST_LIST_ID
@@ -42,8 +42,8 @@ fun WatchlistDetailsMenuSheet(
     navAction: (WatchlistDetailsScreenNavAction) -> Unit,
     bottomPadding: Float = 0f
 ) {
-    val list = viewModel.shows.collectAsState().value as? WatchlistDetailsUiState.Ok
-    if (list == null) return
+    val list = viewModel.loadContent.collectAsState().value
+    if (list.watchlistId == -1) return
     TvTrackerTheme {
         Scaffold {
             WatchlistDetailsMenuSheetContent(
@@ -69,14 +69,19 @@ fun WatchlistDetailsMenuSheetContent(
     Column {
         TextButton(
             shape = TvTrackerTheme.ShapeButton,
-            modifier = Modifier.padding(horizontal = TvTrackerTheme.sidePaddingHalf).fillMaxWidth(),
-            contentPadding = PaddingValues(TvTrackerTheme.sidePaddingHalf),
+            modifier = Modifier.padding(horizontal = sidePaddingHalf).fillMaxWidth(),
+            contentPadding = PaddingValues(sidePaddingHalf),
             enabled = enabled,
             onClick = {
                 navAction(WatchlistDetailsScreenNavAction.ShowRenameDialog(watchlistId, watchlistName))
             }
         ) {
-            Icon(Icons.Rounded.Edit, "", tint = MaterialTheme.colorScheme.primary)
+            Icon(
+                Icons.Rounded.Edit,
+                "",
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.alpha(if (enabled) 1f else 0.38f)
+            )
             Spacer(Modifier.width(8.dp))
             Text(text = "Rename")
             Spacer(modifier = Modifier.weight(1f))
@@ -123,7 +128,8 @@ fun WatchlistDetailsMenuSheetContent(
                         ResImage(
                             Res.drawable.ic_delete_account,
                             "Rename",
-                            tint = if (enabled) MaterialTheme.colorScheme.error else null
+                            tint = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.alpha(if (enabled) 1f else 0.38f)
                         )
                         Spacer(Modifier.width(8.dp))
                         Text(
