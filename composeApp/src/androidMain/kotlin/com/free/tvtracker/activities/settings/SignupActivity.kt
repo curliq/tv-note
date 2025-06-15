@@ -23,13 +23,13 @@ import org.koin.androidx.compose.get
 class SignupActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-                val navAction = { action: SignupScreenAction ->
-                    when (action) {
-                        SignupScreenAction.GoBack -> {
-                            finish()
-                        }
-                    }
+        val navAction = { action: SignupScreenAction ->
+            when (action) {
+                SignupScreenAction.GoBack -> {
+                    finish()
                 }
+            }
+        }
         setContent {
             TvTrackerTheme {
                 Scaffold(
@@ -45,7 +45,11 @@ class SignupActivity : BaseActivity() {
                                 .exitUntilCollapsedScrollBehavior(rememberTopAppBarState()),
                             navigationIcon = {
                                 IconButton(onClick = { this.finish() }) {
-                                    Icon(Icons.AutoMirrored.Rounded.ArrowBack, "")
+                                    Icon(
+                                        Icons.AutoMirrored.Rounded.ArrowBack,
+                                        "",
+                                        tint = MaterialTheme.colorScheme.primary
+                                    )
                                 }
                             }
                         )

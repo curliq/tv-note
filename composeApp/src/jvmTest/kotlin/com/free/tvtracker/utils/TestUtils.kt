@@ -6,6 +6,7 @@ import com.free.tvtracker.ui.details.DetailsUiModel.Crew
 import com.free.tvtracker.ui.details.DetailsUiModel.Season
 import com.free.tvtracker.ui.details.DetailsUiModel.Video
 import com.free.tvtracker.ui.details.DetailsUiModel.WatchProvider
+import com.free.tvtracker.ui.details.DetailsUiModel.Watchlist
 
 fun buildDetailsUiModel(
     tmdbId: Int = 0,
@@ -43,6 +44,10 @@ fun buildDetailsUiModel(
     budget: String = "",
     revenue: String = "",
     website: String = "",
+    watchlists: List<Watchlist> = emptyList(),
+    watchlisted: Boolean = false,
+    isFinished: Boolean = false,
+    isWatching: Boolean = false,
 ) = DetailsUiModel(
     isTvShow = isTvShow,
     tmdbId = tmdbId,
@@ -78,5 +83,9 @@ fun buildDetailsUiModel(
     revenue = revenue,
     website = website,
     omdbRatings = omdbRatings,
-    reviews = reviews
+    reviews = reviews,
+    watchlists = watchlists,
+    watchlisted = watchlisted,
+    isFinished = isFinished,
+    isWatching = isWatching
 )

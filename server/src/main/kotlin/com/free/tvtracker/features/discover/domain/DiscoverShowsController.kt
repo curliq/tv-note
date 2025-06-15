@@ -88,6 +88,7 @@ fun List<TmdbShowSmallResponse>.toApiModel(related: List<Int>): RecommendedConte
                 firstAirDate = it.firstAirDate,
                 voteAverage = it.voteAverage,
                 voteCount = it.voteCount,
+                isTvShow = true
             )
         },
         relatedContent = related.map {

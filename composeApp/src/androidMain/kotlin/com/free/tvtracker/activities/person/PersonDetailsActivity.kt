@@ -3,6 +3,7 @@ package com.free.tvtracker.activities.person
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
@@ -13,6 +14,7 @@ import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
@@ -27,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.unit.dp
 import com.free.tvtracker.activities.showdetails.ShowDetailsActivity
 import com.free.tvtracker.ui.common.theme.TvTrackerTheme
@@ -58,8 +61,8 @@ class PersonDetailsActivity : BaseActivity() {
             val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
             val sheetState = rememberModalBottomSheetState()
             var showBottomSheet: PersonDetailsNavDestinations? by remember { mutableStateOf(null) }
-            val context = LocalContext.current as PersonDetailsActivity
-            val modalMaxHeight = LocalConfiguration.current.screenHeightDp.dp.times(0.7f)
+            val context = LocalActivity.current as PersonDetailsActivity
+            val modalMaxHeight = LocalWindowInfo.current.containerSize.height.dp.times(0.7f)
             val navActions: (PersonScreenNavAction) -> Unit = { action ->
                 when (action) {
                     is PersonScreenNavAction.GoShowDetails -> {
@@ -98,7 +101,11 @@ class PersonDetailsActivity : BaseActivity() {
                             colors = TopAppBarDefaults.mediumTopAppBarColors(),
                             navigationIcon = {
                                 IconButton(onClick = { this.finish() }) {
-                                    Icon(Icons.AutoMirrored.Rounded.ArrowBack, "")
+                                    Icon(
+                                        Icons.AutoMirrored.Rounded.ArrowBack,
+                                        "",
+                                        tint = MaterialTheme.colorScheme.primary
+                                    )
                                 }
                             },
                         )

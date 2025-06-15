@@ -45,7 +45,11 @@ class LoginActivity : BaseActivity() {
                                 .exitUntilCollapsedScrollBehavior(rememberTopAppBarState()),
                             navigationIcon = {
                                 IconButton(onClick = { this.finish() }) {
-                                    Icon(Icons.AutoMirrored.Rounded.ArrowBack, "")
+                                    Icon(
+                                        Icons.AutoMirrored.Rounded.ArrowBack,
+                                        "",
+                                        tint = MaterialTheme.colorScheme.primary
+                                    )
                                 }
                             }
                         )

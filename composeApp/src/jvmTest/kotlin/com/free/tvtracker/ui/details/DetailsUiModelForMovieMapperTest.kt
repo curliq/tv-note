@@ -1,8 +1,8 @@
 package com.free.tvtracker.ui.details
 
 import com.free.tvtracker.details.response.TmdbMovieDetailsApiModel
-import com.free.tvtracker.ui.details.mappers.DetailsRatingsUiModelMapper
-import com.free.tvtracker.ui.details.mappers.DetailsUiModelForMovieMapper
+import com.free.tvtracker.ui.details.mappers.ContentDetailsRatingsUiModelMapper
+import com.free.tvtracker.ui.details.mappers.ContentDetailsUiModelForMovieMapper
 import io.mockk.mockk
 import org.junit.Assert.assertEquals
 import kotlin.test.Test
@@ -10,13 +10,13 @@ import kotlin.test.Test
 class DetailsUiModelForMovieMapperTest {
 
     private val sut =
-        DetailsUiModelForMovieMapper(
+        ContentDetailsUiModelForMovieMapper(
             mockk(relaxed = true),
             mockk(relaxed = true),
             mockk(relaxed = true),
             mockk(relaxed = true),
             mockk(relaxed = true),
-            ratingsUiModelMapper = DetailsRatingsUiModelMapper()
+            ratingsUiModelMapper = ContentDetailsRatingsUiModelMapper()
         )
 
     @Test

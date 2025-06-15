@@ -46,8 +46,9 @@ Authorization: Bearer {{tokenUser1}}
 Content-Type: application/json
 
 {
-  "tmdb_id": 12971,
-  "watchlisted": false
+  "tmdb_id": 222766,
+  "watchlisted": false,
+  "add_all_episodes": false
 }
 
 ### create tracked movie
@@ -121,3 +122,66 @@ Content-Type: application/json
 ### export data
 GET {{host}}/export/shows
 Authorization: Bearer {{tokenUser1}}
+
+### get watchlists
+GET {{host}}/watchlists/
+Authorization: Bearer {{tokenUser1}}
+
+### get watchlist content
+POST {{host}}/watchlists/content
+Authorization: Bearer {{tokenUser1}}
+Content-Type: application/json
+
+{
+    "watchlist_id": 2
+}
+
+### create watchlist
+POST {{host}}/watchlists/
+Authorization: Bearer {{tokenUser1}}
+Content-Type: application/json
+
+{
+  "name": "Wont watch"
+}
+
+### add tracked show to watchlist
+POST {{host}}/watchlists/content/add
+Authorization: Bearer {{tokenUser1}}
+Content-Type: application/json
+
+{
+    "tracked_content_id" : 75,
+    "watchlist_id" : 2,
+    "is_tv_show" : true
+}
+
+### remove tracked show from watchlist
+POST {{host}}/watchlists/content/delete
+Authorization: Bearer {{tokenUser1}}
+Content-Type: application/json
+
+{
+    "tracked_content_id" : 77,
+    "watchlist_id" : 2,
+    "is_tv_show" : true
+}
+
+### delete custom list
+POST {{host}}/watchlists/delete
+Authorization: Bearer {{tokenUser1}}
+Content-Type: application/json
+
+{
+    "watchlist_id" : 1
+}
+
+### rename custom list
+POST {{host}}/watchlists/edit
+Authorization: Bearer {{tokenUser1}}
+Content-Type: application/json
+
+{
+    "watchlist_id" : 52,
+    "name": "will not watch"
+}

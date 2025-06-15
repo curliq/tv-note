@@ -18,7 +18,9 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
             } else if let token = token {
                 print("FCM registration token: \(token)")
                 let repo = IosModules().sessionRepository
-                repo.postFcmToken(token: token, completionHandler: { response, error in })
+                Task {
+                    try await repo.postFcmToken(token: token)
+                }
             }
         }
 #endif

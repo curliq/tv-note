@@ -33,6 +33,8 @@
             android:name=".activities.main.MainActivity" android:label="MainActivity"/>
         <activity android:name=".activities.welcome.WelcomeActivity" android:label="WelcomeActivity"/>
         <activity android:name=".activities.showdetails.ShowDetailsActivity" android:label="ShowDetailsActivity"/>
+        <activity android:name=".activities.watchlists.WatchlistDetailsActivity"
+                  android:label="WatchlistDetailsActivity"/>
         <activity android:name=".activities.add.AddTrackedActivity" android:label="AddTrackedActivity"/>
         <activity android:name=".activities.person.PersonDetailsActivity" android:label="PersonDetailsActivity"/>
         <activity android:name=".activities.discover.RecommendationsActivity" android:label="RecommendationsActivity"/>
