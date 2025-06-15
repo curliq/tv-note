@@ -12,7 +12,7 @@ import kotlinx.datetime.format.Padding
 import kotlinx.datetime.format.char
 import kotlinx.datetime.toLocalDateTime
 
-class ShowEpisodeUiModelMapper(
+class ContentShowEpisodeUiModelMapper(
     private val clock: Clock = Clock.System,
 ) : MapperWithOptions<EpisodeApi, EpisodeUi, ShowSeasonUiModelMapper.O> {
 

@@ -1,10 +1,10 @@
 package com.free.tvtracker.ui.details
 
 import com.free.tvtracker.details.response.TmdbShowDetailsApiModel
-import com.free.tvtracker.ui.details.mappers.DetailsUiModelForShowMapper
+import com.free.tvtracker.ui.details.mappers.ContentDetailsUiModelForShowMapper
 import com.free.tvtracker.constants.TmdbShowStatus
 import com.free.tvtracker.domain.GetShowStatusUseCase
-import com.free.tvtracker.ui.details.mappers.DetailsRatingsUiModelMapper
+import com.free.tvtracker.ui.details.mappers.ContentDetailsRatingsUiModelMapper
 import io.mockk.mockk
 import org.junit.Assert.assertEquals
 import kotlin.test.Test
@@ -12,7 +12,7 @@ import kotlin.test.Test
 class DetailsUiModelForShowMapperTest {
 
     private val sut =
-        DetailsUiModelForShowMapper(
+        ContentDetailsUiModelForShowMapper(
             mockk(relaxed = true),
             mockk(relaxed = true),
             mockk(relaxed = true),
@@ -21,7 +21,7 @@ class DetailsUiModelForShowMapperTest {
             mockk(relaxed = true),
             GetShowStatusUseCase(),
             mockk(relaxed = true),
-            DetailsRatingsUiModelMapper()
+            ContentDetailsRatingsUiModelMapper()
         )
 
     @Test

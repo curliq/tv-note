@@ -85,7 +85,8 @@ class MainActivity : BaseActivity() {
                                     ) {
                                         Icon(
                                             painter = painterResource(id = R.drawable.ic_settings_heart),
-                                            contentDescription = "My Button"
+                                            contentDescription = "settings",
+                                            tint = MaterialTheme.colorScheme.primary
                                         )
                                     }
                                 } else if (currentDestination?.route == AppNavDestinations.WATCHLISTS.id) {
@@ -96,7 +97,8 @@ class MainActivity : BaseActivity() {
                                     ) {
                                         Icon(
                                             Icons.Rounded.AddCircle,
-                                            contentDescription = "Add watchlist"
+                                            contentDescription = "Add watchlist",
+                                            tint = MaterialTheme.colorScheme.primary
                                         )
                                     }
                                 }

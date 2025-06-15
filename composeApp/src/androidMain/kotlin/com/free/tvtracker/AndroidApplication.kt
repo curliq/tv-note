@@ -10,7 +10,7 @@ import com.free.tvtracker.di.appModules
 import com.free.tvtracker.expect.AndroidAppPriceProvider
 import com.free.tvtracker.expect.AndroidFileExporter
 import com.free.tvtracker.expect.initSentry
-import com.free.tvtracker.ui.details.DetailsViewModel
+import com.free.tvtracker.ui.details.ContentDetailsViewModel
 import com.free.tvtracker.ui.discover.DiscoverViewModel
 import com.free.tvtracker.ui.person.PersonViewModel
 import com.free.tvtracker.ui.search.AddTrackedViewModel
@@ -91,7 +91,7 @@ class AndroidApplication : Application() {
                     viewModel { WatchingViewModel(g(), g(), g(), g(), g(), g(), g()) }
                     viewModel { WatchlistsViewModel(g(), g(), g(), g(), g(), g(), g(), g()) }
                     viewModel { WatchlistDetailsViewModel(g(), g(), g(), g(), g(), g(), g()) }
-                    viewModel { DetailsViewModel(g(), g(), g(), g(), g(), g(), g(), g(), g(), g(), g(), g()) }
+                    viewModel { ContentDetailsViewModel(g(), g(), g(), g(), g(), g(), g(), g(), g(), g(), g(), g()) }
                     viewModel { PersonViewModel(g(), g()) }
                     viewModel { LoginViewModel(g(), g()) }
                     viewModel { SignupViewModel(g()) }

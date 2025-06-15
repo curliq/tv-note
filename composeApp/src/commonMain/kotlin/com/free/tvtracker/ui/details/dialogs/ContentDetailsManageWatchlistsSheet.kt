@@ -30,17 +30,17 @@ import com.free.tvtracker.ui.common.theme.TvTrackerTheme.sidePaddingHalf
 import com.free.tvtracker.ui.details.DetailsScreenNavAction
 import com.free.tvtracker.ui.details.DetailsUiModel
 import com.free.tvtracker.ui.details.DetailsUiState
-import com.free.tvtracker.ui.details.DetailsViewModel
-import com.free.tvtracker.ui.details.DetailsViewModel.DetailsAction
+import com.free.tvtracker.ui.details.ContentDetailsViewModel
+import com.free.tvtracker.ui.details.ContentDetailsViewModel.DetailsAction
 import com.free.tvtracker.watchlists.response.WatchlistApiModel.Companion.FINISHED_LIST_ID
 
 @Composable
 fun DetailsManageWatchlistsSheet(
-    viewModel: DetailsViewModel,
+    viewModel: ContentDetailsViewModel,
     navActions: (DetailsScreenNavAction) -> Unit,
     bottomPadding: Float = 0f
 ) {
-    val watchlists = viewModel.watchlists.collectAsState(DetailsViewModel.DetailsWatchlists(emptyList())).value
+    val watchlists = viewModel.watchlists.collectAsState(ContentDetailsViewModel.DetailsWatchlists(emptyList())).value
     val uiModel = viewModel.result.collectAsState().value as? DetailsUiState.Ok
     if (uiModel == null) return
     TvTrackerTheme {
@@ -54,7 +54,7 @@ fun DetailsManageWatchlistsSheet(
 @Composable
 fun DetailsManageWatchlistsContent(
     uiModel: DetailsUiModel,
-    watchlists: DetailsViewModel.DetailsWatchlists,
+    watchlists: ContentDetailsViewModel.DetailsWatchlists,
     action: (DetailsAction) -> Unit,
     navActions: (DetailsScreenNavAction) -> Unit,
     bottomPadding: Float = 0f

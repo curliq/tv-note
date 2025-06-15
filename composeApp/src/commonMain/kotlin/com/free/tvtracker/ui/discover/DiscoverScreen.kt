@@ -172,7 +172,8 @@ fun DiscoverOk(
             DiscoverRow(
                 data.showsTrendingWeeklyPreview,
                 navigate,
-                seeAllAction = { navigate(DiscoverScreenNavActions.GoTrending) })
+                seeAllAction = { navigate(DiscoverScreenNavActions.GoTrending) }
+            )
             Spacer(Modifier.height(24.dp))
 
             Text(
@@ -183,7 +184,8 @@ fun DiscoverOk(
             DiscoverRow(
                 data.showsReleasedSoonPreview,
                 navigate,
-                seeAllAction = { navigate(DiscoverScreenNavActions.GoNewRelease) })
+                seeAllAction = { navigate(DiscoverScreenNavActions.GoNewRelease) }
+            )
             Spacer(Modifier.height(24.dp))
         }
     }

@@ -102,8 +102,8 @@ sealed class DetailsScreenNavAction {
 
 @Composable
 fun DetailsScreen(
-    viewModel: DetailsViewModel,
-    content: DetailsViewModel.LoadContent,
+    viewModel: ContentDetailsViewModel,
+    content: ContentDetailsViewModel.LoadContent,
     navAction: (DetailsScreenNavAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -140,7 +140,7 @@ fun DetailsScreenContent(
     show: DetailsUiModel,
     isActionsAllowed: Boolean,
     navAction: (DetailsScreenNavAction) -> Unit,
-    showAction: (DetailsViewModel.DetailsAction) -> Unit
+    showAction: (ContentDetailsViewModel.DetailsAction) -> Unit
 ) {
     Column(Modifier.padding(horizontal = sidePadding).fillMaxWidth().verticalScroll(rememberScrollState())) {
         Row(Modifier.fillMaxWidth().padding(vertical = 16.dp)) {
@@ -176,7 +176,6 @@ fun DetailsScreenContent(
                 null -> ""
             }
             show.trackingStatus.action1?.let { action1 ->
-
                 AnimatedContent(
                     modifier = Modifier.weight(0.5f, true),
                     targetState = action1,
@@ -196,7 +195,7 @@ fun DetailsScreenContent(
                         Button(
                             onClick = {
                                 showAction(
-                                    DetailsViewModel.DetailsAction.TrackingAction(
+                                    ContentDetailsViewModel.DetailsAction.TrackingAction(
                                         show,
                                         state,
                                         navAction
@@ -219,7 +218,9 @@ fun DetailsScreenContent(
                         }
                     }
                 }
-                Spacer(Modifier.width(8.dp))
+                if (show.trackingStatus.action2 != null) {
+                    Spacer(Modifier.width(8.dp))
+                }
             }
             show.trackingStatus.action2?.let { action2 ->
                 AnimatedContent(
@@ -250,7 +251,7 @@ fun DetailsScreenContent(
                         OutlinedButton(
                             onClick = {
                                 showAction(
-                                    DetailsViewModel.DetailsAction.TrackingAction(
+                                    ContentDetailsViewModel.DetailsAction.TrackingAction(
                                         show,
                                         state,
                                         navAction

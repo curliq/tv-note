@@ -6,7 +6,12 @@ import ComposeApp
 // Define all possible navigation routes
 enum Route: Hashable {
     case search(origin: AddTrackedScreenOriginScreen)
-    case details(content: DetailsViewModel.LoadContent)
+    case details(content: ContentDetailsViewModel.LoadContent)
+    case watchlistDetails(id: Int32, name: String)
+    case watchlistCreate
+    case watchlistContentAdd
+    case watchlistDetailsMenu
+    case watchlistDetailsRename
     case episodes
     case reviews
     case cast
@@ -38,29 +43,27 @@ struct ContentView: View {
 
     // Create a navigation state for each tab
     @StateObject private var watchingNavState = TabNavigationState()
-    @StateObject private var finishedNavState = TabNavigationState()
-    @StateObject private var watchlistNavState = TabNavigationState()
+    @StateObject private var listsNavState = TabNavigationState()
     @StateObject private var discoverNavState = TabNavigationState()
 
     // Create a details view model for each tab
-    let watchingDetailsVM = ViewModelsModule().detailsViewModel
-    let finishedDetailsVM = ViewModelsModule().detailsViewModel
-    let watchlistDetailsVM = ViewModelsModule().detailsViewModel
-    let discoverDetailsVM = ViewModelsModule().detailsViewModel
+    let watchingDetailsVM = ViewModelsModule().contentDetailsViewModel
+    let listsDetailsVM = ViewModelsModule().contentDetailsViewModel
+    let discoverDetailsVM = ViewModelsModule().contentDetailsViewModel
 
     let watchingPersonVM = ViewModelsModule().personViewModel
-    let finishedPersonVM = ViewModelsModule().personViewModel
-    let watchlistPersonVM = ViewModelsModule().personViewModel
+    let listsPersonVM = ViewModelsModule().personViewModel
     let discoverPersonVM = ViewModelsModule().personViewModel
 
     // Tab-specific view models
     let watchingViewModel = ViewModelsModule().watchingViewModel
-    let finishedViewModel = ViewModelsModule().finishedShowsViewModel
-    let watchlistedViewModel = ViewModelsModule().watchlistedShowsViewModel
+    let watchlistsViewModel = ViewModelsModule().watchlistsViewModel
     let discoverViewModel = ViewModelsModule().discoverViewModel
     let settingsViewModel = ViewModelsModule().settingsViewModel
     let addTrackedViewModel = ViewModelsModule().addTrackedViewModel
 
+    // Watchlist details view models
+    let watchlistDetailsViewModel = ViewModelsModule().watchlistDetailsViewModel
 
     @State private var accountSelection: String? = nil
     @State private var showAccount: Bool = false
@@ -73,16 +76,10 @@ struct ContentView: View {
                     Label("Watching", systemImage: "play.tv.fill")
                 }
 
-            // FINISHED TAB
-            finishedTab
+            // LISTS TAB
+            listsTab
                 .tabItem {
-                    Label("Finished", systemImage: "flag.checkered")
-                }
-
-            // WATCHLIST TAB
-            watchlistTab
-                .tabItem {
-                    Label("Watchlist", systemImage: "star.square")
+                    Label("Watchlists", systemImage: "bookmark.fill")
                 }
 
             // DISCOVER TAB
@@ -137,50 +134,34 @@ struct ContentView: View {
         }
     }
 
-    private var finishedTab: some View {
-        NavigationStack(path: $finishedNavState.path) {
+    private var listsTab: some View {
+        NavigationStack(path: $listsNavState.path) {
             VStack {
-                FinishedScreen(
-                    finishedViewModel: finishedViewModel,
-                    nav: createFinishedNavHandler()
+                WatchlistsScreen(
+                    watchlistsViewModel: watchlistsViewModel,
+                    nav: createListsNavHandler()
                 )
-                .styleToolbar(title: "Finished Watching")
-                .id(finishedNavState.refreshId)
+                .styleToolbar(title: "Watchlists")
+                .toolbar {
+                    ToolbarItemGroup(placement: .primaryAction) {
+                        Button {
+                            listsNavState.path.append(Route.watchlistCreate)
+                        } label: {
+                            Image(systemName: "plus.app")
+                        }
+                    }
+                }
+                .id(listsNavState.refreshId)
                 .onAppear {
-                    finishedNavState.refresh()
+                    listsNavState.refresh()
                 }
             }
             .navigationDestination(for: Route.self) { route in
                 handleRouteNavigation(
                     route: route,
-                    navState: finishedNavState,
-                    detailsViewModel: finishedDetailsVM,
-                    personViewModel: finishedPersonVM
-                )
-            }
-            .navigationViewStyle(StackNavigationViewStyle())
-        }
-    }
-
-    private var watchlistTab: some View {
-        NavigationStack(path: $watchlistNavState.path) {
-            VStack {
-                WatchlistScreen(
-                    watchlistViewModel: watchlistedViewModel,
-                    nav: createWatchlistNavHandler()
-                )
-                .styleToolbar(title: "Watchlist")
-                .id(watchlistNavState.refreshId)
-                .onAppear {
-                    watchlistNavState.refresh()
-                }
-            }
-            .navigationDestination(for: Route.self) { route in
-                handleRouteNavigation(
-                    route: route,
-                    navState: watchlistNavState,
-                    detailsViewModel: watchlistDetailsVM,
-                    personViewModel: watchlistPersonVM
+                    navState: listsNavState,
+                    detailsViewModel: listsDetailsVM,
+                    personViewModel: listsPersonVM
                 )
             }
             .navigationViewStyle(StackNavigationViewStyle())
@@ -220,31 +201,21 @@ struct ContentView: View {
             case _ as WatchingScreenNavAction.GoAddShow:
                 watchingNavState.path.append(Route.search(origin: AddTrackedScreenOriginScreen.watching))
             case let action as WatchingScreenNavAction.GoShowDetails:
-                watchingNavState.path.append(Route.details(content: DetailsViewModel.LoadContent(tmdbId: action.tmdbShowId, isTvShow: true)))
+                watchingNavState.path.append(Route.details(content: ContentDetailsViewModel.LoadContent(tmdbId: action.tmdbShowId, isTvShow: true)))
             default: break
             }
         }
     }
 
-    private func createFinishedNavHandler() -> (FinishedScreenNavAction) -> Void {
+    private func createListsNavHandler() -> (WatchlistsScreenNavAction) -> Void {
         return { action in
             switch action {
-            case _ as FinishedScreenNavAction.GoAddShow:
-                finishedNavState.path.append(Route.search(origin: AddTrackedScreenOriginScreen.finished))
-            case let action as FinishedScreenNavAction.GoShowDetails:
-                finishedNavState.path.append(Route.details(content: DetailsViewModel.LoadContent(tmdbId: action.tmdbShowId, isTvShow: action.isTvShow)))
-            default: break
-            }
-        }
-    }
-
-    private func createWatchlistNavHandler() -> (WatchlistScreenNavAction) -> Void {
-        return { action in
-            switch action {
-            case _ as WatchlistScreenNavAction.GoAddShow:
-                watchlistNavState.path.append(Route.search(origin: AddTrackedScreenOriginScreen.watchlist))
-            case let action as WatchlistScreenNavAction.GoShowDetails:
-                watchlistNavState.path.append(Route.details(content: DetailsViewModel.LoadContent(tmdbId: action.tmdbShowId, isTvShow: action.isTvShow)))
+            case _ as WatchlistsScreenNavAction.GoAddShow:
+                listsNavState.path.append(Route.search(origin: AddTrackedScreenOriginScreen.watchlist))
+            case let action as WatchlistsScreenNavAction.GoWatchlistDetails:
+                listsNavState.path.append(Route.watchlistDetails(id: action.watchlistId, name: action.watchlistName))
+            case _ as WatchlistsScreenNavAction.HideBottomSheet:
+                listsNavState.path.removeLast()
             default: break
             }
         }
@@ -260,7 +231,7 @@ struct ContentView: View {
             case _ as DiscoverScreenNavActions.GoRecommendations:
                 discoverNavState.path.append(Route.recommended)
             case let action as DiscoverScreenNavActions.GoShowDetails:
-                discoverNavState.path.append(Route.details(content: DetailsViewModel.LoadContent(tmdbId: action.tmdbShowId, isTvShow: action.isTvShow)))
+                discoverNavState.path.append(Route.details(content: ContentDetailsViewModel.LoadContent(tmdbId: action.tmdbShowId, isTvShow: action.isTvShow)))
             case _ as DiscoverScreenNavActions.GoTrending:
                 discoverNavState.path.append(Route.trending)
             default: break
@@ -273,7 +244,7 @@ struct ContentView: View {
     private func handleRouteNavigation(
         route: Route,
         navState: TabNavigationState,
-        detailsViewModel: DetailsViewModel,
+        detailsViewModel: ContentDetailsViewModel,
         personViewModel: PersonViewModel
     ) -> some View {
         // Create navigation handlers for the route
@@ -293,13 +264,31 @@ struct ContentView: View {
                 nav: addTrackedNav
             ).eraseToAnyView()
 
+        case .watchlistDetails(let id, let name):
+            contentView = WatchlistDetailsView(
+                id: id,
+                name: name,
+                watchlistDetailsViewModel: watchlistDetailsViewModel,
+                navState: navState,
+                navHandler: createWatchlistDetailsNavHandler(navState: navState)
+            ).eraseToAnyView()
+        case .watchlistCreate:
+            contentView = CreateListSheet(watchlistsViewModel: watchlistsViewModel, nav: createListsNavHandler()).eraseToAnyView()
+        case .watchlistDetailsMenu:
+            contentView = WatchlistDetailsMenuSheet(watchlistDetailsViewModel: watchlistDetailsViewModel, nav: createWatchlistDetailsNavHandler(navState: navState)).eraseToAnyView()
+        case .watchlistDetailsRename:
+            contentView = RenameListSheet(watchlistDetailsViewModel: watchlistDetailsViewModel, nav: createWatchlistDetailsNavHandler(navState: navState)).eraseToAnyView()
+        case .watchlistContentAdd:
+            contentView = AddToListSheet(detailsViewModel: detailsViewModel, nav: createDetailsNavHandler(navState: discoverNavState)).eraseToAnyView()
         case .details(let content):
-            contentView = ShowDetailsScreen(
-                detailsViewModel: detailsViewModel,
-                content: content,
-                nav: detailsNav
-            )
-            .id(UUID()) // Always refresh details view
+            contentView = ZStack {
+                ShowDetailsScreen(
+                    detailsViewModel: detailsViewModel,
+                    content: content,
+                    nav: detailsNav
+                )
+                .id(UUID()) // Always refresh details view
+            }
             .eraseToAnyView()
 
         case .episodes:
@@ -369,7 +358,7 @@ struct ContentView: View {
         return { action in
             switch action {
             case let action as AddTrackedScreenNavAction.GoContentDetails:
-                navState.path.append(Route.details(content: DetailsViewModel.LoadContent(
+                navState.path.append(Route.details(content: ContentDetailsViewModel.LoadContent(
                     tmdbId: action.showTmdbId,
                     isTvShow: action.isTvShow
                 )))
@@ -398,12 +387,16 @@ struct ContentView: View {
             case let action as DetailsScreenNavAction.GoCastAndCrewDetails:
                 navState.path.append(Route.person(personId: action.personTmdbId))
             case let action as DetailsScreenNavAction.GoContentDetails:
-                navState.path.append(Route.details(content: DetailsViewModel.LoadContent(
+                navState.path.append(Route.details(content: ContentDetailsViewModel.LoadContent(
                     tmdbId: action.tmdbId,
                     isTvShow: action.isTvShow
                 )))
             case let action as DetailsScreenNavAction.GoWebsite:
                 openURL(URL(string: action.url)!)
+            case _ as DetailsScreenNavAction.GoManageWatchlists:
+                navState.path.append(Route.watchlistContentAdd)
+            case _ as DetailsScreenNavAction.HideManageWatchlists:
+                navState.path.removeLast()
             default: break
             }
         }
@@ -413,7 +406,7 @@ struct ContentView: View {
         return { action in
             switch action {
             case let action as PersonScreenNavAction.GoShowDetails:
-                navState.path.append(Route.details(content: DetailsViewModel.LoadContent(
+                navState.path.append(Route.details(content: ContentDetailsViewModel.LoadContent(
                     tmdbId: action.tmdbShowId,
                     isTvShow: action.isTvShow
                 )))
@@ -434,10 +427,32 @@ struct ContentView: View {
         return { action in
             switch action {
             case let action as RecommendedScreenNavActions.GoShowDetails:
-                navState.path.append(Route.details(content: DetailsViewModel.LoadContent(
+                navState.path.append(Route.details(content: ContentDetailsViewModel.LoadContent(
                     tmdbId: action.tmdbShowId,
                     isTvShow: action.isTvShow
                 )))
+            default: break
+            }
+        }
+    }
+
+    private func createWatchlistDetailsNavHandler(navState: TabNavigationState) -> (WatchlistDetailsScreenNavAction) -> Void {
+        return { action in
+            switch action {
+            case let action as WatchlistDetailsScreenNavAction.GoShowDetails:
+                navState.path.append(Route.details(content: ContentDetailsViewModel.LoadContent(
+                    tmdbId: action.tmdbShowId,
+                    isTvShow: action.isTvShow
+                )))
+            case _ as WatchlistDetailsScreenNavAction.GoAddShow:
+                navState.path.append(Route.search(origin: AddTrackedScreenOriginScreen.watchlist))
+            case _ as WatchlistDetailsScreenNavAction.ShowRenameDialog:
+                navState.path.append(Route.watchlistDetailsRename)
+            case _ as WatchlistDetailsScreenNavAction.HideBottomSheet:
+                navState.path.removeLast()
+            case _ as WatchlistDetailsScreenNavAction.OnDelete:
+                navState.path.removeLast() // pop menu screen
+                navState.path.removeLast() // pop watchlist details screen
             default: break
             }
         }
@@ -593,9 +608,9 @@ struct SearchScreen: View {
 // MARK: - Helpers
 
 struct ShareItemProvider: Transferable {
-    let vm: DetailsViewModel
+    let vm: ContentDetailsViewModel
 
-    init(vm: DetailsViewModel) {
+    init(vm: ContentDetailsViewModel) {
         self.vm = vm
     }
 
@@ -664,5 +679,82 @@ extension UINavigationController: UIGestureRecognizerDelegate {
 
     public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         return viewControllers.count > 1
+    }
+
+    open override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        navigationBar.topItem?.backButtonDisplayMode = .minimal
+    }
+}
+
+struct WatchlistDetailsView: View {
+    let id: Int32
+    let name: String
+    let watchlistDetailsViewModel: WatchlistDetailsViewModel
+    let navState: TabNavigationState
+    let navHandler: (WatchlistDetailsScreenNavAction) -> Void
+
+    @State private var currentTitle: String
+
+    init(id: Int32, name: String, watchlistDetailsViewModel: WatchlistDetailsViewModel, navState: TabNavigationState, navHandler: @escaping (WatchlistDetailsScreenNavAction) -> Void) {
+        self.id = id
+        self.name = name
+        self.watchlistDetailsViewModel = watchlistDetailsViewModel
+        self.navState = navState
+        self.navHandler = navHandler
+        self._currentTitle = State(initialValue: name)
+    }
+
+   class FlowCollector: Kotlinx_coroutines_coreFlowCollector {
+        let callback: (WatchlistDetailsViewModel.LoadContent?) -> Void
+
+        init(callback: @escaping (WatchlistDetailsViewModel.LoadContent?) -> Void) {
+            self.callback = callback
+        }
+
+        func emit(value: Any?) async throws {
+            print("NEW TITLE: \(String(describing: value))")
+            if let content = value as? WatchlistDetailsViewModel.LoadContent {
+                callback(content)
+            }
+        }
+    }
+
+    var body: some View {
+        ZStack {
+            WatchlistDetailsScreen(
+                watchlistDetailsViewModel: watchlistDetailsViewModel,
+                content: WatchlistDetailsViewModel.LoadContent(watchlistId: id, watchlistName: currentTitle),
+                nav: navHandler
+            )
+            .styleToolbar(title: currentTitle)
+            .id(UUID()) // Always refresh details view
+            .toolbar {
+                ToolbarItemGroup(placement: .primaryAction) {
+                    Button {
+                        navState.path.append(Route.watchlistDetailsMenu)
+                    } label: {
+                        Image(systemName: "square.and.pencil")
+                    }
+                }
+            }
+        }
+        .task {
+            let collector = FlowCollector { content in
+                  // Update on main thread since this affects UI
+                  DispatchQueue.main.async {
+                      if let content = content {
+                          currentTitle = content.watchlistName
+                      }
+                  }
+             }
+             Task {
+                 do {
+                     try await watchlistDetailsViewModel.loadContent.collect(collector: collector)
+                 } catch {
+                     print("Error collecting flow: \(error)")
+                 }
+             }
+        }
     }
 }

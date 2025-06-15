@@ -34,7 +34,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.rememberTextMeasurer
@@ -55,8 +54,6 @@ import com.free.tvtracker.ui.common.theme.ScreenContentAnimation
 import com.free.tvtracker.ui.common.theme.TvTrackerTheme
 import com.free.tvtracker.ui.common.theme.TvTrackerTheme.sidePadding
 import com.free.tvtracker.ui.watching.FabContainer
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.stateIn
 
 sealed class WatchlistDetailsScreenNavAction {
     data class GoShowDetails(val tmdbShowId: Int, val isTvShow: Boolean) : WatchlistDetailsScreenNavAction()
@@ -73,13 +70,8 @@ fun WatchlistDetailsScreen(
     navigate: (WatchlistDetailsScreenNavAction) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val scope = rememberCoroutineScope()
-    val shows = viewModel.loadContentFlow2
-        .stateIn(
-            scope = scope,
-            started = SharingStarted.WhileSubscribed(5000), WatchlistDetailsUiState.Loading
-        )
-        .collectAsState()
+    val shows = viewModel.data
+        .collectAsState(WatchlistDetailsUiState.Loading)
         .value
     Logger().d("WatchlistDetailsScreen,content:$content, shows: $shows", "WatchlistDetailsScreen")
     TvTrackerTheme {

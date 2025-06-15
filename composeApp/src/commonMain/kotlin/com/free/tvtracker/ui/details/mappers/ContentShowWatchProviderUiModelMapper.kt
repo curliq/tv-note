@@ -5,7 +5,7 @@ import com.free.tvtracker.details.response.TmdbShowDetailsApiModel
 import com.free.tvtracker.ui.details.DetailsUiModel.WatchProvider
 import com.free.tvtracker.ui.common.TmdbConfigData
 
-class ShowWatchProviderUiModelMapper : Mapper<TmdbShowDetailsApiModel.WatchProvider, WatchProvider> {
+class ContentShowWatchProviderUiModelMapper : Mapper<TmdbShowDetailsApiModel.WatchProvider, WatchProvider> {
     override fun map(from: TmdbShowDetailsApiModel.WatchProvider): WatchProvider {
         return WatchProvider(
             logo = TmdbConfigData.get().getLogoUrl(from.logoPath ?: ""),

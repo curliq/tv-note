@@ -66,8 +66,8 @@ fun WatchlistDetailsRenameSheetContent(
         Spacer(Modifier.height(24.dp))
         Button(
             onClick = {
-                navAction(WatchlistDetailsScreenNavAction.HideBottomSheet)
                 action(WatchlistDetailsViewModel.WatchlistDetailsAction.Rename(watchlistId, text))
+                navAction(WatchlistDetailsScreenNavAction.HideBottomSheet)
             },
             shape = TvTrackerTheme.ShapeButton,
             modifier = Modifier.fillMaxWidth(0.5f).padding(horizontal = sidePadding).align(Alignment.End)

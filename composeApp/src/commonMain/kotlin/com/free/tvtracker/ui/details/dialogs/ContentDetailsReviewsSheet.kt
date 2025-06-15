@@ -28,11 +28,11 @@ import com.free.tvtracker.ui.common.theme.TvTrackerTheme
 import com.free.tvtracker.ui.common.theme.TvTrackerTheme.sidePadding
 import com.free.tvtracker.ui.details.DetailsUiModel
 import com.free.tvtracker.ui.details.DetailsUiState
-import com.free.tvtracker.ui.details.DetailsViewModel
+import com.free.tvtracker.ui.details.ContentDetailsViewModel
 
 @Composable
 fun DetailsReviewsSheet(
-    viewModel: DetailsViewModel,
+    viewModel: ContentDetailsViewModel,
     bottomPadding: Float = 0f
 ) {
     val show = viewModel.result.collectAsState().value as? DetailsUiState.Ok

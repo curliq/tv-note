@@ -14,13 +14,13 @@ import kotlinx.datetime.format.MonthNames
 import kotlinx.datetime.format.Padding
 import kotlinx.datetime.format.char
 
-class DetailsUiModelForMovieMapper(
-    private val castMapper: ShowCastUiModelMapper,
-    private val crewMapper: ShowCrewUiModelMapper,
-    private val showWatchProviderUiModelMapper: ShowWatchProviderUiModelMapper,
-    private val showVideoUiModelMapper: ShowVideoUiModelMapper,
+class ContentDetailsUiModelForMovieMapper(
+    private val castMapper: ContentShowCastUiModelMapper,
+    private val crewMapper: ContentShowCrewUiModelMapper,
+    private val showWatchProviderUiModelMapper: ContentShowWatchProviderUiModelMapper,
+    private val showVideoUiModelMapper: ContentShowVideoUiModelMapper,
     private val locationService: CachingLocationService,
-    private val ratingsUiModelMapper: DetailsRatingsUiModelMapper,
+    private val ratingsUiModelMapper: ContentDetailsRatingsUiModelMapper,
     private val stringUtils: CommonStringUtils = CommonStringUtils(),
 ) : MapperWithOptions<TmdbMovieDetailsApiModel, DetailsUiModel, TrackedContentApiModel?> {
     override fun map(from: TmdbMovieDetailsApiModel, options: TrackedContentApiModel?): DetailsUiModel {
@@ -108,7 +108,7 @@ class DetailsUiModelForMovieMapper(
             budget = formatMoney(from.budget) ?: "(not available)",
             revenue = formatMoney(from.revenue) ?: "(not available)",
             website = from.homepage,
-            watchlists = emptyList()
+            watchlists = options?.watchlists?.map { DetailsUiModel.Watchlist(it.id, it.name) } ?: emptyList(),
         )
     }
 
@@ -120,6 +120,7 @@ class DetailsUiModelForMovieMapper(
     }
 
     private fun getTrackingStatus(trackedShow: TrackedContentApiModel?): DetailsUiModel.TrackingStatus {
+        // not tracked
         if (trackedShow == null) {
             return DetailsUiModel.TrackingStatus(
                 action1 = DetailsUiModel.TrackingStatus.Action.TrackWatchlist,
@@ -129,13 +130,13 @@ class DetailsUiModelForMovieMapper(
             return if (trackedShow.watchlisted) {
                 DetailsUiModel.TrackingStatus(
                     action1 = DetailsUiModel.TrackingStatus.Action.MoveMovieToFinished,
-                    action2 = DetailsUiModel.TrackingStatus.Action.RemoveFromWatchlist,
+                    action2 = DetailsUiModel.TrackingStatus.Action.ManageWatchlists,
                 )
             } else {
                 // watched
                 DetailsUiModel.TrackingStatus(
                     action1 = null,
-                    action2 = DetailsUiModel.TrackingStatus.Action.RemoveMovieFromWatched
+                    action2 = DetailsUiModel.TrackingStatus.Action.ManageWatchlists
                 )
             }
         }

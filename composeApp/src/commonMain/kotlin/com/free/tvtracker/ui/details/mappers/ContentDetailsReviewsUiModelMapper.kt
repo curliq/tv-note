@@ -4,7 +4,7 @@ import com.free.tvtracker.base.Mapper
 import com.free.tvtracker.data.reviews.RapidImdbReviewsResponse
 import com.free.tvtracker.ui.details.DetailsUiModel
 
-class DetailsReviewsUiModelMapper() : Mapper<RapidImdbReviewsResponse?, DetailsUiModel.Reviews?> {
+class ContentDetailsReviewsUiModelMapper() : Mapper<RapidImdbReviewsResponse?, DetailsUiModel.Reviews?> {
     override fun map(from: RapidImdbReviewsResponse?): DetailsUiModel.Reviews? {
         return DetailsUiModel.Reviews(
             reviews = from?.data?.title?.reviews?.edges?.filter { it.node?.id != null }?.map { review ->

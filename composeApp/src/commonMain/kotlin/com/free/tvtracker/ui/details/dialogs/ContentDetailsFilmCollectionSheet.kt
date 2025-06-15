@@ -25,11 +25,11 @@ import com.free.tvtracker.ui.common.theme.TvTrackerTheme
 import com.free.tvtracker.ui.details.DetailsScreenNavAction
 import com.free.tvtracker.ui.details.DetailsUiModel
 import com.free.tvtracker.ui.details.DetailsUiState
-import com.free.tvtracker.ui.details.DetailsViewModel
+import com.free.tvtracker.ui.details.ContentDetailsViewModel
 
 @Composable
 fun DetailsFilmCollectionSheet(
-    viewModel: DetailsViewModel,
+    viewModel: ContentDetailsViewModel,
     navAction: (DetailsScreenNavAction) -> Unit,
     bottomPadding: Float = 0f
 ) {

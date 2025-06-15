@@ -2,7 +2,7 @@ package com.free.tvtracker.ui.details
 
 import com.free.tvtracker.details.response.TmdbShowDetailsApiModel
 import com.free.tvtracker.tracked.response.TrackedContentApiModel
-import com.free.tvtracker.ui.details.mappers.ShowEpisodeUiModelMapper
+import com.free.tvtracker.ui.details.mappers.ContentShowEpisodeUiModelMapper
 import com.free.tvtracker.ui.details.mappers.ShowSeasonUiModelMapper
 import org.junit.Assert.assertEquals
 import kotlin.test.Test
@@ -24,7 +24,7 @@ class ShowSeasonUiModelMapperTest {
             movie = null,
             watchlists = emptyList(),
         )
-        val sut = ShowSeasonUiModelMapper(ShowEpisodeUiModelMapper())
+        val sut = ShowSeasonUiModelMapper(ContentShowEpisodeUiModelMapper())
         val data = TmdbShowDetailsApiModel.Season(
             0, 0, "2000-01-01", null, "", null, null, 0.0,
             episodes = listOf(
@@ -53,7 +53,7 @@ class ShowSeasonUiModelMapperTest {
             movie = null,
             watchlists = emptyList(),
         )
-        val sut = ShowSeasonUiModelMapper(ShowEpisodeUiModelMapper())
+        val sut = ShowSeasonUiModelMapper(ContentShowEpisodeUiModelMapper())
         val data = TmdbShowDetailsApiModel.Season(
             0, 0, "2000-01-01", null, "", null, null, 0.0,
             episodes = listOf(

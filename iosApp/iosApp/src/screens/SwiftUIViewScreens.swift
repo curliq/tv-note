@@ -11,70 +11,70 @@ import UIKit
 import ComposeApp
 
 struct WatchingScreen: UIViewControllerRepresentable {
-    
+
     let navigate: (WatchingScreenNavAction) -> Void
     let watchingViewModel: WatchingViewModel
-    
+
     init(navigate: @escaping (WatchingScreenNavAction) -> Void,  watchingViewModel: WatchingViewModel) {
         self.navigate = navigate
         self.watchingViewModel = watchingViewModel
     }
-    
+
     func makeUIViewController(context: Context) -> UIViewController {
         ViewControllersKt.WatchingScreenViewController(
             navigate: navigate,
             viewModel: watchingViewModel
         )
     }
-    
+
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
 }
 
 struct ShowDetailsScreen: UIViewControllerRepresentable {
-    
-    let detailsViewModel: DetailsViewModel
-    let content: DetailsViewModel.LoadContent
+
+    let detailsViewModel: ContentDetailsViewModel
+    let content: ContentDetailsViewModel.LoadContent
     let nav: (DetailsScreenNavAction) -> Void
-    
-    init(detailsViewModel: DetailsViewModel, content: DetailsViewModel.LoadContent, nav: @escaping (DetailsScreenNavAction) -> Void) {
+
+    init(detailsViewModel: ContentDetailsViewModel, content: ContentDetailsViewModel.LoadContent, nav: @escaping (DetailsScreenNavAction) -> Void) {
         self.detailsViewModel = detailsViewModel
         self.content = content
         self.nav = nav
     }
-    
+
     func makeUIViewController(context: Context) -> UIViewController {
         ViewControllersKt.ShowDetailsScreenViewController(
-            detailsViewModel: detailsViewModel,
+            contentDetailsViewModel: detailsViewModel,
             content: content,
             navigate: nav
         )
     }
-    
+
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
 }
 
 struct DetailsEpisodesSheet: UIViewControllerRepresentable {
-    
-    let detailsViewModel: DetailsViewModel
-    
-    init(detailsViewModel: DetailsViewModel) {
+
+    let detailsViewModel: ContentDetailsViewModel
+
+    init(detailsViewModel: ContentDetailsViewModel) {
         self.detailsViewModel = detailsViewModel
     }
-    
+
     func makeUIViewController(context: Context) -> UIViewController {
         ViewControllersKt.DetailsEpisodesViewController(
             viewModel: detailsViewModel
         )
     }
-    
+
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
 }
 
 struct DetailsReviewsSheet: UIViewControllerRepresentable {
 
-    let detailsViewModel: DetailsViewModel
+    let detailsViewModel: ContentDetailsViewModel
 
-    init(detailsViewModel: DetailsViewModel) {
+    init(detailsViewModel: ContentDetailsViewModel) {
         self.detailsViewModel = detailsViewModel
     }
 
@@ -88,42 +88,42 @@ struct DetailsReviewsSheet: UIViewControllerRepresentable {
 }
 
 struct DetailsMediaSheet: UIViewControllerRepresentable {
-    
-    let detailsViewModel: DetailsViewModel
+
+    let detailsViewModel: ContentDetailsViewModel
     let nav: (DetailsScreenNavAction) -> Void
-    
-    init(detailsViewModel: DetailsViewModel, nav: @escaping (DetailsScreenNavAction) -> Void) {
+
+    init(detailsViewModel: ContentDetailsViewModel, nav: @escaping (DetailsScreenNavAction) -> Void) {
         self.detailsViewModel = detailsViewModel
         self.nav = nav
     }
-    
+
     func makeUIViewController(context: Context) -> UIViewController {
         ViewControllersKt.DetailsMediaViewController(
             viewModel: detailsViewModel,
             navigate: nav
         )
     }
-    
+
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
 }
 
 struct DetailsCastCrewSheet: UIViewControllerRepresentable {
-    
-    let detailsViewModel: DetailsViewModel
+
+    let detailsViewModel: ContentDetailsViewModel
     let nav: (DetailsScreenNavAction) -> Void
-    
-    init(detailsViewModel: DetailsViewModel, nav: @escaping (DetailsScreenNavAction) -> Void) {
+
+    init(detailsViewModel: ContentDetailsViewModel, nav: @escaping (DetailsScreenNavAction) -> Void) {
         self.detailsViewModel = detailsViewModel
         self.nav = nav
     }
-    
+
     func makeUIViewController(context: Context) -> UIViewController {
         ViewControllersKt.DetailsCastCrewViewController(
             viewModel: detailsViewModel,
             navigate: nav
         )
     }
-    
+
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
 }
 
@@ -208,37 +208,37 @@ struct PersonPhotosDetails: UIViewControllerRepresentable {
 }
 
 struct DetailsFilmCollectionSheet: UIViewControllerRepresentable {
-    
-    let detailsViewModel: DetailsViewModel
+
+    let detailsViewModel: ContentDetailsViewModel
     let nav: (DetailsScreenNavAction) -> Void
-    
-    init(detailsViewModel: DetailsViewModel, nav: @escaping (DetailsScreenNavAction) -> Void) {
+
+    init(detailsViewModel: ContentDetailsViewModel, nav: @escaping (DetailsScreenNavAction) -> Void) {
         self.detailsViewModel = detailsViewModel
         self.nav = nav
     }
-    
+
     func makeUIViewController(context: Context) -> UIViewController {
         ViewControllersKt.DetailsFilmCollectionViewController(
             viewModel: detailsViewModel,
             navigate: nav
         )
     }
-    
+
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
 }
 
 struct AddTrackedScreen: UIViewControllerRepresentable {
-    
+
     let addTrackedViewModel: AddTrackedViewModel
     let origin: AddTrackedScreenOriginScreen
     let nav: (AddTrackedScreenNavAction) -> Void
-    
+
     init(addTrackedViewModel: AddTrackedViewModel, origin: AddTrackedScreenOriginScreen, nav: @escaping (AddTrackedScreenNavAction) -> Void) {
         self.addTrackedViewModel = addTrackedViewModel
         self.origin = origin
         self.nav = nav
     }
-    
+
     func makeUIViewController(context: Context) -> UIViewController {
         ViewControllersKt.AddTrackedScreenViewController(
             addTrackedViewModel: addTrackedViewModel,
@@ -246,68 +246,146 @@ struct AddTrackedScreen: UIViewControllerRepresentable {
             originScreen: origin
         )
     }
-    
+
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
 }
 
+struct WatchlistsScreen: UIViewControllerRepresentable {
 
-struct FinishedScreen: UIViewControllerRepresentable {
-    
-    let finishedViewModel: FinishedShowsViewModel
-    let nav: (FinishedScreenNavAction) -> Void
+    let watchlistsViewModel: WatchlistsViewModel
+    let nav: (WatchlistsScreenNavAction) -> Void
 
-    init(finishedViewModel: FinishedShowsViewModel, nav: @escaping (FinishedScreenNavAction) -> Void) {
-        self.finishedViewModel = finishedViewModel
+    init(watchlistsViewModel: WatchlistsViewModel, nav: @escaping (WatchlistsScreenNavAction) -> Void) {
+        self.watchlistsViewModel = watchlistsViewModel
         self.nav = nav
     }
-    
+
     func makeUIViewController(context: Context) -> UIViewController {
-        ViewControllersKt.FinishedScreenViewController(
+        ViewControllersKt.WatchlistsScreenViewController(
             navigate: nav,
-            viewModel: finishedViewModel
+            viewModel: watchlistsViewModel
         )
     }
-    
+
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
 }
 
-struct WatchlistScreen: UIViewControllerRepresentable {
-    
-    let watchlistViewModel: WatchlistedShowsViewModel
-    let nav: (WatchlistScreenNavAction) -> Void
+struct WatchlistDetailsScreen: UIViewControllerRepresentable {
 
-    init(watchlistViewModel: WatchlistedShowsViewModel, nav: @escaping (WatchlistScreenNavAction) -> Void) {
-        self.watchlistViewModel = watchlistViewModel
+    let watchlistDetailsViewModel: WatchlistDetailsViewModel
+    let content: WatchlistDetailsViewModel.LoadContent
+    let nav: (WatchlistDetailsScreenNavAction) -> Void
+    
+    init(watchlistDetailsViewModel: WatchlistDetailsViewModel, content: WatchlistDetailsViewModel.LoadContent, nav: @escaping (WatchlistDetailsScreenNavAction) -> Void) {
+        self.watchlistDetailsViewModel = watchlistDetailsViewModel
+        self.content = content
         self.nav = nav
     }
-    
+
     func makeUIViewController(context: Context) -> UIViewController {
-        ViewControllersKt.WatchlistScreenViewController(
-            navigate: nav,
-            viewModel: watchlistViewModel
+        ViewControllersKt.WatchlistDetailsScreenViewController(
+            watchlistDetailsViewModel: watchlistDetailsViewModel,
+            content: content,
+            navigate: nav
         )
     }
-    
+
+    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
+}
+
+struct CreateListSheet: UIViewControllerRepresentable {
+    let watchlistsViewModel: WatchlistsViewModel
+    let nav: (WatchlistsScreenNavAction) -> Void
+
+    init(watchlistsViewModel: WatchlistsViewModel, nav: @escaping (WatchlistsScreenNavAction) -> Void) {
+        self.watchlistsViewModel = watchlistsViewModel
+        self.nav = nav
+    }
+
+    func makeUIViewController(context: Context) -> UIViewController {
+        return ViewControllersKt.WatchlistAddSheetViewController(
+            viewModel: watchlistsViewModel,
+            navigate: nav
+        )
+    }
+
+    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
+}
+
+struct RenameListSheet: UIViewControllerRepresentable {
+    let watchlistDetailsViewModel: WatchlistDetailsViewModel
+    let nav: (WatchlistDetailsScreenNavAction) -> Void
+
+    init(watchlistDetailsViewModel: WatchlistDetailsViewModel, nav: @escaping (WatchlistDetailsScreenNavAction) -> Void) {
+        self.watchlistDetailsViewModel = watchlistDetailsViewModel
+        self.nav = nav
+    }
+
+    func makeUIViewController(context: Context) -> UIViewController {
+        return ViewControllersKt.WatchlistDetailsRenameSheetViewController(
+            viewModel: watchlistDetailsViewModel,
+            navigate: nav
+        )
+    }
+
+    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
+}
+
+struct WatchlistDetailsMenuSheet: UIViewControllerRepresentable {
+    let watchlistDetailsViewModel: WatchlistDetailsViewModel
+    let nav: (WatchlistDetailsScreenNavAction) -> Void
+
+    init(watchlistDetailsViewModel: WatchlistDetailsViewModel, nav: @escaping (WatchlistDetailsScreenNavAction) -> Void) {
+        self.watchlistDetailsViewModel = watchlistDetailsViewModel
+        self.nav = nav
+    }
+
+    func makeUIViewController(context: Context) -> UIViewController {
+        return ViewControllersKt.WatchlistDetailsMenuSheetViewController(
+            viewModel: watchlistDetailsViewModel,
+            navigate: nav
+        )
+    }
+
+    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
+}
+
+struct AddToListSheet: UIViewControllerRepresentable {
+    let detailsViewModel: ContentDetailsViewModel
+    let nav: (DetailsScreenNavAction) -> Void
+
+    init(detailsViewModel: ContentDetailsViewModel, nav: @escaping (DetailsScreenNavAction) -> Void) {
+        self.detailsViewModel = detailsViewModel
+        self.nav = nav
+    }
+
+    func makeUIViewController(context: Context) -> UIViewController {
+        return ViewControllersKt.DetailsManageWatchlistsViewController(
+            viewModel: detailsViewModel,
+            navigate: nav
+        )
+    }
+
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
 }
 
 struct DiscoverScreen: UIViewControllerRepresentable {
-    
+
     let discoverViewModel: DiscoverViewModel
     let nav: (DiscoverScreenNavActions) -> Void
-    
+
     init(discoverViewModel: DiscoverViewModel, nav: @escaping (DiscoverScreenNavActions) -> Void) {
         self.discoverViewModel = discoverViewModel
         self.nav = nav
     }
-    
+
     func makeUIViewController(context: Context) -> UIViewController {
         return ViewControllersKt.DiscoverScreenViewController(
             navigate: nav,
             viewModel: discoverViewModel
         )
     }
-    
+
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
 }
 
@@ -372,27 +450,27 @@ struct NewReleasesScreen: UIViewControllerRepresentable {
 }
 
 struct SettingsScreen: UIViewControllerRepresentable {
-    
+
     let vm: SettingsViewModel
     let nav: (SettingsScreenNavAction) -> Void
-    
+
     init(vm: SettingsViewModel, nav: @escaping (SettingsScreenNavAction) -> Void) {
         self.vm = vm
         self.nav = nav
     }
-    
+
     func makeUIViewController(context: Context) -> UIViewController {
         ViewControllersKt.SettingsScreenViewController(
             navigate: nav,
             viewModel: vm
         )
     }
-    
+
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
 }
 
 struct WelcomeScreen: UIViewControllerRepresentable {
-    
+
     let vm: WelcomeViewModel
     let navHome: () -> Void
     let openUrl: (String) -> Void
@@ -402,7 +480,7 @@ struct WelcomeScreen: UIViewControllerRepresentable {
         self.navHome = nav
         self.openUrl = openUrl
     }
-    
+
     func makeUIViewController(context: Context) -> UIViewController {
         ViewControllersKt.WelcomeScreenViewController(
             navigateHome: navHome,
@@ -410,55 +488,55 @@ struct WelcomeScreen: UIViewControllerRepresentable {
             viewModel: vm
         )
     }
-    
+
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
 }
 
 struct LoginScreen: UIViewControllerRepresentable {
-    
+
     let vm: LoginViewModel
     let nav: (LoginScreenNavAction) -> Void
-    
+
     init(vm: LoginViewModel, nav: @escaping (LoginScreenNavAction) -> Void) {
         self.vm = vm
         self.nav = nav
     }
-    
+
     func makeUIViewController(context: Context) -> UIViewController {
         ViewControllersKt.LoginScreenViewController(
             nav: nav,
             viewModel: vm
         )
     }
-    
+
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
 }
 
 struct SignupScreen: UIViewControllerRepresentable {
-    
+
     let vm: SignupViewModel
     let nav: (SignupScreenAction) -> Void
-    
+
     init(vm: SignupViewModel, nav: @escaping (SignupScreenAction) -> Void) {
         self.vm = vm
         self.nav = nav
     }
-    
+
     func makeUIViewController(context: Context) -> UIViewController {
         ViewControllersKt.SignupScreenViewController(
             nav: nav,
             viewModel: vm
         )
     }
-    
+
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
 }
 
 struct SplashErrorScreen: UIViewControllerRepresentable {
-    
+
     func makeUIViewController(context: Context) -> UIViewController {
         ViewControllersKt.SplashErrorScreenViewController()
     }
-    
+
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
 }

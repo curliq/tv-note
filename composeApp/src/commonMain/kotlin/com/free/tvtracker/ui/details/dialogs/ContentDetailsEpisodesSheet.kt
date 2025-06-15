@@ -42,10 +42,10 @@ import com.free.tvtracker.ui.common.theme.TvTrackerTheme
 import com.free.tvtracker.ui.common.theme.TvTrackerTheme.sidePadding
 import com.free.tvtracker.ui.details.DetailsUiModel
 import com.free.tvtracker.ui.details.DetailsUiState
-import com.free.tvtracker.ui.details.DetailsViewModel
+import com.free.tvtracker.ui.details.ContentDetailsViewModel
 
 @Composable
-fun DetailsEpisodesSheet(viewModel: DetailsViewModel, bottomPadding: Float = 0f) {
+fun DetailsEpisodesSheet(viewModel: ContentDetailsViewModel, bottomPadding: Float = 0f) {
     val show = viewModel.result.collectAsState().value as? DetailsUiState.Ok
     if (show == null) return
     TvTrackerTheme {
@@ -59,7 +59,7 @@ fun DetailsEpisodesSheet(viewModel: DetailsViewModel, bottomPadding: Float = 0f)
 @Composable
 fun DetailsEpisodesContent(
     show: DetailsUiModel,
-    action: (DetailsViewModel.DetailsAction) -> Unit,
+    action: (ContentDetailsViewModel.DetailsAction) -> Unit,
     bottomPadding: Float = 0f
 ) {
     LazyColumn(modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainerLow)) {
@@ -68,7 +68,7 @@ fun DetailsEpisodesContent(
                 Button(
                     onClick = {
                         action(
-                            DetailsViewModel.DetailsAction.MarkShowWatched(
+                            ContentDetailsViewModel.DetailsAction.MarkShowWatched(
                                 show.tmdbId,
                                 show.trackedContentId
                             )
@@ -84,7 +84,7 @@ fun DetailsEpisodesContent(
                 OutlinedButton(
                     onClick = {
                         action(
-                            DetailsViewModel.DetailsAction.MarkShowWatched(
+                            ContentDetailsViewModel.DetailsAction.MarkShowWatched(
                                 show.tmdbId,
                                 show.trackedContentId
                             )
@@ -119,7 +119,7 @@ fun DetailsEpisodesContent(
                                     ),
                                     onClick = {
                                         action(
-                                            DetailsViewModel.DetailsAction.MarkSeasonWatched(
+                                            ContentDetailsViewModel.DetailsAction.MarkSeasonWatched(
                                                 season.seasonId,
                                                 show.tmdbId
                                             )

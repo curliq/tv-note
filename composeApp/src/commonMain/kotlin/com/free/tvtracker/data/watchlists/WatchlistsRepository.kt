@@ -14,11 +14,16 @@ import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 
 class WatchlistsRepository(
     private val httpClient: TvHttpClientEndpoints,
     private val logger: Logger,
 ) {
+
+    companion object {
+        val TAG = WatchlistsRepository::class.simpleName!!
+    }
 
     val watchlists = MutableSharedFlow<WatchlistsApiResponse>(
         replay = 1,
@@ -29,7 +34,7 @@ class WatchlistsRepository(
         val res = try {
             httpClient.call(Endpoints.getWatchlists)
         } catch (e: Exception) {
-            logger.e(e, "Error fetching Watchlists")
+            logger.e(e, TAG)
             WatchlistsApiResponse.error(ApiError.Network)
         }
         watchlists.emit(res)
@@ -37,8 +42,18 @@ class WatchlistsRepository(
     }
 
     data class MapContainer(val map: MutableMap<Int, TrackedShowsApiResponse>) {
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other !is MapContainer) return false
 
+            return map == other.map
+        }
+
+        override fun hashCode(): Int {
+            return map.hashCode()
+        }
     }
+
     val watchlistsContent: MutableStateFlow<MapContainer> =
         MutableStateFlow(MapContainer(mutableMapOf()))
 
@@ -48,12 +63,13 @@ class WatchlistsRepository(
         }
         val res = httpClient.call(Endpoints.getWatchlistContent, GetWatchlistContentApiRequestBody(watchlistId))
         val map = watchlistsContent.value.map
-        map.put(watchlistId, res)
         logger.d(
             "fetch watchlist details, ${map.values.map { it.data?.map { it.tvShow?.storedShow?.backdropImage } }}",
-            "WatchlistsRepository"
+            TAG
         )
-        watchlistsContent.emit(MapContainer(map))
+        watchlistsContent.update {
+            it.copy(map = it.map.plus(mapOf(watchlistId to res)).toMutableMap())
+        }
     }
 
     suspend fun renameList(watchlistId: Int, newName: String) {

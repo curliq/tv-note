@@ -28,7 +28,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -49,9 +48,6 @@ import com.free.tvtracker.ui.common.theme.TvTrackerTheme
 import com.free.tvtracker.ui.common.theme.TvTrackerTheme.sidePadding
 import com.free.tvtracker.ui.watching.FabContainer
 import com.free.tvtracker.ui.watching.TrialView
-import com.free.tvtracker.ui.watchlists.details.WatchlistDetailsUiState
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.stateIn
 
 sealed class WatchlistsScreenNavAction {
     data object GoAddShow : WatchlistsScreenNavAction()
@@ -61,14 +57,11 @@ sealed class WatchlistsScreenNavAction {
 
 @Composable
 fun WatchlistsScreen(viewModel: WatchlistsViewModel, navigate: (WatchlistsScreenNavAction) -> Unit) {
-    val scope = rememberCoroutineScope()
-    val state = viewModel.stateAsFlow.stateIn(
-        scope = scope,
-        started = SharingStarted.WhileSubscribed(),
-        initialValue = WatchlistsUiState.Loading
-    ).collectAsState().value
+    Logger().d("collect state", "WatchlistsScreen")
+    val state = viewModel.stateAsFlow.collectAsState(WatchlistsUiState.Loading).value
     val purchaseStatus by viewModel.status.collectAsState(PurchaseStatus(PurchaseStatus.Status.Purchased, "", ""))
     LaunchedEffect(Unit) {
+        Logger().d("fetch", "WatchlistsScreen")
         viewModel.fetch()
     }
     TvTrackerTheme {

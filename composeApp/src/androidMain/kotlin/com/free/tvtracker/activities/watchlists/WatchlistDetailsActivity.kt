@@ -38,12 +38,12 @@ import com.free.tvtracker.activities.showdetails.ShowDetailsActivity
 import com.free.tvtracker.core.ui.BaseActivity
 import com.free.tvtracker.ui.common.theme.TvTrackerTheme
 import com.free.tvtracker.ui.search.AddTrackedScreenOriginScreen
-import com.free.tvtracker.ui.watchlists.details.dialogs.WatchlistDetailsMenuSheet
-import com.free.tvtracker.ui.watchlists.details.dialogs.WatchlistDetailsRenameSheet
 import com.free.tvtracker.ui.watchlists.details.WatchlistDetailsScreen
 import com.free.tvtracker.ui.watchlists.details.WatchlistDetailsScreenNavAction
-import com.free.tvtracker.ui.watchlists.details.WatchlistDetailsUiState
 import com.free.tvtracker.ui.watchlists.details.WatchlistDetailsViewModel
+import com.free.tvtracker.ui.watchlists.details.dialogs.WatchlistDetailsMenuSheet
+import com.free.tvtracker.ui.watchlists.details.dialogs.WatchlistDetailsRenameSheet
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
@@ -69,7 +69,6 @@ class WatchlistDetailsActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val watchlistId = intent.getIntExtra(EXTRA_WATCHLIST_ID, -1)
-        val title = intent.getStringExtra(EXTRA_WATCHLIST_NAME) ?: ""
         setContent {
             val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
             val sheetState = rememberModalBottomSheetState()
@@ -113,6 +112,8 @@ class WatchlistDetailsActivity : BaseActivity() {
             }
             TvTrackerTheme {
                 val viewModel: WatchlistDetailsViewModel = koinViewModel(viewModelStoreOwner = context)
+                val title = viewModel.loadContent.map { it.watchlistName }
+                    .collectAsState(intent.getStringExtra(EXTRA_WATCHLIST_NAME) ?: "").value
                 Scaffold(
                     modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
                     topBar = {
@@ -127,7 +128,11 @@ class WatchlistDetailsActivity : BaseActivity() {
                             colors = TopAppBarDefaults.mediumTopAppBarColors(),
                             navigationIcon = {
                                 IconButton(onClick = { this.finish() }) {
-                                    Icon(Icons.AutoMirrored.Rounded.ArrowBack, "")
+                                    Icon(
+                                        Icons.AutoMirrored.Rounded.ArrowBack,
+                                        "",
+                                        tint = MaterialTheme.colorScheme.primary
+                                    )
                                 }
                             },
                             actions = {
@@ -138,7 +143,8 @@ class WatchlistDetailsActivity : BaseActivity() {
                                 }) {
                                     Icon(
                                         imageVector = Icons.Default.MoreVert,
-                                        contentDescription = "Share"
+                                        contentDescription = "Share",
+                                        tint = MaterialTheme.colorScheme.primary
                                     )
                                 }
                             },

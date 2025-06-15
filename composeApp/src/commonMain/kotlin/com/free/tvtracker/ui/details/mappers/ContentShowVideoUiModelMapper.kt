@@ -5,7 +5,7 @@ import com.free.tvtracker.details.response.TmdbShowDetailsApiModel
 import com.free.tvtracker.constants.TmdbVideoSite
 import com.free.tvtracker.ui.details.DetailsUiModel.Video
 
-class ShowVideoUiModelMapper : Mapper<TmdbShowDetailsApiModel.Video, Video?> {
+class ContentShowVideoUiModelMapper : Mapper<TmdbShowDetailsApiModel.Video, Video?> {
     override fun map(from: TmdbShowDetailsApiModel.Video): Video? {
         return when (TmdbVideoSite.entries.firstOrNull { it.site == from.site }) {
             TmdbVideoSite.YOUTUBE -> {

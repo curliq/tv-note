@@ -1,6 +1,5 @@
 package com.free.tvtracker.ui.details.dialogs
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,12 +33,12 @@ import com.free.tvtracker.ui.common.theme.TvTrackerTheme
 import com.free.tvtracker.ui.details.DetailsScreenNavAction
 import com.free.tvtracker.ui.details.DetailsUiModel
 import com.free.tvtracker.ui.details.DetailsUiState
-import com.free.tvtracker.ui.details.DetailsViewModel
+import com.free.tvtracker.ui.details.ContentDetailsViewModel
 import com.free.tvtracker.ui.details.MediaVideoCard
 
 @Composable
 fun DetailsMediaSheet(
-    viewModel: DetailsViewModel,
+    viewModel: ContentDetailsViewModel,
     navAction: (DetailsScreenNavAction) -> Unit,
     bottomPadding: Float = 0f
 ) {

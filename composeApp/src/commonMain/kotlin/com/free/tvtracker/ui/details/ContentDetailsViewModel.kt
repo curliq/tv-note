@@ -10,10 +10,10 @@ import com.free.tvtracker.domain.GetPurchaseStatusUseCase
 import com.free.tvtracker.domain.GetShowByTmdbIdUseCase
 import com.free.tvtracker.domain.PurchaseStatus
 import com.free.tvtracker.expect.ViewModel
-import com.free.tvtracker.ui.details.mappers.DetailsRatingsUiModelMapper
-import com.free.tvtracker.ui.details.mappers.DetailsReviewsUiModelMapper
-import com.free.tvtracker.ui.details.mappers.DetailsUiModelForMovieMapper
-import com.free.tvtracker.ui.details.mappers.DetailsUiModelForShowMapper
+import com.free.tvtracker.ui.details.mappers.ContentDetailsRatingsUiModelMapper
+import com.free.tvtracker.ui.details.mappers.ContentDetailsReviewsUiModelMapper
+import com.free.tvtracker.ui.details.mappers.ContentDetailsUiModelForMovieMapper
+import com.free.tvtracker.ui.details.mappers.ContentDetailsUiModelForShowMapper
 import com.free.tvtracker.ui.watchlists.list.WatchlistsUiModel
 import com.free.tvtracker.ui.watchlists.list.WatchlistsUiState
 import com.free.tvtracker.ui.watchlists.list.WatchlistsViewModel
@@ -22,7 +22,6 @@ import com.free.tvtracker.watchlists.response.WatchlistApiModel.Companion.WATCHL
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
@@ -31,11 +30,11 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class DetailsViewModel(
-    private val detailsUiModelForShowMapper: DetailsUiModelForShowMapper,
-    private val detailsUiModelForMovieMapper: DetailsUiModelForMovieMapper,
-    private val ratingsMapper: DetailsRatingsUiModelMapper,
-    private val reviewsMapper: DetailsReviewsUiModelMapper,
+class ContentDetailsViewModel(
+    private val detailsUiModelForShowMapper: ContentDetailsUiModelForShowMapper,
+    private val detailsUiModelForMovieMapper: ContentDetailsUiModelForMovieMapper,
+    private val ratingsMapper: ContentDetailsRatingsUiModelMapper,
+    private val reviewsMapper: ContentDetailsReviewsUiModelMapper,
     private val trackedShowsRepository: TrackedShowsRepository,
     private val reviewsRepository: ReviewsRepository,
     private val getShowByTmdbId: GetShowByTmdbIdUseCase,
@@ -46,6 +45,10 @@ class DetailsViewModel(
     private val logger: Logger,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : ViewModel() {
+
+    companion object {
+        const val TAG = "ContentDetailsViewModel"
+    }
 
     data class LoadContent(val tmdbId: Int, val isTvShow: Boolean)
 
@@ -60,6 +63,7 @@ class DetailsViewModel(
 
     val watchlists: Flow<DetailsWatchlists> = combine(result, watchlistsViewModel.stateAsFlow) { show, list ->
         if (show is DetailsUiState.Ok && list is WatchlistsUiState.Ok) {
+            logger.d("watchlists updated: $list, show watchlists: ${show.data.watchlists}", TAG)
             DetailsWatchlists(lists = list.watchlists.map { watchlist ->
                 val isChecked = when (watchlist.id) {
                     WATCHLIST_LIST_ID -> {
@@ -92,6 +96,11 @@ class DetailsViewModel(
             loadTvShow(content.tmdbId)
         } else {
             loadMovie(content.tmdbId)
+        }
+        viewModelScope.launch {
+            trackedShowsRepository.updateWatchlisted()
+            trackedShowsRepository.updateFinished()
+            watchlistsRepository.fetch()
         }
     }
 

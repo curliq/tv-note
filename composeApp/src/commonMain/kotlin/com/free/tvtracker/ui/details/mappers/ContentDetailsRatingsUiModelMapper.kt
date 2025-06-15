@@ -7,7 +7,7 @@ import com.free.tvtracker.ui.details.DetailsUiModel
 import kotlin.math.ln
 import kotlin.math.pow
 
-class DetailsRatingsUiModelMapper(
+class ContentDetailsRatingsUiModelMapper(
     private val stringUtils: CommonStringUtils = CommonStringUtils(),
 ) : Mapper<OmdbReviewsResponse?, DetailsUiModel.Ratings?> {
     override fun map(from: OmdbReviewsResponse?): DetailsUiModel.Ratings? {

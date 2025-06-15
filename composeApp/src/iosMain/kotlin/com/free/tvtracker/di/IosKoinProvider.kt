@@ -1,9 +1,8 @@
 package com.free.tvtracker.di
 
 import com.free.tvtracker.data.iap.AppPriceProvider
-import com.free.tvtracker.ui.details.DetailsViewModel
+import com.free.tvtracker.ui.details.ContentDetailsViewModel
 import com.free.tvtracker.ui.discover.DiscoverViewModel
-import com.free.tvtracker.ui.finished.FinishedShowsViewModel
 import com.free.tvtracker.ui.person.PersonViewModel
 import com.free.tvtracker.ui.search.AddTrackedViewModel
 import com.free.tvtracker.ui.settings.FileExporter
@@ -12,7 +11,6 @@ import com.free.tvtracker.ui.settings.login.LoginViewModel
 import com.free.tvtracker.ui.settings.signup.SignupViewModel
 import com.free.tvtracker.ui.splash.SplashViewModel
 import com.free.tvtracker.ui.watching.WatchingViewModel
-import com.free.tvtracker.ui.watchlist.WatchlistedShowsViewModel
 import com.free.tvtracker.ui.watchlists.details.WatchlistDetailsViewModel
 import com.free.tvtracker.ui.watchlists.list.WatchlistsViewModel
 import com.free.tvtracker.ui.welcome.WelcomeViewModel
@@ -27,8 +25,6 @@ fun startKoin(appPriceProvider: AppPriceProvider, fileExporter: FileExporter) {
             single { fileExporter }
             single { AddTrackedViewModel(get(), get(), get(), get(), get(), get()) }
             single { WatchingViewModel(get(), get(), get(), get(), get(), get(), get()) }
-            single { FinishedShowsViewModel(get(), get(), get(), get(), get(), get(), get()) }
-            single { WatchlistedShowsViewModel(get(), get(), get(), get(), get(), get(), get()) }
             single { DiscoverViewModel(get(), get(), get(), get(), get()) }
             single { WatchlistsViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
             single { WatchlistDetailsViewModel(get(), get(), get(), get(), get(), get(), get()) }
@@ -40,7 +36,7 @@ fun startKoin(appPriceProvider: AppPriceProvider, fileExporter: FileExporter) {
 
             // each navstack has its own state
             factory {
-                DetailsViewModel(
+                ContentDetailsViewModel(
                     get(),
                     get(),
                     get(),

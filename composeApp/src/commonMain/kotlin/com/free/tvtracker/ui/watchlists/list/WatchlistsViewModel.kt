@@ -19,11 +19,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class WatchlistsViewModel(
@@ -56,119 +58,104 @@ class WatchlistsViewModel(
         }
     }
 
-    val stateAsFlow: Flow<WatchlistsUiState> =
-        getShowsUseCase(trackedShowsRepository.watchlistedShows)
-            .filter { it.status.fetched == true }
-            .map { data ->
-                logger.d(
-                    "watchlist shows updated: ${data.data.map { it.typedId }}",
-                    TAG
-                )
-                if (data.status.success) {
-                    val res = getWatchlistedShowsUseCase(data.data)
-                    val model = WatchlistsUiModel(
-                        id = WATCHLIST_LIST_ID,
-                        name = WATCHLIST,
-                        thumbnails = getThumbnails(res),
-                        tvShowCount = res.filter { it.isTvShow }.size,
-                        movieCount = res.filter { !it.isTvShow }.size
-                    )
+    val stateAsFlow: Flow<WatchlistsUiState> = combine(
+        getShowsUseCase(trackedShowsRepository.watchlistedShows).filter { it.status.fetched == true },
+        getShowsUseCase(trackedShowsRepository.finishedShows).filter { it.status.fetched == true },
+        watchlistsRepository.watchlists,
+        watchlistsRepository.watchlistsContent
+    ) { watchlistedShows, finishedShows, watchlists, watchlistContent ->
+        logger.d(
+            "watchlisted shows updated: ${watchlistedShows.data.map { it.typedId }}",
+            TAG
+        )
 
-                    WatchlistsUiState.Ok(watchlists = listOf(model))
-                } else {
-                    WatchlistsUiState.Error
-                }
+        // Handle watchlisted shows
+        if (!watchlistedShows.status.success) return@combine WatchlistsUiState.Error
+
+        val watchlistedShowsModel = run {
+            val res = getWatchlistedShowsUseCase(watchlistedShows.data)
+            WatchlistsUiModel(
+                id = WATCHLIST_LIST_ID,
+                name = WATCHLIST,
+                thumbnails = getThumbnails(res),
+                tvShowCount = res.filter { it.isTvShow }.size,
+                movieCount = res.filter { !it.isTvShow }.size
+            )
+        }
+
+        // Handle finished shows
+        logger.d(
+            "finished shows updated: ${finishedShows.data.map { it.typedId }}",
+            TAG
+        )
+        if (!finishedShows.status.success) return@combine WatchlistsUiState.Error
+
+        val finishedShowsModel = run {
+            val res = isTrackedShowWatchableUseCase.unwatchable(finishedShows.data).filter {
+                if (!it.isTvShow) {
+                    !it.watchlisted
+                } else true
             }
-            .combine(getShowsUseCase(trackedShowsRepository.finishedShows).filter { it.status.fetched == true }) { uiState, finished ->
-                logger.d(
-                    "finished shows updated: ${finished.data.map { it.typedId }}",
-                    TAG
-                )
-                if (finished.status.success) {
-                    val res = isTrackedShowWatchableUseCase.unwatchable(finished.data).filter {
-                        if (!it.isTvShow) {
-                            !it.watchlisted
-                        } else true
-                    }
+            WatchlistsUiModel(
+                id = FINISHED_LIST_ID,
+                name = FINISHED,
+                thumbnails = getThumbnails(res),
+                tvShowCount = res.filter { it.isTvShow }.size,
+                movieCount = res.filter { !it.isTvShow }.size
+            )
+        }
 
-                    val model = WatchlistsUiModel(
-                        id = FINISHED_LIST_ID,
-                        name = FINISHED,
-                        thumbnails = getThumbnails(res),
-                        tvShowCount = res.filter { it.isTvShow }.size,
-                        movieCount = res.filter { !it.isTvShow }.size
-                    )
-                    if (uiState is WatchlistsUiState.Ok) {
-                        val watchlists = uiState.watchlists.toMutableList()
-                        val finishedIndex = uiState.watchlists.indexOfFirst { it.id == FINISHED_LIST_ID }
-                        // check if finished already exists and update it
-                        if (finishedIndex != -1) {
-                            watchlists.removeAt(finishedIndex)
-                            watchlists.add(finishedIndex, model)
-                            uiState.copy(watchlists = watchlists)
-                        } else {
-                            val watchlistIndex =
-                                uiState.watchlists.indexOfFirst { it.id == WATCHLIST_LIST_ID }
-                            // add finished after watchlisted
-                            if (watchlistIndex != -1) {
-                                watchlists.add(1, model)
-                            } else {
-                                watchlists.add(0, model)
-                            }
-                            uiState.copy(watchlists = watchlists)
-                        }
-                    } else {
-                        WatchlistsUiState.Ok(watchlists = listOf(model))
-                    }
-                } else {
-                    uiState
-                }
-            }.combine(watchlistsRepository.watchlists) { uiState, watchlists ->
-                if (watchlists.isSuccess()) {
-                    watchlists.data!!.forEach { watchlistApiModel ->
-                        viewModelScope.launch(ioDispatcher) {
-                            watchlistsRepository.fetchContent(watchlistId = watchlistApiModel.id)
-                        }
-                    }
-                    val lists = watchlists.data!!.map {
-                        WatchlistsUiModel(
-                            id = it.id,
-                            name = it.name,
-                            thumbnails = emptyList(),
-                            tvShowCount = it.showsCount,
-                            movieCount = it.moviesCount
-                        )
-                    }
+        // Handle watchlists
+        logger.d(
+            "watchlists updated: ${watchlists.data.orEmpty().map { "${it.id}, ${it.name}, ${it.showsCount}" }}",
+            TAG
+        )
+        if (!watchlists.isSuccess()) return@combine WatchlistsUiState.Error
 
-                    if (uiState is WatchlistsUiState.Ok) {
-                        val watchlists = uiState.watchlists.toMutableList()
-                        watchlists.removeAll { it.id !in listOf(WATCHLIST_LIST_ID, FINISHED_LIST_ID) }
-                        watchlists.addAll(lists)
-                        uiState.copy(watchlists = watchlists)
-                    } else {
-                        WatchlistsUiState.Ok(watchlists = lists)
-                    }
-                } else {
-                    WatchlistsUiState.Error
-                }
-            }.combine(
-                watchlistsRepository.watchlistsContent.filterNotNull().map { it.map }
-            ) { uiState, watchlistContent ->
-                var watchlists = (uiState as? WatchlistsUiState.Ok)?.watchlists ?: emptyList()
-                watchlistContent.forEach { map ->
-                    map.value.asSuccess { content ->
-                        logger.d("custom lists, id: ${map.key}: $content", TAG)
-                        val thumbnails = getThumbnails(content)
-                        logger.d("id: ${map.key}, thumbnails: $thumbnails", TAG)
-                        watchlists.find { it.id == map.key }?.thumbnails = thumbnails
-                    }
-                }
-                if (uiState is WatchlistsUiState.Ok) {
-                    uiState.copy(watchlists = watchlists)
-                } else {
-                    uiState
-                }
-            }.onStart { emit(WatchlistsUiState.Loading) }
+        watchlists.data!!.forEach { watchlistApiModel ->
+            viewModelScope.launch(ioDispatcher) {
+                watchlistsRepository.fetchContent(watchlistId = watchlistApiModel.id)
+            }
+        }
+
+        val customLists = watchlists.data!!.map {
+            WatchlistsUiModel(
+                id = it.id,
+                name = it.name,
+                thumbnails = emptyList(),
+                tvShowCount = it.showsCount,
+                movieCount = it.moviesCount
+            )
+        }
+
+        // Combine all lists and update thumbnails from watchlistContent
+        val allWatchlists = mutableListOf(watchlistedShowsModel, finishedShowsModel).apply {
+            addAll(customLists)
+        }
+
+        // Update thumbnails from watchlistContent
+        logger.d(
+            "watchlistcontent updated: $watchlistContent",
+            TAG
+        )
+        watchlistContent.map.forEach { (key, value) ->
+            value.asSuccess { content ->
+                logger.d("custom lists, id: $key: $content", TAG)
+                val thumbnails = getThumbnails(content)
+                logger.d("id: $key, thumbnails: $thumbnails", TAG)
+                allWatchlists.find { it.id == key }?.thumbnails = thumbnails
+            }
+        }
+
+        WatchlistsUiState.Ok(watchlists = allWatchlists)
+    }
+        .onStart { emit(WatchlistsUiState.Loading) }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = WatchlistsUiState.Loading
+        )
+
 
     private fun getThumbnails(content: List<TrackedContentApiModel>): List<String> {
         return content.map {

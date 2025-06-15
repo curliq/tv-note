@@ -22,11 +22,11 @@ import com.free.tvtracker.ui.details.CastCard
 import com.free.tvtracker.ui.details.DetailsScreenNavAction
 import com.free.tvtracker.ui.details.DetailsUiModel
 import com.free.tvtracker.ui.details.DetailsUiState
-import com.free.tvtracker.ui.details.DetailsViewModel
+import com.free.tvtracker.ui.details.ContentDetailsViewModel
 
 @Composable
 fun DetailsCastCrewSheet(
-    viewModel: DetailsViewModel,
+    viewModel: ContentDetailsViewModel,
     navActions: (DetailsScreenNavAction) -> Unit,
     bottomPadding: Float = 0f
 ) {

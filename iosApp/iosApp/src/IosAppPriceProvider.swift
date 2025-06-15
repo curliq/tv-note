@@ -3,6 +3,7 @@ import ComposeApp
 import StoreKit
 
 class IosAppPriceProvider: AppPriceProvider {
+    
     let purchaseId = "com.free.tvtracker.BestTvTracker.accesslifetime"
     let subId = "com.free.tvtracker.BestTvTracker.accesssub"
     

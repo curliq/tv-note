@@ -9,7 +9,7 @@ typealias EpisodeApi = TmdbShowDetailsApiModel.Season.Episode
 typealias EpisodeUi = DetailsUiModel.Season.Episode
 
 class ShowSeasonUiModelMapper(
-    private val episodeMapper: ShowEpisodeUiModelMapper,
+    private val episodeMapper: ContentShowEpisodeUiModelMapper,
 ) : MapperWithOptions<TmdbShowDetailsApiModel.Season, DetailsUiModel.Season, ShowSeasonUiModelMapper.O> {
 
     data class O(val tmdbShowId: Int, val trackedContentApiModel: TrackedContentApiModel?)

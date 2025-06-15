@@ -10,16 +10,16 @@ import com.free.tvtracker.tracked.response.TrackedContentApiModel
 import com.free.tvtracker.expect.data.CachingLocationService
 import com.free.tvtracker.ui.common.TmdbConfigData
 
-class DetailsUiModelForShowMapper(
+class ContentDetailsUiModelForShowMapper(
     private val seasonUiModelMapper: ShowSeasonUiModelMapper,
-    private val castMapper: ShowCastUiModelMapper,
-    private val crewMapper: ShowCrewUiModelMapper,
-    private val showWatchProviderUiModelMapper: ShowWatchProviderUiModelMapper,
-    private val showVideoUiModelMapper: ShowVideoUiModelMapper,
+    private val castMapper: ContentShowCastUiModelMapper,
+    private val crewMapper: ContentShowCrewUiModelMapper,
+    private val showWatchProviderUiModelMapper: ContentShowWatchProviderUiModelMapper,
+    private val showVideoUiModelMapper: ContentShowVideoUiModelMapper,
     private val isTrackedShowWatchableUseCase: IsTrackedShowWatchableUseCase,
     private val getShowStatusUseCase: GetShowStatusUseCase,
     private val locationService: CachingLocationService,
-    private val ratingsUiModelMapper: DetailsRatingsUiModelMapper,
+    private val ratingsUiModelMapper: ContentDetailsRatingsUiModelMapper,
 ) : MapperWithOptions<TmdbShowDetailsApiModel, DetailsUiModel, TrackedContentApiModel?> {
 
     override fun map(from: TmdbShowDetailsApiModel, options: TrackedContentApiModel?): DetailsUiModel {
