@@ -23,5 +23,6 @@ data class RecommendedContentApiModel(
         @SerialName("first_air_date") val firstAirDate: String? = null,
         @SerialName("vote_average") val voteAverage: Double? = null,
         @SerialName("vote_count") val voteCount: Int? = null,
+        @SerialName("is_tvshow") val isTvShow: Boolean? = null,
     )
 }

@@ -18,19 +18,12 @@ enum class BottomNavBarItems(val label: String, val title: String, val icon: Int
         R.drawable.ic_live_tv_filled_24px,
         AppNavDestinations.WATCHING.id
     ),
-    FINISHED(
-        "Finished",
-        "Finished Watching",
-        R.drawable.ic_flag_24px,
-        R.drawable.ic_flag_filled_24px,
-        AppNavDestinations.FINISHED.id
-    ),
-    WATCHLIST(
-        "Watchlist",
-        "Watchlist",
+    LISTS(
+        "Watchlists",
+        "Watchlists",
         R.drawable.ic_bookmark,
         R.drawable.ic_bookmark_filled,
-        AppNavDestinations.WATCHLIST.id
+        AppNavDestinations.WATCHLISTS.id
     ),
     DISCOVER(
         "Discover",

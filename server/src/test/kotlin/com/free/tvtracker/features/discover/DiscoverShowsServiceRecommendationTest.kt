@@ -41,7 +41,7 @@ class DiscoverShowsServiceRecommendationTest {
         val sut = DiscoverShowsService(mockk(), tmdbClient)
         val data = RecommendedContentApiRequestBody(listOf(1, 2))
         val res = sut.getRecommended(data)
-        assertContentEquals(listOf(RecommendedContentApiModel.Data(101, "")), res?.body?.data?.results)
+        assertContentEquals(listOf(RecommendedContentApiModel.Data(101, "", isTvShow = true)), res?.body?.data?.results)
         assertContentEquals(listOf(RelatedContent(1), RelatedContent(2)), res?.body?.data?.relatedContent)
     }
 
@@ -82,7 +82,7 @@ class DiscoverShowsServiceRecommendationTest {
         val sut = DiscoverShowsService(mockk(), tmdbClient)
         val data = RecommendedContentApiRequestBody(listOf(1, 2, 3))
         val res = sut.getRecommended(data)
-        assertContentEquals(listOf(RecommendedContentApiModel.Data(101, "")), res?.body?.data?.results)
+        assertContentEquals(listOf(RecommendedContentApiModel.Data(101, "", isTvShow = true)), res?.body?.data?.results)
         assertContentEquals(
             listOf(RelatedContent(1), RelatedContent(2), RelatedContent(3)),
             res?.body?.data?.relatedContent

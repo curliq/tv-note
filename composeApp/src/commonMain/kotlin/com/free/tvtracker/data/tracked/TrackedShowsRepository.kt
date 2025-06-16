@@ -12,6 +12,8 @@ import com.free.tvtracker.tracked.request.AddShowApiRequestBody
 import com.free.tvtracker.tracked.response.AddTrackedShowApiResponse
 import com.free.tvtracker.tracked.response.TrackedContentApiModel
 import com.free.tvtracker.tracked.response.TrackedShowsApiResponse
+import com.free.tvtracker.watchlists.requests.AddWatchlistContentApiRequestBody
+import com.free.tvtracker.watchlists.requests.DeleteWatchlistContentApiRequestBody
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -36,14 +38,7 @@ data class ShowsDataStatus(
      */
     val fetched: Boolean?,
     val success: Boolean
-) {
-    /**
-     * this makes the stateflow emit the same value more than once
-     */
-    override fun equals(other: Any?): Boolean {
-        return false
-    }
-}
+)
 
 class TrackedShowsRepository(
     private val httpClient: TvHttpClientEndpoints,
@@ -51,6 +46,10 @@ class TrackedShowsRepository(
     private val watchedEpisodesTaskQueue: WatchedEpisodesTaskQueue,
     private val logger: Logger,
 ) {
+    companion object {
+        val TAG = TrackedShowsRepository::class.simpleName ?: ""
+    }
+
     val allShows = MutableStateFlow<List<TrackedContentApiModel>>(emptyList())
 
     private val _watchingShows = MutableStateFlow(ShowsDataStatus(null, false))
@@ -62,32 +61,34 @@ class TrackedShowsRepository(
 
     private fun MutableStateFlow<ShowsDataStatus>.combineWithAllShows(): Flow<ShowsData> {
         return this.combine(allShows) { watching, all ->
-            logger.d("shows flow updated: ${all.map { it.typedId }}")
+            logger.d("shows flow updated: ${all.map { it.typedId }}, watching: ${watching}", TAG)
             ShowsData(status = watching, data = all)
         }
     }
 
     suspend fun updateWatching(forceUpdate: Boolean = true) {
-        logger.d("updating watching shows")
+        logger.d("updating watching shows", TAG)
         if (!forceUpdate && _watchingShows.value.fetched == true) {
             return
         }
         watchedEpisodesTaskQueue.emitOrders()
         val localWatching = localDataSource.getTrackedShows().map { it.toApiModel() }.filter { !it.watchlisted }
         if (localWatching.isNotEmpty()) {
-            logger.d("local shows is empty")
+            logger.d("local shows is empty", TAG)
             _watchingShows.emit(ShowsDataStatus(false, true))
-            allShows.emit(allShows.value.plus(localWatching).distinctBy { it.typedId })
+            allShows.update {
+                it.plus(localWatching).distinctBy { it.typedId }
+            }
         }
         fetch(_watchingShows, ::getTrackedShows, ignoreResultIfError = true).coAsSuccess {
-            logger.d("local shows response success")
+            logger.d("local shows response success", TAG)
             _watchingShows.emit(ShowsDataStatus(true, true))
             localDataSource.saveTrackedShows(it.map { it.toClientEntity() })
         }
     }
 
     suspend fun updateFinished(forceUpdate: Boolean = true) {
-        logger.d("updating finished shows")
+        logger.d("updating finished shows", TAG)
         if (!forceUpdate && _finishedShows.value.fetched == true) {
             return
         }
@@ -95,7 +96,7 @@ class TrackedShowsRepository(
     }
 
     suspend fun updateWatchlisted(forceUpdate: Boolean = true) {
-        logger.d("updating watchlisted shows")
+        logger.d("updating watchlisted shows", TAG)
         if (!forceUpdate && _watchlistedShows.value.fetched == true) {
             return
         }
@@ -110,7 +111,7 @@ class TrackedShowsRepository(
         val res = try {
             call()
         } catch (e: Exception) {
-            logger.e(e)
+            logger.e(e, TAG)
             TrackedShowsApiResponse.error(ApiError.Network)
         }
         if (res.isSuccess()) {
@@ -135,14 +136,17 @@ class TrackedShowsRepository(
     suspend fun setWatchlisted(trackedContentId: Int, isTvShow: Boolean, watchlisted: Boolean) {
         val res = httpClient.setWatchlisted(trackedContentId, isTvShow, watchlisted)
         res.asSuccess { show ->
-            logger.d("set watchlisted: $trackedContentId")
+            logger.d("set watchlisted: $trackedContentId", TAG)
             allShows.update {
-                val oldShow = if (isTvShow) {
-                    it.first { it.tvShow?.id == trackedContentId }
+                val index = if (isTvShow) {
+                    it.indexOfFirst { it.tvShow?.id == trackedContentId }
                 } else {
-                    it.first { it.movie?.id == trackedContentId }
+                    it.indexOfFirst { it.movie?.id == trackedContentId }
                 }
-                it.minus(oldShow).plus(show)
+                val list = it.toMutableList()
+                list.removeAt(index)
+                list.add(index, show)
+                list
             }
             if (isTvShow) {
                 localDataSource.saveTrackedShows(listOf(show.toClientEntity()))
@@ -153,7 +157,7 @@ class TrackedShowsRepository(
     suspend fun removeContent(trackedContentId: Int, isTvShow: Boolean) {
         val res = httpClient.removeTrackedShow(trackedContentId, isTvShow)
         res.asSuccess {
-            logger.d("remove content: $trackedContentId")
+            logger.d("remove content: $trackedContentId", TAG)
             if (isTvShow) {
                 localDataSource.deleteTrackedShow(trackedContentId)
                 localDataSource.deleteEpisodeWatchedOrderForTvShow(trackedContentId)
@@ -201,16 +205,70 @@ class TrackedShowsRepository(
                 addTrackedMovie(AddMovieApiRequestBody(tmdbId, watchlisted = watchlisted))
             }
             if (res.isSuccess()) {
-                logger.d("add tracked: $tmdbId")
+                logger.d("add tracked: $tmdbId", TAG)
                 allShows.update { it.plus(res.data!!) }
                 localDataSource.saveTrackedShows(listOf(res.data!!.toClientEntity()))
                 return res.data!!
             }
         } catch (e: Exception) {
-            logger.e(e)
+            logger.e(e, TAG)
             return null
         }
         return null
+    }
+
+    suspend fun addContentToWatchlist(trackedContentId: Int, watchlistId: Int, isTvShow: Boolean) {
+        try {
+            val res = httpClient.call(
+                Endpoints.addContentToWatchlist,
+                AddWatchlistContentApiRequestBody(trackedContentId, watchlistId, isTvShow)
+            )
+            res.asSuccess { show ->
+                allShows.update {
+                    val index = if (isTvShow) {
+                        it.indexOfFirst { it.tvShow?.id == trackedContentId }
+                    } else {
+                        it.indexOfFirst { it.movie?.id == trackedContentId }
+                    }
+                    val list = it.toMutableList()
+                    list.removeAt(index)
+                    list.add(index, show)
+                    list
+                }
+                if (isTvShow) {
+                    localDataSource.saveTrackedShows(listOf(show.toClientEntity()))
+                }
+            }
+        } catch (e: Exception) {
+            logger.e(e, TAG)
+        }
+    }
+
+    suspend fun removeContentFromWatchlist(trackedContentId: Int, watchlistId: Int, isTvShow: Boolean) {
+        try {
+            val res = httpClient.call(
+                Endpoints.removeContentToWatchlist,
+                DeleteWatchlistContentApiRequestBody(trackedContentId, watchlistId, isTvShow)
+            )
+            res.asSuccess { show ->
+                allShows.update {
+                    val index = if (isTvShow) {
+                        it.indexOfFirst { it.tvShow?.id == trackedContentId }
+                    } else {
+                        it.indexOfFirst { it.movie?.id == trackedContentId }
+                    }
+                    val list = it.toMutableList()
+                    list.removeAt(index)
+                    list.add(index, show)
+                    list
+                }
+                if (isTvShow) {
+                    localDataSource.saveTrackedShows(listOf(show.toClientEntity()))
+                }
+            }
+        } catch (e: Exception) {
+            logger.e(e, TAG)
+        }
     }
 
     fun getByTmdbId(tmdbShowId: Int): TrackedContentApiModel? {

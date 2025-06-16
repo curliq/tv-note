@@ -26,7 +26,8 @@ fun TrackedShowClientEntity.toApiModel(): TrackedContentApiModel {
             this.watchedEpisodes.map { it.toApiModel() },
             this.storedShow.toApiModel(),
         ),
-        movie = null
+        movie = null,
+        watchlists = emptyList(), // watchlists not needed in cache (test)
     )
 }
 

@@ -72,7 +72,11 @@ class SettingsActivity : BaseActivity() {
                             scrollBehavior = scrollBehavior,
                             navigationIcon = {
                                 IconButton(onClick = { this.finish() }) {
-                                    Icon(Icons.AutoMirrored.Rounded.ArrowBack, "")
+                                    Icon(
+                                        Icons.AutoMirrored.Rounded.ArrowBack,
+                                        "",
+                                        tint = MaterialTheme.colorScheme.primary
+                                    )
                                 }
                             }
                         )

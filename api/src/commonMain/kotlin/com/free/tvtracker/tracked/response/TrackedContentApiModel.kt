@@ -8,9 +8,10 @@ data class TrackedContentApiModel(
     @SerialName("watchlisted") val watchlisted: Boolean,
     @SerialName("content_type") val mediaType: ContentType,
     @SerialName("tv_show") val tvShow: TvShow?,
-    @SerialName("movie") val movie: Movie?
+    @SerialName("movie") val movie: Movie?,
+    @SerialName("lists") var watchlists: List<Watchlist>
 ) {
-    enum class ContentType(val key:String) {
+    enum class ContentType(val key: String) {
         TvShow("tvshow"),
         Person("person"),
         Movie("movie");
@@ -78,4 +79,10 @@ data class TrackedContentApiModel(
             @SerialName("air_date") val airDate: String?,
         )
     }
+
+    @Serializable
+    data class Watchlist(
+        @SerialName("id") val id: Int,
+        @SerialName("name") val name: String
+    )
 }

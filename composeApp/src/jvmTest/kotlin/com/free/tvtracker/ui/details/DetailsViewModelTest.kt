@@ -7,8 +7,8 @@ import com.free.tvtracker.data.tracked.TrackedShowsRepository
 import com.free.tvtracker.details.response.TmdbShowDetailsApiModel
 import com.free.tvtracker.details.response.TmdbShowDetailsApiResponse
 import com.free.tvtracker.domain.GetShowByTmdbIdUseCase
-import com.free.tvtracker.ui.details.mappers.DetailsUiModelForMovieMapper
-import com.free.tvtracker.ui.details.mappers.DetailsUiModelForShowMapper
+import com.free.tvtracker.ui.details.mappers.ContentDetailsUiModelForMovieMapper
+import com.free.tvtracker.ui.details.mappers.ContentDetailsUiModelForShowMapper
 import com.free.tvtracker.ui.watching.GetNextUnwatchedEpisodeUseCaseTest.Companion.buildTrackedContent
 import com.free.tvtracker.utils.buildDetailsUiModel
 import io.mockk.coEvery
@@ -25,8 +25,8 @@ import kotlin.test.Test
 class DetailsViewModelTest {
     private val dispatcher = UnconfinedTestDispatcher()
     private val trackedShowsRepository: TrackedShowsRepository = mockk(relaxed = true)
-    private val showMapper: DetailsUiModelForShowMapper = mockk(relaxed = true)
-    private val movieMapper: DetailsUiModelForMovieMapper = mockk(relaxed = true)
+    private val showMapper: ContentDetailsUiModelForShowMapper = mockk(relaxed = true)
+    private val movieMapper: ContentDetailsUiModelForMovieMapper = mockk(relaxed = true)
     private val getShowByTmdbIdUseCase: GetShowByTmdbIdUseCase =
         mockk<GetShowByTmdbIdUseCase>().apply {
             every { this@apply.invoke(any()) } returns flowOf(
@@ -38,7 +38,7 @@ class DetailsViewModelTest {
             )
         }
     private val viewModel =
-        DetailsViewModel(
+        ContentDetailsViewModel(
             showMapper,
             movieMapper,
             mockk(relaxed = true),
@@ -49,12 +49,14 @@ class DetailsViewModelTest {
             mockk(relaxed = true),
             mockk(relaxed = true),
             mockk(relaxed = true),
+            mockk(relaxed = true),
+            mockk(relaxed = true),
             dispatcher
         )
 
     @Test
     fun `GIVEN data is available THEN ui state is ok`() {
-        viewModel.loadContent(DetailsViewModel.LoadContent(1, true))
+        viewModel.loadContent(ContentDetailsViewModel.LoadContent(1, true))
         dispatcher.scheduler.advanceUntilIdle()
         assertEquals(DetailsUiState.Ok::class.java, viewModel.result.value::class.java)
     }
@@ -66,7 +68,7 @@ class DetailsViewModelTest {
                 TmdbShowDetailsApiResponse.error(ApiError("500")), tracked = null
             )
         )
-        viewModel.loadContent(DetailsViewModel.LoadContent(1, true))
+        viewModel.loadContent(ContentDetailsViewModel.LoadContent(1, true))
         assertEquals(DetailsUiState.Error::class.java, viewModel.result.value::class.java)
     }
 
@@ -86,8 +88,8 @@ class DetailsViewModelTest {
                 )
             )
         )
-        viewModel.loadContent(DetailsViewModel.LoadContent(1, true))
-        viewModel.action(DetailsViewModel.DetailsAction.MarkSeasonWatched(1, 1))
+        viewModel.loadContent(ContentDetailsViewModel.LoadContent(1, true))
+        viewModel.action(ContentDetailsViewModel.DetailsAction.MarkSeasonWatched(1, 1))
         coVerify { trackedShowsRepository.markEpisodeAsWatched(emptyList()) }
     }
 
@@ -110,8 +112,8 @@ class DetailsViewModelTest {
                 )
             )
         )
-        viewModel.loadContent(DetailsViewModel.LoadContent(1, true))
-        viewModel.action(DetailsViewModel.DetailsAction.MarkSeasonWatched(1, 1))
+        viewModel.loadContent(ContentDetailsViewModel.LoadContent(1, true))
+        viewModel.action(ContentDetailsViewModel.DetailsAction.MarkSeasonWatched(1, 1))
         assertEquals(DetailsUiState.Ok::class.java, viewModel.result.value::class.java)
         coVerify {
             trackedShowsRepository.markEpisodeAsWatched(
@@ -139,8 +141,8 @@ class DetailsViewModelTest {
                 )
             )
         )
-        viewModel.loadContent(DetailsViewModel.LoadContent(1, true))
-        viewModel.action(DetailsViewModel.DetailsAction.MarkSeasonWatched(1, 1))
+        viewModel.loadContent(ContentDetailsViewModel.LoadContent(1, true))
+        viewModel.action(ContentDetailsViewModel.DetailsAction.MarkSeasonWatched(1, 1))
         coVerify { trackedShowsRepository.markEpisodeAsWatched(emptyList()) }
     }
 }
