@@ -66,6 +66,7 @@ import besttvtracker.composeapp.generated.resources.imdb_logo
 import besttvtracker.composeapp.generated.resources.justwatch_logo_lightmode
 import besttvtracker.composeapp.generated.resources.rotten_tomatoes_logo
 import besttvtracker.composeapp.generated.resources.tmdb_logo
+import com.free.tvtracker.core.Logger
 import com.free.tvtracker.ui.common.composables.ErrorScreen
 import com.free.tvtracker.ui.common.composables.LoadingIndicator
 import com.free.tvtracker.ui.common.composables.LoadingScreen
@@ -110,6 +111,7 @@ fun DetailsScreen(
     TvTrackerTheme {
         Scaffold(modifier.fillMaxSize()) {
             val show = viewModel.result.collectAsState().value
+            Logger().d("load details screen, ${content}, show: ${show.hashCode()}", "DetailsScreen")
             LaunchedEffect(content) {
                 viewModel.loadContent(content)
             }

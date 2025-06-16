@@ -28,8 +28,8 @@ class GetPurchaseStatusUseCase(
         }.map {
             PurchaseStatus(
                 status = it,
-                price = iapRepository.getPrice() ?: "",
-                subPrice = iapRepository.getSubPrice() ?: ""
+                price = iapRepository.getPrice(),
+                subPrice = iapRepository.getSubPrice()
             )
         }
     }

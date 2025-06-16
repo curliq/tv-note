@@ -149,7 +149,7 @@ private fun Screen1(next: () -> Unit) {
         Spacer(Modifier.height(16.dp))
         FeatureCard("Data backed up: email optional for recovery.".colored("recovery"))
         Spacer(Modifier.height(16.dp))
-        FeatureCard("Made in London, UK and available on GitHub for free.".colored("free"))
+        FeatureCard("Made in London, UK, and available on GitHub for free.".colored("free"))
         Spacer(Modifier.height(32.dp))
         Row(Modifier.align(Alignment.End), verticalAlignment = Alignment.CenterVertically) {
             Text(

@@ -47,13 +47,13 @@ struct ContentView: View {
     @StateObject private var discoverNavState = TabNavigationState()
 
     // Create a details view model for each tab
-    let watchingDetailsVM = ViewModelsModule().contentDetailsViewModel
-    let listsDetailsVM = ViewModelsModule().contentDetailsViewModel
-    let discoverDetailsVM = ViewModelsModule().contentDetailsViewModel
+    let watchingDetailsVM = ViewModelsModule().contentDetailsViewModel(qualifier: "watching")
+    let listsDetailsVM = ViewModelsModule().contentDetailsViewModel(qualifier: "lists")
+    let discoverDetailsVM = ViewModelsModule().contentDetailsViewModel(qualifier: "discover")
 
-    let watchingPersonVM = ViewModelsModule().personViewModel
-    let listsPersonVM = ViewModelsModule().personViewModel
-    let discoverPersonVM = ViewModelsModule().personViewModel
+    let watchingPersonVM = ViewModelsModule().personViewModel(qualifier: "watching")
+    let listsPersonVM = ViewModelsModule().personViewModel(qualifier: "lists")
+    let discoverPersonVM = ViewModelsModule().personViewModel(qualifier: "discover")
 
     // Tab-specific view models
     let watchingViewModel = ViewModelsModule().watchingViewModel
@@ -281,14 +281,11 @@ struct ContentView: View {
         case .watchlistContentAdd:
             contentView = AddToListSheet(detailsViewModel: detailsViewModel, nav: createDetailsNavHandler(navState: discoverNavState)).eraseToAnyView()
         case .details(let content):
-            contentView = ZStack {
-                ShowDetailsScreen(
-                    detailsViewModel: detailsViewModel,
-                    content: content,
-                    nav: detailsNav
-                )
-                .id(UUID()) // Always refresh details view
-            }
+            contentView = ShowDetailsScreen(
+                detailsViewModel: detailsViewModel,
+                content: content,
+                nav: detailsNav
+            )
             .eraseToAnyView()
 
         case .episodes:

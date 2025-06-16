@@ -58,14 +58,10 @@ class WelcomeViewModel(
             val price = iapRepository.getPrice()
             val subPrice = iapRepository.getSubPrice()
             logger.d("price: $price, subprice: $subPrice")
-            if (price == null || subPrice == null) {
-                status.emit(Status.InitialisationError)
-            } else {
-                this@WelcomeViewModel.price.emit(price)
-                this@WelcomeViewModel.subPrice.emit(subPrice)
-                status.emit(Status.CreatingSession)
-                loadSession()
-            }
+            this@WelcomeViewModel.price.emit(price)
+            this@WelcomeViewModel.subPrice.emit(subPrice)
+            status.emit(Status.CreatingSession)
+            loadSession()
         }
     }
 
