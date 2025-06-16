@@ -13,13 +13,8 @@ data class TrackedContentApiModel(
 ) {
     @Serializable
     enum class ContentType(val key: String) {
-        @SerialName("tvshow")
         TvShow("tvshow"),
-
-        @SerialName("person")
         Person("person"),
-
-        @SerialName("movie")
         Movie("movie");
 
         override fun toString(): String {
