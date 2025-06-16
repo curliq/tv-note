@@ -11,7 +11,6 @@ data class TrackedContentApiModel(
     @SerialName("movie") val movie: Movie?,
     @SerialName("lists") var watchlists: List<Watchlist>
 ) {
-    @Serializable
     enum class ContentType(val key: String) {
         TvShow("tvshow"),
         Person("person"),
