@@ -6,10 +6,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.ComposeUIViewController
 import com.free.tvtracker.ui.details.DetailsScreen
 import com.free.tvtracker.ui.details.DetailsScreenNavAction
-import com.free.tvtracker.ui.details.DetailsViewModel
+import com.free.tvtracker.ui.details.ContentDetailsViewModel
 import com.free.tvtracker.ui.details.dialogs.DetailsCastCrewSheet
 import com.free.tvtracker.ui.details.dialogs.DetailsEpisodesSheet
 import com.free.tvtracker.ui.details.dialogs.DetailsFilmCollectionSheet
+import com.free.tvtracker.ui.details.dialogs.DetailsManageWatchlistsSheet
 import com.free.tvtracker.ui.details.dialogs.DetailsMediaSheet
 import com.free.tvtracker.ui.details.dialogs.DetailsReviewsSheet
 import com.free.tvtracker.ui.discover.DiscoverScreen
@@ -19,9 +20,6 @@ import com.free.tvtracker.ui.discover.RecommendedScreen
 import com.free.tvtracker.ui.discover.RecommendedScreenNavActions
 import com.free.tvtracker.ui.discover.dialogs.DiscoverNewReleasesSheet
 import com.free.tvtracker.ui.discover.dialogs.DiscoverTrendingSheet
-import com.free.tvtracker.ui.finished.FinishedScreen
-import com.free.tvtracker.ui.finished.FinishedScreenNavAction
-import com.free.tvtracker.ui.finished.FinishedShowsViewModel
 import com.free.tvtracker.ui.person.PersonScreen
 import com.free.tvtracker.ui.person.PersonScreenNavAction
 import com.free.tvtracker.ui.person.PersonViewModel
@@ -45,9 +43,15 @@ import com.free.tvtracker.ui.splash.SplashErrorScreen
 import com.free.tvtracker.ui.watching.WatchingScreen
 import com.free.tvtracker.ui.watching.WatchingScreenNavAction
 import com.free.tvtracker.ui.watching.WatchingViewModel
-import com.free.tvtracker.ui.watchlist.WatchlistScreen
-import com.free.tvtracker.ui.watchlist.WatchlistScreenNavAction
-import com.free.tvtracker.ui.watchlist.WatchlistedShowsViewModel
+import com.free.tvtracker.ui.watchlists.list.WatchlistsScreen
+import com.free.tvtracker.ui.watchlists.list.WatchlistsScreenNavAction
+import com.free.tvtracker.ui.watchlists.list.WatchlistsViewModel
+import com.free.tvtracker.ui.watchlists.list.dialogs.WatchlistAddSheet
+import com.free.tvtracker.ui.watchlists.details.WatchlistDetailsScreen
+import com.free.tvtracker.ui.watchlists.details.WatchlistDetailsScreenNavAction
+import com.free.tvtracker.ui.watchlists.details.WatchlistDetailsViewModel
+import com.free.tvtracker.ui.watchlists.details.dialogs.WatchlistDetailsMenuSheet
+import com.free.tvtracker.ui.watchlists.details.dialogs.WatchlistDetailsRenameSheet
 import com.free.tvtracker.ui.welcome.WelcomeScreen
 import com.free.tvtracker.ui.welcome.WelcomeViewModel
 
@@ -84,14 +88,9 @@ fun WatchingScreenViewController(navigate: (WatchingScreenNavAction) -> Unit, vi
         WatchingScreen(navigate, viewModel)
     }
 
-fun FinishedScreenViewController(navigate: (FinishedScreenNavAction) -> Unit, viewModel: FinishedShowsViewModel) =
+fun WatchlistsScreenViewController(navigate: (WatchlistsScreenNavAction) -> Unit, viewModel: WatchlistsViewModel) =
     ComposeUIViewController {
-        FinishedScreen(navigate, viewModel)
-    }
-
-fun WatchlistScreenViewController(navigate: (WatchlistScreenNavAction) -> Unit, viewModel: WatchlistedShowsViewModel) =
-    ComposeUIViewController {
-        WatchlistScreen(viewModel, navigate)
+        WatchlistsScreen(viewModel, navigate)
     }
 
 fun DiscoverScreenViewController(navigate: (DiscoverScreenNavActions) -> Unit, viewModel: DiscoverViewModel) =
@@ -124,29 +123,29 @@ fun SettingsScreenViewController(navigate: (SettingsScreenNavAction) -> Unit, vi
     }
 
 fun ShowDetailsScreenViewController(
-    detailsViewModel: DetailsViewModel,
-    content: DetailsViewModel.LoadContent,
+    contentDetailsViewModel: ContentDetailsViewModel,
+    content: ContentDetailsViewModel.LoadContent,
     navigate: (DetailsScreenNavAction) -> Unit
 ) = ComposeUIViewController {
-    DetailsScreen(detailsViewModel, content, navigate)
+    DetailsScreen(contentDetailsViewModel, content, navigate)
 }
 
-fun DetailsEpisodesViewController(viewModel: DetailsViewModel) =
+fun DetailsEpisodesViewController(viewModel: ContentDetailsViewModel) =
     ComposeUIViewController {
         DetailsEpisodesSheet(viewModel)
     }
 
-fun DetailsReviewsViewController(viewModel: DetailsViewModel) =
+fun DetailsReviewsViewController(viewModel: ContentDetailsViewModel) =
     ComposeUIViewController {
         DetailsReviewsSheet(viewModel)
     }
 
-fun DetailsMediaViewController(viewModel: DetailsViewModel, navigate: (DetailsScreenNavAction) -> Unit) =
+fun DetailsMediaViewController(viewModel: ContentDetailsViewModel, navigate: (DetailsScreenNavAction) -> Unit) =
     ComposeUIViewController {
         DetailsMediaSheet(viewModel, navigate)
     }
 
-fun DetailsCastCrewViewController(viewModel: DetailsViewModel, navigate: (DetailsScreenNavAction) -> Unit) =
+fun DetailsCastCrewViewController(viewModel: ContentDetailsViewModel, navigate: (DetailsScreenNavAction) -> Unit) =
     ComposeUIViewController {
         DetailsCastCrewSheet(viewModel, navigate)
     }
@@ -171,7 +170,7 @@ fun PersonPhotosViewController(viewModel: PersonViewModel) =
         PersonPhotosSheet(viewModel)
     }
 
-fun DetailsFilmCollectionViewController(viewModel: DetailsViewModel, navigate: (DetailsScreenNavAction) -> Unit) =
+fun DetailsFilmCollectionViewController(viewModel: ContentDetailsViewModel, navigate: (DetailsScreenNavAction) -> Unit) =
     ComposeUIViewController {
         DetailsFilmCollectionSheet(viewModel, navigate)
     }
@@ -186,4 +185,56 @@ fun AddTrackedScreenViewController(
     }
 ) {
     AddTrackedScreen(addTrackedViewModel, navigate, originScreen)
+}
+
+fun WatchlistDetailsScreenViewController(
+    watchlistDetailsViewModel: WatchlistDetailsViewModel,
+    content: WatchlistDetailsViewModel.LoadContent,
+    navigate: (WatchlistDetailsScreenNavAction) -> Unit
+) = ComposeUIViewController {
+    WatchlistDetailsScreen(
+        viewModel = watchlistDetailsViewModel,
+        content = content,
+        navigate = navigate
+    )
+}
+
+fun DetailsManageWatchlistsViewController(
+    viewModel: ContentDetailsViewModel,
+    navigate: (DetailsScreenNavAction) -> Unit
+) = ComposeUIViewController {
+    DetailsManageWatchlistsSheet(
+        viewModel = viewModel,
+        navActions = navigate
+    )
+}
+
+fun WatchlistAddSheetViewController(
+    viewModel: WatchlistsViewModel,
+    navigate: (WatchlistsScreenNavAction) -> Unit
+) = ComposeUIViewController {
+    WatchlistAddSheet(
+        viewModel = viewModel,
+        navAction = navigate
+    )
+}
+
+fun WatchlistDetailsRenameSheetViewController(
+    viewModel: WatchlistDetailsViewModel,
+    navigate: (WatchlistDetailsScreenNavAction) -> Unit
+) = ComposeUIViewController {
+    WatchlistDetailsRenameSheet(
+        viewModel = viewModel,
+        navAction = navigate
+    )
+}
+
+fun WatchlistDetailsMenuSheetViewController(
+    viewModel: WatchlistDetailsViewModel,
+    navigate: (WatchlistDetailsScreenNavAction) -> Unit
+) = ComposeUIViewController {
+    WatchlistDetailsMenuSheet(
+        viewModel = viewModel,
+        navAction = navigate
+    )
 }

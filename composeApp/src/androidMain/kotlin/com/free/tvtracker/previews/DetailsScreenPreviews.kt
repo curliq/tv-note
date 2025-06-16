@@ -141,7 +141,11 @@ object DetailsScreenPreviews {
                 ),
             ),
             total = 30
-        )
+        ),
+        watchlists = emptyList(),
+        watchlisted = true,
+        isFinished = false,
+        isWatching = true
     )
 }
 
@@ -163,6 +167,25 @@ fun DetailsScreenMoviePreview() {
     TvTrackerTheme {
         Scaffold { padding ->
             DetailsScreenContent(showDetailsUiModel.copy(isTvShow = false), false, {}, {})
+        }
+    }
+}
+
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@Preview(heightDp = 2000)
+@Composable
+fun DetailsScreenShowLoadingPreview() {
+    TvTrackerTheme {
+        Scaffold { padding ->
+            DetailsScreenContent(
+                showDetailsUiModel.copy(
+                    trackingStatus = DetailsUiModel.TrackingStatus(
+                        DetailsUiModel.TrackingStatus.Action.MoveToWatching,
+                        DetailsUiModel.TrackingStatus.Action.TrackWatchlist,
+                        isLoading = true
+                    )
+                ), true, {}, {}
+            )
         }
     }
 }

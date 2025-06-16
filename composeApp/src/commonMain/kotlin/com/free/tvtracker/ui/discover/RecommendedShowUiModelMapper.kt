@@ -10,7 +10,7 @@ class RecommendedShowUiModelMapper : Mapper<RecommendedContentApiModel.Data, Dis
             tmdbId = from.tmdbId,
             title = from.name,
             image = TmdbConfigData.get().getPosterUrl(from.posterPath),
-            isTvShow = true //not used for recomended selection items
+            isTvShow = from.isTvShow == true
         )
     }
 }

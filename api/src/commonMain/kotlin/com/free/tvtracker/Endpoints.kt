@@ -30,11 +30,17 @@ import com.free.tvtracker.user.request.UpdatePreferencesApiRequestBody
 import com.free.tvtracker.user.response.DataExportApiResponse
 import com.free.tvtracker.user.response.SessionApiResponse
 import com.free.tvtracker.user.response.UserApiResponse
+import com.free.tvtracker.watchlists.requests.AddWatchlistApiRequestBody
+import com.free.tvtracker.watchlists.requests.AddWatchlistContentApiRequestBody
+import com.free.tvtracker.watchlists.requests.DeleteWatchlistApiRequestBody
+import com.free.tvtracker.watchlists.requests.DeleteWatchlistContentApiRequestBody
+import com.free.tvtracker.watchlists.requests.GetWatchlistContentApiRequestBody
+import com.free.tvtracker.watchlists.requests.RenameWatchlistApiRequestBody
+import com.free.tvtracker.watchlists.response.WatchlistsApiResponse
 import kotlin.reflect.KClass
 
 object Endpoints {
     object Path {
-        const val GET_USER = ""
         const val POST_USER_CREDENTIALS = "user/complete-credentials"
         const val UPDATE_PREFERENCES = "user/update-push-notifications"
         const val CREATE_ANON_USER = "/user/create-anon"
@@ -59,9 +65,15 @@ object Endpoints {
         const val GET_RECOMMENDED_CONTENT_SHOWS = "discover/recommended/shows"
         const val GET_RECOMMENDED_CONTENT_MOVIES = "discover/recommended/movies"
         const val GET_EXPORT_SHOWS = "export/shows"
+        const val GET_WATCHLISTS = "watchlists/"
+        const val ADD_WATCHLISTS = "watchlists/"
+        const val REMOVE_WATCHLIST = "watchlists/delete"
+        const val EDIT_WATCHLIST = "watchlists/edit"
+        const val GET_WATCHLIST_CONTENT = "watchlists/content"
+        const val ADD_TRACKED_CONTENT_TO_WATCHLIST = "watchlists/content/add"
+        const val REMOVE_TRACKED_CONTENT_TO_WATCHLIST = "watchlists/content/delete"
     }
 
-    val getUser = EndpointNoBody(Path.GET_USER, UserApiResponse::class, Endpoint.Verb.GET)
     val createAnonUser = EndpointNoBody(Path.CREATE_ANON_USER, SessionApiResponse::class, Endpoint.Verb.POST)
     val postUserCredentials =
         Endpoint(Path.POST_USER_CREDENTIALS, SessionApiResponse::class, SignupApiRequestBody::class, Endpoint.Verb.POST)
@@ -171,6 +183,43 @@ object Endpoints {
             Endpoint.Verb.POST
         )
     val getDataExport = EndpointNoBody(Path.GET_EXPORT_SHOWS, DataExportApiResponse::class, Endpoint.Verb.GET)
+    val getWatchlists = EndpointNoBody(Path.GET_WATCHLISTS, WatchlistsApiResponse::class, Endpoint.Verb.GET)
+    val getWatchlistContent = Endpoint(
+        Path.GET_WATCHLIST_CONTENT,
+        TrackedShowsApiResponse::class,
+        GetWatchlistContentApiRequestBody::class,
+        Endpoint.Verb.POST
+    )
+    val postWatchlistRename = Endpoint(
+        Path.EDIT_WATCHLIST,
+        WatchlistsApiResponse::class,
+        RenameWatchlistApiRequestBody::class,
+        Endpoint.Verb.POST
+    )
+    val postWatchlistDelete = Endpoint(
+        Path.REMOVE_WATCHLIST,
+        WatchlistsApiResponse::class,
+        DeleteWatchlistApiRequestBody::class,
+        Endpoint.Verb.POST
+    )
+    val postWatchlistCreate = Endpoint(
+        Path.ADD_WATCHLISTS,
+        WatchlistsApiResponse::class,
+        AddWatchlistApiRequestBody::class,
+        Endpoint.Verb.POST
+    )
+    val addContentToWatchlist = Endpoint(
+        Path.ADD_TRACKED_CONTENT_TO_WATCHLIST,
+        TrackedShowApiResponse::class,
+        AddWatchlistContentApiRequestBody::class,
+        Endpoint.Verb.POST
+    )
+    val removeContentToWatchlist = Endpoint(
+        Path.REMOVE_TRACKED_CONTENT_TO_WATCHLIST,
+        TrackedShowApiResponse::class,
+        DeleteWatchlistContentApiRequestBody::class,
+        Endpoint.Verb.POST
+    )
 }
 
 open class Endpoint<ReturnType : ApiResponse<out Any>, BodyType : Any>(

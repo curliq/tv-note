@@ -45,7 +45,7 @@ class IapRepository(
         isPurchased.value = owned
     }
 
-    suspend fun getPrice(): String? = appPriceProvider.appPrice() ?: "£2.99"
+    suspend fun getPrice(): String = appPriceProvider.appPrice() ?: "$2.99"
 
     suspend fun restorePurchase(): Boolean {
         val success = appPriceProvider.restorePurchase()
@@ -53,5 +53,5 @@ class IapRepository(
         return success
     }
 
-    suspend fun getSubPrice(): String? = appPriceProvider.appSubPrice()  ?: "£2.99"
+    suspend fun getSubPrice(): String = appPriceProvider.appSubPrice()  ?: "$0.99"
 }

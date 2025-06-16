@@ -1,5 +1,6 @@
 package com.free.tvtracker.features.tracked.data.shows
 
+import com.free.tvtracker.features.watchlists.data.WatchlistTrackedShowEntity
 import com.free.tvtracker.storage.shows.data.StoredShowEntity
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
@@ -34,6 +35,10 @@ data class TrackedShowEntity(
     @OneToMany(fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE], mappedBy = "trackedTvShow")
     @OnDelete(action = OnDeleteAction.CASCADE)
     var watchedEpisodes: List<TrackedShowEpisodeEntity> = emptyList(),
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE], mappedBy = "show")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    var watchlistTrackedShows: List<WatchlistTrackedShowEntity> = emptyList(),
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "storedshow_id", nullable = false)

@@ -34,7 +34,8 @@ class GetNextUnwatchedEpisodeUseCaseTest {
                 ),
                 movie = null,
                 mediaType = TrackedContentApiModel.ContentType.TvShow,
-                watchlisted = false
+                watchlisted = false,
+                watchlists = emptyList()
             )
         }
     }

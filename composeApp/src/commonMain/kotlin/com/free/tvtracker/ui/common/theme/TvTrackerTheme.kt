@@ -2,6 +2,7 @@ package com.free.tvtracker.ui.common.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
@@ -32,6 +33,7 @@ object TvTrackerTheme {
 @Composable
 expect fun themePreferences(): SettingsUiModel.Theme?
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun TvTrackerTheme(themePrefs: SettingsUiModel.Theme? = themePreferences(), content: @Composable () -> Unit) {
     val isDarkTheme = when (themePrefs) {
@@ -74,8 +76,11 @@ fun TvTrackerTheme(themePrefs: SettingsUiModel.Theme? = themePreferences(), cont
     )
     val Typography = Typography(
         displayLarge = Typography().displayLarge.copy(fontFamily = ibmNormal),
+        displayLargeEmphasized = Typography().displayLargeEmphasized.copy(fontFamily = ibmSemiBold),
         displayMedium = Typography().displayMedium.copy(fontFamily = ibmNormal),
+        displayMediumEmphasized = Typography().displayMediumEmphasized.copy(fontFamily = ibmSemiBold),
         displaySmall = Typography().displaySmall.copy(fontFamily = ibmNormal),
+        displaySmallEmphasized = Typography().displaySmallEmphasized.copy(fontFamily = ibmSemiBold),
         headlineLarge = Typography().headlineLarge.copy(fontFamily = ibmBold),
         headlineMedium = Typography().headlineMedium.copy(fontFamily = ibmBold),
         headlineSmall = Typography().headlineSmall.copy(fontFamily = ibmBold),
@@ -83,8 +88,11 @@ fun TvTrackerTheme(themePrefs: SettingsUiModel.Theme? = themePreferences(), cont
         titleMedium = Typography().titleMedium.copy(fontFamily = ibmBold),
         titleSmall = Typography().titleSmall.copy(fontFamily = ibmBold),
         bodyLarge = Typography().bodyLarge.copy(fontFamily = ibmNormal),
+        bodyLargeEmphasized = Typography().bodyLargeEmphasized.copy(fontFamily = ibmSemiBold),
         bodyMedium = Typography().bodyMedium.copy(fontFamily = ibmNormal),
+        bodyMediumEmphasized = Typography().bodyMediumEmphasized.copy(fontFamily = ibmSemiBold),
         bodySmall = Typography().bodySmall.copy(fontFamily = ibmNormal),
+        bodySmallEmphasized = Typography().bodySmallEmphasized.copy(fontFamily = ibmSemiBold),
         labelLarge = Typography().labelLarge.copy(fontFamily = ibmSemiBold),
         labelMedium = Typography().labelMedium.copy(fontFamily = ibmSemiBold),
         labelSmall = Typography().labelSmall.copy(fontFamily = ibmSemiBold),

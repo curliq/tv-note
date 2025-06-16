@@ -7,6 +7,8 @@ import android.os.Build
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.AddCircle
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -16,7 +18,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
@@ -28,6 +32,7 @@ import com.free.tvtracker.activities.main.bottomnav.AppNavDestinations
 import com.free.tvtracker.activities.main.bottomnav.BottomNavBar
 import com.free.tvtracker.activities.main.bottomnav.BottomNavBarItems
 import com.free.tvtracker.activities.main.bottomnav.MainNavHost
+import com.free.tvtracker.activities.main.bottomnav.WatchlistNavDestinations
 import com.free.tvtracker.activities.settings.SettingsActivity
 import com.free.tvtracker.core.ui.BaseActivity
 import com.free.tvtracker.data.session.SessionRepository
@@ -53,6 +58,7 @@ class MainActivity : BaseActivity() {
             val scroll = scrollBehaviors.firstOrNull { scroll ->
                 currentDestination?.hierarchy?.any { dest -> dest.route == scroll.first } == true
             }?.second ?: TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+            val showBottomSheet = rememberSaveable { mutableStateOf<WatchlistNavDestinations?>(null) }
             TvTrackerTheme {
                 Scaffold(
                     modifier = Modifier.nestedScroll(scroll.nestedScrollConnection),
@@ -79,19 +85,35 @@ class MainActivity : BaseActivity() {
                                     ) {
                                         Icon(
                                             painter = painterResource(id = R.drawable.ic_settings_heart),
-                                            contentDescription = "My Button"
+                                            contentDescription = "settings",
+                                            tint = MaterialTheme.colorScheme.primary
+                                        )
+                                    }
+                                } else if (currentDestination?.route == AppNavDestinations.WATCHLISTS.id) {
+                                    IconButton(
+                                        onClick = {
+                                            showBottomSheet.value = WatchlistNavDestinations.ADD_WATCHLIST
+                                        }
+                                    ) {
+                                        Icon(
+                                            Icons.Rounded.AddCircle,
+                                            contentDescription = "Add watchlist",
+                                            tint = MaterialTheme.colorScheme.primary
                                         )
                                     }
                                 }
                             }
                         )
-
                     }
                 ) { padding ->
-                    MainNavHost(padding = padding, navController = appNavController)
+                    MainNavHost(padding = padding, showBottomSheet = showBottomSheet, navController = appNavController)
                 }
             }
         }
+        registerPush()
+    }
+
+    private fun registerPush() {
         askNotificationPermission()
         val repo: SessionRepository = get()
         FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
@@ -109,10 +131,6 @@ class MainActivity : BaseActivity() {
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission(),
     ) { isGranted: Boolean ->
-        if (isGranted) {
-            // FCM SDK (and your app) can post notifications.
-        } else {
-        }
     }
 
     private fun askNotificationPermission() {

@@ -36,7 +36,7 @@ expect fun getUserAgent(): String
 open class TvHttpClient(private val sessionStore: SessionStore) {
 
     private val localhostiOS = "localhost:${getServerPort()}"
-    private val localhostiOSPhone = "192.168.1.89:8080"
+    private val localhostiOSPhone = "192.168.1.205:8080"
     private val server: String by lazy { "${getServerUrl()}:${getServerPort()}" }
 
     fun cli() = getHttpClient {
@@ -60,8 +60,8 @@ open class TvHttpClient(private val sessionStore: SessionStore) {
         install(DefaultRequest) {
             this.url {
                 protocol = URLProtocol.HTTP
-                host = server
-//                host = localhostiOSPhone
+//                host = server
+                host = localhostiOSPhone
             }
             contentType(ContentType.Application.Json)
             accept(ContentType.Application.Json)

@@ -5,7 +5,7 @@ data class TrackedShowClientEntity(
     val createdAtDatetime: String,
     var watchedEpisodes: List<WatchedEpisodeClientEntity>,
     var storedShow: StoredShowClientEntity,
-    val watchlisted: Boolean
+    val watchlisted: Boolean,
 ) {
     companion object {
         fun fromSql(
