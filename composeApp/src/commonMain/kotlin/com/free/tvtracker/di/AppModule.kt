@@ -77,7 +77,7 @@ fun appModules() = module {
     factory<GetWatchlistedShowsUseCase> { GetWatchlistedShowsUseCase() }
     factory<TrackedShowReducer> { TrackedShowReducer() }
     factory<CachingLocationService> { CachingLocationService() }
-    factory<GetShowByTmdbIdUseCase> { GetShowByTmdbIdUseCase(get(), get(), get(), get(), get()) }
+    factory<GetShowByTmdbIdUseCase> { GetShowByTmdbIdUseCase(get(), get(), get(), get(), get(), get()) }
     factory<GetMovieByTmdbIdUseCase> { GetMovieByTmdbIdUseCase(get(), get(), get()) }
     factory<GetShowsUseCase> { GetShowsUseCase(get(), get()) }
     factory<GetWatchingShowsUseCase> { GetWatchingShowsUseCase(get(), get(), get()) }

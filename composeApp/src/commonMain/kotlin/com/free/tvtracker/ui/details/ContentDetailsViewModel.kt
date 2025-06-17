@@ -22,10 +22,14 @@ import com.free.tvtracker.watchlists.response.WatchlistApiModel.Companion.WATCHL
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.cancellable
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -90,12 +94,16 @@ class ContentDetailsViewModel(
         return (result.value as? DetailsUiState.Ok)?.data?.homepageUrl ?: "Missing url"
     }
 
+    private var contentJob: Job? = null
     fun loadContent(content: LoadContent) {
         result.value = DetailsUiState.Loading
-        if (content.isTvShow) {
-            loadTvShow(content.tmdbId)
-        } else {
-            loadMovie(content.tmdbId)
+        contentJob?.cancel()
+        contentJob = viewModelScope.launch(ioDispatcher) {
+            if (content.isTvShow) {
+                loadTvShow(content.tmdbId)
+            } else {
+                loadMovie(content.tmdbId)
+            }
         }
         viewModelScope.launch {
             trackedShowsRepository.updateWatchlisted()
@@ -104,37 +112,33 @@ class ContentDetailsViewModel(
         }
     }
 
-    private fun loadTvShow(tmdbId: Int) {
-        viewModelScope.launch(ioDispatcher) {
-            getShowByTmdbId.invoke(tmdbId).catch {
-                result.value = DetailsUiState.Error
-            }.collect { trackedShowResult ->
-                trackedShowResult.showData
-                    .coAsSuccess { data ->
-                        result.value =
-                            DetailsUiState.Ok(detailsUiModelForShowMapper.map(data, trackedShowResult.tracked))
-                        loadRatings(data.imdbId)
-                    }.asError {
-                        result.value = DetailsUiState.Error
-                    }
-            }
+    private suspend fun loadTvShow(tmdbId: Int) {
+        getShowByTmdbId.invoke(tmdbId).cancellable().catch {
+            result.value = DetailsUiState.Error
+        }.collect { trackedShowResult ->
+            trackedShowResult.showData
+                .coAsSuccess { data ->
+                    result.value =
+                        DetailsUiState.Ok(detailsUiModelForShowMapper.map(data, trackedShowResult.tracked))
+                    loadRatings(data.imdbId)
+                }.asError {
+                    result.value = DetailsUiState.Error
+                }
         }
     }
 
-    private fun loadMovie(tmdbId: Int) {
-        viewModelScope.launch(ioDispatcher) {
-            getMovieByTmdbId.invoke(tmdbId).catch {
-                result.value = DetailsUiState.Error
-            }.collect { trackedShowResult ->
-                trackedShowResult.showData
-                    .coAsSuccess { data ->
-                        result.value =
-                            DetailsUiState.Ok(detailsUiModelForMovieMapper.map(data, trackedShowResult.tracked))
-                        loadRatings(data.imdbId)
-                    }.coAsError {
-                        result.value = DetailsUiState.Error
-                    }
-            }
+    private suspend fun loadMovie(tmdbId: Int) {
+        getMovieByTmdbId.invoke(tmdbId).cancellable().catch {
+            result.value = DetailsUiState.Error
+        }.collect { trackedShowResult ->
+            trackedShowResult.showData
+                .coAsSuccess { data ->
+                    result.value =
+                        DetailsUiState.Ok(detailsUiModelForMovieMapper.map(data, trackedShowResult.tracked))
+                    loadRatings(data.imdbId)
+                }.coAsError {
+                    result.value = DetailsUiState.Error
+                }
         }
     }
 
