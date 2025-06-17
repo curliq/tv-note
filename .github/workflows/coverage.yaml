@@ -76,6 +76,8 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: composeApp/build/reports/kover/report.xml
           flags: compose
+          name: compose-coverage
+          verbose: true
 
       - name: Upload server coverage to Codecov
         uses: codecov/codecov-action@v4
@@ -83,3 +85,5 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: server/build/reports/kover/report.xml
           flags: server
+          name: server-coverage
+          verbose: true
