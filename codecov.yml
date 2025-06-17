@@ -1,30 +1,30 @@
 codecov:
   branch: main # set new Default branch
-flag_management:
-  default_rules: # the rules that will be followed for any flag added, generally
-    carryforward: true
-    statuses:
-      - type: project
-        target: auto
-        threshold: 1%
-      - type: patch
-        target: 90%
-  individual_flags: # exceptions to the default rules above, stated flag by flag
-    - name: server
-      paths:
-        - server/src  #fill in your own path. Note, accepts globs, not regexes
+  flag_management:
+    default_rules: # the rules that will be followed for any flag added, generally
       carryforward: true
       statuses:
         - type: project
-          target: 1%
+          target: auto
+          threshold: 1%
         - type: patch
-          target: 100%
-    - name: compose
-      paths:
-        - composeApp/src  #fill in your own path. Note, accepts globs, not regexes
-      carryforward: true
-      statuses:
-        - type: project
-          target: 1%
-        - type: patch
-          target: 100%
+          target: 90%
+    individual_flags: # exceptions to the default rules above, stated flag by flag
+      - name: server
+        paths:
+          - server/src  #fill in your own path. Note, accepts globs, not regexes
+        carryforward: true
+        statuses:
+          - type: project
+            target: 1%
+          - type: patch
+            target: 100%
+      - name: compose
+        paths:
+          - composeApp/src  #fill in your own path. Note, accepts globs, not regexes
+        carryforward: true
+        statuses:
+          - type: project
+            target: 1%
+          - type: patch
+            target: 100%
