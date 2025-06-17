@@ -10,7 +10,7 @@ flag_management:
       - type: patch
         target: 90%
   individual_flags: # exceptions to the default rules above, stated flag by flag
-    - name: server  #fill in your own flag name
+    - name: server
       paths:
         - server/src  #fill in your own path. Note, accepts globs, not regexes
       carryforward: true
@@ -19,7 +19,7 @@ flag_management:
           target: 1%
         - type: patch
           target: 100%
-    - name: composeApp #fill in your own flag name
+    - name: compose
       paths:
         - composeApp/src  #fill in your own path. Note, accepts globs, not regexes
       carryforward: true
