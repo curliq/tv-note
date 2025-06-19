@@ -362,7 +362,9 @@ fun DetailsScreenContent(
                         FilmSeriesCard(it, navAction)
                     }
                     Box(Modifier.fillMaxWidth().weight(0.2f).fillMaxHeight()) {
-                        SeeAllCard("\n(${show.movieSeries.movies.size})") { navAction(DetailsScreenNavAction.GoFilmCollection) }
+                        SeeAllCard("\n(${show.movieSeries.movies.size})") {
+                            navAction(DetailsScreenNavAction.GoFilmCollection)
+                        }
                     }
                 }
             }
@@ -447,7 +449,10 @@ fun DetailsScreenContent(
         }
         Spacer(Modifier.height(8.dp))
         FilledTonalButton(
-            onClick = { navAction(DetailsScreenNavAction.GoReviews) },
+            onClick = {
+                showAction(ContentDetailsViewModel.DetailsAction.LoadReviews(show.imdbId))
+                navAction(DetailsScreenNavAction.GoReviews)
+            },
             content = { Text("See reviews") },
             shape = TvTrackerTheme.ShapeButton
         )
@@ -455,14 +460,6 @@ fun DetailsScreenContent(
 
         Text(text = "About", style = MaterialTheme.typography.titleLarge)
         Spacer(Modifier.height(8.dp))
-        if (!show.isTvShow) {
-            Text("Budget", style = MaterialTheme.typography.titleSmall)
-            Text(show.budget, style = MaterialTheme.typography.bodySmall)
-            Spacer(Modifier.height(8.dp))
-            Text("Revenue", style = MaterialTheme.typography.titleSmall)
-            Text(show.revenue, style = MaterialTheme.typography.bodySmall)
-            Spacer(Modifier.height(8.dp))
-        }
         Text("Website", style = MaterialTheme.typography.titleSmall)
         if (!show.website.isNullOrEmpty()) {
             FilledTonalButton(
@@ -480,7 +477,36 @@ fun DetailsScreenContent(
                 Text(text = show.website)
             }
         } else {
-            Text("(no website)", style = MaterialTheme.typography.labelMedium)
+            Text("(Website not found)", style = MaterialTheme.typography.labelMedium)
+        }
+        Spacer(Modifier.height(8.dp))
+        Text("IMDB page", style = MaterialTheme.typography.titleSmall)
+        if (show.imdbUrl != null) {
+            FilledTonalButton(
+                onClick = { navAction(DetailsScreenNavAction.GoWebsite(show.imdbUrl)) },
+                contentPadding = PaddingValues(vertical = 0.dp, horizontal = 12.dp),
+                shape = TvTrackerTheme.ShapeButton,
+            ) {
+                ResImage(
+                    res = Res.drawable.ic_open_window,
+                    contentDescription = "open",
+                    modifier = Modifier.size(24.dp),
+                    tint = MaterialTheme.colorScheme.primary
+                )
+                Spacer(Modifier.width(12.dp))
+                Text(text = show.imdbUrl)
+            }
+        } else {
+            Text("(IMDB page not found)", style = MaterialTheme.typography.labelMedium)
+        }
+        if (!show.isTvShow) {
+            Spacer(Modifier.height(8.dp))
+            Text("Budget", style = MaterialTheme.typography.titleSmall)
+            Text(show.budget, style = MaterialTheme.typography.bodySmall)
+            Spacer(Modifier.height(8.dp))
+            Text("Revenue", style = MaterialTheme.typography.titleSmall)
+            Text(show.revenue, style = MaterialTheme.typography.bodySmall)
+            Spacer(Modifier.height(8.dp))
         }
         Spacer(Modifier.height(24.dp))
     }

@@ -24,12 +24,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.cancellable
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -155,6 +153,10 @@ class ContentDetailsViewModel(
                 ) else it
             }
         }
+    }
+
+    suspend fun loadReviews(imdbId: String?) {
+        if (imdbId == null) return
         val reviewsData = reviewsRepository.getReviews(imdbId)
         val reviews = reviewsMapper.map(reviewsData)
         if (reviews?.reviews != null) {
@@ -334,6 +336,14 @@ class ContentDetailsViewModel(
                     }
                 }
             }
+
+            is DetailsAction.LoadReviews -> {
+                viewModelScope.launch(ioDispatcher) {
+                    if (action.imdbId != null) {
+                        loadReviews(action.imdbId)
+                    }
+                }
+            }
         }
     }
 
@@ -345,6 +355,7 @@ class ContentDetailsViewModel(
             val navAction: ((DetailsScreenNavAction) -> Unit),
         ) : DetailsAction()
 
+        data class LoadReviews(val imdbId: String?) : DetailsAction()
         data class MarkShowWatched(val tmdbShowId: Int, val trackedContentId: Int?) : DetailsAction()
         data class AddToWatchList(val uiModel: DetailsUiModel, val watchlistId: Int) : DetailsAction()
         data class RemoveFromWatchList(val uiModel: DetailsUiModel, val watchlistId: Int) : DetailsAction()
@@ -396,8 +407,11 @@ data class DetailsUiModel(
     val budget: String,
     val revenue: String,
     val website: String?,
+    val imdbUrl: String?,
     val watchlists: List<Watchlist>,
+    val imdbId: String?
 ) {
+
     sealed interface Person {
         val tmdbId: Int
         val irlName: String

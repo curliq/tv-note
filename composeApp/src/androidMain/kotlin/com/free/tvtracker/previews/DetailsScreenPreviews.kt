@@ -145,7 +145,9 @@ object DetailsScreenPreviews {
         watchlists = emptyList(),
         watchlisted = true,
         isFinished = false,
-        isWatching = true
+        isWatching = true,
+        imdbUrl = "",
+        imdbId = null
     )
 }
 

@@ -108,6 +108,8 @@ class ContentDetailsUiModelForMovieMapper(
             budget = formatMoney(from.budget) ?: "(not available)",
             revenue = formatMoney(from.revenue) ?: "(not available)",
             website = from.homepage,
+            imdbUrl = if (from.imdbId != null) "https://www.imdb.com/title/${from.imdbId}" else null,
+            imdbId = from.imdbId,
             watchlists = options?.watchlists?.map { DetailsUiModel.Watchlist(it.id, it.name) } ?: emptyList(),
         )
     }

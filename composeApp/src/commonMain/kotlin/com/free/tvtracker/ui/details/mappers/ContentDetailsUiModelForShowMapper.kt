@@ -81,6 +81,8 @@ class ContentDetailsUiModelForShowMapper(
             budget = "",
             revenue = "",
             website = from.homepage ?: "(no website)",
+            imdbUrl = if (from.imdbId != null) "https://www.imdb.com/title/${from.imdbId}" else null,
+            imdbId = from.imdbId,
             watchlists = options?.watchlists?.map { DetailsUiModel.Watchlist(it.id, it.name) } ?: emptyList(),
         )
     }
