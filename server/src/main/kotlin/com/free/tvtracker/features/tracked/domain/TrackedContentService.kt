@@ -11,6 +11,7 @@ import com.free.tvtracker.features.tracked.data.shows.TrackedShowEpisodeEntity
 import com.free.tvtracker.features.tracked.data.shows.TrackedShowEpisodeJdbcRepository
 import com.free.tvtracker.features.tracked.data.shows.TrackedShowJdbcRepository
 import com.free.tvtracker.features.tracked.data.shows.TrackedShowJpaRepository
+import com.free.tvtracker.logging.TvtrackerLogger
 import com.free.tvtracker.security.SessionService
 import com.free.tvtracker.storage.movies.domain.StoredMoviesService
 import com.free.tvtracker.storage.shows.domain.StoredShowsService
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Service
  */
 @Service
 class TrackedContentService(
+    private val logger: TvtrackerLogger,
     private val trackedShowJpaRepository: TrackedShowJpaRepository,
     private val trackedShowJdbcRepository: TrackedShowJdbcRepository,
     private val trackedShowEpisodeJdbcRepository: TrackedShowEpisodeJdbcRepository,
@@ -53,7 +55,7 @@ class TrackedContentService(
             val trackedShowId = trackedShow.id
             val eps = addEpisode(storedShow.storedEpisodes.map { Episode(trackedShowId, it.id) })
             // assign episodes to tracked show just to return them in the api
-            trackedShow.watchedEpisodes = eps
+            trackedShow.watchedEpisodes = eps.toSet()
         }
         return trackedShow
     }
@@ -88,15 +90,19 @@ class TrackedContentService(
 
     fun getOngoingShows(): List<TrackedContentApiModel> {
         val userId = sessionService.getSessionUserId()
-        val trackedShow = trackedShowJpaRepository.findByUserIdAndWatchlisted(userId, watchlisted = false)
-            .map { it.toApiModel() }
+        val trackedShow =
+            trackedShowJdbcRepository.findByUserIdAndWatchlistedWithAllRelations(userId, watchlisted = false)
+                .map { it.toApiModel() }
         return isTrackedShowWatchableUseCase.watchable(trackedShow)
     }
 
     fun getFinishedShows(): List<TrackedContentApiModel> {
         val userId = sessionService.getSessionUserId()
-        val shows = trackedShowJpaRepository.findByUserIdAndWatchlisted(userId = userId, watchlisted = false)
-            .map { it.toApiModel() }
+        logger.get.debug("TrackedContentService: get finished shows: start")
+        val shows =
+            trackedShowJdbcRepository.findByUserIdAndWatchlistedWithAllRelations(userId = userId, watchlisted = false)
+                .map { it.toApiModel() }
+        logger.get.debug("TrackedContentService: get finished shows: finish")
         val movies = trackedMovieJpaRepository.findByUserIdAndWatchlisted(userId, watchlisted = false)
             .map { it.toApiModel() }.sortedByDescending { it.movie!!.createdAtDatetime }
         return isTrackedShowWatchableUseCase.unwatchable(shows).plus(movies)
@@ -104,10 +110,14 @@ class TrackedContentService(
 
     fun getWatchlistedShows(): List<TrackedContentApiModel> {
         val userId = sessionService.getSessionUserId()
-        val shows = trackedShowJpaRepository.findByUserIdAndWatchlisted(userId, watchlisted = true)
+        logger.get.debug("TrackedContentService: get watchlisted shows: start")
+        val shows = trackedShowJdbcRepository.findByUserIdAndWatchlistedWithAllRelations(userId, watchlisted = true)
             .map { it.toApiModel() }
+        logger.get.debug("TrackedContentService: get watchlisted shows: finish")
+        logger.get.debug("TrackedContentService: get finished movies: start")
         val movies = trackedMovieJpaRepository.findByUserIdAndWatchlisted(userId, watchlisted = true)
             .map { it.toApiModel() }
+        logger.get.debug("TrackedContentService: get finished movies: finish")
         return shows.plus(movies).sortedByDescending { it.tvShow?.createdAtDatetime ?: it.movie!!.createdAtDatetime }
     }
 

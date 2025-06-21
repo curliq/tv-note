@@ -35,7 +35,7 @@ data class StoredShowEntity(
     val title: String = "",
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "storedShow")
-    var storedEpisodes: List<StoredEpisodeEntity> = emptyList(),
+    var storedEpisodes: Set<StoredEpisodeEntity> = emptySet(),
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "storedShow")
     val trackedShows: List<TrackedShowEntity> = emptyList(),

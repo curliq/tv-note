@@ -12,7 +12,7 @@ logging:
     org:
       apache:
         http: DEBUG
-      hibernate: WARN
+      hibernate: OFF
       springframework:
         security: DEBUG
         web: WARN

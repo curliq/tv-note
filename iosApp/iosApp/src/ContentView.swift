@@ -618,7 +618,10 @@ struct ShareItemProvider: Transferable {
 
     static var transferRepresentation: some TransferRepresentation {
         ProxyRepresentation { report in
-            URL(string: report.generateReport())!
+            guard let url = URL(string: report.generateReport()) else {
+                return URL(string: "about:blank")! // Fallback URL
+            }
+            return url
         }
     }
 }

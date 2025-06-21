@@ -106,5 +106,5 @@ fun appModules() = module {
     factory<ContentDetailsRatingsUiModelMapper> { ContentDetailsRatingsUiModelMapper() }
     factory<GetShowStatusUseCase> { GetShowStatusUseCase() }
     factory<GetNextUnwatchedEpisodeUseCase> { GetNextUnwatchedEpisodeUseCase() }
-    factory<GetPurchaseStatusUseCase> { GetPurchaseStatusUseCase(get(), get()) }
+    factory<GetPurchaseStatusUseCase> { GetPurchaseStatusUseCase(get(), get(), get()) }
 }

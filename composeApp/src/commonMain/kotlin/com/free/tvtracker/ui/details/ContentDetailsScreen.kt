@@ -170,7 +170,7 @@ fun DetailsScreenContent(
                 RemoveFromWatching -> "Remove"
                 RemoveMovieFromWatched -> "Remove"
                 TrackWatchlist -> "Add to watchlist"
-                TrackWatching -> "Add to watching"
+                TrackWatching -> "Watching now"
                 MoveToWatchlist -> "Move to watchlist"
                 MoveToWatching -> "Move to watching"
                 MoveMovieToFinished -> "Mark watched"

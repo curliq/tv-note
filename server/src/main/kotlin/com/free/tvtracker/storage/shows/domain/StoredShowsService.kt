@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service
 import java.sql.Timestamp
 import java.time.Duration
 import java.time.Instant
-import kotlin.contracts.ExperimentalContracts
 
 @Service
 class StoredShowsService(
@@ -33,7 +32,7 @@ class StoredShowsService(
         storedShowJpaRepository.save(newStoredShow)
         val episodes = storedEpisodesService.getOrCreateEpisodes(tmdbShowResponse, newStoredShow)
         // assign episodes just for this instance to include them in the api response
-        newStoredShow.storedEpisodes = episodes
+        newStoredShow.storedEpisodes = episodes.toSet()
         return newStoredShow
     }
 

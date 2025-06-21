@@ -78,7 +78,7 @@ fun WatchlistsScreen(viewModel: WatchlistsViewModel, navigate: (WatchlistsScreen
                         { viewModel.action(WatchlistsViewModel.WatchlistsAction.Sub) }
                     )
 
-                    WatchlistsUiState.Error -> ErrorScreen { viewModel.fetch() }
+                    WatchlistsUiState.Error -> ErrorScreen { viewModel.fetch(forceRefresh = true) }
                     WatchlistsUiState.Loading -> LoadingScreen()
                     is WatchlistsUiState.Ok -> WatchlistsOk(targetState, purchaseStatus, viewModel::action, navigate)
                 }

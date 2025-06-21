@@ -79,7 +79,7 @@ fun WatchingScreen(navigate: (WatchingScreenNavAction) -> Unit, viewModel: Watch
     val logger: Logger = viewModel.logger
     val shows = viewModel.shows.collectAsState().value
     logger.d("recomposing watching screen, shows: $shows", "WatchingScreen")
-    val purchaseStatus by viewModel.status.collectAsState(PurchaseStatus(PurchaseStatus.Status.Purchased, "", "$2.99"))
+    val purchaseStatus by viewModel.status.collectAsState(PurchaseStatus(PurchaseStatus.Status.Purchased, "", "$2.98"))
     val snackbarHostState = remember { SnackbarHostState() }
     LaunchedEffect(Unit) {
         viewModel.toaster.collectLatest {

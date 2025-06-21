@@ -34,11 +34,11 @@ data class TrackedShowEntity(
 
     @OneToMany(fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE], mappedBy = "trackedTvShow")
     @OnDelete(action = OnDeleteAction.CASCADE)
-    var watchedEpisodes: List<TrackedShowEpisodeEntity> = emptyList(),
+    var watchedEpisodes: Set<TrackedShowEpisodeEntity> = emptySet(),
 
     @OneToMany(fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE], mappedBy = "show")
     @OnDelete(action = OnDeleteAction.CASCADE)
-    var watchlistTrackedShows: List<WatchlistTrackedShowEntity> = emptyList(),
+    var watchlistTrackedShows: Set<WatchlistTrackedShowEntity> = emptySet(),
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "storedshow_id", nullable = false)

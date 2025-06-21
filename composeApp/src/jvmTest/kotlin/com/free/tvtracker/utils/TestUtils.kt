@@ -87,5 +87,7 @@ fun buildDetailsUiModel(
     watchlists = watchlists,
     watchlisted = watchlisted,
     isFinished = isFinished,
-    isWatching = isWatching
+    isWatching = isWatching,
+    imdbUrl = "",
+    imdbId = null
 )

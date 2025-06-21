@@ -22,8 +22,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -45,16 +44,22 @@ class WatchlistsViewModel(
         const val FINISHED = "Finished"
     }
 
-    val watchlists: MutableStateFlow<WatchlistsUiState> = MutableStateFlow(WatchlistsUiState.Loading)
+    val watchlistsLoading: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val status: Flow<PurchaseStatus> = purchaseStatus.invoke()
+    private val hasData: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
     val TAG = this@WatchlistsViewModel::class.simpleName!!
 
-    fun fetch() {
-        viewModelScope.launch {
-            trackedShowsRepository.updateWatchlisted()
-            trackedShowsRepository.updateFinished()
-            watchlistsRepository.fetch()
+    @Suppress("UnusedFlow")
+    fun fetch(forceRefresh: Boolean = false) {
+        if (forceRefresh || !hasData.value) {
+            viewModelScope.launch {
+                watchlistsLoading.value = true
+                trackedShowsRepository.updateWatchlisted(forceUpdate = forceRefresh)
+                trackedShowsRepository.updateFinished(forceUpdate = forceRefresh)
+                watchlistsRepository.fetch()
+                watchlistsLoading.value = false
+            }
         }
     }
 
@@ -62,12 +67,17 @@ class WatchlistsViewModel(
         getShowsUseCase(trackedShowsRepository.watchlistedShows).filter { it.status.fetched == true },
         getShowsUseCase(trackedShowsRepository.finishedShows).filter { it.status.fetched == true },
         watchlistsRepository.watchlists,
-        watchlistsRepository.watchlistsContent
-    ) { watchlistedShows, finishedShows, watchlists, watchlistContent ->
+        watchlistsRepository.watchlistsContent,
+        watchlistsLoading
+    ) { watchlistedShows, finishedShows, watchlists, watchlistContent, isLoading ->
         logger.d(
             "watchlisted shows updated: ${watchlistedShows.data.map { it.typedId }}",
             TAG
         )
+
+        if (isLoading) {
+            return@combine WatchlistsUiState.Loading
+        }
 
         // Handle watchlisted shows
         if (!watchlistedShows.status.success) return@combine WatchlistsUiState.Error
@@ -150,6 +160,11 @@ class WatchlistsViewModel(
         WatchlistsUiState.Ok(watchlists = allWatchlists)
     }
         .onStart { emit(WatchlistsUiState.Loading) }
+        .onEach {
+            if (it is WatchlistsUiState.Ok) {
+                hasData.value = true
+            }
+        }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),

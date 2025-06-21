@@ -40,9 +40,9 @@ class GetShowByTmdbIdUseCase(
         }
         val trackedShow = trackedShowsRepository.getByTmdbIdFlow(tmdbShowId)
         val watchedEpisodes = watchedEpisodesTaskQueue.watchedEpisodeOrders
-        return combine(showDataResponse, trackedShow, watchedEpisodes, transform = { a, b, c ->
-            logger.d("combine: ${a.data?.name},\nb: ${b?.typedId},\nc: $c", TAG)
-            GetTrackedShowByTmdbIdResult(a, if (b == null) null else trackedShowReducer.reduce(b, c))
+        return combine(showDataResponse, trackedShow, watchedEpisodes, transform = { show, tracked, eps ->
+            logger.d("combine: ${show.data?.name},\nb: ${tracked?.typedId},\nc: $eps", TAG)
+            GetTrackedShowByTmdbIdResult(show, if (tracked == null) null else trackedShowReducer.reduce(tracked, eps))
         })
     }
 }

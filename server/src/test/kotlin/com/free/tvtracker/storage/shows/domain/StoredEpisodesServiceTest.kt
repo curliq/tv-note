@@ -17,7 +17,7 @@ class StoredEpisodesServiceTest {
             StoredEpisodeEntity(seasonNumber = 1, airDate = "2020-01-01"),
             StoredEpisodeEntity(seasonNumber = 1, airDate = "2025-01-01"),
         )
-        val data = StoredShowEntity(storedEpisodes = eps)
+        val data = StoredShowEntity(storedEpisodes = eps.toSet())
         val sut = StoredEpisodesService(
             mockk(),
             mockk(),
@@ -34,7 +34,7 @@ class StoredEpisodesServiceTest {
             StoredEpisodeEntity(seasonNumber = 1, airDate = "2020-01-01"),
             StoredEpisodeEntity(seasonNumber = 1, airDate = "2020-01-01"),
         )
-        val data = StoredShowEntity(storedEpisodes = eps)
+        val data = StoredShowEntity(storedEpisodes = eps.toSet())
         val sut = StoredEpisodesService(
             mockk(),
             mockk(),
@@ -51,7 +51,7 @@ class StoredEpisodesServiceTest {
             StoredEpisodeEntity(seasonNumber = 1, airDate = "2020-01-01"),
             StoredEpisodeEntity(seasonNumber = 1, airDate = "2020-01-01"),
         )
-        val data = StoredShowEntity(storedEpisodes = eps)
+        val data = StoredShowEntity(storedEpisodes = eps.toSet())
         val sut = StoredEpisodesService(
             mockk(),
             mockk(),
@@ -71,7 +71,7 @@ class StoredEpisodesServiceTest {
             StoredEpisodeEntity(seasonNumber = 2, airDate = "2020-01-01"),
             StoredEpisodeEntity(seasonNumber = 2, airDate = "2025-01-01"),
         )
-        val data = StoredShowEntity(storedEpisodes = eps)
+        val data = StoredShowEntity(storedEpisodes = eps.toSet())
         val sut = StoredEpisodesService(
             mockk(),
             mockk(),
