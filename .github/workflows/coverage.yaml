@@ -78,13 +78,24 @@ jobs:
           path: server/build/reports/kover/report.xml
           if-no-files-found: warn
 
-      - name: Upload coverage to Codecov
+      - name: Upload coverage to Codecov (compose)
         uses: codecov/codecov-action@v5
         with:
           fail_ci_if_error: true
-          files: composeApp/build/reports/kover/report.xml,server/build/reports/kover/report.xml
+          files: composeApp/build/reports/kover/report.xml
           directory: ./
-          flags: compose,server
+          flags: compose
+          name: codecov-coverage
+          token: ${{ secrets.CODECOV_TOKEN }}
+          verbose: true
+
+      - name: Upload coverage to Codecov (server)
+        uses: codecov/codecov-action@v5
+        with:
+          fail_ci_if_error: true
+          files: server/build/reports/kover/report.xml
+          directory: ./
+          flags: server
           name: codecov-coverage
           token: ${{ secrets.CODECOV_TOKEN }}
           verbose: true
