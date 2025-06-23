@@ -70,20 +70,22 @@ jobs:
           name: server-coverage-report
           path: server/build/reports/kover/report.xml
 
-      - name: Upload compose coverage to Codecov
-        uses: codecov/codecov-action@v4
+      - uses: actions/checkout@main
+      - uses: codecov/codecov-action@v5
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: true # optional (default = false)
           files: composeApp/build/reports/kover/report.xml
           flags: compose
-          name: compose-coverage
-          verbose: true
-
-      - name: Upload server coverage to Codecov
-        uses: codecov/codecov-action@v4
-        with:
+          name: codecov-compose
           token: ${{ secrets.CODECOV_TOKEN }}
+          verbose: true # optional (default = false)
+
+      - uses: actions/checkout@main
+      - uses: codecov/codecov-action@v5
+        with:
+          fail_ci_if_error: true # optional (default = false)
           files: server/build/reports/kover/report.xml
           flags: server
-          name: server-coverage
-          verbose: true
+          name: codecov-server
+          token: ${{ secrets.CODECOV_TOKEN }}
+          verbose: true # optional (default = false)
