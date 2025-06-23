@@ -57,35 +57,34 @@ jobs:
       - name: Run tests and generate coverage
         run: ./gradlew koverXmlReport
 
+      # Verify coverage reports exist
+      - name: Check if coverage reports exist
+        run: |
+          ls -la composeApp/build/reports/kover/ || echo "Compose coverage report directory not found"
+          ls -la server/build/reports/kover/ || echo "Server coverage report directory not found"
+
       # Upload both reports as artifacts (with unique names)
       - name: Upload compose coverage report to GitHub Actions
         uses: actions/upload-artifact@v4
         with:
           name: compose-coverage-report
           path: composeApp/build/reports/kover/report.xml
+          if-no-files-found: warn
 
       - name: Upload server coverage report to GitHub Actions
         uses: actions/upload-artifact@v4
         with:
           name: server-coverage-report
           path: server/build/reports/kover/report.xml
+          if-no-files-found: warn
 
-      - uses: actions/checkout@main
-      - uses: codecov/codecov-action@v5
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
         with:
-          fail_ci_if_error: true # optional (default = false)
-          files: compose-coverage-report
-          flags: compose
-          name: codecov-compose
+          fail_ci_if_error: true
+          files: composeApp/build/reports/kover/report.xml,server/build/reports/kover/report.xml
+          directory: ./
+          flags: compose,server
+          name: codecov-coverage
           token: ${{ secrets.CODECOV_TOKEN }}
-          verbose: true # optional (default = false)
-
-      - uses: actions/checkout@main
-      - uses: codecov/codecov-action@v5
-        with:
-          fail_ci_if_error: true # optional (default = false)
-          files: server-coverage-report
-          flags: server
-          name: codecov-server
-          token: ${{ secrets.CODECOV_TOKEN }}
-          verbose: true # optional (default = false)
+          verbose: true
