@@ -1,37 +1,33 @@
-# Setting coverage targets per flag
+codecov:
+  require_ci_to_pass: yes
+
 coverage:
+  precision: 2
+  round: down
+  range: "50...80"
   status:
     project:
       default:
-        target: 5% #overall project/ repo coverage
-      server:
-        target: 5%
-        flags:
-          - server
-      compose:
-        target: 5%
-        flags:
-          - compose
-
-# adding Flags to your `layout` configuration to show up in the PR comment
-comment:
-  layout:  "diff, flags, files"
-  behavior: default
-  require_changes: false
-  require_base: yes
-  require_head: yes
-  branches: main
-
-# New root YAML section = `flags:`
-# This is where you would define every flag from your
-# uploader, and update when new Flags added
+        target: auto
+        threshold: 5%
+    patch:
+      default:
+        target: auto
+        threshold: 5%
 
 flags:
   server:
-    paths: #note, accepts globs, not regexes
-      - server/src
-    carryforward: false
-  compose:
-    paths: #note, accepts globs, not regexes
-      - composeApp/src
+    paths:
+      - server/
     carryforward: true
+  compose:
+    paths:
+      - composeApp/
+    carryforward: true
+
+comment:
+  layout: "reach,diff,flags,files,footer"
+  behavior: default
+  require_changes: false
+  require_base: no
+  require_head: yes
