@@ -74,7 +74,7 @@ jobs:
       - uses: codecov/codecov-action@v5
         with:
           fail_ci_if_error: true # optional (default = false)
-          files: composeApp/build/reports/kover/report.xml
+          files: compose-coverage-report
           flags: compose
           name: codecov-compose
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -84,7 +84,7 @@ jobs:
       - uses: codecov/codecov-action@v5
         with:
           fail_ci_if_error: true # optional (default = false)
-          files: server/build/reports/kover/report.xml
+          files: server-coverage-report
           flags: server
           name: codecov-server
           token: ${{ secrets.CODECOV_TOKEN }}
