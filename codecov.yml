@@ -21,7 +21,7 @@ flag_management:
     statuses:
       - type: project
         target: auto
-        threshold: 1%
+        threshold: 0%
       - type: patch
         target: 5%
 
