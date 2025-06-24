@@ -15,15 +15,15 @@ coverage:
         target: auto
         threshold: 5%
 
-flags:
-  server:
-    paths:
-      - server/
+flag_management:
+  default_rules: # the rules that will be followed for any flag added, generally
     carryforward: true
-  compose:
-    paths:
-      - composeApp/
-    carryforward: true
+    statuses:
+      - type: project
+        target: auto
+        threshold: 1%
+      - type: patch
+        target: 5%
 
 comment:
   layout: "reach,diff,flags,files,footer"
