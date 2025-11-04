@@ -45,5 +45,5 @@ data class TrackedShowEntity(
     val storedShow: StoredShowEntity = StoredShowEntity(),
 
     @Column(name = "watchlisted", nullable = false)
-    val watchlisted: Boolean = false
+    var watchlisted: Boolean = false
 )

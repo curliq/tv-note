@@ -11,9 +11,11 @@ import com.free.tvtracker.features.tracked.data.shows.TrackedShowEpisodeEntity
 import com.free.tvtracker.features.tracked.data.shows.TrackedShowEpisodeJdbcRepository
 import com.free.tvtracker.features.tracked.data.shows.TrackedShowJdbcRepository
 import com.free.tvtracker.features.tracked.data.shows.TrackedShowJpaRepository
+import com.free.tvtracker.features.watchlists.data.WatchlistTrackedShowJpaRepository
 import com.free.tvtracker.logging.TvtrackerLogger
 import com.free.tvtracker.security.SessionService
 import com.free.tvtracker.storage.movies.domain.StoredMoviesService
+import com.free.tvtracker.storage.shows.domain.StoredEpisodesService
 import com.free.tvtracker.storage.shows.domain.StoredShowsService
 import com.free.tvtracker.tracked.request.AddEpisodesApiRequestBody.Episode
 import com.free.tvtracker.tracked.request.AddMovieApiRequestBody
@@ -37,7 +39,9 @@ class TrackedContentService(
     private val trackedMovieJpaRepository: TrackedMovieJpaRepository,
     private val trackedMovieJdbcRepository: TrackedMovieJdbcRepository,
     private val searchService: SearchService,
-    private val isTrackedShowWatchableUseCase: IsTrackedShowWatchableUseCase
+    private val isTrackedShowWatchableUseCase: IsTrackedShowWatchableUseCase,
+    private val storedEpisodesService: StoredEpisodesService,
+    private val watchlistTrackedShowJpaRepository: WatchlistTrackedShowJpaRepository
 ) {
     fun addShow(body: AddShowApiRequestBody): TrackedShowEntity? {
         var storedShow = storedShowsService.getStoredShow(body.tmdbShowId)
@@ -45,19 +49,24 @@ class TrackedContentService(
             val showResponse = searchService.getShow(body.tmdbShowId)
             storedShow = storedShowsService.createOrUpdateStoredShow(showResponse)
         }
-        val trackedShow = TrackedShowEntity(
+        var trackedShow = TrackedShowEntity(
             userId = sessionService.getSessionUserId(),
             watchlisted = body.watchlisted,
             storedShow = storedShow,
         )
-        trackedShowJpaRepository.saveAndFlush(trackedShow)
+        trackedShow = trackedShowJpaRepository.saveAndFlush(trackedShow)
         if (body.addAllEpisodes) {
             val trackedShowId = trackedShow.id
-            val eps = addEpisode(storedShow.storedEpisodes.map { Episode(trackedShowId, it.id) })
+            val storedEpisodes = storedEpisodesService.getEpisodes(storedShow.tmdbId)
+            val eps = addEpisodes(storedEpisodes.map { Episode(trackedShowId, it.id) })
             // assign episodes to tracked show just to return them in the api
             trackedShow.watchedEpisodes = eps.toSet()
         }
         return trackedShow
+    }
+
+    fun getTrackedShow(trackedShowId: Int): TrackedShowEntity? {
+        return trackedShowJpaRepository.findById(trackedShowId).orElse(null)
     }
 
     fun addMovie(body: AddMovieApiRequestBody): TrackedMovieEntity? {
@@ -75,7 +84,7 @@ class TrackedContentService(
         return trackedMovie
     }
 
-    fun addEpisode(episodes: List<Episode>): List<TrackedShowEpisodeEntity> {
+    fun addEpisodes(episodes: List<Episode>): List<TrackedShowEpisodeEntity> {
         val episodes = episodes.map { episode ->
             val trackedTvShow = trackedShowJpaRepository.getReferenceById(episode.trackedShowId)
             TrackedShowEpisodeEntity(
@@ -130,7 +139,9 @@ class TrackedContentService(
         if (body.isTvShow) {
             val show = trackedShowJpaRepository.findById(body.trackedContentId).get()
                 .copy(watchlisted = body.watchlisted)
-            return trackedShowJpaRepository.saveAndFlush(show).toApiModel()
+            val eps = storedEpisodesService.getEpisodes(show.storedShow.tmdbId)
+            val watchlists = watchlistTrackedShowJpaRepository.findAllByShow(show)
+            return trackedShowJpaRepository.saveAndFlush(show).toApiModel(eps, watchlists)
         } else {
             val movie =
                 trackedMovieJpaRepository.findById(body.trackedContentId).get().copy(watchlisted = body.watchlisted)
@@ -140,6 +151,7 @@ class TrackedContentService(
 
     fun delete(trackedContentId: Int, isTvShow: Boolean) {
         if (isTvShow) {
+            watchlistTrackedShowJpaRepository.deleteAllByShow_Id(trackedContentId)
             trackedShowJpaRepository.deleteById(trackedContentId)
         } else {
             trackedMovieJpaRepository.deleteById(trackedContentId)

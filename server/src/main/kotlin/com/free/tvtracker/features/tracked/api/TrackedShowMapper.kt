@@ -3,15 +3,29 @@ package com.free.tvtracker.features.tracked.api
 import com.free.tvtracker.features.tracked.data.movies.TrackedMovieEntity
 import com.free.tvtracker.features.tracked.data.shows.TrackedShowEntity
 import com.free.tvtracker.features.tracked.data.shows.TrackedShowEpisodeEntity
+import com.free.tvtracker.features.watchlists.data.WatchlistTrackedShowEntity
+import com.free.tvtracker.storage.shows.data.StoredEpisodeEntity
 import com.free.tvtracker.tracked.response.TrackedContentApiModel
 
-fun TrackedShowEntity.toApiModel(): TrackedContentApiModel {
+/**
+ * the lists are passed here because accessing it through hibernate throws concurrent exception
+ */
+fun TrackedShowEntity.toApiModel(
+    storedEpisodes: List<StoredEpisodeEntity>? = null,
+    watchlists: List<WatchlistTrackedShowEntity>? = null,
+    watchedEpisodes: List<TrackedShowEpisodeEntity>? = null,
+): TrackedContentApiModel {
+    val watchedEpisodes = watchedEpisodes ?: this.watchedEpisodes.toList()
+    val storedEpisodes = storedEpisodes ?: this.storedShow.storedEpisodes.toList()
+    val watchlistTrackedShows = watchlists ?: this.watchlistTrackedShows.toList()
     return TrackedContentApiModel(
         watchlisted = this.watchlisted,
         tvShow = TrackedContentApiModel.TvShow(
             id = this.id,
             createdAtDatetime = this.createdAtDatetime,
-            watchedEpisodes = this.watchedEpisodes.map { it.toApiModel() },
+            watchedEpisodes = watchedEpisodes.map {
+                it.toApiModel()
+            },
             storedShow = this.storedShow.run {
                 TrackedContentApiModel.TvShow.StoredShowApiModel(
                     tmdbId = tmdbId,
@@ -32,7 +46,7 @@ fun TrackedShowEntity.toApiModel(): TrackedContentApiModel {
         ),
         movie = null,
         mediaType = TrackedContentApiModel.ContentType.TvShow,
-        watchlists = this.watchlistTrackedShows.map {
+        watchlists = watchlistTrackedShows.map {
             TrackedContentApiModel.Watchlist(it.watchlist.id, it.watchlist.name)
         }
     )

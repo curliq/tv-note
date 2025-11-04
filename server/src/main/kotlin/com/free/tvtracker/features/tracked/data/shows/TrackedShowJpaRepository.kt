@@ -1,7 +1,9 @@
 package com.free.tvtracker.features.tracked.data.shows
 
+import jakarta.transaction.Transactional
 import org.springframework.data.jpa.repository.EntityGraph
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
@@ -31,4 +33,8 @@ interface TrackedShowJpaRepository : JpaRepository<TrackedShowEntity, Int> {
         @Param("userId") userId: Int,
         @Param("watchlisted") watchlisted: Boolean
     ): List<TrackedShowEntity>
+
+    @Modifying
+    @Query("update TrackedShowEntity c set c.watchlisted = ?1 where c.id = ?2")
+    fun updateWatchlisted(watchlisted: Boolean, id: Int): Int
 }

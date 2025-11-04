@@ -8,7 +8,6 @@ import com.free.tvtracker.storage.shows.data.StoredEpisodeEntity
 import com.free.tvtracker.storage.shows.data.StoredEpisodeJdbcRepository
 import com.free.tvtracker.storage.shows.data.StoredEpisodeJpaRepository
 import com.free.tvtracker.storage.shows.data.StoredShowEntity
-import kotlinx.coroutines.delay
 import org.springframework.stereotype.Service
 import java.sql.Timestamp
 import java.time.Clock

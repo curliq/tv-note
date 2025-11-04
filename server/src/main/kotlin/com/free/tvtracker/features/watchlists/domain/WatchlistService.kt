@@ -2,6 +2,7 @@ package com.free.tvtracker.features.watchlists.domain
 
 import com.free.tvtracker.features.tracked.api.toApiModel
 import com.free.tvtracker.features.tracked.data.movies.TrackedMovieJpaRepository
+import com.free.tvtracker.features.tracked.data.shows.TrackedShowEpisodeJpaRepository
 import com.free.tvtracker.features.tracked.data.shows.TrackedShowJpaRepository
 import com.free.tvtracker.features.tracked.domain.TrackedContentService
 import com.free.tvtracker.features.watchlists.api.toApiModel
@@ -13,6 +14,7 @@ import com.free.tvtracker.features.watchlists.data.WatchlistTrackedShowEntity
 import com.free.tvtracker.features.watchlists.data.WatchlistTrackedShowJpaRepository
 import com.free.tvtracker.logging.TvtrackerLogger
 import com.free.tvtracker.security.SessionService
+import com.free.tvtracker.storage.shows.domain.StoredEpisodesService
 import com.free.tvtracker.tracked.response.TrackedContentApiModel
 import com.free.tvtracker.watchlists.response.WatchlistApiModel
 import org.springframework.stereotype.Service
@@ -29,8 +31,9 @@ class WatchlistService(
     private val trackedMovieJpaRepository: TrackedMovieJpaRepository,
     private val watchlistTrackedMovieJpaRepository: WatchlistTrackedMovieJpaRepository,
     private val watchlistTrackedShowJpaRepository: WatchlistTrackedShowJpaRepository,
-    private val trackedContentService: TrackedContentService,
     private val logger: TvtrackerLogger,
+    private val storedEpisodesService: StoredEpisodesService,
+    private val trackedShowEpisodeJpaRepository: TrackedShowEpisodeJpaRepository,
 ) {
 
     fun getWatchlists(): List<WatchlistApiModel> {
@@ -76,7 +79,12 @@ class WatchlistService(
             logger.get.error("Attempting to fetch watchlist without permission")
             return emptyList()
         }
-        val shows = list.get().shows.map { Pair(it.show.toApiModel(), it.createdAtDatetime) }
+        val shows = list.get().shows.map {
+            val eps = storedEpisodesService.getEpisodes(it.show.storedShow.tmdbId)
+            val trackedEpisodes = trackedShowEpisodeJpaRepository.findAllByTrackedTvShowId(it.show.id)
+            val watchlists = watchlistTrackedShowJpaRepository.findAllByShow_Id(it.show.id)
+            Pair(it.show.toApiModel(eps, watchlists, watchedEpisodes = trackedEpisodes), it.createdAtDatetime)
+        }
         val movies = list.get().movies.map { Pair(it.movie.toApiModel(), it.createdAtDatetime) }
         return shows.plus(movies).sortedBy { it.second }.map { it.first }
     }
@@ -99,7 +107,9 @@ class WatchlistService(
                 show = show
             )
             watchlistTrackedShowJpaRepository.saveAndFlush(watchlistTracked)
-            return show.toApiModel()
+            val watchlists = watchlistTrackedShowJpaRepository.findAllByShow(show)
+            val eps = storedEpisodesService.getEpisodes(show.storedShow.tmdbId)
+            return show.toApiModel(eps, watchlists)
         } else {
             val movie = trackedMovieJpaRepository.getReferenceById(trackedContentId)
             val watchlistTracked = WatchlistTrackedMovieEntity(

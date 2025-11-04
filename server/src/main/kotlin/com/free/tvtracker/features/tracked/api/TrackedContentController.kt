@@ -5,6 +5,7 @@ import com.free.tvtracker.base.ApiResponse
 import com.free.tvtracker.logging.TvtrackerLogger
 import com.free.tvtracker.features.tracked.domain.TrackedContentService
 import com.free.tvtracker.logging.error
+import com.free.tvtracker.storage.shows.domain.StoredEpisodesService
 import com.free.tvtracker.tracked.request.AddEpisodesApiRequestBody
 import com.free.tvtracker.tracked.request.AddMovieApiRequestBody
 import com.free.tvtracker.tracked.request.AddShowApiRequestBody
@@ -31,7 +32,8 @@ import org.springframework.web.bind.annotation.RequestMapping
 )
 class TrackedContentController(
     val logger: TvtrackerLogger,
-    val trackedContentService: TrackedContentService
+    val trackedContentService: TrackedContentService,
+    val storedEpisodesService: StoredEpisodesService,
 ) {
 
     @PostMapping(Endpoints.Path.ADD_TRACKED_SHOW)
@@ -51,7 +53,8 @@ class TrackedContentController(
                 HttpStatus.BAD_REQUEST
             )
         }
-        return ResponseEntity.ok(AddTrackedShowApiResponse.ok(res.toApiModel()))
+        val eps = storedEpisodesService.getEpisodes(body.tmdbShowId)
+        return ResponseEntity.ok(AddTrackedShowApiResponse.ok(res.toApiModel(eps)))
     }
 
     @PostMapping(Endpoints.Path.ADD_TRACKED_MOVIE)
@@ -82,7 +85,7 @@ class TrackedContentController(
 
     @PostMapping(Endpoints.Path.ADD_EPISODES)
     fun episodeWatched(@RequestBody body: AddEpisodesApiRequestBody): ResponseEntity<AddTrackedEpisodesApiResponse> {
-        val show = trackedContentService.addEpisode(body.episodes)
+        val show = trackedContentService.addEpisodes(body.episodes)
         return ResponseEntity.ok(AddTrackedEpisodesApiResponse.ok(show.map { it.toApiModel() }))
     }
 

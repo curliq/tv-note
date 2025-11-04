@@ -29,7 +29,7 @@ class StoredShowsService(
             newStoredShow.createdAtDatetime = storedShow.createdAtDatetime
             newStoredShow.id = storedShow.id
         }
-        storedShowJpaRepository.save(newStoredShow)
+        storedShowJpaRepository.saveAndFlush(newStoredShow)
         val episodes = storedEpisodesService.getOrCreateEpisodes(tmdbShowResponse, newStoredShow)
         // assign episodes just for this instance to include them in the api response
         newStoredShow.storedEpisodes = episodes.toSet()
